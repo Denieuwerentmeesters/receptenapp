@@ -1,0 +1,145 @@
+import type { ReactNode } from 'react'
+import { Button, Icon } from '../ds'
+import { Label, Titel } from './Layout'
+import { foutTekst } from '../lib/fouten'
+
+/**
+ * Systeemschermen uit `Systeemschermen.dc.html`. Ze zijn hier één component met
+ * varianten in plaats van vier losse schermen, omdat ze alleen in tekst en
+ * icoon verschillen.
+ */
+
+export function Laden({ tekst = 'We stellen je week samen' }: { tekst?: string }) {
+  return (
+    <div style={{
+      height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      gap: 16, background: 'var(--c-red)', color: 'var(--c-cream)', padding: '0 26px 46px',
+    }}>
+      <Label>Even geduld</Label>
+      <Titel grootte={32}>{tekst}</Titel>
+      <div style={{
+        height: 8, borderRadius: 'var(--radius-full)',
+        background: 'rgba(255,246,232,0.28)', overflow: 'hidden', marginTop: 6,
+      }}>
+        <div style={{
+          height: '100%', width: '60%', borderRadius: 'var(--radius-full)',
+          background: 'var(--c-yellow)', animation: 'laadbalk 1.4s ease-in-out infinite',
+        }} />
+      </div>
+      <style>{'@keyframes laadbalk{0%{width:12%}50%{width:82%}100%{width:12%}}'}</style>
+    </div>
+  )
+}
+
+export function Leeg({ icoon, kop, tekst, knop, onKnop }: {
+  icoon: string
+  kop: string
+  tekst: string
+  knop?: string
+  onKnop?: () => void
+}) {
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+      justifyContent: 'center', gap: 14, padding: '32px 30px', textAlign: 'center',
+    }}>
+      <div style={{
+        width: 76, height: 76, borderRadius: 'var(--radius-full)', background: 'var(--c-paper)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <Icon name={icoon} size={30} />
+      </div>
+      <h2 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, lineHeight: 1,
+        margin: '6px 0 0', textTransform: 'uppercase', color: 'var(--color-ink)',
+      }}>{kop}</h2>
+      <p style={{
+        fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0,
+        maxWidth: 280, color: 'rgba(20,20,20,0.6)',
+      }}>{tekst}</p>
+      {knop && (
+        <Button onClick={onKnop} style={{ marginTop: 10, width: '100%', maxWidth: 280, padding: '17px 24px' }}>
+          {knop}
+        </Button>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Foutscherm. De tekst vermijdt schuldtaal en zegt expliciet dat er niets kwijt
+ * is — dat is de belangrijkste informatie op dit moment.
+ */
+export function Fout({ kop, tekst, stappen, onOpnieuw, onTerug }: {
+  kop: string
+  tekst: string
+  stappen?: string[]
+  onOpnieuw?: () => void
+  onTerug?: () => void
+}) {
+  return (
+    <div style={{
+      height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+      background: 'var(--c-red-bright)', color: 'var(--c-cream)',
+    }}>
+      <div style={{
+        flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        gap: 14, padding: '60px 26px 0',
+      }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: 'var(--radius-full)', background: 'var(--c-yellow)',
+          color: 'var(--c-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28,
+        }}>!</div>
+        <Titel grootte={30}>{kop}</Titel>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>
+          {tekst}
+        </p>
+        {stappen && (
+          <div style={{ marginTop: 8 }}>
+            {stappen.map((stap, i) => (
+              <div key={i} style={{
+                display: 'flex', gap: 10, padding: '11px 0',
+                borderBottom: '1.5px solid rgba(255,246,232,0.3)',
+              }}>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'var(--c-yellow)' }}>
+                  {i + 1}
+                </span>
+                <span style={{ flex: 1, fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5 }}>{stap}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div style={{ flex: 'none', padding: '22px 26px 44px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <Button tone="yellow" onClick={onOpnieuw} style={{ width: '100%', padding: '17px 24px' }}>
+          Opnieuw proberen
+        </Button>
+        {onTerug && (
+          <button onClick={onTerug} style={{
+            fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--c-cream)',
+            background: 'transparent', border: 'none', padding: 12, cursor: 'pointer',
+          }}>Terug naar mijn lijst</button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function Grens({ query, children, ladenTekst }: {
+  query: { isPending: boolean; isError: boolean; error: unknown; refetch: () => void }
+  children: ReactNode
+  ladenTekst?: string
+}) {
+  if (query.isPending) return <Laden tekst={ladenTekst} />
+  if (query.isError) {
+    return (
+      <Fout
+        kop="Even geen verbinding"
+        tekst={foutTekst(query.error)}
+        onOpnieuw={() => query.refetch()}
+      />
+    )
+  }
+  return <>{children}</>
+}

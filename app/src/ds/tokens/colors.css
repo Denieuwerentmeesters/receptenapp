@@ -1,0 +1,30 @@
+:root{
+/* Brand core */
+--c-red:#AB2328;--c-yellow:#FFF000;--c-warm:#FAC724;--c-ink:#141414;--c-paper:#FFFFFF;--c-cream:#FFF6E8;
+
+/* Section surfaces — full-bleed vlakken uit de site (elk vlak één kleur) */
+--c-red-bright:#E8202E;--c-purple:#6B2A9E;--c-pink:#D33A96;--c-orange:#F0431C;--c-green:#06612F;--c-gold:#FBC93B;--c-black:#000000;
+
+/* Ramps — for UI states (hover, disabled, borders), not decoration */
+--c-red-100:#F6DDDE;--c-red-300:#DE8C8F;--c-red-500:#AB2328;--c-red-700:#8A1B20;--c-red-900:#5E1216;
+--c-yellow-300:#FFF666;--c-yellow-500:#FFF000;--c-yellow-700:#D6C900;
+--c-warm-300:#FDE49B;--c-warm-500:#FAC724;--c-warm-700:#C79B12;
+--c-ink-300:#8C8C8C;--c-ink-500:#5A5A5A;--c-ink-700:#2E2E2E;--c-ink-900:#141414;
+
+/* Semantic */
+--color-canvas:var(--c-cream);--color-canvas-alt:var(--c-paper);--color-canvas-brand:var(--c-red);
+--color-ink:var(--c-ink);--color-ink-muted:var(--c-ink-500);
+--color-action:var(--c-red);--color-signal:var(--c-yellow);--color-success:var(--c-red-700);--color-warning:var(--c-red-900);
+--color-surface-card:var(--c-paper);--color-surface-accent:var(--c-warm-300);--color-surface-drama:var(--c-black);
+--color-bar-announce:var(--c-black);--color-bar-announce-fg:var(--c-yellow);
+--color-bar-nav:var(--c-red);--color-bar-nav-fg:var(--c-paper);--color-bar-nav-mark:var(--c-yellow);
+--color-hero:var(--c-red-bright);--color-hero-fg:var(--c-paper);--color-hero-cta:var(--c-yellow);--color-hero-cta-fg:var(--c-ink);--color-border:var(--c-red-100);
+--color-on-brand:var(--c-cream);--color-on-signal:var(--c-ink);
+
+/* Category colours — drawn from the brand palette, never new hues */
+--cat-ontbijt:var(--c-gold);--cat-ontbijt-fg:var(--c-green);--cat-ontbijt-tint:#FDE9AE;
+--cat-lunch:var(--c-orange);--cat-lunch-fg:var(--c-paper);--cat-lunch-tint:#FBD3C7;
+--cat-diner:var(--c-green);--cat-diner-fg:var(--c-yellow);--cat-diner-tint:#C6DCCE;
+--cat-snack:var(--c-purple);--cat-snack-fg:var(--c-paper);--cat-snack-tint:#DCC9EC;
+--cat-dessert:var(--c-pink);--cat-dessert-fg:var(--c-paper);--cat-dessert-tint:#F5CDE6;
+}

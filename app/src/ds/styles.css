@@ -1,0 +1,27 @@
+@import "./tokens/colors.css";
+@import "./tokens/fonts.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/radius.css";
+@import "./tokens/motion.css";
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  background:var(--color-canvas);
+  color:var(--color-ink);
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+}
+h1,h2,h3,p,span,button{overflow-wrap:break-word}
+a{color:var(--c-red)}
+a:hover{color:var(--c-red-700)}
+button{font:inherit}
+input,textarea{font:inherit}
+::-webkit-scrollbar{width:0;height:0}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important;transition-duration:0.01ms !important}
+}

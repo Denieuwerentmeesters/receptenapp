@@ -1,0 +1,4 @@
+/* Fonts komen uit de bundle via Fontsource (zie main.tsx) — geen CDN,
+   omdat de app ook offline in de supermarkt moet werken. */
+:root{--font-display:"Unbounded",sans-serif;--font-body:"Plus Jakarta Sans",sans-serif;
+--fw-medium:400;--fw-bold:700;--fw-black:900;}
