@@ -117,10 +117,71 @@ ziet `/beoordelen` met de aangemelde recepten van anderen.
   eerst een goede prompt, dan pas batchgewijs genereren.
 - Push (APNs), huisgenoten delen, Jumbo (mechanisme onbekend)
 
-## Werkwijze
+## Werkwijze (verplicht)
 
+Reinoud en Steven werken allebei aan deze repo, elk vanaf een eigen machine.
+Dezelfde afspraken als bij De Nieuwe Rentmeesters — ze zijn daar niet voor niets
+zo gegroeid.
+
+- Nooit rechtstreeks op `master` werken of committen. Eén klus = één branch =
+  één PR. GitHub weigert een directe push ook: `master` is beschermd.
+- **Begin elke klus met een verse branch vanaf de actuele `master`** — zie het
+  blok hieronder.
+- Mergen kan alleen als de check "Typecheck en build" groen is; merge als
+  **squash and merge**.
+- **Mergen blijft een menselijke beslissing — automatiseer die niet weg.** Maar
+  het initiatief ligt bij Claude, niet bij het geheugen van de mens:
+  - **Claude stelt de vraag.** Zodra de checks groen zijn, meldt Claude dat
+    actief en vraagt: *"Groen — mergen?"* Bij "ja" voert Claude de merge uit
+    (`gh pr merge --squash --delete-branch`); niemand hoeft naar GitHub.
+  - Draaien de checks nog, dan mag je ook alvast "ja, zodra groen" zeggen —
+    Claude zet dan auto-merge op de PR (`gh pr merge --auto --squash`).
+  - **Sessiestart-check:** Claude meldt bij de start van een werksessie welke
+    open PR's groen staan en op een merge-besluit wachten.
+- **Vóór elke klus: check of de ander er al mee bezig is** (`gh pr list`,
+  `gh issue list`). Raakt iets jouw onderwerp, stem dan eerst af. Grotere
+  klussen: eerst een issue aanmaken of aan jezelf toewijzen — dat is het
+  "bezet"-bordje. Claude doet deze check zelf aan het begin van elke klus.
 - Migraties: nieuw bestand in `db/migrations/`, nooit een bestaande aanpassen —
-  `scripts/migrate.py` houdt bij wat gedraaid is.
+  `scripts/migrate.py` houdt bij wat gedraaid is. Benoem een migratie expliciet
+  in de PR, zodat de ander meekijkt vóór de merge.
 - `DATABASE_URL` staat alleen bij Reinoud in zijn terminal. Vraag 'm niet op en
-  laat 'm nooit in de chat plakken.
-- Bouwen en typecheck: `npm run build` in `app/`.
+  laat 'm nooit in de chat plakken. Secrets nooit in code, commits, logs of
+  chat; environment-variabelen zet je in Vercel.
+- Bouwen en typecheck: `npm run build` in `app/`. Draai dat vóór het pushen —
+  CI doet exact hetzelfde en je wilt niet op een rode check wachten.
+
+### Branches: altijd vers vanaf `master` (verplicht)
+
+Begin **elke** klus zo, vóór de eerste wijziging:
+
+```
+git fetch origin
+git checkout -b feat/<korte-omschrijving> origin/master
+```
+
+- **Eerst `fetch`, dan pas aftakken.** Een verouderde lokale `master` geeft een
+  conflicterende PR. Let op het stille gevolg: bij `mergeStateStatus: DIRTY`
+  draait GitHub Actions niet meer, want het `pull_request`-event kan de
+  merge-commit niet bouwen. De check verdwijnt dan uit beeld in plaats van rood
+  te worden.
+- **Nooit doorwerken op een branch waarvan de PR al gemerged is.** Bij squash
+  worden de losse commits géén ancestors van `master`; zo'n branch loopt
+  "vooruit" en nieuw werk hangt eraan zonder PR. Vercel bouwt wél een preview
+  per branch, ook zonder PR — het lijkt dus alsof er iets doorgevoerd is
+  terwijl er in GitHub niets te mergen staat. Nieuw werk? Nieuwe branch.
+- **Alleen doorwerken op een bestaande branch** als het over hetzelfde onderwerp
+  gaat én de PR nog openstaat.
+- **Opruimen na de merge gaat vanzelf** — GitHub verwijdert de remote branch
+  automatisch. De lokale kopie ruimt Claude zelf op
+  (`git checkout master && git pull && git branch -d <branch>`).
+
+### Waar het draait
+
+- **Hosting: Vercel, op het account van Reinoud** (`receptenapp.vercel.app`).
+  Steven heeft daar een Developer-rol; production redeployen kan alleen Reinoud.
+- De twee `VITE_NEON_*`-variabelen staan in de Vercel-projectinstellingen, niet
+  in de repo. Lokaal komen ze uit `app/.env.local` (zie `app/.env.example`).
+- Een deploy die "Blocked" heet komt niet door een bug maar doordat de
+  git-auteur nog geen toegang had tot het Vercel-project; hij kan daarna gewoon
+  opnieuw gedeployd worden.
