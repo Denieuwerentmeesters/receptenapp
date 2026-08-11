@@ -1,0 +1,35 @@
+# De automatische keuring: draait bij elke pull request en elke push naar master.
+# Groene vinkjes = veilig te mergen. Zie app/package.json voor de losse scripts.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  keuring:
+    name: Typecheck en build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+
+      - name: Node opzetten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Dependencies installeren
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck en build (tsc -b && vite build)
+        run: npm run build
