@@ -9,6 +9,10 @@ commentaar. Houd dat aan.
 
 ## Waar wat staat
 
+**Lees `docs/waarom.md` voor je iets voorstelt of afwijst.** Daar staat wat we
+oplossen, voor wie, en — belangrijker — wat we expliciet níét bouwen. Het
+uitgangspunt is gemak: kiezen uit weinig, niet uit veel.
+
 ```
 api/extraheer.ts     Serverless functie (Vercel) die recepten uitleest met Claude
 app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
