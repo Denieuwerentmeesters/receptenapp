@@ -45,48 +45,53 @@ export function Recept() {
 
           return (
             <>
-              <Kop kleur="var(--c-red-bright)" style={{ padding: 'calc(env(safe-area-inset-top) + 20px) 22px 22px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <IconButton
-                    icon="chevronLeft" label="Terug" size={36} onClick={() => navigeer(-1)}
-                    style={{ background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)' }}
-                  />
-                  <IconButton
-                    icon="heart" label={favoriet ? 'Uit favorieten' : 'Bewaren als favoriet'} size={36}
-                    onClick={() => favToggle.mutate({ receptId: r.id, favoriet: !favoriet })}
-                    style={{
-                      background: favoriet ? 'var(--c-cream)' : 'rgba(255,246,232,0.22)',
-                      color: favoriet ? 'var(--c-red-bright)' : 'var(--c-cream)',
-                    }}
-                  />
-                </div>
+              {/* Alleen de statusbalk blijft staan; de rode kop scrollt mee
+                  met het recept, zodat de ingrediënten de ruimte krijgen. */}
+              <div style={{ flex: 'none', height: 'env(safe-area-inset-top)', background: 'var(--c-red-bright)' }} />
 
-                <div style={{
-                  height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '16px 0 0', borderRadius: 'var(--radius-md)',
-                  background: r.afbeelding_url ? `url(${r.afbeelding_url}) center/cover` : 'var(--c-red)',
-                  fontFamily: 'var(--font-body)', fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase',
-                }}>
-                  {r.afbeelding_url ? '' : 'foto'}
-                </div>
+              <Inhoud style={{ gap: 0, padding: 0 }}>
+                <Kop kleur="var(--c-red-bright)" style={{ padding: '20px 22px 22px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <IconButton
+                      icon="chevronLeft" label="Terug" size={36} onClick={() => navigeer(-1)}
+                      style={{ background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)' }}
+                    />
+                    <IconButton
+                      icon="heart" label={favoriet ? 'Uit favorieten' : 'Bewaren als favoriet'} size={36}
+                      onClick={() => favToggle.mutate({ receptId: r.id, favoriet: !favoriet })}
+                      style={{
+                        background: favoriet ? 'var(--c-cream)' : 'rgba(255,246,232,0.22)',
+                        color: favoriet ? 'var(--c-red-bright)' : 'var(--c-cream)',
+                      }}
+                    />
+                  </div>
 
-                <div style={{ marginTop: 18 }}>
-                  <Label>{r.keuken ?? 'Recept'}{vegetarisch ? ' · vegetarisch' : ''}</Label>
-                </div>
-                <div style={{ marginTop: 8 }}>
-                  <Titel>{r.titel_nl ?? r.titel}</Titel>
-                </div>
-                <div style={{
-                  display: 'flex', gap: 16, marginTop: 14,
-                  fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
-                }}>
-                  <span>{r.bereidingstijd_minuten ?? '?'} min</span>
-                  <span>{personen} {personen === 1 ? 'persoon' : 'personen'}</span>
-                  <span>{r.ingredienten.length} ingrediënten</span>
-                </div>
-              </Kop>
+                  <div style={{
+                    height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    margin: '16px 0 0', borderRadius: 'var(--radius-md)',
+                    background: r.afbeelding_url ? `url(${r.afbeelding_url}) center/cover` : 'var(--c-red)',
+                    fontFamily: 'var(--font-body)', fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase',
+                  }}>
+                    {r.afbeelding_url ? '' : 'foto'}
+                  </div>
 
-              <Inhoud style={{ gap: 8, padding: '20px 22px 8px' }}>
+                  <div style={{ marginTop: 18 }}>
+                    <Label>{r.keuken ?? 'Recept'}{vegetarisch ? ' · vegetarisch' : ''}</Label>
+                  </div>
+                  <div style={{ marginTop: 8 }}>
+                    <Titel>{r.titel_nl ?? r.titel}</Titel>
+                  </div>
+                  <div style={{
+                    display: 'flex', gap: 16, marginTop: 14,
+                    fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
+                  }}>
+                    <span>{r.bereidingstijd_minuten ?? '?'} min</span>
+                    <span>{personen} {personen === 1 ? 'persoon' : 'personen'}</span>
+                    <span>{r.ingredienten.length} ingrediënten</span>
+                  </div>
+                </Kop>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '20px 22px 8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <span style={{
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
@@ -145,9 +150,10 @@ export function Recept() {
                   </div>
                 ))}
 
+                </div>
               </Inhoud>
 
-              <Voet>
+              <Voet meeschuiven>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Button
                     variant={opLijst ? 'secondary' : 'primary'}
