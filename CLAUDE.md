@@ -173,7 +173,15 @@ zo gegroeid.
 - Migraties: nieuw bestand in `db/migrations/`, nooit een bestaande aanpassen —
   `scripts/migrate.py` houdt bij wat gedraaid is. Benoem een migratie expliciet
   in de PR, zodat de ander meekijkt vóór de merge.
-- `DATABASE_URL` staat alleen bij Reinoud in zijn terminal. Vraag 'm niet op en
+- **Migraties draaien vanzelf** na de merge: `.github/workflows/migraties.yml`
+  draait `scripts/migrate.py` bij elke push naar `master` met een migratie erin.
+  Met de hand (her)starten: `gh workflow run migraties.yml`; kijken of het
+  lukte: `gh run list --workflow migraties.yml`. Niemand hoeft ze nog zelf te
+  draaien. Een migratie moet daarom altijd achterwaarts veilig zijn (kolom
+  erbij, niet weg of hernoemd): de oude app draait nog even tegen de nieuwe
+  database tot Vercel klaar is.
+- `DATABASE_URL` staat als repository secret in GitHub (voor de migraties) en
+  bij Reinoud in zijn terminal (voor `npm run afbeeldingen`). Vraag 'm niet op en
   laat 'm nooit in de chat plakken. Secrets nooit in code, commits, logs of
   chat; environment-variabelen zet je in Vercel.
 - Bouwen en typecheck: `npm run build` in `app/`. Draai dat vóór het pushen —
