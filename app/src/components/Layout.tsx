@@ -1,6 +1,6 @@
 import {
   createContext, useContext, useEffect, useMemo, useRef, useState,
-  type CSSProperties, type ReactNode, type UIEvent,
+  type CSSProperties, type ReactNode, type Ref, type UIEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router-dom'
@@ -162,12 +162,18 @@ export function Titel({ children, grootte = 28 }: { children: ReactNode; grootte
   )
 }
 
-export function Inhoud({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+export function Inhoud({ children, style, scrollRef, onScroll }: {
+  children: ReactNode
+  style?: CSSProperties
+  /** Voor schermen die hun scrollpositie onthouden (Ontdekken). */
+  scrollRef?: Ref<HTMLDivElement>
+  onScroll?: (e: UIEvent<HTMLDivElement>) => void
+}) {
   // Het dok ligt over de onderkant heen; zonder deze ruimte valt je laatste
   // recept of boodschap erachter.
   const { ruimte } = useContext(OnderkantContext)
   return (
-    <div style={{
+    <div ref={scrollRef} onScroll={onScroll} style={{
       flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch',
       padding: '16px 22px 8px', display: 'flex', flexDirection: 'column', gap: 12, ...style,
     }}>
