@@ -6,6 +6,7 @@ import { weekStart } from './week'
 import { sleutels } from './queries'
 import type { BronType, DeelStatus, Recept } from './database.types'
 import type { Concept } from './extractie'
+import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
 
 /* --------------------------------------------------------------- ontdekken */
 
@@ -14,6 +15,7 @@ export interface OntdekFilters {
   maxTijd: number | null
   keuken: string | null
   alleenVega: boolean
+  alleenBudget: boolean
 }
 
 const PER_PAGINA = 30
@@ -43,6 +45,7 @@ function metFilters<T>(vraag: T, filters: OntdekFilters): T {
   if (filters.maxTijd) v = v.lte('bereidingstijd_minuten', filters.maxTijd)
   if (filters.keuken) v = v.eq('keuken', filters.keuken)
   if (filters.alleenVega) v = v.contains('tags', ['vegetarisch'])
+  if (filters.alleenBudget) v = v.lte('prijs_pp_schatting', BUDGET_PER_PERSOON)
   return v as unknown as T
 }
 
@@ -327,6 +330,7 @@ export function useReceptOpslaan() {
         bereiding_nl: concept.bereiding_nl.filter((s) => s.trim()),
         bron_type: bronType,
         deel_status: deelStatus,
+        prijs_pp_schatting: schatPrijsPerPersoon(concept),
       }).select('id').single()
 
       if (error) throw error

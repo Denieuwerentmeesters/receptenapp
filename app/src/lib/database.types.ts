@@ -38,6 +38,8 @@ export interface Recept {
   bron_type: BronType
   deel_status: DeelStatus
   aangemaakt_op: string
+  /** Ruwe schatting in euro's (lib/prijsschatting.ts); null als er niets te schatten viel. */
+  prijs_pp_schatting: number | null
 }
 
 export interface WeekmenuGetoond {

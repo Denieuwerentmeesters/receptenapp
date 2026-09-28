@@ -7,12 +7,14 @@ import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
 import { useDezeWeek, useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
 import { weekLabel, weekStart } from '../lib/week'
+import { isBudget } from '../lib/prijsschatting'
 
-type Filter = 'alles' | 'lijst' | 'vega' | 'snel'
+type Filter = 'alles' | 'lijst' | 'budget' | 'vega' | 'snel'
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: 'alles', label: 'Alles' },
   { id: 'lijst', label: 'Op mijn lijst' },
+  { id: 'budget', label: 'Budget' },
   { id: 'vega', label: 'Vegetarisch' },
   { id: 'snel', label: 'Binnen 30 min' },
 ]
@@ -47,6 +49,7 @@ export function DezeWeek() {
   const zichtbaar = recepten.filter((r) =>
     filter === 'alles' ? true
       : filter === 'lijst' ? r.opLijst
+      : filter === 'budget' ? isBudget(r)
       : filter === 'vega' ? isVega(r)
       : (r.bereidingstijd_minuten ?? 999) <= 30)
 

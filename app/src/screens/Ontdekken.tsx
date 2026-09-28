@@ -6,6 +6,7 @@ import { Grens, Leeg } from '../components/Staten'
 import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../lib/queries2'
 import { useDezeWeek, useLijstActies, type WeekRecept } from '../lib/queries'
 import type { Recept } from '../lib/database.types'
+import { isBudget } from '../lib/prijsschatting'
 
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
@@ -33,10 +34,11 @@ export function Ontdekken() {
   const [maxTijd, setMaxTijd] = useState<number | null>(null)
   const [keuken, setKeuken] = useState<string | null>(null)
   const [alleenVega, setAlleenVega] = useState(false)
+  const [alleenBudget, setAlleenBudget] = useState(false)
 
   const filters: OntdekFilters = useMemo(
-    () => ({ zoek, maxTijd, keuken, alleenVega }),
-    [zoek, maxTijd, keuken, alleenVega],
+    () => ({ zoek, maxTijd, keuken, alleenVega, alleenBudget }),
+    [zoek, maxTijd, keuken, alleenVega, alleenBudget],
   )
 
   const resultaten = useOntdek(filters)
@@ -51,7 +53,7 @@ export function Ontdekken() {
   )
 
   const recepten = resultaten.data?.pages.flat() ?? []
-  const heeftFilter = Boolean(maxTijd || keuken || alleenVega)
+  const heeftFilter = Boolean(maxTijd || keuken || alleenVega || alleenBudget)
   const totaal = telling.data ?? recepten.length
 
   // Vanzelf verder laden zodra je bij de onderkant komt; de knop blijft als
@@ -98,9 +100,10 @@ export function Ontdekken() {
 
       <div style={{ flex: 'none', padding: '14px 22px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
-          <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setAlleenVega(false) }}>
+          <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setAlleenVega(false); setAlleenBudget(false) }}>
             Alles
           </Chip>
+          <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
           <Chip selected={alleenVega} onClick={() => setAlleenVega(!alleenVega)}>Vegetarisch</Chip>
           {TIJDEN.map((t) => (
             <Chip key={t.waarde} selected={maxTijd === t.waarde} onClick={() => setMaxTijd(maxTijd === t.waarde ? null : t.waarde)}>
@@ -246,6 +249,7 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
         }}>{recept.titel_nl ?? recept.titel}</span>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>
           {meta}
+          {isBudget(recept) && <BudgetLabel />}
         </span>
         {status && (
           <span style={{
@@ -254,5 +258,12 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
         )}
       </button>
     </div>
+  )
+}
+
+/** Klein groen "budget" achter de meta: tot €2,50 per persoon (geschat). */
+export function BudgetLabel() {
+  return (
+    <span style={{ color: 'var(--c-green)', fontWeight: 700 }}> · budget</span>
   )
 }
