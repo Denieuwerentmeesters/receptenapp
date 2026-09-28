@@ -25,7 +25,10 @@ export function Dialoog({ open, kop, tekst, acties, onSluit }: {
       role="presentation"
       onClick={onSluit}
       style={{
-        position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(20,20,20,0.45)',
+        // Niet `inset: 0`: in iOS Safari loopt dat door tot onder de zwevende
+        // adresbalk en valt de onderste knop erachter. 100dvh is het zichtbare deel.
+        position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh',
+        zIndex: 50, background: 'rgba(20,20,20,0.45)',
         display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
       }}
     >
