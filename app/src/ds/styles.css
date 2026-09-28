@@ -7,6 +7,8 @@
 
 *{box-sizing:border-box}
 html,body,#root{height:100%}
+/* Safari legt de adresbalk over de pagina heen; 100% loopt eronder door. dvh is het zichtbare deel, zodat de onderbalk erboven blijft. */
+@supports (height:100dvh){#root{height:100dvh}}
 body{
   margin:0;
   font-family:var(--font-body);
