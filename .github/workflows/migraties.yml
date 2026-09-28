@@ -1,0 +1,48 @@
+# Draait de databasemigraties automatisch, zodat niemand dat meer met de hand
+# hoeft te doen. Gebeurt bij elke push naar master waar een migratie in zit
+# (dus na het mergen van zo'n PR), en kan ook met de hand gestart worden:
+#
+#   gh workflow run migraties.yml
+#
+# DATABASE_URL staat als repository secret in GitHub (Settings → Secrets and
+# variables → Actions). Niemand hoeft 'm dan nog in een terminal te hebben.
+#
+# scripts/migrate.py houdt zelf bij wat al gedraaid is, dus opnieuw draaien is
+# veilig. De migratie is in een paar seconden klaar; de Vercel-build duurt
+# ongeveer een minuut, dus de database is bijna altijd eerder klaar dan de app.
+name: Migraties
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - db/migrations/**
+      - scripts/migrate.py
+      - .github/workflows/migraties.yml
+  workflow_dispatch:
+
+# Nooit twee tegelijk: migraties moeten op volgorde.
+concurrency:
+  group: migraties
+  cancel-in-progress: false
+
+jobs:
+  migreren:
+    name: Migraties draaien
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+
+      - name: Python opzetten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: psycopg installeren
+        run: pip install 'psycopg[binary]'
+
+      - name: Migraties draaien
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python scripts/migrate.py
