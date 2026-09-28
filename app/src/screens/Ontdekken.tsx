@@ -120,7 +120,7 @@ export function Ontdekken() {
             placeholder="Zoek op gerecht of ingrediënt"
             style={{
               flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
-              fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--color-ink)',
+              fontFamily: 'var(--font-body)', fontSize: 16, color: 'var(--color-ink)',
             }}
           />
           {zoek && (

@@ -197,7 +197,7 @@ export function ReceptToevoegen() {
                       style={{
                         width: '100%', background: 'var(--c-paper)', borderRadius: 14,
                         border: '1.5px solid rgba(20,20,20,0.14)', padding: '14px 16px',
-                        fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, resize: 'vertical',
+                        fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.5, resize: 'vertical',
                       }}
                     />
                     <Button
@@ -344,7 +344,7 @@ function Veld({ label, waarde, onChange, type = 'text' }: {
         type={type} value={waarde} onChange={(e) => onChange(e.target.value)}
         style={{
           background: 'var(--c-paper)', border: '1.5px solid rgba(20,20,20,0.14)',
-          borderRadius: 14, padding: '13px 15px', fontFamily: 'var(--font-body)', fontSize: 15,
+          borderRadius: 14, padding: '13px 15px', fontFamily: 'var(--font-body)', fontSize: 16,
           width: '100%', minWidth: 0,
         }}
       />
