@@ -1,9 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/extraheer.ts": { "maxDuration": 60 }
+    "api/extraheer.ts": { "maxDuration": 60 },
+    "api/afbeeldingen.ts": { "maxDuration": 60 }
   },
-  "installCommand": "cd app && npm install",
+  "crons": [
+    { "path": "/api/afbeeldingen", "schedule": "0 3 * * *" }
+  ],
+  "installCommand": "npm install && cd app && npm install",
   "buildCommand": "cd app && npm run build",
   "outputDirectory": "app/dist",
   "rewrites": [

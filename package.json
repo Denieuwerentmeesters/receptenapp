@@ -1,0 +1,19 @@
+{
+  "name": "receptenapp-root",
+  "private": true,
+  "type": "module",
+  "description": "Root-dependencies voor de serverless functies (api/) en de scripts die buiten de app draaien. De app zelf zit in app/.",
+  "scripts": {
+    "afbeeldingen": "tsx scripts/genereer_afbeeldingen.ts"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@vercel/blob": "^1.1.1",
+    "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "tsx": "^4.20.5",
+    "typescript": "~6.0.2"
+  }
+}
