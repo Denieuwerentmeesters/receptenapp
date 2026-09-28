@@ -11,16 +11,24 @@ commentaar. Houd dat aan.
 
 ```
 api/extraheer.ts     Serverless functie (Vercel) die recepten uitleest met Claude
+api/afbeeldingen.ts  Nachtelijke cron (Vercel) die nieuwe recepten een afbeelding geeft
+lib/afbeeldingen/    Prompt-opbouw en generatie van receptafbeeldingen (gedeeld door
+                     api/afbeeldingen.ts en scripts/genereer_afbeeldingen.ts)
 app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
   src/ds/            Design system uit Claude Design: tokens + componenten
   src/screens/       Weekmenu, Recept, Boodschappen, Instellingen, Inloggen
   src/lib/           auth, db, queries, schaal, ah, week, config, fouten
 db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
-scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping
+scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
+                     genereer_afbeeldingen (TypeScript, via `npm run afbeeldingen`)
 data/recepten.json   581 gescrapete recepten (archief na import)
 data/ah_mapping.json ingrediënt → AH-productnummer
-docs/                app-plan, tech-stack, setup
+docs/                app-plan, tech-stack, setup, foodfotografie-prompt
 ```
+
+De root heeft een eigen `package.json` voor de serverless functies en de
+TypeScript-scripts (sharp, @vercel/blob, @neondatabase/serverless). Vercel
+installeert die vóór de app (`installCommand` in vercel.json).
 
 ## Stack — en waar die afwijkt van docs/tech-stack.md
 
@@ -110,11 +118,31 @@ De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
 ziet `/beoordelen` met de aangemelde recepten van anderen.
 
+## Receptafbeeldingen
+
+Elk recept krijgt één gegenereerde foto (plan §6), geen varianten. De prompt
+volgt het sjabloon in `docs/foodfotografie-prompt.md`: een vaste kern plus
+variabelen (hoek, vaatwerk, ondergrond, rekwisieten, garnering) die
+`lib/afbeeldingen/prompt.ts` deterministisch uit het recept-id kiest. Geen
+taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
+`gemini-3.1-flash-lite-image`) krijgt de ingrediëntenlijst rechtstreeks.
+
+- Beeld op 1K, verkleind naar 800 px WebP, opgeslagen in Vercel Blob
+  (`recepten/<id>.webp`), URL in `recepten.afbeelding_url`, prompt in
+  `recepten.afbeelding_prompt`, `afbeelding_bron = 'gegenereerd'`.
+- Batch: `npm run afbeeldingen -- --limit 500` vanaf Reinouds terminal met
+  `DATABASE_URL`, `GEMINI_API_KEY` en `BLOB_READ_WRITE_TOKEN`. Eerst
+  `--dry-run --telling` om de verdeling te zien, dat kost niets.
+- Nieuwe recepten: `api/afbeeldingen.ts` draait elke nacht (Vercel Cron) en
+  pakt alles zonder afbeelding op, hooguit 8 per run.
+- Tegenvallend beeld: `npm run afbeeldingen -- --id <uuid> --opnieuw`.
+- Eigen foto's (`eigen_foto`, `kookboek_foto`) worden nooit overschreven.
+- Wijzig je de prompt-lijsten, draai dan eerst `--dry-run --telling`: het doel is
+  ongeveer half top-down, half schuin, en een derde zonder rekwisieten.
+
 ## Wat er nog niet is
 
 - Prijsindicatie per recept — vraagt eenheidsprijzen per AH-product
-- Receptafbeeldingen (plan §6); kaarten tonen nu een kleurvlak. Apart project:
-  eerst een goede prompt, dan pas batchgewijs genereren.
 - Push (APNs), huisgenoten delen, Jumbo (mechanisme onbekend)
 
 ## Werkwijze (verplicht)
