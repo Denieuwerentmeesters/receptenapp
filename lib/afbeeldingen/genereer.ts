@@ -44,9 +44,10 @@ export function maakSql(): Sql {
 /**
  * Recepten die nog geen afbeelding hebben. Foto's die de gebruiker zelf
  * toevoegde (`eigen_foto`, `kookboek_foto`) laten we met rust; een gegenereerde
- * mag overschreven worden met `opnieuw`.
+ * mag overschreven worden met `opnieuw`. Met `ookGegenereerd` komen ook de
+ * recepten mee die al een gegenereerde afbeelding hebben (alles opnieuw).
  */
-export async function haalReceptenZonderAfbeelding(sql: Sql, limiet: number, ids?: string[]): Promise<ReceptRij[]> {
+export async function haalReceptenZonderAfbeelding(sql: Sql, limiet: number, ids?: string[], ookGegenereerd = false): Promise<ReceptRij[]> {
   if (ids && ids.length) {
     return (await sql`
       select id, titel, titel_nl, keuken, tags, ingredienten, afbeelding_url, afbeelding_bron
@@ -57,7 +58,7 @@ export async function haalReceptenZonderAfbeelding(sql: Sql, limiet: number, ids
   return (await sql`
     select id, titel, titel_nl, keuken, tags, ingredienten, afbeelding_url, afbeelding_bron
     from recepten
-    where afbeelding_url is null
+    where (afbeelding_url is null or ${ookGegenereerd})
       and (afbeelding_bron is null or afbeelding_bron = 'gegenereerd')
     order by aangemaakt_op
     limit ${limiet}
@@ -66,10 +67,30 @@ export async function haalReceptenZonderAfbeelding(sql: Sql, limiet: number, ids
 
 // -------------------------------------------------------------- Gemini
 
-interface GeminiAntwoord {
+export interface GeminiAntwoord {
   candidates?: { content?: { parts?: { inlineData?: { mimeType: string; data: string }; text?: string }[] } }[]
   promptFeedback?: { blockReason?: string }
   error?: { message?: string }
+}
+
+/** De request-body voor één beeld; dezelfde voor een losse aanroep en de batch. */
+export function beeldVerzoek(prompt: string) {
+  return {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      responseModalities: ['IMAGE'],
+      imageConfig: { aspectRatio: '1:1', imageSize: '1K' },
+    },
+  }
+}
+
+export function beeldUitAntwoord(body: GeminiAntwoord): Buffer {
+  if (body.promptFeedback?.blockReason) {
+    throw new Error(`Gemini weigerde de prompt (${body.promptFeedback.blockReason}).`)
+  }
+  const beeld = body.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)?.inlineData
+  if (!beeld) throw new Error('Gemini gaf geen afbeelding terug.')
+  return Buffer.from(beeld.data, 'base64')
 }
 
 export async function genereerBeeld(prompt: string, model = process.env.GEMINI_IMAGE_MODEL ?? STANDAARD_MODEL): Promise<Buffer> {
@@ -81,13 +102,7 @@ export async function genereerBeeld(prompt: string, model = process.env.GEMINI_I
     {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-goog-api-key': sleutel },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseModalities: ['IMAGE'],
-          imageConfig: { aspectRatio: '1:1', imageSize: '1K' },
-        },
-      }),
+      body: JSON.stringify(beeldVerzoek(prompt)),
     },
   )
 
@@ -95,12 +110,7 @@ export async function genereerBeeld(prompt: string, model = process.env.GEMINI_I
   if (!respons.ok) {
     throw new Error(`Gemini gaf ${respons.status}: ${body.error?.message ?? 'onbekende fout'}`)
   }
-  if (body.promptFeedback?.blockReason) {
-    throw new Error(`Gemini weigerde de prompt (${body.promptFeedback.blockReason}).`)
-  }
-  const beeld = body.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)?.inlineData
-  if (!beeld) throw new Error('Gemini gaf geen afbeelding terug.')
-  return Buffer.from(beeld.data, 'base64')
+  return beeldUitAntwoord(body)
 }
 
 // ---------------------------------------------------------------- WebP
@@ -138,8 +148,14 @@ export interface Uitkomst {
 export async function verwerkRecept(sql: Sql, recept: ReceptRij, model?: string): Promise<Uitkomst> {
   const { prompt } = bouwPrompt(recept)
   const origineel = await genereerBeeld(prompt, model)
+  const url = await slaBeeldOp(sql, recept.id, prompt, origineel)
+  return { id: recept.id, titel: recept.titel_nl ?? recept.titel, url, prompt }
+}
+
+/** Verkleinen, uploaden en wegschrijven; gedeeld door de losse route en de batch. */
+export async function slaBeeldOp(sql: Sql, receptId: string, prompt: string, origineel: Buffer): Promise<string> {
   const webp = await verkleinNaarWebp(origineel)
-  const url = await uploadNaarBlob(recept.id, webp)
+  const url = await uploadNaarBlob(receptId, webp)
 
   // Cache-buster in de URL: dezelfde bestandsnaam wordt bij `opnieuw` overschreven
   // en de app zou anders de oude versie uit de cache blijven tonen.
@@ -150,8 +166,7 @@ export async function verwerkRecept(sql: Sql, recept: ReceptRij, model?: string)
     set afbeelding_url = ${urlMetVersie},
         afbeelding_bron = 'gegenereerd',
         afbeelding_prompt = ${prompt}
-    where id = ${recept.id}::uuid
+    where id = ${receptId}::uuid
   `
-
-  return { id: recept.id, titel: recept.titel_nl ?? recept.titel, url: urlMetVersie, prompt }
+  return urlMetVersie
 }
