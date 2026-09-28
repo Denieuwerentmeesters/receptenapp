@@ -1,6 +1,7 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Icon } from '../ds'
+import { useDezeWeek } from '../lib/queries'
 
 /**
  * Vast schermskelet uit de designs: een gekleurde kop die niet meescrollt, een
@@ -87,13 +88,53 @@ const TABS = [
   { pad: '/profiel', icoon: 'user', label: 'Profiel' },
 ] as const
 
+/**
+ * Een recept erbij moet je zien gebeuren: het cijfer op "Deze week" zwelt
+ * even op. Bij het openen van een scherm niet — alleen als het aantal stijgt
+ * terwijl je kijkt.
+ */
+const TELLER_ANIMATIE = `
+@keyframes teller-plop { 0% { transform: scale(1) } 35% { transform: scale(1.7) } 70% { transform: scale(0.9) } 100% { transform: scale(1) } }
+@media (prefers-reduced-motion: reduce) { .teller-plop { animation: none !important } }
+`
+
+function WeekTeller({ aantal }: { aantal: number }) {
+  const vorige = useRef(aantal)
+  const [plop, setPlop] = useState(0)
+
+  useEffect(() => {
+    if (aantal > vorige.current) setPlop((p) => p + 1)
+    vorige.current = aantal
+  }, [aantal])
+
+  if (aantal === 0) return null
+  return (
+    <span
+      key={plop}
+      className="teller-plop"
+      aria-label={`${aantal} recepten deze week`}
+      style={{
+        position: 'absolute', top: -6, right: -12, minWidth: 18, height: 18, padding: '0 5px',
+        borderRadius: 'var(--radius-full)', background: 'var(--c-red-bright)', color: 'var(--c-paper)',
+        fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700, lineHeight: '18px',
+        textAlign: 'center', boxSizing: 'border-box', border: '1.5px solid var(--color-surface-card)',
+        animation: plop > 0 ? 'teller-plop 520ms var(--ease)' : undefined,
+      }}
+    >{aantal}</span>
+  )
+}
+
 export function OnderBalk() {
+  const dezeWeek = useDezeWeek()
+  const inWeek = dezeWeek.data?.length ?? 0
+
   return (
     <nav style={{
       flex: 'none', display: 'flex', justifyContent: 'space-around',
       background: 'var(--color-surface-card)', borderTop: '1px solid var(--c-red-100)',
       padding: '10px 0 calc(10px + env(safe-area-inset-bottom))',
     }}>
+      <style>{TELLER_ANIMATIE}</style>
       {TABS.map((tab) => (
         <NavLink
           key={tab.pad}
@@ -104,7 +145,10 @@ export function OnderBalk() {
             color: isActive ? 'var(--color-action)' : 'var(--c-ink-300)',
           })}
         >
-          <Icon name={tab.icoon} size={22} />
+          <span style={{ position: 'relative', display: 'flex' }}>
+            <Icon name={tab.icoon} size={22} />
+            {tab.pad === '/deze-week' && <WeekTeller aantal={inWeek} />}
+          </span>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 400 }}>{tab.label}</span>
         </NavLink>
       ))}

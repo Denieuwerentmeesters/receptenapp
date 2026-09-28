@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Chip, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
+import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
-import { useDezeWeek, useVoorkeuren, type WeekRecept } from '../lib/queries'
-import { useFavorietIds, useFavorietToggle } from '../lib/queries2'
+import { useDezeWeek, useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
 import { weekLabel, weekStart } from '../lib/week'
 
 type Filter = 'alles' | 'lijst' | 'vega' | 'snel'
@@ -26,9 +26,10 @@ function isVega(recept: WeekRecept) {
 
 /**
  * Het startscherm: je week. De tien suggesties van de generator, plus wat je
- * zelf via Ontdekken of Favorieten toevoegde. Wat op je boodschappenlijst
- * staat krijgt een gele rand; na de boodschappen verdwijnt die, maar het
- * recept blijft staan — hiervandaan kook je.
+ * zelf via Ontdekken (het hartje) toevoegde. Tik je een recept aan, dan gaat
+ * het op je boodschappenlijst en krijgt het een gele rand; met het kruisje
+ * haal je het helemaal uit je week. Na de boodschappen verdwijnt de gele
+ * rand, maar het recept blijft staan — hiervandaan kook je.
  */
 export function DezeWeek() {
   const week = weekStart()
@@ -38,8 +39,9 @@ export function DezeWeek() {
   const dezeWeek = useDezeWeek(week)
   const voorkeuren = useVoorkeuren()
   const { voegToe, dialoog } = useOpLijst(week)
-  const favorieten = useFavorietIds()
-  const favToggle = useFavorietToggle()
+  const { haalUitWeek } = useLijstActies(week)
+  // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
+  const [wegVraag, setWegVraag] = useState<WeekRecept | null>(null)
 
   const recepten = useMemo(() => dezeWeek.data ?? [], [dezeWeek.data])
   const zichtbaar = recepten.filter((r) =>
@@ -117,13 +119,9 @@ export function DezeWeek() {
                     recept={recept}
                     vlak={VLAKKEN[i % VLAKKEN.length]}
                     personen={personen}
-                    favoriet={Boolean(favorieten.data?.[recept.id])}
                     onOpen={() => navigeer(`/recept/${recept.id}`)}
                     onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
-                    onFavoriet={() => favToggle.mutate({
-                      receptId: recept.id,
-                      favoriet: !favorieten.data?.[recept.id],
-                    })}
+                    onWeg={() => (recept.opLijst ? setWegVraag(recept) : haalUitWeek.mutate(recept.id))}
                   />
                 ))}
               </div>
@@ -151,28 +149,40 @@ export function DezeWeek() {
       </Grens>
 
       {dialoog}
+      <Dialoog
+        open={Boolean(wegVraag)}
+        kop="Uit je week halen?"
+        tekst={wegVraag
+          ? `${wegVraag.titel_nl ?? wegVraag.titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.`
+          : undefined}
+        onSluit={() => setWegVraag(null)}
+        acties={[
+          { label: 'Ja, haal weg', hoofd: true, onClick: () => { if (wegVraag) haalUitWeek.mutate(wegVraag.id); setWegVraag(null) } },
+          { label: 'Laat maar', onClick: () => setWegVraag(null) },
+        ]}
+      />
       <OnderBalk />
     </Scherm>
   )
 }
 
-/** Tekst op de knop onder een kaart: wat er met dit recept aan de hand is. */
+/**
+ * Tekst op de knop onder een kaart: wat er met dit recept aan de hand is.
+ * "In je week" = staat er, maar nog niet op je lijst; tik om 'm te kiezen.
+ */
 function knopTekst(recept: WeekRecept): string {
   if (recept.opLijst) return recept.aantal > 1 ? `Op je lijst · ${recept.aantal}x` : 'Op je lijst'
   if (recept.gekooktOp) return 'Gekookt'
-  // Van de lijst af: boodschappen gedaan, doorgestuurd of gewist.
-  if (recept.gekozen) return 'In je week'
-  return 'Op de lijst'
+  return 'In je week'
 }
 
-function ReceptKaart({ recept, vlak, personen, favoriet, onOpen, onLijst, onFavoriet }: {
+function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
   recept: WeekRecept
   vlak: string
   personen: number
-  favoriet: boolean
   onOpen: () => void
   onLijst: () => void
-  onFavoriet: () => void
+  onWeg: () => void
 }) {
   return (
     <div style={{
@@ -214,15 +224,15 @@ function ReceptKaart({ recept, vlak, personen, favoriet, onOpen, onLijst, onFavo
       </button>
 
       <button
-        onClick={onFavoriet}
-        aria-label={favoriet ? 'Uit favorieten' : 'Bewaren als favoriet'}
+        onClick={onWeg}
+        aria-label="Uit je week halen"
         style={{
           position: 'absolute', top: 10, right: 10, width: 32, height: 32,
-          borderRadius: 'var(--radius-full)', background: 'rgba(20,20,20,0.28)', border: 'none',
+          borderRadius: 'var(--radius-full)', background: 'rgba(20,20,20,0.34)', border: 'none',
           display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-          color: favoriet ? 'var(--c-yellow)' : 'var(--c-paper)',
+          color: 'var(--c-paper)',
         }}
-      ><Icon name="heart" size={16} /></button>
+      ><Icon name="x" size={16} /></button>
       </div>
 
       <button
@@ -232,10 +242,10 @@ function ReceptKaart({ recept, vlak, personen, favoriet, onOpen, onLijst, onFavo
           margin: '0 4px 4px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
           border: `1.5px solid ${recept.opLijst ? 'var(--c-red)' : 'rgba(20,20,20,0.14)'}`,
-          color: recept.opLijst ? 'var(--c-red)' : recept.gekozen ? 'rgba(20,20,20,0.55)' : 'var(--c-ink)',
+          color: recept.opLijst ? 'var(--c-red)' : 'var(--c-ink)',
         }}
       >
-        <Icon name={recept.gekozen ? 'check' : 'plus'} size={14} />
+        <Icon name={recept.opLijst ? 'check' : 'plus'} size={14} />
         {knopTekst(recept)}
       </button>
     </div>

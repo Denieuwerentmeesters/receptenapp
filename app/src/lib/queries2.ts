@@ -18,6 +18,34 @@ export interface OntdekFilters {
 
 const PER_PAGINA = 30
 
+/** Het stukje van de PostgREST-builder dat de filters nodig hebben. */
+interface Filterbaar {
+  or(filter: string): Filterbaar
+  lte(kolom: string, waarde: number): Filterbaar
+  eq(kolom: string, waarde: string): Filterbaar
+  contains(kolom: string, waarde: string[]): Filterbaar
+}
+
+/**
+ * Dezelfde filters voor de pagina's en voor de telling, zodat die nooit
+ * uiteenlopen. De casts zijn nodig omdat de volledige builder-typen van
+ * postgrest-js TypeScript in een oneindige lus laten lopen.
+ */
+function metFilters<T>(vraag: T, filters: OntdekFilters): T {
+  let v = vraag as unknown as Filterbaar
+  const zoek = filters.zoek.trim()
+  if (zoek) {
+    // Zoek op titel én op de Nederlandse titel; PostgREST's `or` wil
+    // komma-gescheiden condities.
+    const patroon = `%${zoek}%`
+    v = v.or(`titel.ilike.${patroon},titel_nl.ilike.${patroon}`)
+  }
+  if (filters.maxTijd) v = v.lte('bereidingstijd_minuten', filters.maxTijd)
+  if (filters.keuken) v = v.eq('keuken', filters.keuken)
+  if (filters.alleenVega) v = v.contains('tags', ['vegetarisch'])
+  return v as unknown as T
+}
+
 /**
  * Alle recepten doorbladeren met filters. Paginerend, want 475 recepten in één
  * keer ophalen is zonde van de verbinding als je er tien bekijkt.
@@ -29,25 +57,29 @@ export function useOntdek(filters: OntdekFilters) {
     getNextPageParam: (laatste: Recept[], allePaginas) =>
       laatste.length < PER_PAGINA ? undefined : allePaginas.length,
     queryFn: async ({ pageParam }) => {
-      let vraag = db.from('recepten').select('*')
-
-      const zoek = filters.zoek.trim()
-      if (zoek) {
-        // Zoek op titel én op de Nederlandse titel; PostgREST's `or` wil
-        // komma-gescheiden condities.
-        const patroon = `%${zoek}%`
-        vraag = vraag.or(`titel.ilike.${patroon},titel_nl.ilike.${patroon}`)
-      }
-      if (filters.maxTijd) vraag = vraag.lte('bereidingstijd_minuten', filters.maxTijd)
-      if (filters.keuken) vraag = vraag.eq('keuken', filters.keuken)
-      if (filters.alleenVega) vraag = vraag.contains('tags', ['vegetarisch'])
-
       const van = (pageParam as number) * PER_PAGINA
-      const { data, error } = await vraag
+      const { data, error } = await metFilters(db.from('recepten').select('*'), filters)
         .order('titel')
         .range(van, van + PER_PAGINA - 1)
       if (error) throw error
       return data as Recept[]
+    },
+  })
+}
+
+/**
+ * Hoeveel recepten er binnen deze filters zijn — het getal bovenaan Ontdekken.
+ * Los van de pagina's: je wilt "475 recepten" zien, niet "30+".
+ */
+export function useOntdekTelling(filters: OntdekFilters) {
+  return useQuery({
+    queryKey: ['ontdek-telling', filters],
+    queryFn: async (): Promise<number> => {
+      const { count, error } = await metFilters(
+        db.from('recepten').select('id', { count: 'exact', head: true }), filters,
+      )
+      if (error) throw error
+      return count ?? 0
     },
   })
 }
@@ -302,6 +334,7 @@ export function useReceptOpslaan() {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['ontdek'] })
+      void qc.invalidateQueries({ queryKey: ['ontdek-telling'] })
       void qc.invalidateQueries({ queryKey: ['mijn-recepten'] })
     },
   })
@@ -359,6 +392,7 @@ export function useBeoordelen() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['aanmeldingen'] })
       void qc.invalidateQueries({ queryKey: ['ontdek'] })
+      void qc.invalidateQueries({ queryKey: ['ontdek-telling'] })
     },
   })
 }

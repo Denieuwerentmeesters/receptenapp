@@ -5,6 +5,7 @@ import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens } from '../components/Staten'
 import { useOpLijst } from '../components/OpLijst'
 import { useDezeWeek, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { useFavorietIds, useFavorietToggle } from '../lib/queries2'
 import { schaalIngredienten } from '../lib/schaal'
 import { weekStart } from '../lib/week'
 
@@ -17,6 +18,11 @@ export function Recept() {
   const week = weekStart()
   const dezeWeek = useDezeWeek(week)
   const { voegToe, dialoog, bezig } = useOpLijst(week)
+  // Favorieten wegen mee in het weekmenu. Het hartje in Ontdekken betekent
+  // "in je week"; hier bewaar je een recept voor later.
+  const favorieten = useFavorietIds()
+  const favToggle = useFavorietToggle()
+  const favoriet = Boolean(id && favorieten.data?.[id])
 
   // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
   // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
@@ -44,6 +50,14 @@ export function Recept() {
                   <IconButton
                     icon="chevronLeft" label="Terug" size={36} onClick={() => navigeer(-1)}
                     style={{ background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)' }}
+                  />
+                  <IconButton
+                    icon="heart" label={favoriet ? 'Uit favorieten' : 'Bewaren als favoriet'} size={36}
+                    onClick={() => favToggle.mutate({ receptId: r.id, favoriet: !favoriet })}
+                    style={{
+                      background: favoriet ? 'var(--c-cream)' : 'rgba(255,246,232,0.22)',
+                      color: favoriet ? 'var(--c-red-bright)' : 'var(--c-cream)',
+                    }}
                   />
                 </div>
 
