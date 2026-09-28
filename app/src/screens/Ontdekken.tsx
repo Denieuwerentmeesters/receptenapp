@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Chip, Icon } from '../ds'
 import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
@@ -24,22 +24,47 @@ const ACHTERGROND = '#FCD6C3'
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
 
 /**
+ * Wat je in Ontdekken aan het doen was: filters en hoe ver je gescrold had.
+ * Open je een recept en ga je terug, dan sta je weer op dezelfde plek — niet
+ * bovenaan met alle filters uit. Bewust in het geheugen van de app en niet in
+ * de URL: na een herstart mag je gewoon bovenaan beginnen. De opgehaalde
+ * pagina's zelf bewaart React Query al.
+ */
+const onthouden = {
+  zoek: '',
+  maxTijd: null as number | null,
+  keuken: null as string | null,
+  alleenVega: false,
+  alleenBudget: false,
+  scrollTop: 0,
+}
+
+/**
  * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en vegetarisch —
  * precies de dingen waarop je een doordeweekse avond selecteert. Het hartje
  * zet een recept in "Deze week"; daar kies je of het op je lijst gaat.
  */
 export function Ontdekken() {
   const navigeer = useNavigate()
-  const [zoek, setZoek] = useState('')
-  const [maxTijd, setMaxTijd] = useState<number | null>(null)
-  const [keuken, setKeuken] = useState<string | null>(null)
-  const [alleenVega, setAlleenVega] = useState(false)
-  const [alleenBudget, setAlleenBudget] = useState(false)
+  const [zoek, setZoek] = useState(onthouden.zoek)
+  const [maxTijd, setMaxTijd] = useState<number | null>(onthouden.maxTijd)
+  const [keuken, setKeuken] = useState<string | null>(onthouden.keuken)
+  const [alleenVega, setAlleenVega] = useState(onthouden.alleenVega)
+  const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
 
   const filters: OntdekFilters = useMemo(
     () => ({ zoek, maxTijd, keuken, alleenVega, alleenBudget }),
     [zoek, maxTijd, keuken, alleenVega, alleenBudget],
   )
+
+  // Ander filter = andere lijst: dan hoort de oude scrollpositie er niet meer bij.
+  const vorigeFilters = useRef(filters)
+  useEffect(() => {
+    if (vorigeFilters.current === filters) return
+    vorigeFilters.current = filters
+    Object.assign(onthouden, { zoek, maxTijd, keuken, alleenVega, alleenBudget, scrollTop: 0 })
+    scroller.current?.scrollTo({ top: 0 })
+  }, [filters, zoek, maxTijd, keuken, alleenVega, alleenBudget])
 
   const resultaten = useOntdek(filters)
   const telling = useOntdekTelling(filters)
@@ -53,6 +78,16 @@ export function Ontdekken() {
   )
 
   const recepten = resultaten.data?.pages.flat() ?? []
+
+  // Terug van een recept: zodra de lijst er (uit de cache) weer staat, springen
+  // we naar waar je was. Eén keer; daarna scroll je zelf.
+  const scroller = useRef<HTMLDivElement>(null)
+  const nogHerstellen = useRef(onthouden.scrollTop > 0)
+  useLayoutEffect(() => {
+    if (!nogHerstellen.current || !scroller.current || recepten.length === 0) return
+    scroller.current.scrollTop = onthouden.scrollTop
+    nogHerstellen.current = false
+  }, [recepten.length])
   const heeftFilter = Boolean(maxTijd || keuken || alleenVega || alleenBudget)
   const totaal = telling.data ?? recepten.length
 
@@ -134,7 +169,11 @@ export function Ontdekken() {
             tekst={zoek ? `Geen recept voor "${zoek}". Probeer een ingrediënt, bijvoorbeeld aubergine.` : 'Geen recept binnen deze filters.'}
           />
         ) : (
-          <Inhoud style={{ gap: 12 }}>
+          <Inhoud
+            style={{ gap: 12 }}
+            scrollRef={scroller}
+            onScroll={(e) => { if (!nogHerstellen.current) onthouden.scrollTop = e.currentTarget.scrollTop }}
+          >
             <span style={{
               fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
               textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
@@ -196,7 +235,7 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
     recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
     vega ? 'vegetarisch' : recept.keuken,
   ].filter(Boolean).join(' · ')
-  const status = week?.opLijst ? 'Op je lijst' : week ? 'In je week' : null
+  const status = week?.opLijst ? 'Op je lijst' : week ? "In 'Deze week' geplaatst" : null
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>

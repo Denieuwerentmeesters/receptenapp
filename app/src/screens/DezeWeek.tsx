@@ -152,12 +152,12 @@ export function DezeWeek() {
 
 /**
  * Tekst op de knop onder een kaart: wat er met dit recept aan de hand is.
- * "In je week" = staat er, maar nog niet op je lijst; tik om 'm te kiezen.
+ * Staat het nog niet op je lijst, dan zegt de knop wat een tik doet.
  */
 function knopTekst(recept: WeekRecept): string {
   if (recept.opLijst) return recept.aantal > 1 ? `Op je lijst · ${recept.aantal}x` : 'Op je lijst'
   if (recept.gekooktOp) return 'Gekookt'
-  return 'In je week'
+  return 'Zet op je lijst'
 }
 
 function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {

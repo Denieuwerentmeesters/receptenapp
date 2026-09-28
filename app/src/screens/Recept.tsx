@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, IconButton } from '../ds'
-import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
+import { Button, Icon, IconButton } from '../ds'
+import { Inhoud, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens } from '../components/Staten'
+import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
-import { useDezeWeek, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
-import { useFavorietIds, useFavorietToggle } from '../lib/queries2'
+import { useDezeWeek, useLijstActies, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { isBudget } from '../lib/prijsschatting'
 import { schaalIngredienten } from '../lib/schaal'
 import { weekStart } from '../lib/week'
 
@@ -18,11 +19,9 @@ export function Recept() {
   const week = weekStart()
   const dezeWeek = useDezeWeek(week)
   const { voegToe, dialoog, bezig } = useOpLijst(week)
-  // Favorieten wegen mee in het weekmenu. Het hartje in Ontdekken betekent
-  // "in je week"; hier bewaar je een recept voor later.
-  const favorieten = useFavorietIds()
-  const favToggle = useFavorietToggle()
-  const favoriet = Boolean(id && favorieten.data?.[id])
+  // Het hartje werkt hier net als in Ontdekken: het recept in "Deze week" zetten.
+  const { zetInWeek, haalUitWeek } = useLijstActies(week)
+  const [wegVraag, setWegVraag] = useState(false)
 
   // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
   // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
@@ -45,51 +44,83 @@ export function Recept() {
 
           return (
             <>
-              {/* Alleen de statusbalk blijft staan; de rode kop scrollt mee
-                  met het recept, zodat de ingrediënten de ruimte krijgen. */}
-              <div style={{ flex: 'none', height: 'env(safe-area-inset-top)', background: 'var(--c-red-bright)' }} />
+              {/* Alleen de statusbalk blijft staan; de rest scrollt mee met het
+                  recept, zodat de ingrediënten daarna de ruimte krijgen. */}
+              <div style={{ flex: 'none', height: 'env(safe-area-inset-top)', background: 'var(--c-ink)' }} />
 
               <Inhoud style={{ gap: 0, padding: 0 }}>
-                <Kop kleur="var(--c-red-bright)" style={{ padding: '20px 22px 22px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <IconButton
-                      icon="chevronLeft" label="Terug" size={36} onClick={() => navigeer(-1)}
-                      style={{ background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)' }}
-                    />
-                    <IconButton
-                      icon="heart" label={favoriet ? 'Uit favorieten' : 'Bewaren als favoriet'} size={36}
-                      onClick={() => favToggle.mutate({ receptId: r.id, favoriet: !favoriet })}
-                      style={{
-                        background: favoriet ? 'var(--c-cream)' : 'rgba(255,246,232,0.22)',
-                        color: favoriet ? 'var(--c-red-bright)' : 'var(--c-cream)',
-                      }}
-                    />
-                  </div>
+                {/* De foto is de verleiding: groot, met titel en knoppen erin.
+                    Twee verlopen houden tekst en knoppen leesbaar op elke foto. */}
+                <div style={{
+                  position: 'relative', flex: 'none', height: 'min(64dvh, 560px)', minHeight: 340,
+                  background: r.afbeelding_url ? `url(${r.afbeelding_url}) center/cover` : 'var(--c-red-bright)',
+                  color: 'var(--c-paper)',
+                }}>
+                  <div aria-hidden style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.78) 100%)',
+                  }} />
 
                   <div style={{
-                    height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '16px 0 0', borderRadius: 'var(--radius-md)',
-                    background: r.afbeelding_url ? `url(${r.afbeelding_url}) center/cover` : 'var(--c-red)',
-                    fontFamily: 'var(--font-body)', fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase',
+                    position: 'absolute', top: 16, left: 16, right: 16,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
                   }}>
-                    {r.afbeelding_url ? '' : 'foto'}
+                    <IconButton
+                      icon="chevronLeft" label="Terug" size={42} onClick={() => navigeer(-1)}
+                      style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
+                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {inWeek && (
+                        <span style={{
+                          padding: '8px 12px', borderRadius: 'var(--radius-full)',
+                          background: 'rgba(20,20,20,0.5)', backdropFilter: 'blur(8px)',
+                          fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
+                        }}>{opLijst ? 'Op je lijst' : "In 'Deze week'"}</span>
+                      )}
+                      <IconButton
+                        icon="heart" size={42}
+                        label={inWeek ? 'Uit deze week halen' : 'In deze week zetten'}
+                        onClick={() => {
+                          if (!inWeek) zetInWeek.mutate(r)
+                          else if (opLijst) setWegVraag(true)
+                          else haalUitWeek.mutate(r.id)
+                        }}
+                        style={{
+                          background: inWeek ? 'var(--c-red-bright)' : 'rgba(20,20,20,0.5)',
+                          color: 'var(--c-paper)', backdropFilter: 'blur(8px)',
+                        }}
+                      />
+                    </div>
                   </div>
 
-                  <div style={{ marginTop: 18 }}>
-                    <Label>{r.keuken ?? 'Recept'}{vegetarisch ? ' · vegetarisch' : ''}</Label>
+                  {!r.afbeelding_url && (
+                    <div style={{
+                      position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      opacity: 0.5,
+                    }}><Icon name="utensils" size={48} /></div>
+                  )}
+
+                  <div style={{ position: 'absolute', left: 22, right: 22, bottom: 22 }}>
+                    <Label>
+                      {r.keuken ?? 'Recept'}{vegetarisch ? ' · vegetarisch' : ''}{isBudget(r) ? ' · budget' : ''}
+                    </Label>
+                    <div style={{ marginTop: 8, textShadow: '0 2px 12px rgba(0,0,0,0.35)' }}>
+                      <Titel grootte={30}>{r.titel_nl ?? r.titel}</Titel>
+                    </div>
+                    <div style={{
+                      display: 'flex', gap: 16, marginTop: 12,
+                      fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
+                    }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <Icon name="clock" size={14} />{r.bereidingstijd_minuten ?? '?'} min
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <Icon name="users" size={14} />{personen} {personen === 1 ? 'persoon' : 'personen'}
+                      </span>
+                      <span>{r.ingredienten.length} ingrediënten</span>
+                    </div>
                   </div>
-                  <div style={{ marginTop: 8 }}>
-                    <Titel>{r.titel_nl ?? r.titel}</Titel>
-                  </div>
-                  <div style={{
-                    display: 'flex', gap: 16, marginTop: 14,
-                    fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
-                  }}>
-                    <span>{r.bereidingstijd_minuten ?? '?'} min</span>
-                    <span>{personen} {personen === 1 ? 'persoon' : 'personen'}</span>
-                    <span>{r.ingredienten.length} ingrediënten</span>
-                  </div>
-                </Kop>
+                </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '20px 22px 8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
@@ -199,6 +230,16 @@ export function Recept() {
                 )}
               </Voet>
               {dialoog}
+              <Dialoog
+                open={wegVraag}
+                kop="Uit je week halen?"
+                tekst={`${r.titel_nl ?? r.titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.`}
+                onSluit={() => setWegVraag(false)}
+                acties={[
+                  { label: 'Ja, haal weg', hoofd: true, onClick: () => { haalUitWeek.mutate(r.id); setWegVraag(false) } },
+                  { label: 'Laat maar', onClick: () => setWegVraag(false) },
+                ]}
+              />
             </>
           )
         })()}

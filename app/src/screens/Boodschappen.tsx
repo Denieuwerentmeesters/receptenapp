@@ -19,6 +19,8 @@ interface Doorgestuurd {
   ids: string[]
   gemapt: number
   ongemapt: number
+  /** Wat niet mee kon naar AH: dat blijft op de lijst, en dat melden we. */
+  nietBijAh: string[]
 }
 
 export function Boodschappen() {
@@ -36,6 +38,7 @@ export function Boodschappen() {
   const [melding, setMelding] = useState<string | null>(null)
   const [doorgestuurd, setDoorgestuurd] = useState<Doorgestuurd | null>(null)
   const [wisVraag, setWisVraag] = useState(false)
+  const [nietBijAh, setNietBijAh] = useState<string[] | null>(null)
 
   const receptenOpLijst = (dezeWeek.data ?? []).filter((r) => r.opLijst).length
   const items = useMemo(() => boodschappen.data ?? [], [boodschappen.data])
@@ -64,7 +67,10 @@ export function Boodschappen() {
         .flatMap((r) => r.ids)
       // Bewust eerst vragen: we kunnen niet controleren of het aankwam. AH
       // voegt niets toe als je daar niet ingelogd bent, zonder foutmelding.
-      setDoorgestuurd({ ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length })
+      setDoorgestuurd({
+        ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length,
+        nietBijAh: regels.filter((r) => !r.afgevinkt && !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
+      })
     } catch {
       setMandjeFout('Het mandje is niet aangekomen. Je lijst is bewaard — er is niets kwijt.')
     }
@@ -261,7 +267,10 @@ export function Boodschappen() {
             label: 'Ja, haal van mijn lijst',
             hoofd: true,
             onClick: () => {
-              if (doorgestuurd) opruimen.mutate(doorgestuurd.ids)
+              if (doorgestuurd) {
+                opruimen.mutate(doorgestuurd.ids)
+                if (doorgestuurd.nietBijAh.length > 0) setNietBijAh(doorgestuurd.nietBijAh)
+              }
               setDoorgestuurd(null)
             },
           },
@@ -276,6 +285,17 @@ export function Boodschappen() {
             },
           },
         ]}
+      />
+
+      <Dialoog
+        open={Boolean(nietBijAh)}
+        kop="Let op: dit moet je zelf nog kopen"
+        tekst={nietBijAh
+          ? `Deze producten zitten níét in je AH-mandje: ${nietBijAh.join(', ')}. ` +
+            "Ze blijven op je lijst. Koop ze los — bij AH via 'zoek', of in een andere winkel."
+          : undefined}
+        onSluit={() => setNietBijAh(null)}
+        acties={[{ label: 'Oké, ik koop ze zelf', hoofd: true, onClick: () => setNietBijAh(null) }]}
       />
 
       <Dialoog
