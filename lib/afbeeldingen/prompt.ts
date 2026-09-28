@@ -94,22 +94,28 @@ const ONDERGRONDEN = {
   rooster: 'een metalen taartrooster op een linnen doek',
   bakpapier: 'bakpapier op een betonnen blad',
   leisteen: 'een mat zwarte leisteen plaat',
+  notenHout: 'een warm notenhouten tafelblad met zichtbare nerf',
+  aanrechtMarmer: 'een modern keukenaanrecht van licht natuursteen (marmer), met een onscherpe keuken op de achtergrond',
+  aanrechtBeton: 'een modern keukenaanrecht van glad antraciet beton, met een onscherpe keuken op de achtergrond',
+  aanrechtHout: 'een modern massief eikenhouten keukenaanrecht, met een onscherpe keuken op de achtergrond',
 } as const
 
 type OndergrondSleutel = keyof typeof ONDERGRONDEN
 
-// Sfeer per keuken (sjabloon §5): jute en bamboe bij Aziatisch, linnen en marmer
-// bij Italiaans, hout en gietijzer bij stoof, beton bij alles wat fris moet ogen.
+// Sfeer per keuken (sjabloon §5): jute en bamboe bij Aziatisch, marmer bij
+// Italiaans, hout en gietijzer bij stoof, beton bij alles wat fris moet ogen.
+// Per sfeer hooguit één linnen ondergrond; verder vooral houten tafels en een
+// modern aanrecht (marmer, beton, hout), zodat linnen niet overal terugkomt.
 const ONDERGROND_PER_SFEER: Record<string, OndergrondSleutel[]> = {
-  aziatisch: ['bamboe', 'jute', 'leisteen', 'donkerHout', 'beton'],
-  italiaans: ['marmer', 'linnenKleed', 'linnenLoper', 'lichtHout', 'beton'],
-  mediterraan: ['marmer', 'linnenKleed', 'lichtHout', 'beton', 'linnenBlauw'],
-  mexicaans: ['donkerHout', 'linnenLoper', 'beton', 'leisteen', 'lichtHout'],
-  frans: ['marmer', 'linnenKleed', 'lichtHout', 'beton'],
-  stoof: ['donkerHout', 'lichtHout', 'linnenKleed', 'beton', 'jute'],
-  fris: ['beton', 'marmer', 'linnenBlauw', 'lichtHout', 'leisteen'],
-  oven: ['bakpapier', 'rooster', 'donkerHout', 'linnenKleed', 'beton'],
-  neutraal: ['beton', 'lichtHout', 'linnenKleed', 'marmer', 'linnenLoper', 'donkerHout'],
+  aziatisch: ['bamboe', 'jute', 'leisteen', 'donkerHout', 'aanrechtBeton', 'notenHout'],
+  italiaans: ['marmer', 'linnenKleed', 'lichtHout', 'aanrechtMarmer', 'notenHout', 'aanrechtHout'],
+  mediterraan: ['marmer', 'lichtHout', 'aanrechtMarmer', 'beton', 'linnenBlauw', 'notenHout'],
+  mexicaans: ['donkerHout', 'linnenLoper', 'aanrechtBeton', 'leisteen', 'lichtHout', 'aanrechtHout'],
+  frans: ['marmer', 'linnenKleed', 'lichtHout', 'aanrechtMarmer', 'notenHout'],
+  stoof: ['donkerHout', 'lichtHout', 'notenHout', 'aanrechtHout', 'linnenKleed', 'jute'],
+  fris: ['beton', 'marmer', 'aanrechtMarmer', 'lichtHout', 'aanrechtBeton', 'linnenBlauw'],
+  oven: ['bakpapier', 'rooster', 'donkerHout', 'aanrechtHout', 'aanrechtBeton', 'notenHout'],
+  neutraal: ['lichtHout', 'donkerHout', 'notenHout', 'aanrechtMarmer', 'aanrechtBeton', 'aanrechtHout', 'marmer', 'linnenKleed'],
 }
 
 // Garnering die bij de keuken past als het recept er zelf geen noemt.
@@ -140,14 +146,14 @@ const REKWISIETEN_OP_INGREDIENT: [RegExp, string][] = [
   [/yoghurt|dressing|saus|pesto|tzatziki|aioli|raita/i, 'een schaaltje saus met een lepeltje'],
   [/sojasaus|ketjap|vissaus/i, 'een schaaltje sojasaus'],
   [/pinda|cashew|amandel|walnoot|pijnboompit|sesam/i, 'een schaaltje noten of zaden'],
-  [/tortilla|taco|wrap/i, 'een stapeltje tortilla\'s onder een linnen doek'],
+  [/tortilla|taco|wrap/i, 'een stapeltje warme tortilla\'s'],
   [/brood|stokbrood|ciabatta|naan|pita/i, 'een afgebroken stuk brood'],
 ]
 
 const ALGEMENE_REKWISIETEN = [
   'een schaaltje grof zeezout',
   'een pepermolen',
-  'een gekreukte linnen theedoek',
+  'een houten pollepel',
   'een glas water, half buiten beeld',
   'een mes met houten heft',
 ]
@@ -375,6 +381,9 @@ export function bouwPrompt(recept: ReceptVoorPrompt): { prompt: string; keuzes: 
     keuzes.rekwisieten.length
       ? `In beeld: ${opsomming(keuzes.rekwisieten)}.`
       : 'In beeld verder alleen het gerecht en het bestek.',
+    // Het beeldmodel legt uit zichzelf graag een linnen doek neer; alleen als
+    // de ondergrond zelf linnen is mag dat.
+    ...(/linnen/.test(keuzes.ondergrond) ? [] : ['Geen tafelkleed, servet of linnen doek in beeld; de ondergrond blijft goed zichtbaar.']),
     VASTE_KERN,
   ]
 
