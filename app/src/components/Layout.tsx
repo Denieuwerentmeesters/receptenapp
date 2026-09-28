@@ -81,7 +81,7 @@ export function Voet({ children }: { children: ReactNode }) {
 
 /** De vier tabs uit het design system: home, ontdekken, lijst, profiel. */
 const TABS = [
-  { pad: '/vandaag', icoon: 'house', label: 'Vandaag' },
+  { pad: '/deze-week', icoon: 'house', label: 'Deze week' },
   { pad: '/ontdekken', icoon: 'grid', label: 'Ontdekken' },
   { pad: '/boodschappen', icoon: 'cart', label: 'Lijst' },
   { pad: '/profiel', icoon: 'user', label: 'Profiel' },

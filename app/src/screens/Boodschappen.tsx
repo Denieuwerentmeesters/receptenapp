@@ -1,81 +1,76 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Checkbox, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
 import { Fout, Grens, Leeg } from '../components/Staten'
+import { Dialoog } from '../components/Dialoog'
 import {
-  useAhMapping, useBoodschapMuteren, useBoodschappen,
-  useLijstSamenstellen, useVoorkeuren, useWeekmenu,
+  useAhMapping, useBoodschapMuteren, useBoodschappen, useDezeWeek, useVoorkeuren,
 } from '../lib/queries'
 import { bouwMandjeLink, openBijAh, zoekLink, zoekProduct } from '../lib/ah'
+import { groepeerOpSchap, voegSamen } from '../lib/lijst'
 import { weekStart } from '../lib/week'
-import type { BoodschapItem } from '../lib/database.types'
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
+
+/** Wat er naar AH ging, zodat we na terugkomst kunnen vragen of het aankwam. */
+interface Doorgestuurd {
+  /** Rijen die van de lijst mogen als het mandje klopt: doorgestuurd + al afgevinkt. */
+  ids: string[]
+  gemapt: number
+  ongemapt: number
+}
 
 export function Boodschappen() {
   const week = weekStart()
   const navigeer = useNavigate()
 
   const boodschappen = useBoodschappen(week)
-  const weekmenu = useWeekmenu(week)
+  const dezeWeek = useDezeWeek(week)
   const voorkeuren = useVoorkeuren()
   const mapping = useAhMapping()
-  const samenstellen = useLijstSamenstellen(week)
-  const { afvinken, toevoegen, verwijderen } = useBoodschapMuteren(week)
+  const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
 
   const [nieuw, setNieuw] = useState('')
   const [mandjeFout, setMandjeFout] = useState<string | null>(null)
+  const [melding, setMelding] = useState<string | null>(null)
+  const [doorgestuurd, setDoorgestuurd] = useState<Doorgestuurd | null>(null)
+  const [wisVraag, setWisVraag] = useState(false)
 
-  const gekozenRecepten = (weekmenu.data ?? []).filter((r) => r.gekozen)
+  const receptenOpLijst = (dezeWeek.data ?? []).filter((r) => r.opLijst).length
   const items = useMemo(() => boodschappen.data ?? [], [boodschappen.data])
-  const open = items.filter((i) => !i.is_afgevinkt)
-
-  // Heb je recepten gekozen maar staat er nog niets op de lijst, dan vullen we
-  // 'm één keer automatisch. Daarna is de lijst van jou: verwijderde items
-  // komen niet terug.
-  useEffect(() => {
-    if (
-      boodschappen.isSuccess && weekmenu.isSuccess &&
-      items.length === 0 && gekozenRecepten.length > 0 &&
-      samenstellen.isIdle
-    ) {
-      samenstellen.mutate()
-    }
-  }, [boodschappen.isSuccess, weekmenu.isSuccess, items.length, gekozenRecepten.length, samenstellen])
-
-  const groepen = useMemo(() => groepeer(items), [items])
+  const regels = useMemo(() => voegSamen(items), [items])
+  const open = regels.filter((r) => !r.afgevinkt)
+  const groepen = useMemo(() => groepeerOpSchap(regels), [regels])
 
   async function naarMandje() {
     setMandjeFout(null)
+    setMelding(null)
     const { url, gemapt, ongemapt } = bouwMandjeLink(
-      open, mapping.data ?? {}, voorkeuren.data?.biologisch_voorkeur ?? false,
+      open.map((r) => r.voorbeeld), mapping.data ?? {}, voorkeuren.data?.biologisch_voorkeur ?? false,
     )
     if (gemapt.length === 0) {
-      setMandjeFout(
-        'Geen van deze producten heeft nog een AH-productnummer. Draai het mappingscript, ' +
-        'of gebruik de zoeklinks hieronder.',
+      setMelding(
+        'Geen van deze producten heeft nog een AH-productnummer. ' +
+        'Gebruik de zoeklinks bij de producten.',
       )
       return
     }
     try {
       await openBijAh(url)
-      // Bewust "doorgestuurd" en niet "staat in je mandje": we kunnen dat niet
-      // controleren. AH voegt niets toe als je daar niet ingelogd bent, en geeft
-      // dan geen foutmelding — je ziet alleen een leeg mandje.
-      setMandjeFout(
-        `${gemapt.length} product${gemapt.length === 1 ? '' : 'en'} doorgestuurd naar Albert Heijn. ` +
-        (ongemapt.length > 0
-          ? `${ongemapt.length} nog niet — die hebben nog geen productnummer. `
-          : '') +
-        'Zie je een leeg mandje? Dan ben je bij AH niet ingelogd; log daar in en tik opnieuw.',
-      )
+      const gemapteIds = new Set(gemapt.map((i) => i.id))
+      const weg = regels
+        .filter((r) => r.afgevinkt || gemapteIds.has(r.voorbeeld.id))
+        .flatMap((r) => r.ids)
+      // Bewust eerst vragen: we kunnen niet controleren of het aankwam. AH
+      // voegt niets toe als je daar niet ingelogd bent, zonder foutmelding.
+      setDoorgestuurd({ ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length })
     } catch {
       setMandjeFout('Het mandje is niet aangekomen. Je lijst is bewaard — er is niets kwijt.')
     }
   }
 
-  if (mandjeFout && open.length > 0 && !mandjeFout.includes('doorgestuurd')) {
+  if (mandjeFout && open.length > 0) {
     return (
       <Fout
         kop="Je mandje is niet aangekomen"
@@ -95,67 +90,80 @@ export function Boodschappen() {
     <Scherm>
       <Grens query={boodschappen} ladenTekst="Boodschappenlijst ophalen">
         <Kop kleur="var(--c-green)">
-          <Label>{gekozenRecepten.length} {gekozenRecepten.length === 1 ? 'recept' : 'recepten'}</Label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <Label>{receptenOpLijst} {receptenOpLijst === 1 ? 'recept' : 'recepten'}</Label>
+            {items.length > 0 && (
+              <button
+                onClick={() => setWisVraag(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6, border: '1.5px solid rgba(255,246,232,0.5)',
+                  background: 'transparent', color: 'var(--c-cream)', borderRadius: 'var(--radius-full)',
+                  padding: '6px 12px', cursor: 'pointer',
+                  fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
+                }}
+              ><Icon name="trash" size={13} />Alles wissen</button>
+            )}
+          </div>
           <div style={{ marginTop: 14 }}><Titel>Boodschappen</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
-            {items.length === 0
+            {regels.length === 0
               ? 'Nog niets op je lijst.'
-              : `${open.length} van de ${items.length} producten nog nodig · dubbele ingrediënten samengevoegd`}
+              : `${open.length} van de ${regels.length} producten nog nodig · op volgorde van de winkel`}
           </p>
         </Kop>
 
-        {items.length === 0 ? (
+        {regels.length === 0 ? (
           <Leeg
             icoon="cart"
             kop="Je lijst is leeg"
-            tekst="Kies een recept, dan zetten we de ingrediënten er automatisch bij."
-            knop="Naar mijn weekmenu"
-            onKnop={() => navigeer('/weekmenu')}
+            tekst="Zet een recept op je lijst, dan komen de ingrediënten hier vanzelf te staan."
+            knop="Naar deze week"
+            onKnop={() => navigeer('/deze-week')}
           />
         ) : (
           <Inhoud style={{ gap: 18 }}>
-            {mandjeFout && (
+            {melding && (
               <div style={{
                 background: 'var(--c-warm-300)', borderRadius: 'var(--radius-sm)', padding: '12px 14px',
                 fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4,
-              }}>{mandjeFout}</div>
+              }}>{melding}</div>
             )}
 
             {groepen.map((groep) => (
-              <div key={groep.naam} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div key={groep.schap} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingBottom: 6 }}>
                   <span style={{
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                     textTransform: 'uppercase', color: 'var(--c-green)',
-                  }}>{groep.naam}</span>
+                  }}>{groep.schap}</span>
                   <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(20,20,20,0.6)' }}>
-                    {groep.items.filter((i) => !i.is_afgevinkt).length} van {groep.items.length}
+                    {groep.regels.filter((r) => !r.afgevinkt).length} van {groep.regels.length}
                   </span>
                 </div>
 
-                {groep.items.map((item) => (
-                  <div key={item.id} style={{
+                {groep.regels.map((regel) => (
+                  <div key={regel.key} style={{
                     display: 'flex', alignItems: 'center', gap: 8, padding: '10px 2px',
                     borderBottom: '1.5px solid rgba(20,20,20,0.12)',
                   }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <Checkbox
-                        checked={item.is_afgevinkt}
-                        onChange={() => afvinken.mutate({ itemId: item.id, afgevinkt: !item.is_afgevinkt })}
+                        checked={regel.afgevinkt}
+                        onChange={() => afvinken.mutate({ itemIds: regel.ids, afgevinkt: !regel.afgevinkt })}
                       >
-                        {labelVan(item)}
+                        {regel.label}
                       </Checkbox>
                     </div>
-                    {!zoekProduct(item, mapping.data ?? {}) && (
+                    {!zoekProduct(regel.voorbeeld, mapping.data ?? {}) && (
                       <a
-                        href={zoekLink(item.naam)}
-                        onClick={(e) => { e.preventDefault(); void openBijAh(zoekLink(item.naam)) }}
+                        href={zoekLink(regel.naam)}
+                        onClick={(e) => { e.preventDefault(); void openBijAh(zoekLink(regel.naam)) }}
                         style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
                       >zoek</a>
                     )}
                     <button
-                      onClick={() => verwijderen.mutate(item.id)}
-                      aria-label={`${item.naam} verwijderen`}
+                      onClick={() => verwijderen.mutate(regel.ids)}
+                      aria-label={`${regel.naam} verwijderen`}
                       style={{
                         flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',
                         border: 'none', background: 'transparent', color: 'rgba(20,20,20,0.45)',
@@ -196,7 +204,7 @@ export function Boodschappen() {
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {SUGGESTIES
-                  .filter((s) => !items.some((i) => i.naam.toLowerCase() === s.toLowerCase()))
+                  .filter((s) => !regels.some((r) => r.naam.toLowerCase() === s.toLowerCase()))
                   .slice(0, 4)
                   .map((s) => (
                     <button key={s} onClick={() => toevoegen.mutate(s)} style={{
@@ -210,46 +218,78 @@ export function Boodschappen() {
           </Inhoud>
         )}
 
-        {items.length > 0 && (
+        {regels.length > 0 && (
           <Voet>
-            <Button
-              disabled={open.length === 0}
-              onClick={() => { void naarMandje() }}
-              style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-            >
-              {open.length === 0 ? 'Alles al in huis' : `Naar AH-mandje (${open.length})`}
-            </Button>
+            {open.length === 0 ? (
+              // Alles afgevinkt: je bent klaar in de winkel. Dan mag de lijst leeg.
+              <Button
+                tone="green"
+                onClick={() => opruimen.mutate(regels.flatMap((r) => r.ids))}
+                style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
+              >Klaar met boodschappen</Button>
+            ) : (
+              <Button
+                onClick={() => { void naarMandje() }}
+                style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
+              >{`Naar AH-mandje (${open.length})`}</Button>
+            )}
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, margin: '8px 0 0',
               textAlign: 'center', color: 'rgba(20,20,20,0.6)',
-            }}>Afgevinkte producten laten we uit je mandje.</p>
+            }}>
+              {open.length === 0
+                ? 'Je lijst wordt leeggemaakt. Je recepten blijven in Deze week staan.'
+                : 'Afgevinkte producten laten we uit je mandje.'}
+            </p>
           </Voet>
         )}
       </Grens>
 
+      <Dialoog
+        open={Boolean(doorgestuurd)}
+        kop="Staat alles in je AH-mandje?"
+        tekst={doorgestuurd
+          ? `${doorgestuurd.gemapt} product${doorgestuurd.gemapt === 1 ? '' : 'en'} doorgestuurd naar Albert Heijn. ` +
+            'Zie je ze in je mandje, dan halen we ze van je lijst.' +
+            (doorgestuurd.ongemapt > 0
+              ? ` ${doorgestuurd.ongemapt} product${doorgestuurd.ongemapt === 1 ? '' : 'en'} konden we niet bij AH vinden — die blijven staan.`
+              : '')
+          : undefined}
+        onSluit={() => setDoorgestuurd(null)}
+        acties={[
+          {
+            label: 'Ja, haal van mijn lijst',
+            hoofd: true,
+            onClick: () => {
+              if (doorgestuurd) opruimen.mutate(doorgestuurd.ids)
+              setDoorgestuurd(null)
+            },
+          },
+          {
+            label: 'Nee, mijn mandje is leeg',
+            onClick: () => {
+              setDoorgestuurd(null)
+              setMelding(
+                'Dan ben je bij AH waarschijnlijk niet ingelogd — dan voegt AH niets toe, zonder melding. ' +
+                'Log daar in en tik opnieuw op Naar AH-mandje. Je lijst is niet veranderd.',
+              )
+            },
+          },
+        ]}
+      />
+
+      <Dialoog
+        open={wisVraag}
+        kop="Weet je het zeker?"
+        tekst="Alle producten gaan van je lijst. Je recepten blijven in Deze week staan, zonder gele rand."
+        onSluit={() => setWisVraag(false)}
+        acties={[
+          { label: 'Ja, alles wissen', hoofd: true, onClick: () => { allesWissen.mutate(); setWisVraag(false) } },
+          { label: 'Annuleer', onClick: () => setWisVraag(false) },
+        ]}
+      />
+
       <OnderBalk />
     </Scherm>
   )
-}
-
-function labelVan(item: BoodschapItem): string {
-  const hoeveelheid = item.hoeveelheid === null
-    ? ''
-    : `${String(item.hoeveelheid).replace('.', ',')} ${item.eenheid ?? ''} `.replace(/\s+/g, ' ')
-  return `${hoeveelheid}${item.naam.toLowerCase()}`.trim()
-}
-
-/** Afgevinkte items zakken naar onderen, zodat je bovenaan ziet wat je nog moet halen. */
-function groepeer(items: BoodschapItem[]) {
-  const perCategorie = new Map<string, BoodschapItem[]>()
-  for (const item of items) {
-    const naam = item.categorie ?? 'Uit je recepten'
-    const rij = perCategorie.get(naam) ?? []
-    rij.push(item)
-    perCategorie.set(naam, rij)
-  }
-  return [...perCategorie].map(([naam, rij]) => ({
-    naam,
-    items: [...rij].sort((a, b) => Number(a.is_afgevinkt) - Number(b.is_afgevinkt)),
-  }))
 }

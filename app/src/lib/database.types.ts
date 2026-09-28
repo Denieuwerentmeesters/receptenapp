@@ -56,6 +56,8 @@ export interface WeekmenuGekozen {
   recept_id: string
   gekozen_op: string
   gekookt_op: string | null
+  aantal: number
+  van_lijst_op: string | null
 }
 
 export interface Voorkeuren {

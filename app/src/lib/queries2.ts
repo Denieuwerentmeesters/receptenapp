@@ -252,25 +252,8 @@ export function useGekooktMarkeren(week = weekStart()) {
       if (error) throw error
     },
     onSettled: () => {
-      void qc.invalidateQueries({ queryKey: ['vandaag', week] })
+      void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
       void qc.invalidateQueries({ queryKey: ['geschiedenis'] })
-    },
-  })
-}
-
-/** De recepten die je deze week hebt gekozen, met of ze al gekookt zijn. */
-export function useMijnWeek(week = weekStart()) {
-  return useQuery({
-    queryKey: ['vandaag', week],
-    queryFn: async (): Promise<{ recept: Recept; gekooktOp: string | null }[]> => {
-      const { data, error } = await db
-        .from('weekmenu_gekozen')
-        .select('gekookt_op, recepten(*)')
-        .eq('week_start_datum', week)
-      if (error) throw error
-      return (data as unknown as { gekookt_op: string | null; recepten: Recept }[])
-        .filter((r) => r.recepten)
-        .map((r) => ({ recept: r.recepten, gekooktOp: r.gekookt_op }))
     },
   })
 }

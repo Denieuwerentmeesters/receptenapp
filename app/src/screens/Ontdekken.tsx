@@ -5,6 +5,7 @@ import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useFavorietIds, useFavorietToggle, useKeukens, useOntdek, type OntdekFilters } from '../lib/queries2'
 import { ReceptRegel } from '../components/ReceptRegel'
+import { useDezeWeek } from '../lib/queries'
 
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
@@ -32,6 +33,11 @@ export function Ontdekken() {
   const keukens = useKeukens()
   const favorieten = useFavorietIds()
   const favToggle = useFavorietToggle()
+  const dezeWeek = useDezeWeek()
+  const opLijst = useMemo(
+    () => new Set((dezeWeek.data ?? []).filter((r) => r.opLijst).map((r) => r.id)),
+    [dezeWeek.data],
+  )
 
   const recepten = resultaten.data?.pages.flat() ?? []
   const heeftFilter = Boolean(maxTijd || keuken || alleenVega)
@@ -108,14 +114,21 @@ export function Ontdekken() {
             </span>
 
             {recepten.map((r, i) => (
-              <ReceptRegel
-                key={r.id}
-                recept={r}
-                index={i}
-                favoriet={Boolean(favorieten.data?.[r.id]) ?? false}
-                onOpen={() => navigeer(`/recept/${r.id}`)}
-                onFavoriet={() => favToggle.mutate({ receptId: r.id, favoriet: !Boolean(favorieten.data?.[r.id]) })}
-              />
+              // Zelfde gele rand als in "Deze week": dit staat al op je lijst.
+              <div key={r.id} style={{
+                borderRadius: 'calc(var(--radius-md) + 3px)', padding: 3,
+                background: opLijst.has(r.id) ? 'var(--c-yellow)' : 'transparent',
+              }}>
+                <ReceptRegel
+                  recept={r}
+                  index={i}
+                  favoriet={Boolean(favorieten.data?.[r.id])}
+                  actie={opLijst.has(r.id) ? 'op je lijst' : undefined}
+                  actieKleur="var(--c-red)"
+                  onOpen={() => navigeer(`/recept/${r.id}`)}
+                  onFavoriet={() => favToggle.mutate({ receptId: r.id, favoriet: !favorieten.data?.[r.id] })}
+                />
+              </div>
             ))}
 
             {resultaten.hasNextPage && (

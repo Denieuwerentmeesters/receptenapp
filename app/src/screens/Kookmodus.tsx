@@ -173,7 +173,7 @@ export function Kookmodus() {
                   onClick={() => {
                     if (!laatste) { setStap(stap + 1); return }
                     gekooktMarkeren.mutate({ receptId: r.id, gekookt: true })
-                    navigeer('/vandaag')
+                    navigeer('/deze-week')
                   }}
                   style={{
                     flex: 1, height: 56, borderRadius: 'var(--radius-full)', border: 'none',

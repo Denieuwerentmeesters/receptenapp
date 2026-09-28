@@ -7,8 +7,7 @@ import type { AhProduct, BoodschapItem, Recept, Voorkeuren } from './database.ty
 
 export const sleutels = {
   voorkeuren: ['voorkeuren'] as const,
-  weekmenu: (week: string) => ['weekmenu', week] as const,
-  gekozen: (week: string) => ['gekozen', week] as const,
+  dezeWeek: (week: string) => ['deze-week', week] as const,
   boodschappen: (week: string) => ['boodschappen', week] as const,
   recept: (id: string) => ['recept', id] as const,
   ahMapping: ['ah-mapping'] as const,
@@ -54,17 +53,27 @@ export function useVoorkeurenOpslaan() {
   })
 }
 
-/* ---------------------------------------------------------------- weekmenu */
+/* --------------------------------------------------------------- deze week */
 
-export interface WeekmenuRecept extends Recept {
-  positie: number
+/**
+ * Een recept zoals het in "Deze week" staat: uit de tien suggesties van de
+ * generator, of zelf toegevoegd via Ontdekken of Favorieten.
+ */
+export interface WeekRecept extends Recept {
+  /** Plek in de suggesties; null als je het recept ergens anders vandaan haalde. */
+  positie: number | null
   gekozen: boolean
+  /** Hoe vaak je het deze week maakt — "wil je deze 2x?". */
+  aantal: number
+  /** Staat nog op de boodschappenlijst: de gele rand. */
+  opLijst: boolean
+  gekooktOp: string | null
 }
 
-export function useWeekmenu(week = weekStart()) {
+export function useDezeWeek(week = weekStart()) {
   return useQuery({
-    queryKey: sleutels.weekmenu(week),
-    queryFn: async (): Promise<WeekmenuRecept[]> => {
+    queryKey: sleutels.dezeWeek(week),
+    queryFn: async (): Promise<WeekRecept[]> => {
       const id = await userId()
 
       // De generator is idempotent: bestaat de week al, dan doet 'ie niets.
@@ -79,54 +88,160 @@ export function useWeekmenu(week = weekStart()) {
           .order('positie'),
         db
           .from('weekmenu_gekozen')
-          .select('recept_id')
-          .eq('week_start_datum', week),
+          .select('recept_id, aantal, van_lijst_op, gekookt_op, gekozen_op, recepten(*)')
+          .eq('week_start_datum', week)
+          .order('gekozen_op'),
       ])
       if (getoond.error) throw getoond.error
       if (gekozen.error) throw gekozen.error
 
-      const gekozenIds = new Set(gekozen.data.map((g) => g.recept_id))
-      return (getoond.data as unknown as { positie: number; recept_id: string; recepten: Recept }[])
+      const keuzes = new Map(
+        (gekozen.data as unknown as {
+          recept_id: string; aantal: number; van_lijst_op: string | null
+          gekookt_op: string | null; recepten: Recept
+        }[]).map((g) => [g.recept_id, g]),
+      )
+      const metKeuze = (recept: Recept, positie: number | null): WeekRecept => {
+        const keuze = keuzes.get(recept.id)
+        return {
+          ...recept,
+          positie,
+          gekozen: Boolean(keuze),
+          aantal: keuze?.aantal ?? 0,
+          opLijst: Boolean(keuze) && !keuze?.van_lijst_op,
+          gekooktOp: keuze?.gekookt_op ?? null,
+        }
+      }
+
+      const suggesties = (getoond.data as unknown as { positie: number; recepten: Recept }[])
         .filter((rij) => rij.recepten)
-        .map((rij) => ({
-          ...rij.recepten,
-          positie: rij.positie,
-          gekozen: gekozenIds.has(rij.recept_id),
-        }))
+        .map((rij) => metKeuze(rij.recepten, rij.positie))
+      const inSuggesties = new Set(suggesties.map((r) => r.id))
+
+      // Wat je zelf toevoegde komt bovenaan: dat heb je bewust gekozen.
+      const zelfGekozen = [...keuzes.values()]
+        .filter((g) => g.recepten && !inSuggesties.has(g.recept_id))
+        .map((g) => metKeuze(g.recepten, null))
+
+      return [...zelfGekozen, ...suggesties]
     },
   })
 }
 
-export function useKiesRecept(week = weekStart()) {
+/**
+ * Een recept op de lijst zetten, en er weer af halen.
+ *
+ * De boodschappenlijst krijgt één rij per ingrediënt per recept; het
+ * samenvoegen gebeurt pas bij het tonen (lib/lijst.ts). Daardoor kan een
+ * recept er weer af zonder dat de hoeveelheden van een ander recept meegaan.
+ */
+export function useLijstActies(week = weekStart()) {
   const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ receptId, kiezen }: { receptId: string; kiezen: boolean }) => {
+  const ververs = () => {
+    void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
+    void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) })
+    void qc.invalidateQueries({ queryKey: ['geschiedenis'] })
+  }
+  const pasAan = (receptId: string, wijziging: Partial<WeekRecept>) => {
+    qc.setQueryData<WeekRecept[]>(sleutels.dezeWeek(week), (oud) =>
+      oud?.map((r) => (r.id === receptId ? { ...r, ...wijziging } : r)))
+  }
+
+  const zetOpLijst = useMutation({
+    mutationFn: async (receptId: string) => {
       const id = await userId()
-      if (kiezen) {
-        const { error } = await db.from('weekmenu_gekozen')
-          .insert({ user_id: id, week_start_datum: week, recept_id: receptId })
-        if (error) throw error
-      } else {
-        const { error } = await db.from('weekmenu_gekozen').delete()
+
+      const [recept, voorkeuren, voorraad, keuze] = await Promise.all([
+        db.from('recepten').select('*').eq('id', receptId).single(),
+        db.from('gebruiker_voorkeuren').select('aantal_personen').single(),
+        db.from('voorraad_item').select('ingredient_key').eq('in_huis', true),
+        db.from('weekmenu_gekozen').select('aantal, van_lijst_op')
+          .eq('week_start_datum', week).eq('recept_id', receptId).maybeSingle(),
+      ])
+      if (recept.error) throw recept.error
+      if (keuze.error) throw keuze.error
+
+      // Nog niet gekozen: nieuw. Staat al op de lijst: nog een keer (2x).
+      // Al gekocht of gewist: opnieuw op de lijst, vanaf één keer.
+      const bestaand = keuze.data as { aantal: number; van_lijst_op: string | null } | null
+      const { error } = !bestaand
+        ? await db.from('weekmenu_gekozen')
+          .insert({ user_id: id, week_start_datum: week, recept_id: receptId, aantal: 1 })
+        : await db.from('weekmenu_gekozen')
+          .update(bestaand.van_lijst_op
+            ? { aantal: 1, van_lijst_op: null }
+            : { aantal: Math.min(9, bestaand.aantal + 1) })
           .eq('week_start_datum', week).eq('recept_id', receptId)
-        if (error) throw error
-      }
+      if (error) throw error
+
+      const r = recept.data as Recept
+      const personen = voorkeuren.data?.aantal_personen ?? 4
+      // Wat in je voorraadkast staat hoeft niet op de lijst (design "Voorraadkast").
+      const inHuis = new Set(
+        (voorraad.data as { ingredient_key: string }[] | null ?? []).map((v) => v.ingredient_key),
+      )
+
+      const rijen = schaalIngredienten(r.ingredienten, r.personen, personen)
+        .map((ing) => ({ ing, key: ingredientKey(ing.naam) }))
+        .filter(({ key }) => key && !inHuis.has(key))
+        .map(({ ing, key }) => ({
+          user_id: id,
+          week_start_datum: week,
+          naam: ing.naam,
+          ingredient_key: key,
+          hoeveelheid: ing.geschaald,
+          eenheid: ing.eenheid,
+          categorie: null,
+          bron_type: 'recept' as const,
+          bron_recept_id: r.id,
+          is_afgevinkt: false,
+        }))
+      if (rijen.length === 0) return
+      const invoer = await db.from('boodschappenlijst_item').insert(rijen)
+      if (invoer.error) throw invoer.error
     },
-    onMutate: async ({ receptId, kiezen }) => {
-      await qc.cancelQueries({ queryKey: sleutels.weekmenu(week) })
-      const vorige = qc.getQueryData<WeekmenuRecept[]>(sleutels.weekmenu(week))
-      qc.setQueryData<WeekmenuRecept[]>(sleutels.weekmenu(week), (oud) =>
-        oud?.map((r) => (r.id === receptId ? { ...r, gekozen: kiezen } : r)))
+    onMutate: async (receptId) => {
+      await qc.cancelQueries({ queryKey: sleutels.dezeWeek(week) })
+      const vorige = qc.getQueryData<WeekRecept[]>(sleutels.dezeWeek(week))
+      const nu = vorige?.find((r) => r.id === receptId)
+      pasAan(receptId, {
+        gekozen: true, opLijst: true,
+        aantal: nu?.opLijst ? Math.min(9, nu.aantal + 1) : 1,
+      })
       return { vorige }
     },
     onError: (_e, _v, context) => {
-      if (context?.vorige) qc.setQueryData(sleutels.weekmenu(week), context.vorige)
+      if (context?.vorige) qc.setQueryData(sleutels.dezeWeek(week), context.vorige)
     },
-    onSettled: () => {
-      void qc.invalidateQueries({ queryKey: sleutels.weekmenu(week) })
-      void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) })
-    },
+    onSettled: ververs,
   })
+
+  /** Haalt het recept uit je week, met al zijn ingrediënten van de lijst. */
+  const haalVanLijst = useMutation({
+    mutationFn: async (receptId: string) => {
+      const items = await db.from('boodschappenlijst_item').delete()
+        .eq('week_start_datum', week).eq('bron_recept_id', receptId)
+      if (items.error) throw items.error
+      const { error } = await db.from('weekmenu_gekozen').delete()
+        .eq('week_start_datum', week).eq('recept_id', receptId)
+      if (error) throw error
+    },
+    onMutate: async (receptId) => {
+      await qc.cancelQueries({ queryKey: sleutels.dezeWeek(week) })
+      const vorige = qc.getQueryData<WeekRecept[]>(sleutels.dezeWeek(week))
+      qc.setQueryData<WeekRecept[]>(sleutels.dezeWeek(week), (oud) => oud
+        // Zelf toegevoegd verdwijnt helemaal; een suggestie blijft staan, zonder keuze.
+        ?.filter((r) => r.id !== receptId || r.positie !== null)
+        .map((r) => (r.id === receptId ? { ...r, gekozen: false, opLijst: false, aantal: 0 } : r)))
+      return { vorige }
+    },
+    onError: (_e, _v, context) => {
+      if (context?.vorige) qc.setQueryData(sleutels.dezeWeek(week), context.vorige)
+    },
+    onSettled: ververs,
+  })
+
+  return { zetOpLijst, haalVanLijst }
 }
 
 /* ------------------------------------------------------------------ recept */
@@ -152,7 +267,6 @@ export function useBoodschappen(week = weekStart()) {
       const { data, error } = await db
         .from('boodschappenlijst_item').select('*')
         .eq('week_start_datum', week)
-        .order('categorie', { nullsFirst: false })
         .order('naam')
       if (error) throw error
       return data as BoodschapItem[]
@@ -161,100 +275,36 @@ export function useBoodschappen(week = weekStart()) {
 }
 
 /**
- * Zet de ingrediënten van de gekozen recepten op de lijst: geschaald naar het
- * ingestelde aantal personen, samengevoegd op ingredient_key, en zonder de
- * items die je al hebt afgevinkt of zelf toevoegde.
+ * Mutaties op de lijst. Afvinken en verwijderen werken op de rij-id's achter
+ * één samengevoegde regel (lib/lijst.ts): "400 g tomaten" kan uit twee
+ * recepten komen, en afvinken moet ze allebei raken.
  */
-export function useLijstSamenstellen(week = weekStart()) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async () => {
-      const id = await userId()
-
-      const [voorkeuren, gekozen, bestaand, voorraad] = await Promise.all([
-        db.from('gebruiker_voorkeuren').select('aantal_personen').single(),
-        db.from('weekmenu_gekozen').select('recept_id, recepten(*)').eq('week_start_datum', week),
-        db.from('boodschappenlijst_item').select('ingredient_key, bron_type')
-          .eq('week_start_datum', week),
-        db.from('voorraad_item').select('ingredient_key').eq('in_huis', true),
-      ])
-      if (gekozen.error) throw gekozen.error
-      if (bestaand.error) throw bestaand.error
-
-      const personen = voorkeuren.data?.aantal_personen ?? 4
-      const alBekend = new Set(bestaand.data.map((b) => b.ingredient_key))
-      // Wat in je voorraadkast staat hoeft niet op de lijst (design "Voorraadkast").
-      const inHuis = new Set(
-        (voorraad.data as { ingredient_key: string }[] | null ?? []).map((v) => v.ingredient_key),
-      )
-
-      // Samenvoegen over recepten heen: dezelfde sleutel telt op.
-      const samengevoegd = new Map<string, Omit<BoodschapItem, 'id' | 'aangemaakt_op'>>()
-
-      for (const rij of gekozen.data as unknown as { recepten: Recept }[]) {
-        const recept = rij.recepten
-        if (!recept) continue
-
-        for (const ing of schaalIngredienten(recept.ingredienten, recept.personen, personen)) {
-          const key = ingredientKey(ing.naam)
-          if (!key || alBekend.has(key) || inHuis.has(key)) continue
-
-          const bestaandeRegel = samengevoegd.get(key)
-          if (bestaandeRegel) {
-            // Optellen kan alleen als de eenheden gelijk zijn; anders laten we de
-            // eerste staan en verliezen we geen informatie door te forceren.
-            if (bestaandeRegel.eenheid === ing.eenheid && bestaandeRegel.hoeveelheid !== null && ing.geschaald !== null) {
-              bestaandeRegel.hoeveelheid += ing.geschaald
-            }
-            continue
-          }
-
-          samengevoegd.set(key, {
-            user_id: id,
-            week_start_datum: week,
-            naam: ing.naam,
-            ingredient_key: key,
-            hoeveelheid: ing.geschaald,
-            eenheid: ing.eenheid,
-            categorie: null,
-            bron_type: 'recept',
-            bron_recept_id: recept.id,
-            is_afgevinkt: false,
-          })
-        }
-      }
-
-      if (samengevoegd.size === 0) return 0
-      const { error } = await db.from('boodschappenlijst_item').insert([...samengevoegd.values()])
-      if (error) throw error
-      return samengevoegd.size
-    },
-    onSuccess: () => { void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) }) },
-  })
-}
-
 export function useBoodschapMuteren(week = weekStart()) {
   const qc = useQueryClient()
-  const ververs = () => { void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) }) }
+  const ververs = () => {
+    void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) })
+    void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
+  }
 
   const afvinken = useMutation({
-    mutationFn: async ({ itemId, afgevinkt }: { itemId: string; afgevinkt: boolean }) => {
+    mutationFn: async ({ itemIds, afgevinkt }: { itemIds: string[]; afgevinkt: boolean }) => {
       const { error } = await db.from('boodschappenlijst_item')
-        .update({ is_afgevinkt: afgevinkt }).eq('id', itemId)
+        .update({ is_afgevinkt: afgevinkt }).in('id', itemIds)
       if (error) throw error
     },
     // Afvinken moet werken in de kelder van de Lidl: eerst de UI, dan de server.
-    onMutate: async ({ itemId, afgevinkt }) => {
+    onMutate: async ({ itemIds, afgevinkt }) => {
       await qc.cancelQueries({ queryKey: sleutels.boodschappen(week) })
       const vorige = qc.getQueryData<BoodschapItem[]>(sleutels.boodschappen(week))
+      const ids = new Set(itemIds)
       qc.setQueryData<BoodschapItem[]>(sleutels.boodschappen(week), (oud) =>
-        oud?.map((i) => (i.id === itemId ? { ...i, is_afgevinkt: afgevinkt } : i)))
+        oud?.map((i) => (ids.has(i.id) ? { ...i, is_afgevinkt: afgevinkt } : i)))
       return { vorige }
     },
     onError: (_e, _v, context) => {
       if (context?.vorige) qc.setQueryData(sleutels.boodschappen(week), context.vorige)
     },
-    onSettled: ververs,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) }) },
   })
 
   const toevoegen = useMutation({
@@ -279,14 +329,56 @@ export function useBoodschapMuteren(week = weekStart()) {
   })
 
   const verwijderen = useMutation({
-    mutationFn: async (itemId: string) => {
-      const { error } = await db.from('boodschappenlijst_item').delete().eq('id', itemId)
+    mutationFn: async (itemIds: string[]) => {
+      const { error } = await db.from('boodschappenlijst_item').delete().in('id', itemIds)
       if (error) throw error
     },
     onSuccess: ververs,
   })
 
-  return { afvinken, toevoegen, verwijderen }
+  /**
+   * Haalt gekochte of doorgestuurde producten van de lijst. Een recept waar
+   * daarna niets meer van op de lijst staat, gaat er ook af — het verliest de
+   * gele rand in "Deze week", maar blijft gekozen, want je moet het nog koken.
+   * Een recept met een product dat AH niet had, blijft dus op de lijst staan.
+   */
+  const opruimen = useMutation({
+    mutationFn: async (itemIds: string[]) => {
+      if (itemIds.length > 0) {
+        const { error } = await db.from('boodschappenlijst_item').delete().in('id', itemIds)
+        if (error) throw error
+      }
+      const over = await db.from('boodschappenlijst_item').select('bron_recept_id')
+        .eq('week_start_datum', week).not('bron_recept_id', 'is', null)
+      if (over.error) throw over.error
+      const nogOpLijst = [...new Set(
+        (over.data as { bron_recept_id: string }[]).map((r) => r.bron_recept_id),
+      )]
+
+      let vraag = db.from('weekmenu_gekozen')
+        .update({ van_lijst_op: new Date().toISOString() })
+        .eq('week_start_datum', week).is('van_lijst_op', null)
+      if (nogOpLijst.length > 0) vraag = vraag.not('recept_id', 'in', `(${nogOpLijst.join(',')})`)
+      const { error } = await vraag
+      if (error) throw error
+    },
+    onSuccess: ververs,
+  })
+
+  /** "Alles wissen": de lijst leeg, alle recepten eraf. */
+  const allesWissen = useMutation({
+    mutationFn: async () => {
+      const items = await db.from('boodschappenlijst_item').delete().eq('week_start_datum', week)
+      if (items.error) throw items.error
+      const { error } = await db.from('weekmenu_gekozen')
+        .update({ van_lijst_op: new Date().toISOString() })
+        .eq('week_start_datum', week).is('van_lijst_op', null)
+      if (error) throw error
+    },
+    onSuccess: ververs,
+  })
+
+  return { afvinken, toevoegen, verwijderen, opruimen, allesWissen }
 }
 
 /* ------------------------------------------------------------ AH-mapping */
