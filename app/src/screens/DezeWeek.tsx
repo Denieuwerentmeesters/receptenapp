@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Chip, Icon } from '../ds'
-import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
+import { Chip, Icon } from '../ds'
+import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
@@ -57,18 +57,16 @@ export function DezeWeek() {
   return (
     <Scherm>
       <Grens query={dezeWeek} ladenTekst="Je week ophalen">
-        <Kop>
+        {/* Compact: de recepten zijn waar het om gaat, niet de kop. */}
+        <Kop kleur="var(--c-red-bright)" style={{ paddingBottom: 14 }}>
           <Label>Week van {weekLabel(week)}</Label>
-        </Kop>
-
-        <Kop kleur="var(--c-red-bright)" style={{ padding: '20px 22px 22px' }}>
-          <Titel>Wat eet jij<br />deze week?</Titel>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '12px 0 0' }}>
+          <div style={{ marginTop: 6 }}><Titel grootte={22}>Wat eet jij deze week?</Titel></div>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, margin: '6px 0 0' }}>
             {recepten.length} recepten · {vegaAantal} vegetarisch · voor {personen} {personen === 1 ? 'persoon' : 'personen'}
           </p>
         </Kop>
 
-        <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '16px 22px 6px', overflowX: 'auto' }}>
+        <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '12px 22px 4px', overflowX: 'auto' }}>
           {FILTERS.map((f) => (
             <Chip key={f.id} selected={filter === f.id} onClick={() => setFilter(f.id)}>
               {f.label}
@@ -85,7 +83,7 @@ export function DezeWeek() {
             onKnop={() => navigeer('/instellingen')}
           />
         ) : (
-          <Inhoud style={{ padding: '10px 22px 16px', gap: 0 }}>
+          <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingBottom: 10 }}>
               <span style={{
                 fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
@@ -111,7 +109,7 @@ export function DezeWeek() {
             ) : (
               <div style={{
                 display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
-                gridAutoRows: '1fr', gap: 12,
+                gap: 12,
               }}>
                 {zichtbaar.map((recept, i) => (
                   <ReceptKaart
@@ -129,23 +127,6 @@ export function DezeWeek() {
           </Inhoud>
         )}
 
-        <Voet>
-          <Button
-            disabled={opLijst === 0}
-            onClick={() => navigeer('/boodschappen')}
-            style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-          >
-            {opLijst === 0 ? 'Kies eerst een recept' : `Naar boodschappenlijst (${opLijst})`}
-          </Button>
-          <p style={{
-            fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, margin: '8px 0 0',
-            textAlign: 'center', color: 'rgba(20,20,20,0.6)',
-          }}>
-            {opLijst === 0
-              ? 'Tik op de recepten die je deze week wil koken.'
-              : 'Dubbele ingrediënten voegen we samen.'}
-          </p>
-        </Voet>
       </Grens>
 
       {dialoog}
@@ -195,24 +176,29 @@ function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
       <button
         onClick={onOpen}
         style={{
-          flex: 1, background: vlak, borderRadius: 'var(--radius-md)', border: 'none',
+          // Een knop centreert zijn inhoud verticaal; zonder flex-start schuift
+          // de foto omlaag in een hogere kaart en zie je een rode rand erboven.
+          flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+          background: vlak, borderRadius: 'var(--radius-md)', border: 'none',
           overflow: 'hidden', padding: 0, textAlign: 'left', cursor: 'pointer', color: 'var(--c-paper)',
         }}
       >
         <div style={{
-          height: 110,
+          width: '100%', aspectRatio: '4 / 3', flex: 'none',
           background: recept.afbeelding_url ? `url(${recept.afbeelding_url}) center/cover` : 'rgba(0,0,0,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'var(--font-body)', fontSize: 12, opacity: recept.afbeelding_url ? 1 : 0.5,
         }}>
           {recept.afbeelding_url ? '' : 'foto'}
         </div>
-        <div style={{ padding: 'var(--space-4)' }}>
+        <div style={{ padding: '10px 12px 12px', width: '100%', boxSizing: 'border-box' }}>
           <h3 style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15, lineHeight: 0.9,
-            margin: 0, textTransform: 'uppercase',
+            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, lineHeight: 1,
+            margin: 0, textTransform: 'uppercase', minHeight: '2em',
+            // Twee regels, dan afkappen: alle kaarten even hoog, vier in beeld.
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
           }}>{recept.titel_nl ?? recept.titel}</h3>
-          <div style={{ display: 'flex', gap: 12, marginTop: 8, opacity: 0.85 }}>
+          <div style={{ display: 'flex', gap: 12, marginTop: 6, opacity: 0.85 }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
               <Icon name="clock" size={13} />{recept.bereidingstijd_minuten ?? '?'} min
             </span>
@@ -238,7 +224,7 @@ function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
       <button
         onClick={onLijst}
         style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, height: 38,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, height: 34,
           margin: '0 4px 4px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
           border: `1.5px solid ${recept.opLijst ? 'var(--c-red)' : 'rgba(20,20,20,0.14)'}`,
