@@ -2,6 +2,7 @@ import {
   createContext, useContext, useEffect, useMemo, useRef, useState,
   type CSSProperties, type ReactNode, type UIEvent,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router-dom'
 import { Icon } from '../ds'
 import { useBoodschappen, useDezeWeek } from '../lib/queries'
@@ -9,54 +10,72 @@ import { voegSamen } from '../lib/lijst'
 
 /**
  * Scroll je naar beneden, dan schuiven de onderbalk en een meeschuivende Voet
- * weg — meer ruimte voor recepten en boodschappen. Een stukje omhoog en ze
- * zijn er weer.
+ * weg — meer ruimte voor recepten en boodschappen. Pas als je bewust weer
+ * omhoog scrollt komen ze terug.
+ *
+ * Ze liggen als een laag óver de inhoud (het "dok") en schuiven weg met een
+ * transform. Daardoor verandert de hoogte van het scrollvlak nooit: een
+ * eerdere versie klapte de ruimte in, waarna scrollTop versprong en de balk
+ * zichzelf weer liet zien — vooral onderaan en bij het nadeinen op iOS.
  */
-const OnderkantVerborgen = createContext(false)
+interface Onderkant {
+  verborgen: boolean
+  /** Hoogte van het dok, zodat Inhoud onderaan genoeg ruimte laat. */
+  ruimte: number
+  voetPlek: HTMLElement | null
+  balkPlek: HTMLElement | null
+}
+const OnderkantContext = createContext<Onderkant>({
+  verborgen: false, ruimte: 0, voetPlek: null, balkPlek: null,
+})
 
-/** Hoe ver je moet scrollen voordat we reageren; kleine trillingen tellen niet. */
-const DREMPEL = 8
-/**
- * Terwijl de balk in- of uitschuift verandert de hoogte van het scrollvlak,
- * en daarmee soms scrollTop. Die sprong is geen scrollbeweging van jou.
- */
-const RUSTTIJD = 350
+/** Zo ver moet je naar beneden voor de balk wegschuift… */
+const OMLAAG = 12
+/** …en zo ver bewust omhoog voordat 'ie terugkomt. */
+const OMHOOG = 40
 
 function useVerbergBijScrollen() {
   const [verborgen, setVerborgen] = useState(false)
   const vorige = useRef(0)
-  const rustTot = useRef(0)
+  /** Afgelegde afstand in de huidige richting; positief = omlaag. */
+  const afstand = useRef(0)
 
   function onScroll(e: UIEvent<HTMLElement>) {
-    const el = e.target as HTMLElement
-    if (!(el instanceof HTMLElement) || el.scrollHeight <= el.clientHeight) return
+    const el = e.target
+    if (!(el instanceof HTMLElement)) return
+    const max = el.scrollHeight - el.clientHeight
+    // Horizontale chiprijen en korte lijsten: niets te verbergen.
+    if (max <= 0) return
     const top = el.scrollTop
-    const verschil = top - vorige.current
-    if (Date.now() < rustTot.current) { vorige.current = top; return }
-    if (Math.abs(verschil) < DREMPEL) return
-    vorige.current = top
 
-    // Bovenaan altijd tonen; anders volgt het de richting.
-    const nieuw = top > 40 && verschil > 0
-    if (nieuw !== verborgen) {
-      rustTot.current = Date.now() + RUSTTIJD
-      setVerborgen(nieuw)
+    // Het nadeinen van iOS voorbij de randen is geen scrollbeweging van jou.
+    if (top < 0 || top > max) return
+
+    if (top < 40) {
+      afstand.current = 0
+      vorige.current = top
+      if (verborgen) setVerborgen(false)
+      return
     }
+
+    const verschil = top - vorige.current
+    vorige.current = top
+    if (verschil === 0) return
+    // Van richting veranderd: opnieuw beginnen met tellen.
+    if (Math.sign(verschil) !== Math.sign(afstand.current)) afstand.current = 0
+    afstand.current += verschil
+
+    if (!verborgen && afstand.current > OMLAAG) setVerborgen(true)
+    // Onderaan aankomen telt niet als omhoog; alleen echt terugscrollen.
+    else if (verborgen && afstand.current < -OMHOOG && top < max - 2) setVerborgen(false)
   }
 
   return { verborgen, onScroll }
 }
 
-/** Klapt de hoogte weg met een grid-truc, zodat de ruimte echt vrijkomt. */
-function Inklapper({ children, dicht }: { children: ReactNode; dicht: boolean }) {
-  return (
-    <div style={{
-      flex: 'none', display: 'grid', gridTemplateRows: dicht ? '0fr' : '1fr',
-      transition: 'grid-template-rows var(--motion-base) var(--ease)',
-    }}>
-      <div style={{ overflow: 'hidden', minHeight: 0 }}>{children}</div>
-    </div>
-  )
+/** Hoeveel ruimte de onderbalk onderaan inneemt; 0 buiten een Scherm met balk. */
+export function useOnderRuimte() {
+  return useContext(OnderkantContext).ruimte
 }
 
 /**
@@ -70,13 +89,40 @@ export function Scherm({ children, achtergrond = 'var(--c-cream)' }: {
   achtergrond?: string
 }) {
   const { verborgen, onScroll } = useVerbergBijScrollen()
+  const [dok, setDok] = useState<HTMLElement | null>(null)
+  const [voetPlek, setVoetPlek] = useState<HTMLElement | null>(null)
+  const [balkPlek, setBalkPlek] = useState<HTMLElement | null>(null)
+  const [ruimte, setRuimte] = useState(0)
+
+  useEffect(() => {
+    if (!dok) return
+    const meter = new ResizeObserver(() => setRuimte(dok.offsetHeight))
+    meter.observe(dok)
+    return () => meter.disconnect()
+  }, [dok])
+
+  const waarde = useMemo(
+    () => ({ verborgen, ruimte, voetPlek, balkPlek }),
+    [verborgen, ruimte, voetPlek, balkPlek],
+  )
+
   return (
     // Scroll-events bubbelen niet, maar de capture-fase komt wél langs hier.
     <div onScrollCapture={onScroll} style={{
-      height: '100%', display: 'flex', flexDirection: 'column',
+      position: 'relative', height: '100%', display: 'flex', flexDirection: 'column',
       background: achtergrond, overflow: 'hidden',
     }}>
-      <OnderkantVerborgen.Provider value={verborgen}>{children}</OnderkantVerborgen.Provider>
+      <OnderkantContext.Provider value={waarde}>{children}</OnderkantContext.Provider>
+
+      <div ref={setDok} style={{
+        position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10,
+        transform: verborgen ? 'translateY(100%)' : 'translateY(0)',
+        transition: 'transform 280ms cubic-bezier(0.2, 0, 0, 1)',
+        willChange: 'transform',
+      }}>
+        <div ref={setVoetPlek} style={{ background: achtergrond }} />
+        <div ref={setBalkPlek} />
+      </div>
     </div>
   )
 }
@@ -117,22 +163,26 @@ export function Titel({ children, grootte = 28 }: { children: ReactNode; grootte
 }
 
 export function Inhoud({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+  // Het dok ligt over de onderkant heen; zonder deze ruimte valt je laatste
+  // recept of boodschap erachter.
+  const { ruimte } = useContext(OnderkantContext)
   return (
     <div style={{
       flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch',
       padding: '16px 22px 8px', display: 'flex', flexDirection: 'column', gap: 12, ...style,
     }}>
       {children}
+      {ruimte > 0 && <div aria-hidden style={{ flex: 'none', height: ruimte }} />}
     </div>
   )
 }
 
 /**
- * Vaste balk onderaan. Met `meeschuiven` verdwijnt 'ie samen met de
- * onderbalk als je naar beneden scrollt.
+ * Vaste balk onderaan. Met `meeschuiven` gaat 'ie in het dok boven de
+ * onderbalk, en verdwijnt 'ie mee als je naar beneden scrollt.
  */
 export function Voet({ children, meeschuiven = false }: { children: ReactNode; meeschuiven?: boolean }) {
-  const verborgen = useContext(OnderkantVerborgen)
+  const { voetPlek } = useContext(OnderkantContext)
   const balk = (
     <div style={{
       flex: 'none', padding: '12px 22px 14px',
@@ -141,7 +191,8 @@ export function Voet({ children, meeschuiven = false }: { children: ReactNode; m
       {children}
     </div>
   )
-  return meeschuiven ? <Inklapper dicht={verborgen}>{balk}</Inklapper> : balk
+  if (!meeschuiven) return balk
+  return voetPlek ? createPortal(balk, voetPlek) : null
 }
 
 /** De vier tabs uit het design system: home, ontdekken, lijst, profiel. */
@@ -189,7 +240,7 @@ function Teller({ aantal, label }: { aantal: number; label: string }) {
 }
 
 export function OnderBalk() {
-  const verborgen = useContext(OnderkantVerborgen)
+  const { balkPlek } = useContext(OnderkantContext)
   const dezeWeek = useDezeWeek()
   const boodschappen = useBoodschappen()
   // Zelfde telling als het Boodschappen-scherm: samengevoegde regels, nog niet afgevinkt.
@@ -202,8 +253,8 @@ export function OnderBalk() {
     '/boodschappen': { aantal: producten, label: 'producten op je lijst' },
   }
 
-  return (
-    <Inklapper dicht={verborgen}>
+  if (!balkPlek) return null
+  return createPortal(
     <nav style={{
       flex: 'none', display: 'flex', justifyContent: 'space-around',
       background: 'var(--color-surface-card)', borderTop: '1px solid var(--c-red-100)',
@@ -227,7 +278,7 @@ export function OnderBalk() {
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 400 }}>{tab.label}</span>
         </NavLink>
       ))}
-    </nav>
-    </Inklapper>
+    </nav>,
+    balkPlek,
   )
 }

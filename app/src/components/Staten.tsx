@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Button, Icon } from '../ds'
-import { Label, Titel } from './Layout'
+import { Label, Titel, useOnderRuimte } from './Layout'
 import { foutTekst } from '../lib/fouten'
 
 /**
@@ -38,10 +38,12 @@ export function Leeg({ icoon, kop, tekst, knop, onKnop }: {
   knop?: string
   onKnop?: () => void
 }) {
+  // De onderbalk ligt over de onderkant heen; centreer boven die balk.
+  const ruimte = useOnderRuimte()
   return (
     <div style={{
       flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-      justifyContent: 'center', gap: 14, padding: '32px 30px', textAlign: 'center',
+      justifyContent: 'center', gap: 14, padding: `32px 30px ${32 + ruimte}px`, textAlign: 'center',
     }}>
       <div style={{
         width: 76, height: 76, borderRadius: 'var(--radius-full)', background: 'var(--c-paper)',
@@ -77,6 +79,7 @@ export function Fout({ kop, tekst, stappen, onOpnieuw, onTerug }: {
   onOpnieuw?: () => void
   onTerug?: () => void
 }) {
+  const ruimte = useOnderRuimte()
   return (
     <div style={{
       height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
@@ -111,7 +114,7 @@ export function Fout({ kop, tekst, stappen, onOpnieuw, onTerug }: {
           </div>
         )}
       </div>
-      <div style={{ flex: 'none', padding: '22px 26px 44px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ flex: 'none', padding: `22px 26px ${44 + ruimte}px`, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <Button tone="yellow" onClick={onOpnieuw} style={{ width: '100%', padding: '17px 24px' }}>
           Opnieuw proberen
         </Button>
