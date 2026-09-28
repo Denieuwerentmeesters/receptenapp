@@ -289,13 +289,13 @@ export function Boodschappen() {
 
       <Dialoog
         open={Boolean(nietBijAh)}
-        kop="Let op: niet in je AH-mandje"
+        kop="Let op: dit moet je zelf nog kopen"
         tekst={nietBijAh
-          ? `Deze producten konden niet naar AH: ${nietBijAh.join(', ')}. ` +
-            "Ze blijven op je lijst. Tik op 'zoek' om ze op ah.nl te vinden, of haal ze ergens anders."
+          ? `Deze producten zitten níét in je AH-mandje: ${nietBijAh.join(', ')}. ` +
+            "Ze blijven op je lijst. Koop ze los — bij AH via 'zoek', of in een andere winkel."
           : undefined}
         onSluit={() => setNietBijAh(null)}
-        acties={[{ label: 'Oké', hoofd: true, onClick: () => setNietBijAh(null) }]}
+        acties={[{ label: 'Oké, ik koop ze zelf', hoofd: true, onClick: () => setNietBijAh(null) }]}
       />
 
       <Dialoog
