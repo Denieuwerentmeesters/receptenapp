@@ -3,7 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Button, IconButton } from '../ds'
 import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens } from '../components/Staten'
-import { useKiesRecept, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { useOpLijst } from '../components/OpLijst'
+import { useDezeWeek, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { schaalIngredienten } from '../lib/schaal'
 import { weekStart } from '../lib/week'
 
@@ -13,7 +14,15 @@ export function Recept() {
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
   const opslaan = useVoorkeurenOpslaan()
-  const kies = useKiesRecept(weekStart())
+  const week = weekStart()
+  const dezeWeek = useDezeWeek(week)
+  const { voegToe, dialoog, bezig } = useOpLijst(week)
+
+  // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
+  // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
+  const inWeek = dezeWeek.data?.find((r) => r.id === id)
+  const gekozen = inWeek?.gekozen ?? false
+  const opLijst = inWeek?.opLijst ?? false
 
   // Lokale overschrijving: je kunt per recept even schuiven met het aantal
   // personen zonder je vaste voorkeur te veranderen.
@@ -125,21 +134,51 @@ export function Recept() {
               </Inhoud>
 
               <Voet>
-                <Button
-                  onClick={() => {
-                    // Het aantal personen dat je hier koos wordt je voorkeur, zodat
-                    // de boodschappenlijst met dezelfde hoeveelheden werkt.
-                    if (lokaalPersonen && lokaalPersonen !== voorkeuren.data?.aantal_personen) {
-                      opslaan.mutate({ aantal_personen: lokaalPersonen })
-                    }
-                    kies.mutate({ receptId: r.id, kiezen: true })
-                    navigeer('/boodschappen')
-                  }}
-                  style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-                >
-                  Zet op de boodschappenlijst
-                </Button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Button
+                    variant={opLijst ? 'secondary' : 'primary'}
+                    disabled={bezig || dezeWeek.isPending}
+                    icon={opLijst ? 'check' : 'plus'}
+                    onClick={() => {
+                      // Het aantal personen dat je hier koos wordt je voorkeur, zodat
+                      // de boodschappenlijst met dezelfde hoeveelheden werkt.
+                      if (lokaalPersonen && lokaalPersonen !== voorkeuren.data?.aantal_personen) {
+                        opslaan.mutate({ aantal_personen: lokaalPersonen })
+                      }
+                      voegToe({
+                        id: r.id,
+                        titel: r.titel_nl ?? r.titel,
+                        gekozen,
+                        opLijst,
+                        aantal: inWeek?.aantal ?? 0,
+                      })
+                    }}
+                    style={{ flex: 1, padding: '17px 20px', fontSize: 16 }}
+                  >
+                    {opLijst
+                      ? (inWeek && inWeek.aantal > 1 ? `Op je lijst · ${inWeek.aantal}x` : 'Op je lijst')
+                      : 'Zet op de boodschappenlijst'}
+                  </Button>
+                  {gekozen && (
+                    <Button
+                      tone="yellow"
+                      onClick={() => navigeer(`/koken/${r.id}`)}
+                      style={{ flex: 'none', padding: '17px 20px', fontSize: 16 }}
+                    >Koken</Button>
+                  )}
+                </div>
+                {opLijst && (
+                  <button
+                    onClick={() => navigeer('/boodschappen')}
+                    style={{
+                      display: 'block', width: '100%', marginTop: 8, padding: 6, border: 'none',
+                      background: 'transparent', cursor: 'pointer', fontFamily: 'var(--font-body)',
+                      fontSize: 13, fontWeight: 700, color: 'var(--c-red)',
+                    }}
+                  >Bekijk je boodschappenlijst</button>
+                )}
               </Voet>
+              {dialoog}
             </>
           )
         })()}

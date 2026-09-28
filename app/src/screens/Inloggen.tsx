@@ -45,7 +45,7 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
           letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--c-yellow)',
         }}>Receptenapp</div>
 
-        <Titel grootte={32}>{nieuw ? 'Maak een account' : 'Wat eet je deze week?'}</Titel>
+        <Titel grootte={32}>{nieuw ? 'Maak een account' : 'Van recept tot mandje'}</Titel>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>
           {nieuw
             ? 'Kies een wachtwoord van minstens 8 tekens. Daarna hoef je hier nooit meer te zijn op dit toestel.'

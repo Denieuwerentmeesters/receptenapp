@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, HashRouter as Router, Routes } from 'react-router-dom'
-import { Weekmenu } from './screens/Weekmenu'
-import { Vandaag } from './screens/Vandaag'
+import { DezeWeek } from './screens/DezeWeek'
 import { Kookmodus } from './screens/Kookmodus'
 import { Ontdekken } from './screens/Ontdekken'
 import { Favorieten } from './screens/Favorieten'
@@ -72,9 +71,11 @@ export default function App() {
     // het bestandssysteem en is er geen server die diepe paden kan serveren.
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/vandaag" replace />} />
-        <Route path="/vandaag" element={<Vandaag />} />
-        <Route path="/weekmenu" element={<Weekmenu />} />
+        <Route path="/" element={<Navigate to="/deze-week" replace />} />
+        <Route path="/deze-week" element={<DezeWeek />} />
+        {/* Oude paden: Vandaag en Weekmenu zijn samen "Deze week" geworden. */}
+        <Route path="/vandaag" element={<Navigate to="/deze-week" replace />} />
+        <Route path="/weekmenu" element={<Navigate to="/deze-week" replace />} />
         <Route path="/ontdekken" element={<Ontdekken />} />
         <Route path="/recept/:id" element={<Recept />} />
         <Route path="/koken/:id" element={<Kookmodus />} />
@@ -86,7 +87,7 @@ export default function App() {
         <Route path="/toevoegen" element={<ReceptToevoegen />} />
         <Route path="/beoordelen" element={<Beoordelen />} />
         <Route path="/instellingen" element={<Instellingen />} />
-        <Route path="*" element={<Navigate to="/vandaag" replace />} />
+        <Route path="*" element={<Navigate to="/deze-week" replace />} />
       </Routes>
     </Router>
   )

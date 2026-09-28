@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Chip, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
-import { useKiesRecept, useVoorkeuren, useWeekmenu, type WeekmenuRecept } from '../lib/queries'
+import { useOpLijst } from '../components/OpLijst'
+import { useDezeWeek, useVoorkeuren, type WeekRecept } from '../lib/queries'
 import { useFavorietIds, useFavorietToggle } from '../lib/queries2'
 import { weekLabel, weekStart } from '../lib/week'
 
-type Filter = 'alles' | 'vega' | 'snel'
+type Filter = 'alles' | 'lijst' | 'vega' | 'snel'
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: 'alles', label: 'Alles' },
+  { id: 'lijst', label: 'Op mijn lijst' },
   { id: 'vega', label: 'Vegetarisch' },
   { id: 'snel', label: 'Binnen 30 min' },
 ]
@@ -18,42 +20,49 @@ const FILTERS: { id: Filter; label: string }[] = [
 /** De kaarten wisselen af tussen de twee roodtinten — het merkritme uit de designs. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
 
-function isVega(recept: WeekmenuRecept) {
+function isVega(recept: WeekRecept) {
   return recept.tags.includes('vegetarisch')
 }
 
-export function Weekmenu() {
+/**
+ * Het startscherm: je week. De tien suggesties van de generator, plus wat je
+ * zelf via Ontdekken of Favorieten toevoegde. Wat op je boodschappenlijst
+ * staat krijgt een gele rand; na de boodschappen verdwijnt die, maar het
+ * recept blijft staan — hiervandaan kook je.
+ */
+export function DezeWeek() {
   const week = weekStart()
   const navigeer = useNavigate()
   const [filter, setFilter] = useState<Filter>('alles')
 
-  const weekmenu = useWeekmenu(week)
+  const dezeWeek = useDezeWeek(week)
   const voorkeuren = useVoorkeuren()
-  const kies = useKiesRecept(week)
+  const { voegToe, dialoog } = useOpLijst(week)
   const favorieten = useFavorietIds()
   const favToggle = useFavorietToggle()
 
-  const recepten = useMemo(() => weekmenu.data ?? [], [weekmenu.data])
+  const recepten = useMemo(() => dezeWeek.data ?? [], [dezeWeek.data])
   const zichtbaar = recepten.filter((r) =>
     filter === 'alles' ? true
+      : filter === 'lijst' ? r.opLijst
       : filter === 'vega' ? isVega(r)
       : (r.bereidingstijd_minuten ?? 999) <= 30)
 
-  const gekozenAantal = recepten.filter((r) => r.gekozen).length
+  const opLijst = recepten.filter((r) => r.opLijst).length
   const vegaAantal = recepten.filter(isVega).length
   const personen = voorkeuren.data?.aantal_personen ?? 4
 
   return (
     <Scherm>
-      <Grens query={weekmenu}>
+      <Grens query={dezeWeek} ladenTekst="Je week ophalen">
         <Kop>
           <Label>Week van {weekLabel(week)}</Label>
         </Kop>
 
         <Kop kleur="var(--c-red-bright)" style={{ padding: '20px 22px 22px' }}>
-          <Titel>{recepten.length} recepten<br />voor jou klaar</Titel>
+          <Titel>Wat eet jij<br />deze week?</Titel>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '12px 0 0' }}>
-            {vegaAantal} vegetarisch · voor {personen} {personen === 1 ? 'persoon' : 'personen'}
+            {recepten.length} recepten · {vegaAantal} vegetarisch · voor {personen} {personen === 1 ? 'persoon' : 'personen'}
           </p>
         </Kop>
 
@@ -83,7 +92,7 @@ export function Weekmenu() {
                 {filter === 'alles' ? `Alle ${recepten.length} recepten` : `${zichtbaar.length} in dit filter`}
               </span>
               <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)' }}>
-                {gekozenAantal} gekozen
+                {opLijst} op je lijst
               </span>
             </div>
 
@@ -108,12 +117,12 @@ export function Weekmenu() {
                     recept={recept}
                     vlak={VLAKKEN[i % VLAKKEN.length]}
                     personen={personen}
-                    favoriet={Boolean(favorieten.data?.[recept.id]) ?? false}
+                    favoriet={Boolean(favorieten.data?.[recept.id])}
                     onOpen={() => navigeer(`/recept/${recept.id}`)}
-                    onKies={() => kies.mutate({ receptId: recept.id, kiezen: !recept.gekozen })}
+                    onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
                     onFavoriet={() => favToggle.mutate({
                       receptId: recept.id,
-                      favoriet: !Boolean(favorieten.data?.[recept.id]),
+                      favoriet: !favorieten.data?.[recept.id],
                     })}
                   />
                 ))}
@@ -124,42 +133,52 @@ export function Weekmenu() {
 
         <Voet>
           <Button
-            disabled={gekozenAantal === 0}
+            disabled={opLijst === 0}
             onClick={() => navigeer('/boodschappen')}
             style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
           >
-            {gekozenAantal === 0 ? 'Kies eerst een recept' : `Naar boodschappenlijst (${gekozenAantal})`}
+            {opLijst === 0 ? 'Kies eerst een recept' : `Naar boodschappenlijst (${opLijst})`}
           </Button>
           <p style={{
             fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, margin: '8px 0 0',
             textAlign: 'center', color: 'rgba(20,20,20,0.6)',
           }}>
-            {gekozenAantal === 0
+            {opLijst === 0
               ? 'Tik op de recepten die je deze week wil koken.'
               : 'Dubbele ingrediënten voegen we samen.'}
           </p>
         </Voet>
       </Grens>
 
+      {dialoog}
       <OnderBalk />
     </Scherm>
   )
 }
 
-function ReceptKaart({ recept, vlak, personen, favoriet, onOpen, onKies, onFavoriet }: {
-  recept: WeekmenuRecept
+/** Tekst op de knop onder een kaart: wat er met dit recept aan de hand is. */
+function knopTekst(recept: WeekRecept): string {
+  if (recept.opLijst) return recept.aantal > 1 ? `Op je lijst · ${recept.aantal}x` : 'Op je lijst'
+  if (recept.gekooktOp) return 'Gekookt'
+  // Van de lijst af: boodschappen gedaan, doorgestuurd of gewist.
+  if (recept.gekozen) return 'In je week'
+  return 'Op de lijst'
+}
+
+function ReceptKaart({ recept, vlak, personen, favoriet, onOpen, onLijst, onFavoriet }: {
+  recept: WeekRecept
   vlak: string
   personen: number
   favoriet: boolean
   onOpen: () => void
-  onKies: () => void
+  onLijst: () => void
   onFavoriet: () => void
 }) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 20, padding: 4,
-      // Een gele ring is de "gekozen"-markering uit het design.
-      background: recept.gekozen ? 'var(--c-yellow)' : 'transparent',
+      // Een gele ring betekent: staat op je boodschappenlijst.
+      background: recept.opLijst ? 'var(--c-yellow)' : 'transparent',
       transition: 'background var(--motion-base) var(--ease)',
     }}>
       <div style={{ flex: 1, position: 'relative', display: 'flex' }}>
@@ -207,17 +226,17 @@ function ReceptKaart({ recept, vlak, personen, favoriet, onOpen, onKies, onFavor
       </div>
 
       <button
-        onClick={onKies}
+        onClick={onLijst}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, height: 38,
           margin: '0 4px 4px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
-          border: `1.5px solid ${recept.gekozen ? 'var(--c-red)' : 'rgba(20,20,20,0.14)'}`,
-          color: recept.gekozen ? 'var(--c-red)' : 'var(--c-ink)',
+          border: `1.5px solid ${recept.opLijst ? 'var(--c-red)' : 'rgba(20,20,20,0.14)'}`,
+          color: recept.opLijst ? 'var(--c-red)' : recept.gekozen ? 'rgba(20,20,20,0.55)' : 'var(--c-ink)',
         }}
       >
-        {recept.gekozen && <Icon name="check" size={14} />}
-        {recept.gekozen ? 'Gekozen' : 'Kiezen'}
+        <Icon name={recept.gekozen ? 'check' : 'plus'} size={14} />
+        {knopTekst(recept)}
       </button>
     </div>
   )
