@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Chip, Icon } from '../ds'
 import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
-import { useFavorietIds, useFavorietToggle, useKeukens, useOntdek, type OntdekFilters } from '../lib/queries2'
-import { ReceptRegel } from '../components/ReceptRegel'
-import { useDezeWeek } from '../lib/queries'
+import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../lib/queries2'
+import { useDezeWeek, useLijstActies, type WeekRecept } from '../lib/queries'
+import type { Recept } from '../lib/database.types'
 
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
@@ -14,8 +14,18 @@ const TIJDEN = [
 ]
 
 /**
- * Alle recepten doorbladeren. Filters op kooktijd, keuken en vegetarisch —
- * precies de dingen waarop je een doordeweekse avond selecteert.
+ * Zachte perzik: orange uit de kop, gemengd met cream. Zo voelt Ontdekken
+ * anders dan "Deze week", en springen de foto's eruit.
+ */
+const ACHTERGROND = '#FCD6C3'
+
+/** Zonder foto toch een vlak: de roodtinten wisselen af, het merkritme. */
+const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
+
+/**
+ * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en vegetarisch —
+ * precies de dingen waarop je een doordeweekse avond selecteert. Het hartje
+ * zet een recept in "Deze week"; daar kies je of het op je lijst gaat.
  */
 export function Ontdekken() {
   const navigeer = useNavigate()
@@ -30,20 +40,36 @@ export function Ontdekken() {
   )
 
   const resultaten = useOntdek(filters)
+  const telling = useOntdekTelling(filters)
   const keukens = useKeukens()
-  const favorieten = useFavorietIds()
-  const favToggle = useFavorietToggle()
   const dezeWeek = useDezeWeek()
-  const opLijst = useMemo(
-    () => new Set((dezeWeek.data ?? []).filter((r) => r.opLijst).map((r) => r.id)),
+  const { zetInWeek, haalUitWeek } = useLijstActies()
+  // Geen Map als querydata (zie useAhMapping), maar hier is het afgeleid.
+  const inWeek = useMemo(
+    () => new Map((dezeWeek.data ?? []).map((r) => [r.id, r])),
     [dezeWeek.data],
   )
 
   const recepten = resultaten.data?.pages.flat() ?? []
   const heeftFilter = Boolean(maxTijd || keuken || alleenVega)
+  const totaal = telling.data ?? recepten.length
+
+  // Vanzelf verder laden zodra je bij de onderkant komt; de knop blijft als
+  // terugval voor als de observer niet afgaat.
+  const onderkant = useRef<HTMLDivElement>(null)
+  const { hasNextPage, isFetchingNextPage, fetchNextPage } = resultaten
+  useEffect(() => {
+    const el = onderkant.current
+    if (!el || !hasNextPage) return
+    const kijker = new IntersectionObserver((regels) => {
+      if (regels.some((r) => r.isIntersecting) && !isFetchingNextPage) void fetchNextPage()
+    }, { rootMargin: '400px' })
+    kijker.observe(el)
+    return () => kijker.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   return (
-    <Scherm>
+    <Scherm achtergrond={ACHTERGROND}>
       <Kop kleur="var(--c-orange)" tekstKleur="var(--c-paper)" style={{ paddingBottom: 22 }}>
         <Titel grootte={26}>Ontdekken</Titel>
         <div style={{
@@ -105,32 +131,30 @@ export function Ontdekken() {
             tekst={zoek ? `Geen recept voor "${zoek}". Probeer een ingrediënt, bijvoorbeeld aubergine.` : 'Geen recept binnen deze filters.'}
           />
         ) : (
-          <Inhoud style={{ gap: 10 }}>
+          <Inhoud style={{ gap: 12 }}>
             <span style={{
               fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
               textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
             }}>
-              {recepten.length}{resultaten.hasNextPage ? '+' : ''} {recepten.length === 1 ? 'recept' : 'recepten'}
+              {totaal} {totaal === 1 ? 'recept' : 'recepten'}
             </span>
 
-            {recepten.map((r, i) => (
-              // Zelfde gele rand als in "Deze week": dit staat al op je lijst.
-              <div key={r.id} style={{
-                borderRadius: 'calc(var(--radius-md) + 3px)', padding: 3,
-                background: opLijst.has(r.id) ? 'var(--c-yellow)' : 'transparent',
-              }}>
-                <ReceptRegel
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: '18px 12px',
+            }}>
+              {recepten.map((r, i) => (
+                <FotoKaart
+                  key={r.id}
                   recept={r}
                   index={i}
-                  favoriet={Boolean(favorieten.data?.[r.id])}
-                  actie={opLijst.has(r.id) ? 'op je lijst' : undefined}
-                  actieKleur="var(--c-red)"
+                  week={inWeek.get(r.id)}
                   onOpen={() => navigeer(`/recept/${r.id}`)}
-                  onFavoriet={() => favToggle.mutate({ receptId: r.id, favoriet: !favorieten.data?.[r.id] })}
+                  onHartje={() => (inWeek.has(r.id) ? haalUitWeek.mutate(r.id) : zetInWeek.mutate(r))}
                 />
-              </div>
-            ))}
+              ))}
+            </div>
 
+            <div ref={onderkant} />
             {resultaten.hasNextPage && (
               <button
                 onClick={() => void resultaten.fetchNextPage()}
@@ -150,5 +174,85 @@ export function Ontdekken() {
 
       <OnderBalk />
     </Scherm>
+  )
+}
+
+/**
+ * Een recept als foto met de tekst eronder. Het hartje rechtsboven zet 'm in
+ * "Deze week" (of haalt 'm eruit); staat 'ie op je lijst, dan de gele rand.
+ */
+function FotoKaart({ recept, index, week, onOpen, onHartje }: {
+  recept: Recept
+  index: number
+  week: WeekRecept | undefined
+  onOpen: () => void
+  onHartje: () => void
+}) {
+  const vega = recept.tags.includes('vegetarisch')
+  const meta = [
+    recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
+    vega ? 'vegetarisch' : recept.keuken,
+  ].filter(Boolean).join(' · ')
+  const status = week?.opLijst ? 'Op je lijst' : week ? 'In je week' : null
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
+      <div style={{
+        position: 'relative', borderRadius: 'calc(var(--radius-md) + 4px)', padding: 4,
+        margin: -4, background: week?.opLijst ? 'var(--c-yellow)' : 'transparent',
+        transition: 'background var(--motion-base) var(--ease)',
+      }}>
+        <button
+          onClick={onOpen}
+          aria-label={recept.titel_nl ?? recept.titel}
+          style={{
+            display: 'block', width: '100%', aspectRatio: '1 / 1', border: 'none', padding: 0,
+            borderRadius: 'var(--radius-md)', cursor: 'pointer', overflow: 'hidden',
+            background: recept.afbeelding_url
+              ? `url(${recept.afbeelding_url}) center/cover`
+              : VLAKKEN[index % VLAKKEN.length],
+            color: 'var(--c-cream)', fontFamily: 'var(--font-body)', fontSize: 11,
+            letterSpacing: '.08em', textTransform: 'uppercase',
+          }}
+        >{recept.afbeelding_url ? '' : 'foto'}</button>
+
+        <button
+          onClick={onHartje}
+          aria-label={week ? 'Uit deze week halen' : 'In deze week zetten'}
+          aria-pressed={Boolean(week)}
+          style={{
+            position: 'absolute', top: 12, right: 12, width: 38, height: 38,
+            borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: week ? 'var(--c-red)' : 'rgba(255,255,255,0.92)',
+            color: week ? 'var(--c-cream)' : 'var(--c-red)',
+            boxShadow: '0 2px 8px rgba(20,20,20,0.18)',
+            transition: 'background var(--motion-fast) var(--ease)',
+          }}
+        ><Icon name="heart" size={18} /></button>
+      </div>
+
+      <button
+        onClick={onOpen}
+        style={{
+          display: 'flex', flexDirection: 'column', gap: 3, background: 'none', border: 'none',
+          padding: '0 2px', textAlign: 'left', cursor: 'pointer',
+        }}
+      >
+        <span style={{
+          fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, lineHeight: 1.25,
+          color: 'var(--color-ink)', display: '-webkit-box', WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical', overflow: 'hidden',
+        }}>{recept.titel_nl ?? recept.titel}</span>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>
+          {meta}
+        </span>
+        {status && (
+          <span style={{
+            fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
+          }}>{status}</span>
+        )}
+      </button>
+    </div>
   )
 }
