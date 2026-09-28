@@ -9,6 +9,9 @@
 html,body,#root{height:100%}
 /* Safari legt de adresbalk over de pagina heen; 100% loopt eronder door. dvh is het zichtbare deel, zodat de onderbalk erboven blijft. */
 @supports (height:100dvh){#root{height:100dvh}}
+/* De pagina zelf scrollt nooit, alleen de schermen erin. Anders schuift Safari de hele app weg, onder de klok of opzij. */
+html,body{overflow:hidden;overscroll-behavior:none}
+/* Invoervelden onder 16px laten iOS inzoomen bij focus, en dat zoomniveau blijft hangen. Houd ze op 16px of groter. */
 body{
   margin:0;
   font-family:var(--font-body);

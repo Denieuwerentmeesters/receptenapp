@@ -192,7 +192,7 @@ export function Boodschappen() {
                   style={{
                     flex: 1, minWidth: 0, background: 'var(--c-paper)',
                     border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 14,
-                    padding: '13px 15px', fontFamily: 'var(--font-body)', fontSize: 15,
+                    padding: '13px 15px', fontFamily: 'var(--font-body)', fontSize: 16,
                   }}
                 />
                 <button type="submit" style={{
