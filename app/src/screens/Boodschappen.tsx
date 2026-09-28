@@ -219,7 +219,7 @@ export function Boodschappen() {
         )}
 
         {regels.length > 0 && (
-          <Voet>
+          <Voet meeschuiven>
             {open.length === 0 ? (
               // Alles afgevinkt: je bent klaar in de winkel. Dan mag de lijst leeg.
               <Button
