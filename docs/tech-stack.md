@@ -190,5 +190,5 @@ Stap 1 t/m 9 kun je grotendeels in de browser bouwen; het toestel heb je pas ech
 
 - **De designs en de wireframe** — nog niet ingezien. Nodig voordat de schermen gebouwd worden, vooral om te weten of het design system in Tailwind-tokens zit (directe overname) of in losse kleurwaarden.
 - **Alleen iOS, of ook Android?** Bepaalt of er een Firebase-project en een tweede buildprofiel bij komt.
-- **Jumbo-mechanisme** is nog niet afgevangen (plan §4) — geen blokkade voor v1.
+- **Jumbo-mechanisme** is afgevangen: `jumbo.com/mandje/?add=[{"sku":…,"quantity":…}]` — zie CLAUDE.md, "Jumbo-koppeling".
 - **De 23 pending-redo recepten** uit de README — losstaande databron-taak, kan parallel.

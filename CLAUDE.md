@@ -94,6 +94,26 @@ volgende lijst 'm kent. In de Capacitor-app kan dat via native HTTP
 Zolang dat er niet is, moet elk nieuw recept handmatig gemapt worden of blijft
 het bij zoeklinks.
 
+## Jumbo-koppeling
+
+Kies je in Instellingen voor Jumbo (`gebruiker_voorkeuren.voorkeurswinkel`),
+dan gaat de mandjeknop naar jumbo.com in plaats van ah.nl. `src/lib/winkel.ts`
+kiest; `src/lib/jumbo.ts` bouwt de link.
+
+- **Mechanisme:** `https://www.jumbo.com/mandje/?add=[{"sku":"641085STK","quantity":2},…]`
+  (JSON, URL-gecodeerd). Afgekeken van de Jumbo-knop op Uit Paulines Keuken,
+  die via tobasket.com precies deze link opent; live getest.
+- **SKU's zijn tekst**, geen getallen: nummer plus verpakkingsachtervoegsel
+  (`STK`, `PAK`, `ZK`). Vandaar een eigen tabel `jumbo_product_cache`.
+- **Mapping bijwerken:** anders dan ah.nl geeft jumbo.com gewoon antwoord op
+  kale HTTP. `python3 scripts/jumbo_mapping.py` zoekt alle sleutels uit
+  `data/ah_mapping.json` op en schrijft `data/jumbo_mapping.json`; nakijken,
+  dan `python3 scripts/jumbo_mapping.py --migratie` voor een nieuwe migratie.
+  Zelfde regel als bij AH: bij twijfel geen mapping.
+- **Niet getest op een iPhone:** of de Jumbo-app de link als Universal Link
+  opvangt en de `add`-parameter dan ook verwerkt, is nog onbekend. In Safari
+  werkt het.
+
 ## Recepten toevoegen en de adminrol
 
 Twee routes (plan §7): een foto van een kookboekpagina, of je eigen recept in
@@ -143,7 +163,7 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 ## Wat er nog niet is
 
 - Prijsindicatie per recept — vraagt eenheidsprijzen per AH-product
-- Push (APNs), huisgenoten delen, Jumbo (mechanisme onbekend)
+- Push (APNs), huisgenoten delen
 
 ## Werkwijze (verplicht)
 

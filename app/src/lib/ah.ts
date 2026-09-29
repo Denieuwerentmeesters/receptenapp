@@ -39,17 +39,17 @@ export interface MandjeResultaat {
  * maar dat is een ander product. Zo'n gok legt stilletjes het verkeerde artikel
  * in je mandje, en dat merk je pas bij de kassa.
  */
-export function zoekProduct(
+export function zoekProduct<P>(
   item: BoodschapItem,
-  mapping: Record<string, AhProduct>,
-): AhProduct | undefined {
+  mapping: Record<string, P>,
+): P | undefined {
   const direct = mapping[item.ingredient_key] ?? mapping[ingredientKey(item.naam)]
   if (direct) return direct
 
   const woorden = ingredientKey(item.naam).split(' ').filter(Boolean)
   if (woorden.length < 2) return undefined
 
-  let beste: AhProduct | undefined
+  let beste: P | undefined
   let besteLengte = 0
 
   for (const [sleutel, product] of Object.entries(mapping)) {
@@ -101,16 +101,17 @@ export function zoekLink(naam: string): string {
 }
 
 /**
- * Opent een ah.nl-URL in de systeembrowser — nooit in een in-app webview.
+ * Opent een winkel-URL (ah.nl of jumbo.com) in de systeembrowser — nooit in
+ * een in-app webview.
  *
  * Dit is de valkuil uit tech-stack §5: `@capacitor/browser` en een gewone
  * `<a href>` blijven in een omgeving met een eigen cookiejar. Ben je daar niet
  * ingelogd bij AH, dan landen je artikelen op een anonieme lijst en is je mandje
  * leeg als je de AH-app opent — zonder foutmelding. AppLauncher.openUrl geeft de
- * URL aan het besturingssysteem, dat 'm doorzet naar de AH-app (Universal Link)
- * of naar Safari, waar je normale AH-sessie zit.
+ * URL aan het besturingssysteem, dat 'm doorzet naar de app van de winkel
+ * (Universal Link) of naar Safari, waar je normale sessie zit.
  */
-export async function openBijAh(url: string): Promise<void> {
+export async function openBijWinkel(url: string): Promise<void> {
   if (Capacitor.isNativePlatform()) {
     await AppLauncher.openUrl({ url })
     return
