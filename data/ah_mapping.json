@@ -1416,6 +1416,12 @@
   "bio": 600464
  },
  {
+  "key": "klapstuk",
+  "naam": "ah greenfields magere runderlappen",
+  "standaard": 4002,
+  "bio": null
+ },
+ {
   "key": "knoflook",
   "naam": "ah knoflook",
   "standaard": 4160,

@@ -74,15 +74,17 @@ insert into recepten (
 )
 on conflict (url) where url is not null do nothing;
 
--- AH-mapping voor twee nieuwe ingrediënten, op ah.nl opgezocht. AH heeft alleen
+-- AH-mapping voor drie nieuwe ingrediënten, op ah.nl opgezocht. AH heeft alleen
 -- biologische zuurkool, dus standaard en bio wijzen naar hetzelfde product.
--- Klapstuk en Italiaanse saucijzen verkoopt ah.nl niet los: die blijven een
--- zoeklink. Ook bijgewerkt in data/ah_mapping.json.
+-- Klapstuk verkoopt ah.nl niet onder die naam; het is een runderlap, dus
+-- dezelfde als 'runderlappen'. Italiaanse saucijzen heeft ah.nl niet: die
+-- blijven een zoeklink. Ook bijgewerkt in data/ah_mapping.json.
 
 insert into ah_product_cache
   (ingredient_key, weergavenaam, standaard_product_id, bio_product_id, laatst_geverifieerd)
 values
   ('friet', 'ah extra krokante friet', 580674, null, now()),
+  ('klapstuk', 'ah greenfields magere runderlappen', 4002, null, now()),
   ('zuurkool', 'ah biologisch zuurkool naturel', 51774, 51774, now())
 on conflict (ingredient_key) do update set
   weergavenaam = excluded.weergavenaam,
