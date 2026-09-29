@@ -1,6 +1,5 @@
-import { useNavigate } from 'react-router-dom'
-import { Button, Icon } from '../ds'
-import { Inhoud, Kop, Label, Scherm, Titel } from '../components/Layout'
+import { Button } from '../ds'
+import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useAanmeldingen, useBeoordelen } from '../lib/queries2'
 
@@ -13,7 +12,6 @@ import { useAanmeldingen, useBeoordelen } from '../lib/queries2'
  * aangemeld worden.
  */
 export function Beoordelen() {
-  const navigeer = useNavigate()
   const aanmeldingen = useAanmeldingen()
   const beoordelen = useBeoordelen()
   const lijst = aanmeldingen.data ?? []
@@ -22,15 +20,7 @@ export function Beoordelen() {
     <Scherm>
       <Kop kleur="var(--c-black)" style={{ paddingBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button
-            onClick={() => navigeer(-1)}
-            aria-label="Terug"
-            style={{
-              border: 'none', background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)',
-              width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          ><Icon name="chevronLeft" size={18} /></button>
+          <TerugKnop />
           <Label>Alleen voor admins</Label>
         </div>
         <div style={{ marginTop: 14 }}><Titel grootte={26}>Te beoordelen</Titel></div>

@@ -4,8 +4,10 @@ import { Button, Checkbox, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
 import { Fout, Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
-import { useBoodschapMuteren, useBoodschappen, useDezeWeek } from '../lib/queries'
-import { useVoorraad } from '../lib/queries2'
+import { useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
+import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useVoorraad } from '../lib/queries2'
+import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
+import type { Bestelling } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isDroogKruid } from '../lib/kruiden'
 import { inVoorraad } from '../lib/voorraad'
 import {
@@ -26,6 +28,9 @@ interface Doorgestuurd {
   ongemapt: number
   /** Wat niet mee kon naar de winkel: dat blijft op de lijst, en dat melden we. */
   nietMee: string[]
+  /** Voor "Bespaard!": vastgelegd zodra je bevestigt dat het mandje aankwam. */
+  recepten: Record<string, number>
+  kosten: number
 }
 
 export function Boodschappen() {
@@ -36,6 +41,12 @@ export function Boodschappen() {
   const dezeWeek = useDezeWeek(week)
   const winkel = useWinkel()
   const voorraad = useVoorraad()
+  const voorkeuren = useVoorkeuren()
+  // Voor de besparingsteller altijd in Jumbo-prijzen, ook als je bij AH bestelt.
+  const jumboMapping = useJumboMapping(true)
+  const jumboPrijzen = useJumboPrijzen()
+  const bestellingen = useBestellingen()
+  const vastleggen = useBestellingVastleggen(week)
   const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
 
   const [nieuw, setNieuw] = useState('')
@@ -44,6 +55,7 @@ export function Boodschappen() {
   const [doorgestuurd, setDoorgestuurd] = useState<Doorgestuurd | null>(null)
   const [wisVraag, setWisVraag] = useState(false)
   const [nietMee, setNietMee] = useState<string[] | null>(null)
+  const [bespaard, setBespaard] = useState<Bestelling | null>(null)
 
   const receptenOpLijst = (dezeWeek.data ?? []).filter((r) => r.opLijst).length
   const items = useMemo(() => boodschappen.data ?? [], [boodschappen.data])
@@ -92,9 +104,23 @@ export function Boodschappen() {
       // Bewust eerst vragen: we kunnen niet controleren of het aankwam. AH
       // voegt niets toe als je daar niet ingelogd bent, zonder foutmelding, en
       // bij Jumbo kan het in een ander mandje landen dan dat in je Jumbo-app.
+      // Alles wat naar de winkel gaat telt mee, ook wat je los koopt: een
+      // maaltijdbox levert ook het hele recept.
+      const aantalPerRecept = new Map((dezeWeek.data ?? []).map((r) => [r.id, r.aantal]))
+      const recepten: Record<string, number> = {}
+      for (const r of naarWinkel) {
+        for (const i of r.items) {
+          if (i.bron_recept_id) recepten[i.bron_recept_id] = aantalPerRecept.get(i.bron_recept_id) ?? 1
+        }
+      }
       setDoorgestuurd({
         ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length,
         nietMee: naarWinkel.filter((r) => !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
+        recepten,
+        kosten: mandjeKosten(
+          naarWinkel, jumboMapping.data ?? {}, jumboPrijzen.data ?? {},
+          voorkeuren.data?.biologisch_voorkeur ?? false,
+        ).totaal,
       })
     } catch {
       setMandjeFout('Het mandje is niet aangekomen. Je lijst is bewaard — er is niets kwijt.')
@@ -317,6 +343,16 @@ export function Boodschappen() {
               if (doorgestuurd) {
                 opruimen.mutate(doorgestuurd.ids)
                 if (doorgestuurd.nietMee.length > 0) setNietMee(doorgestuurd.nietMee)
+                vastleggen.mutate({
+                  winkel: winkel.id,
+                  personen: voorkeuren.data?.aantal_personen ?? 4,
+                  recepten: doorgestuurd.recepten,
+                  mandjeKosten: doorgestuurd.kosten,
+                }, {
+                  // Alleen vieren als er maaltijden bij kwamen; een tweede ronde
+                  // voor een vergeten ui is geen besparing.
+                  onSuccess: (b) => { if (b.maaltijden > 0) setBespaard(b) },
+                })
               }
               setDoorgestuurd(null)
             },
@@ -346,6 +382,25 @@ export function Boodschappen() {
           : undefined}
         onSluit={() => setNietMee(null)}
         acties={[{ label: 'Oké, ik koop ze zelf', hoofd: true, onClick: () => setNietMee(null) }]}
+      />
+
+      <Dialoog
+        open={Boolean(bespaard) && !nietMee}
+        kop={bespaard ? `${euro(bespaardMet(bespaard))} bespaard!` : ''}
+        tekst={bespaard
+          ? `Deze boodschappen kosten zo'n ${euro(bespaard.mandje_kosten)}. ` +
+            `Dezelfde ${bespaard.maaltijden} ${bespaard.maaltijden === 1 ? 'maaltijd' : 'maaltijden'} voor ` +
+            `${bespaard.personen} bij ${MAALTIJDBOX.naam}: ${euro(bespaard.maaltijdbox_kosten)}. ` +
+            // De lijst kan nog aan het verversen zijn; deze bestelling telt hoe dan ook mee.
+            `Totaal bespaard met de app: ${euro(totaalBespaard([
+              ...(bestellingen.data ?? []).filter((b) => b.id !== bespaard.id), bespaard,
+            ]))}.`
+          : undefined}
+        onSluit={() => setBespaard(null)}
+        acties={[
+          { label: 'Top!', hoofd: true, onClick: () => setBespaard(null) },
+          { label: 'Bekijk wat je bespaarde', onClick: () => { setBespaard(null); navigeer('/bespaard') } },
+        ]}
       />
 
       <Dialoog

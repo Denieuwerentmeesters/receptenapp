@@ -4,9 +4,10 @@ import { huidigeUserId } from './auth'
 import { ingredientKey } from './schaal'
 import { weekStart } from './week'
 import { sleutels } from './queries'
-import type { BronType, DeelStatus, Recept } from './database.types'
+import type { Bestelling, BronType, DeelStatus, Recept } from './database.types'
 import type { Concept } from './extractie'
 import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
+import { maaltijdboxKosten } from './besparing'
 
 /* --------------------------------------------------------------- ontdekken */
 
@@ -401,5 +402,81 @@ export function useBeoordelen() {
       void qc.invalidateQueries({ queryKey: ['ontdek'] })
       void qc.invalidateQueries({ queryKey: ['ontdek-telling'] })
     },
+  })
+}
+
+/* ---------------------------------------------------------------- bespaard */
+
+/** Gewone Jumbo-prijs per SKU (scripts/jumbo_prijzen.py). Een object, geen Map: zie useAhMapping. */
+export function useJumboPrijzen() {
+  return useQuery({
+    queryKey: ['jumbo-prijzen'],
+    staleTime: 60 * 60 * 1000,
+    queryFn: async (): Promise<Record<string, number>> => {
+      const { data, error } = await db.from('jumbo_prijs').select('sku, prijs')
+      if (error) throw error
+      return Object.fromEntries((data as { sku: string; prijs: number | string }[])
+        .map((p) => [p.sku, Number(p.prijs)]))
+    },
+  })
+}
+
+export function useBestellingen() {
+  return useQuery({
+    queryKey: ['bestellingen'],
+    queryFn: async (): Promise<Bestelling[]> => {
+      const { data, error } = await db.from('bestelling').select('*')
+        .order('besteld_op', { ascending: false })
+      if (error) throw error
+      // numeric komt als tekst uit PostgREST.
+      return (data as Bestelling[]).map((b) => ({
+        ...b, mandje_kosten: Number(b.mandje_kosten), maaltijdbox_kosten: Number(b.maaltijdbox_kosten),
+      }))
+    },
+  })
+}
+
+export interface BestellingInvoer {
+  winkel: 'ah' | 'jumbo'
+  personen: number
+  /** Recept-id → hoe vaak je het deze week maakt. */
+  recepten: Record<string, number>
+  mandjeKosten: number
+}
+
+/**
+ * Legt een bestelling vast zodra je bevestigt dat je mandje aankwam.
+ *
+ * Een recept telt één keer per week: bestel je in twee rondes, dan telt de
+ * tweede alleen de recepten die er nog niet bij zaten. De bezorgkosten van de
+ * maaltijdbox tellen bij de eerste bestelling van de week.
+ */
+export function useBestellingVastleggen(week = weekStart()) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (invoer: BestellingInvoer): Promise<Bestelling> => {
+      const eerder = await db.from('bestelling').select('recept_ids').eq('week_start_datum', week)
+      if (eerder.error) throw eerder.error
+      const rijen = eerder.data as { recept_ids: string[] }[]
+      const alGeteld = new Set(rijen.flatMap((r) => r.recept_ids))
+
+      const nieuw = Object.keys(invoer.recepten).filter((id) => !alGeteld.has(id))
+      const maaltijden = nieuw.reduce((som, id) => som + Math.max(1, invoer.recepten[id]), 0)
+
+      const { data, error } = await db.from('bestelling').insert({
+        user_id: await huidigeUserId(),
+        week_start_datum: week,
+        winkel: invoer.winkel,
+        personen: invoer.personen,
+        recept_ids: nieuw,
+        maaltijden,
+        mandje_kosten: invoer.mandjeKosten,
+        maaltijdbox_kosten: maaltijdboxKosten(maaltijden, invoer.personen, rijen.length === 0),
+      }).select().single()
+      if (error) throw error
+      const b = data as Bestelling
+      return { ...b, mandje_kosten: Number(b.mandje_kosten), maaltijdbox_kosten: Number(b.maaltijdbox_kosten) }
+    },
+    onSuccess: () => { void qc.invalidateQueries({ queryKey: ['bestellingen'] }) },
   })
 }
