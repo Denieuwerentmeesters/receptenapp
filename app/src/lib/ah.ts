@@ -40,7 +40,7 @@ export interface MandjeResultaat {
  * in je mandje, en dat merk je pas bij de kassa.
  */
 export function zoekProduct<P>(
-  item: BoodschapItem,
+  item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
   mapping: Record<string, P>,
 ): P | undefined {
   const direct = mapping[item.ingredient_key] ?? mapping[ingredientKey(item.naam)]

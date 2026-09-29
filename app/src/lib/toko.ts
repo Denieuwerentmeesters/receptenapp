@@ -1,5 +1,6 @@
 import { zoekProduct } from './ah'
-import type { BoodschapItem } from './database.types'
+import { ingredientKey } from './schaal'
+import type { BoodschapItem, Ingredient } from './database.types'
 
 /**
  * Wat je bij AH en Jumbo niet (goed) krijgt, maar wel bij Tjin's Toko:
@@ -51,6 +52,24 @@ const TOKO: Record<string, TokoProduct> = {
 }
 
 /** Zelfde zoekregels als bij de winkels: enkelvoud en hele woorden ("sake shaoxing rijstwijn"). */
-export function tokoProduct(item: BoodschapItem): TokoProduct | undefined {
+export function tokoProduct(item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>): TokoProduct | undefined {
   return zoekProduct(item, TOKO)
+}
+
+export interface TokoIngredient {
+  naam: string
+  product: TokoProduct
+}
+
+/**
+ * Welke ingrediënten van dit recept haal je bij de toko? Zo zie je al bij het
+ * kiezen dat je er niet met alleen een AH- of Jumbo-bestelling komt.
+ */
+export function tokoIngredienten(ingredienten: Ingredient[]): TokoIngredient[] {
+  const uit: TokoIngredient[] = []
+  for (const ing of ingredienten) {
+    const product = tokoProduct({ ingredient_key: ingredientKey(ing.naam), naam: ing.naam })
+    if (product) uit.push({ naam: ing.naam, product })
+  }
+  return uit
 }

@@ -7,6 +7,8 @@ import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../
 import { useDezeWeek, useLijstActies, type WeekRecept } from '../lib/queries'
 import type { Recept } from '../lib/database.types'
 import { isBudget } from '../lib/prijsschatting'
+import { tokoIngredienten } from '../lib/toko'
+import { TokoLabel } from '../components/TokoLabel'
 
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
@@ -236,6 +238,7 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
     vega ? 'vegetarisch' : recept.keuken,
   ].filter(Boolean).join(' · ')
   const status = week?.opLijst ? 'Op je lijst' : week ? "In 'Deze week' geplaatst" : null
+  const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
@@ -257,6 +260,7 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
             letterSpacing: '.08em', textTransform: 'uppercase',
           }}
         >{recept.afbeelding_url ? '' : 'foto'}</button>
+        {toko && <TokoLabel />}
 
         <button
           onClick={onHartje}
