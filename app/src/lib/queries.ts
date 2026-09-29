@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { db } from './db'
 import { huidigeUserId } from './auth'
 import { altijdInHuis } from './altijdInHuis'
+import { DROGE_KRUIDEN_KEY } from './kruiden'
 import { ingredientKey, schaalIngredienten } from './schaal'
 import { weekStart } from './week'
 import type { AhProduct, BoodschapItem, JumboProduct, Recept, Voorkeuren } from './database.types'
@@ -182,8 +183,11 @@ export function useLijstActies(week = weekStart()) {
       const r = recept.data as Recept
       const personen = voorkeuren.data?.aantal_personen ?? 4
       // Wat in je voorraadkast staat hoeft niet op de lijst (design "Voorraadkast").
+      // Droge kruiden wel: die blijven staan, ze gaan alleen niet naar het mandje.
       const inHuis = new Set(
-        (voorraad.data as { ingredient_key: string }[] | null ?? []).map((v) => v.ingredient_key),
+        (voorraad.data as { ingredient_key: string }[] | null ?? [])
+          .map((v) => v.ingredient_key)
+          .filter((key) => key !== DROGE_KRUIDEN_KEY),
       )
 
       const rijen = schaalIngredienten(r.ingredienten, r.personen, personen)
