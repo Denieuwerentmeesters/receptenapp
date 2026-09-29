@@ -2994,6 +2994,18 @@
   "bio": 127726
  },
  {
+  "key": "vega rookworst",
+  "naam": "unox rookworst vegetarisch",
+  "standaard": 445001,
+  "bio": null
+ },
+ {
+  "key": "vega spekjes",
+  "naam": "ah terra plantaardige spekjes",
+  "standaard": 519526,
+  "bio": null
+ },
+ {
   "key": "vegagehakt",
   "naam": "ah terra plantaardige rulgehakt",
   "standaard": 620842,

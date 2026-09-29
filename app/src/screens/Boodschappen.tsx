@@ -11,8 +11,8 @@ import type { Bestelling } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isDroogKruid } from '../lib/kruiden'
 import { inVoorraad } from '../lib/voorraad'
 import {
-  bewaarGehaktKeuzes, isGehakt, leesGehaktKeuzes, metGehaktKeuze, type GehaktKeuze,
-} from '../lib/gehakt'
+  bewaarVegaKeuzes, leesVegaKeuzes, metVegaKeuze, vegaVervanger, type VegaKeuze,
+} from '../lib/vega'
 import { openBijWinkel } from '../lib/ah'
 import { useWinkel } from '../lib/winkel'
 import { groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
@@ -74,15 +74,15 @@ export function Boodschappen() {
   const thuisOpen = open.length - naarWinkel.length
   const groepen = useMemo(() => groepeerOpSchap(regels), [regels])
 
-  const [gehaktKeuzes, setGehaktKeuzes] = useState(leesGehaktKeuzes)
-  const gehaktKeuze = (key: string): GehaktKeuze => gehaktKeuzes[key] ?? 'vega'
-  const kiesGehakt = (key: string, keuze: GehaktKeuze) => {
-    const nieuw = { ...gehaktKeuzes, [key]: keuze }
-    setGehaktKeuzes(nieuw)
-    bewaarGehaktKeuzes(nieuw)
+  const [vegaKeuzes, setVegaKeuzes] = useState(leesVegaKeuzes)
+  const vegaKeuze = (key: string): VegaKeuze => vegaKeuzes[key] ?? 'vega'
+  const kiesVega = (key: string, keuze: VegaKeuze) => {
+    const nieuw = { ...vegaKeuzes, [key]: keuze }
+    setVegaKeuzes(nieuw)
+    bewaarVegaKeuzes(nieuw)
   }
-  /** De rij zoals hij naar de winkel gaat — met vegagehakt waar je dat koos. */
-  const voorWinkel = (regel: LijstRegel) => metGehaktKeuze(regel.voorbeeld, gehaktKeuze(regel.key))
+  /** De rij zoals hij naar de winkel gaat — met de vega-versie waar je die koos. */
+  const voorWinkel = (regel: LijstRegel) => metVegaKeuze(regel.voorbeeld, vegaKeuze(regel.key))
 
   async function naarMandje() {
     setMandjeFout(null)
@@ -210,11 +210,11 @@ export function Boodschappen() {
                       >
                         {regel.label}
                       </Checkbox>
-                      {isGehakt(regel.key) && !regel.afgevinkt && (
+                      {vegaVervanger(regel.key) && !regel.afgevinkt && (
                         <select
-                          value={gehaktKeuze(regel.key)}
-                          onChange={(e) => kiesGehakt(regel.key, e.target.value as GehaktKeuze)}
-                          aria-label={`Welk gehakt voor ${regel.naam}`}
+                          value={vegaKeuze(regel.key)}
+                          onChange={(e) => kiesVega(regel.key, e.target.value as VegaKeuze)}
+                          aria-label={`Vega of vlees voor ${regel.naam}`}
                           style={{
                             display: 'block', marginTop: 6, marginLeft: 36, maxWidth: 'calc(100% - 36px)',
                             fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
@@ -222,7 +222,7 @@ export function Boodschappen() {
                             border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 10, padding: '6px 10px',
                           }}
                         >
-                          <option value="vega">Vegagehakt</option>
+                          <option value="vega">{vegaVervanger(regel.key)?.label}</option>
                           <option value="recept">{regel.naam.charAt(0).toUpperCase() + regel.naam.slice(1)}</option>
                         </select>
                       )}
