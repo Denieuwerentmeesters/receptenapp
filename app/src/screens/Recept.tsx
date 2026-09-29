@@ -7,8 +7,10 @@ import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
 import { useDezeWeek, useLijstActies, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { isBudget } from '../lib/prijsschatting'
-import { schaalIngredienten } from '../lib/schaal'
+import { ingredientKey, schaalIngredienten } from '../lib/schaal'
 import { weekStart } from '../lib/week'
+import { tokoIngredienten, tokoProduct } from '../lib/toko'
+import { openBijWinkel } from '../lib/ah'
 
 export function Recept() {
   const { id } = useParams<{ id: string }>()
@@ -41,6 +43,7 @@ export function Recept() {
           const r = recept.data
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
           const vegetarisch = r.tags.includes('vegetarisch')
+          const toko = tokoIngredienten(r.ingredienten)
 
           return (
             <>
@@ -102,7 +105,7 @@ export function Recept() {
 
                   <div style={{ position: 'absolute', left: 22, right: 22, bottom: 22 }}>
                     <Label>
-                      {r.keuken ?? 'Recept'}{vegetarisch ? ' · vegetarisch' : ''}{isBudget(r) ? ' · budget' : ''}
+                      {r.keuken ?? 'Recept'}{vegetarisch ? ' · vegetarisch' : ''}{isBudget(r) ? ' · budget' : ''}{toko.length > 0 ? ' · toko nodig' : ''}
                     </Label>
                     <div style={{ marginTop: 8, textShadow: '0 2px 12px rgba(0,0,0,0.35)' }}>
                       <Titel grootte={30}>{r.titel_nl ?? r.titel}</Titel>
@@ -149,7 +152,20 @@ export function Recept() {
                   </div>
                 </div>
 
-                {ingredienten.map((ing, i) => (
+                {toko.length > 0 && (
+                  <div style={{
+                    background: 'var(--c-warm-300)', borderRadius: 'var(--radius-sm)', padding: '12px 14px',
+                    margin: '4px 0 8px', fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45,
+                  }}>
+                    <strong>Niet bij AH of Jumbo:</strong>{' '}
+                    {toko.map((t) => t.naam.toLowerCase()).join(', ')}. Die haal je bij een toko, bijvoorbeeld
+                    online bij Tjin's Toko — tik op "toko" bij het ingrediënt.
+                  </div>
+                )}
+
+                {ingredienten.map((ing, i) => {
+                  const tokoIng = tokoProduct({ ingredient_key: ingredientKey(ing.naam), naam: ing.naam })
+                  return (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'baseline', gap: 12, padding: '11px 2px',
                     borderBottom: '1.5px solid rgba(20,20,20,0.12)',
@@ -159,8 +175,17 @@ export function Recept() {
                       fontWeight: 700, color: 'var(--c-red-bright)',
                     }}>{ing.weergave}</span>
                     <span style={{ flex: 1, fontFamily: 'var(--font-body)', fontSize: 15 }}>{ing.naam}</span>
+                    {tokoIng && (
+                      <a
+                        href={tokoIng.url}
+                        onClick={(e) => { e.preventDefault(); void openBijWinkel(tokoIng.url) }}
+                        aria-label={`${tokoIng.naam} bij Tjin's Toko`}
+                        style={{ flex: 'none', fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
+                      >toko</a>
+                    )}
                   </div>
-                ))}
+                  )
+                })}
 
                 <div style={{
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
