@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Button, Icon } from '../ds'
-import { Inhoud, Kop, Label, Scherm, Titel } from '../components/Layout'
+import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useAanmeldingen, useBeoordelen } from '../lib/queries2'
 
@@ -110,6 +110,8 @@ export function Beoordelen() {
           </Inhoud>
         )}
       </Grens>
+
+      <OnderBalk />
     </Scherm>
   )
 }

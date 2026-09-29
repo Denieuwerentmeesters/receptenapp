@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
+import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { ReceptRegel } from '../components/ReceptRegel'
 import { useFavorieten, useFavorietToggle } from '../lib/queries2'
@@ -14,8 +14,11 @@ export function Favorieten() {
     <Scherm>
       <Grens query={favorieten} ladenTekst="Favorieten ophalen">
         <Kop kleur="var(--c-ink)" style={{ paddingBottom: 22 }}>
-          <Label>{lijst.length} bewaard</Label>
-          <div style={{ marginTop: 12 }}><Titel grootte={26}>Favorieten</Titel></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <TerugKnop />
+            <Label>{lijst.length} bewaard</Label>
+          </div>
+          <div style={{ marginTop: 14 }}><Titel grootte={26}>Favorieten</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
             Deze komen vaker terug in je weekmenu.
           </p>

@@ -3,7 +3,7 @@ import {
   type CSSProperties, type ReactNode, type Ref, type UIEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
 import { useBoodschappen, useDezeWeek } from '../lib/queries'
 import { voegSamen } from '../lib/lijst'
@@ -143,6 +143,38 @@ export function Kop({ children, kleur = 'var(--c-red)', tekstKleur = 'var(--c-cr
   )
 }
 
+/**
+ * Rond pijltje terug linksboven in de Kop. Terug in de geschiedenis als die er
+ * is; kwam je via een directe link binnen, dan naar `standaard` — anders zou
+ * terug je de app uit sturen.
+ */
+export function TerugKnop({ standaard = '/profiel', onClick }: {
+  standaard?: string
+  /** Eigen gedrag, bijvoorbeeld een stap terug binnen hetzelfde scherm. */
+  onClick?: () => void
+}) {
+  const navigeer = useNavigate()
+  function terug() {
+    if (onClick) return onClick()
+    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0
+    if (idx > 0) navigeer(-1)
+    else navigeer(standaard, { replace: true })
+  }
+  return (
+    <button
+      onClick={terug}
+      aria-label="Terug"
+      style={{
+        flex: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
+        // Lichte tint van de tekstkleur: werkt op elke Kop-kleur.
+        background: 'color-mix(in srgb, currentColor 22%, transparent)',
+        width: 36, height: 36, borderRadius: 'var(--radius-full)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+    ><Icon name="chevronLeft" size={18} /></button>
+  )
+}
+
 /** Kleine hoofdletterlabel — het terugkerende ritme boven elke sectie. */
 export function Label({ children, kleur = 'var(--c-yellow)' }: { children: ReactNode; kleur?: string }) {
   return (
@@ -209,6 +241,9 @@ const TABS = [
   { pad: '/profiel', icoon: 'user', label: 'Profiel' },
 ] as const
 
+/** Schermen onder "Mijn keuken": daar blijft de Profiel-tab oplichten. */
+const ONDER_PROFIEL = ['/favorieten', '/voorraadkast', '/geschiedenis', '/instellingen', '/beoordelen', '/toevoegen']
+
 /**
  * Iets erbij moet je zien gebeuren: het cijfer op "Deze week" of "Lijst"
  * zwelt even op. Bij het openen van een scherm niet — alleen als het aantal
@@ -247,6 +282,8 @@ function Teller({ aantal, label }: { aantal: number; label: string }) {
 
 export function OnderBalk() {
   const { balkPlek } = useContext(OnderkantContext)
+  const { pathname } = useLocation()
+  const inKeuken = ONDER_PROFIEL.some((pad) => pathname.startsWith(pad))
   const dezeWeek = useDezeWeek()
   const boodschappen = useBoodschappen()
   // Zelfde telling als het Boodschappen-scherm: samengevoegde regels, nog niet afgevinkt.
@@ -271,11 +308,13 @@ export function OnderBalk() {
         <NavLink
           key={tab.pad}
           to={tab.pad}
-          style={({ isActive }) => ({
+          style={({ isActive }) => {
+            const actief = isActive || (inKeuken && tab.pad === '/profiel')
+            return {
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
             padding: '4px 14px', textDecoration: 'none',
-            color: isActive ? 'var(--color-action)' : 'var(--c-ink-300)',
-          })}
+            color: actief ? 'var(--color-action)' : 'var(--c-ink-300)',
+          }}}
         >
           <span style={{ position: 'relative', display: 'flex' }}>
             <Icon name={tab.icoon} size={22} />

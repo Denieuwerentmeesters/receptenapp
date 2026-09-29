@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Inhoud, Kop, Label, Scherm, Titel } from '../components/Layout'
+import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useGeschiedenis } from '../lib/queries2'
 import { weekLabel, weekStart } from '../lib/week'
@@ -14,8 +14,11 @@ export function Geschiedenis() {
     <Scherm>
       <Grens query={geschiedenis} ladenTekst="Geschiedenis ophalen">
         <Kop kleur="var(--c-gold)" tekstKleur="var(--c-ink)" style={{ paddingBottom: 22 }}>
-          <Label kleur="var(--c-green)">Wat je kookte</Label>
-          <div style={{ marginTop: 12 }}><Titel grootte={26}>Geschiedenis</Titel></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <TerugKnop />
+            <Label kleur="var(--c-green)">Wat je kookte</Label>
+          </div>
+          <div style={{ marginTop: 14 }}><Titel grootte={26}>Geschiedenis</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
             Tik een gerecht aan om het opnieuw te bekijken.
           </p>
@@ -78,6 +81,8 @@ export function Geschiedenis() {
           </Inhoud>
         )}
       </Grens>
+
+      <OnderBalk />
     </Scherm>
   )
 }
