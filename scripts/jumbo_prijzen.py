@@ -66,7 +66,7 @@ def haal_prijs(sku: str) -> float | None:
 
 def skus_uit_mapping() -> list[str]:
     mapping = json.loads(MAPPING.read_text(encoding="utf-8"))
-    return sorted({s for m in mapping for s in (m["standaard"], m["bio"]) if s})
+    return sorted({s for m in mapping for s in (m["standaard"], m["bio"], m.get("huismerk")) if s})
 
 
 def sql_tekst(waarde: str) -> str:

@@ -68,6 +68,7 @@ export interface Voorkeuren {
   vega_minimum: number
   max_bereidingstijd: number | null
   biologisch_voorkeur: boolean
+  huismerk_voorkeur: boolean
   voorkeurswinkel: 'ah' | 'jumbo'
   aantal_personen: number
   pushbericht_aan: boolean
@@ -111,6 +112,8 @@ export interface AhProduct {
   weergavenaam: string | null
   standaard_product_id: number | null
   bio_product_id: number | null
+  /** Alleen gevuld als de standaard een A-merk is en er een huismerk-alternatief is. */
+  huismerk_product_id: number | null
   laatst_geverifieerd: string
 }
 
@@ -120,6 +123,8 @@ export interface JumboProduct {
   weergavenaam: string | null
   standaard_sku: string | null
   bio_sku: string | null
+  /** Alleen gevuld als de standaard een A-merk is en er een huismerk-alternatief is. */
+  huismerk_sku: string | null
   laatst_geverifieerd: string
 }
 

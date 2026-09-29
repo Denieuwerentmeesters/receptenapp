@@ -95,6 +95,31 @@ CORRECTIES = {
     "gember": ("485371BAK", "Jumbo Biologische Verse Gember"),
 }
 
+# Huismerk-alternatief voor wie in Instellingen "Huismerk als het kan" aanzet.
+# Alleen waar de standaard een A-merk is. Met de hand gekozen (29-09-2026):
+# de regels van past() zijn voor het kale ingrediënt geschreven en keuren een
+# huismerk met "Gedroogde" of "in Azijn" in de naam af. Bij twijfel geen.
+HUISMERK = {
+    "doperwtje": ("656961POT", "Jumbo Doperwten 350 g"),
+    "gerookt ontbijtspek": ("713927TRA", "Jumbo Gerookte Ontbijtspek Plakjes 150 g"),
+    "groentebouillon": ("628616STK", "Jumbo groentebouillon blokjes 3 x 8 stuks"),
+    "kappertje": ("168900POT", "Jumbo Kappertjes in Azijn 100 g"),
+    "ketchup": ("222818FLS", "Jumbo Tomatenketchup 500ML"),
+    "kipdrumsticks": ("596715KGR", "Jumbo Kip Drumsticks ca. 1 Kg"),
+    "laurier": ("721522BUS", "Jumbo Laurierblad 10 g"),
+    "linguine": ("717470ZK", "Jumbo's Pasta Linguine 500 g"),
+    "oestersaus": ("195727STK", "Jumbo Oester Saus 175 ml"),
+    "paprikapoeder": ("719327BUS", "Jumbo Milde Paprika 39 g"),
+    "rode linzen": ("711097ZK", "Jumbo Gedroogde Rode Linzen 500 g"),
+    "sesamzaad": ("384698CUP", "Jumbo Sesamzaad 100 g"),
+    "spliterwten": ("711086ZK", "Jumbo Gedroogde Spliterwten 500 g"),
+    "sriracha mayo": ("751015FLS", "Jumbo's Sriracha Smaak Mayonaise 250 ml"),
+    "stevige tofu": ("680366STK", "Jumbo Tofu Naturel 375g"),
+    "volkorenbrood": ("300146STK", "Jumbo - Fijn Volkoren"),
+    "wokolie": ("548994FLS", "Jumbo Wok Olie 500ML"),
+    "zilveruitje": ("221079POT", "Jumbo Zilver Uitjes Zuur 320 g"),
+}
+
 
 def normaliseer(tekst: str) -> list[str]:
     # Accenten eraf, zoals ingredient_key dat ook doet (crème fraîche → creme fraiche).
@@ -212,6 +237,8 @@ def kies(sleutel: str, producten: list[tuple[str, str]], ah_naam: str = "") -> d
         "standaard": standaard[0],
         "bio": biologisch[0] if biologisch else None,
         "bio_naam": biologisch[1] if biologisch else None,
+        "huismerk": HUISMERK[sleutel][0] if sleutel in HUISMERK else None,
+        "huismerk_naam": HUISMERK[sleutel][1] if sleutel in HUISMERK else None,
     }
 
 
@@ -228,7 +255,8 @@ def schrijf_migratie() -> Path:
     stempel = time.strftime("%Y%m%d%H%M%S")
     pad = MIGRATIES / f"{stempel}_jumbo_mapping.sql"
     rijen = ",\n".join(
-        f"  ({sql_tekst(m['key'])}, {sql_tekst(m['naam'])}, {sql_tekst(m['standaard'])}, {sql_tekst(m['bio'])})"
+        f"  ({sql_tekst(m['key'])}, {sql_tekst(m['naam'])}, {sql_tekst(m['standaard'])}, "
+        f"{sql_tekst(m['bio'])}, {sql_tekst(m.get('huismerk'))})"
         for m in mapping
     )
     pad.write_text(
@@ -237,12 +265,13 @@ def schrijf_migratie() -> Path:
         "-- Ingrediënt → Jumbo-SKU, opgezocht op jumbo.com. Twijfelgevallen zijn\n"
         "-- weggelaten: dan toont de app een zoeklink, en dat is beter dan een fout\n"
         "-- artikel in je mandje.\n\n"
-        "insert into jumbo_product_cache (ingredient_key, weergavenaam, standaard_sku, bio_sku)\n"
+        "insert into jumbo_product_cache (ingredient_key, weergavenaam, standaard_sku, bio_sku, huismerk_sku)\n"
         f"values\n{rijen}\n"
         "on conflict (ingredient_key) do update set\n"
         "  weergavenaam = excluded.weergavenaam,\n"
         "  standaard_sku = excluded.standaard_sku,\n"
         "  bio_sku = excluded.bio_sku,\n"
+        "  huismerk_sku = excluded.huismerk_sku,\n"
         "  laatst_geverifieerd = now();\n",
         encoding="utf-8",
     )

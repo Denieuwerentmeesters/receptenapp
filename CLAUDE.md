@@ -95,6 +95,14 @@ volgende lijst 'm kent. In de Capacitor-app kan dat via native HTTP
 Zolang dat er niet is, moet elk nieuw recept handmatig gemapt worden of blijft
 het bij zoeklinks.
 
+**Huismerk-voorkeur** (`gebruiker_voorkeuren.huismerk_voorkeur`): naast bio heeft
+een mapping-regel een optionele huismerkvariant (`huismerk_product_id`,
+`huismerk_sku`). Die staat alleen ingevuld waar de standaard een A-merk is en
+er een huismerk bestaat dat hetzelfde product is; de meeste standaardkeuzes
+zíjn al huismerk. `kiesVariant` in `src/lib/ah.ts` kiest: bio gaat voor
+huismerk, en ontbreekt de gewenste variant dan de standaard. Bij Jumbo staan
+de handmatige keuzes in `HUISMERK` in `scripts/jumbo_mapping.py`.
+
 ## Jumbo-koppeling
 
 Kies je in Instellingen voor Jumbo (`gebruiker_voorkeuren.voorkeurswinkel`),

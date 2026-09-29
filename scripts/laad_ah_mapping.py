@@ -24,12 +24,13 @@ BRON = Path(__file__).resolve().parent.parent / "data" / "ah_mapping.json"
 
 INVOEGEN = """
 insert into ah_product_cache
-  (ingredient_key, weergavenaam, standaard_product_id, bio_product_id, laatst_geverifieerd)
-values (%s, %s, %s, %s, now())
+  (ingredient_key, weergavenaam, standaard_product_id, bio_product_id, huismerk_product_id, laatst_geverifieerd)
+values (%s, %s, %s, %s, %s, now())
 on conflict (ingredient_key) do update set
   weergavenaam = excluded.weergavenaam,
   standaard_product_id = excluded.standaard_product_id,
   bio_product_id = excluded.bio_product_id,
+  huismerk_product_id = excluded.huismerk_product_id,
   laatst_geverifieerd = now()
 """
 
@@ -42,7 +43,7 @@ def main() -> None:
         sys.exit("Zet DATABASE_URL in je omgeving voordat je dit script draait.")
 
     mapping = json.loads(BRON.read_text(encoding="utf-8"))
-    rijen = [(m["key"], m["naam"], m["standaard"], m["bio"]) for m in mapping]
+    rijen = [(m["key"], m["naam"], m["standaard"], m["bio"], m.get("huismerk")) for m in mapping]
 
     with psycopg.connect(verbinding_url) as verbinding:
         with verbinding.cursor() as cursor:

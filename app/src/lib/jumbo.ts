@@ -1,4 +1,4 @@
-import { zoekProduct, type MandjeResultaat } from './ah'
+import { kiesVariant, zoekProduct, type MandjeResultaat, type Productvoorkeur } from './ah'
 import type { BoodschapItem, JumboProduct } from './database.types'
 
 const MANDJE = 'https://www.jumbo.com/mandje/'
@@ -19,7 +19,7 @@ const ZOEKEN = 'https://www.jumbo.com/producten/'
 export function bouwJumboLink(
   items: BoodschapItem[],
   mapping: Record<string, JumboProduct>,
-  biologisch: boolean,
+  voorkeur: Productvoorkeur,
 ): MandjeResultaat {
   const gemapt: BoodschapItem[] = []
   const ongemapt: BoodschapItem[] = []
@@ -27,10 +27,7 @@ export function bouwJumboLink(
 
   for (const item of items) {
     const product = zoekProduct(item, mapping)
-    // Zelfde terugval als bij AH: geen bio-variant, dan de standaardversie.
-    const sku = biologisch
-      ? product?.bio_sku ?? product?.standaard_sku
-      : product?.standaard_sku
+    const sku = product && jumboSku(product, voorkeur)
 
     if (!sku) {
       ongemapt.push(item)
@@ -42,6 +39,13 @@ export function bouwJumboLink(
 
   const add = [...aantallen].map(([sku, quantity]) => ({ sku, quantity }))
   return { gemapt, ongemapt, url: `${MANDJE}?add=${encodeURIComponent(JSON.stringify(add))}` }
+}
+
+/** De SKU die bij je voorkeur past; zelfde terugval als bij AH (kiesVariant). */
+export function jumboSku(product: JumboProduct, voorkeur: Productvoorkeur): string | null {
+  return kiesVariant({
+    standaard: product.standaard_sku, bio: product.bio_sku, huismerk: product.huismerk_sku,
+  }, voorkeur)
 }
 
 /** Terugval voor een ingrediënt zonder SKU: de zoekpagina van jumbo.com. */
