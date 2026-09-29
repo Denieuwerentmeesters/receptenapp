@@ -1350,6 +1350,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "gerookte zalmsnipper",
+  "naam": "Jumbo Zalmsnippers Houtgerookt 150 g",
+  "standaard": "681086STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "geroosterde paprika",
   "naam": "Royal Mediterranean Geroosterde Rode Paprika 465 g",
   "standaard": "567408POT",
@@ -2271,6 +2280,24 @@
   "key": "kroepoek",
   "naam": "Jumbo Kroepoek Naturel 66 g",
   "standaard": "220631ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "krop sla",
+  "naam": "Jumbo Kropsla",
+  "standaard": "302247STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "kropsla",
+  "naam": "Jumbo Kropsla",
+  "standaard": "302247STK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -3861,6 +3888,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "sla",
+  "naam": "Jumbo Kropsla",
+  "standaard": "302247STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "slagroom",
   "naam": "Jumbo Slagroom 250 g",
   "standaard": "145462BUS",
@@ -4908,6 +4944,15 @@
   "key": "zalmsalade",
   "naam": "Jumbo Zalmsalade 140 g",
   "standaard": "710147CUP",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zalmsnipper",
+  "naam": "Jumbo Zalmsnippers Houtgerookt 150 g",
+  "standaard": "681086STK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
