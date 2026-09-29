@@ -756,6 +756,12 @@
   "bio": null
  },
  {
+  "key": "friet",
+  "naam": "ah extra krokante friet",
+  "standaard": 580674,
+  "bio": null
+ },
+ {
   "key": "fusilli",
   "naam": "ah fusilli volkoren",
   "standaard": 468009,
@@ -3286,6 +3292,12 @@
   "naam": "ah sour cream",
   "standaard": 3869,
   "bio": null
+ },
+ {
+  "key": "zuurkool",
+  "naam": "ah biologisch zuurkool naturel",
+  "standaard": 51774,
+  "bio": 51774
  },
  {
   "key": "zwarte bonen",
