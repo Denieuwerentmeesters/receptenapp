@@ -61,8 +61,11 @@ export function useOntdek(filters: OntdekFilters) {
       laatste.length < PER_PAGINA ? undefined : allePaginas.length,
     queryFn: async ({ pageParam }) => {
       const van = (pageParam as number) * PER_PAGINA
+      // Gemengde, vaste volgorde met gemiddeld meer vega bovenaan; zie migratie
+      // 20260929000000_ontdek_volgorde.sql. `id` als tiebreaker voor stabiele pagina's.
       const { data, error } = await metFilters(db.from('recepten').select('*'), filters)
-        .order('titel')
+        .order('ontdek_volgorde')
+        .order('id')
         .range(van, van + PER_PAGINA - 1)
       if (error) throw error
       return data as Recept[]
