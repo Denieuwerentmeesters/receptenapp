@@ -46,6 +46,10 @@ export function zoekProduct<P>(
   const direct = mapping[item.ingredient_key] ?? mapping[ingredientKey(item.naam)]
   if (direct) return direct
 
+  for (const vorm of enkelvoudVormen(ingredientKey(item.naam))) {
+    if (mapping[vorm]) return mapping[vorm]
+  }
+
   const woorden = ingredientKey(item.naam).split(' ').filter(Boolean)
   if (woorden.length < 2) return undefined
 
@@ -64,6 +68,34 @@ export function zoekProduct<P>(
     }
   }
   return beste
+}
+
+/**
+ * Mogelijke enkelvouden van het laatste woord: "preien" → "prei",
+ * "kipfilets" → "kipfilet", "tomaten" → "tomaat", "pitten" → "pit".
+ *
+ * Dit hoort bewust niet in ingredientKey: die sleutel moet op drie plekken
+ * identiek blijven (SQL, app, script), en wat meervoud is valt zonder
+ * woordenboek niet te zeggen ("kruiden", "linzen"). Hier is een verkeerde
+ * kandidaat onschuldig: hij telt alleen als hij exact een mappingsleutel is.
+ */
+export function enkelvoudVormen(key: string): string[] {
+  const woorden = key.split(' ')
+  const laatste = woorden.pop() ?? ''
+  const voor = woorden.length ? woorden.join(' ') + ' ' : ''
+  const vormen: string[] = []
+
+  if (laatste.length >= 4 && laatste.endsWith('s')) vormen.push(laatste.slice(0, -1))
+  if (laatste.length >= 4 && laatste.endsWith('en')) {
+    const stam = laatste.slice(0, -2)
+    vormen.push(stam)
+    // Verdubbelde medeklinker terug: pitten → pit, flessen → fles.
+    if (/([^aeiou])\1$/.test(stam)) vormen.push(stam.slice(0, -1))
+    // Open lettergreep weer sluiten: tomaten → tomaat, bonen → boon.
+    const kort = stam.match(/^(.*[^aeiou])([aeou])([^aeiou])$/)
+    if (kort) vormen.push(kort[1] + kort[2] + kort[2] + kort[3])
+  }
+  return vormen.map((v) => voor + v)
 }
 
 export function bouwMandjeLink(
