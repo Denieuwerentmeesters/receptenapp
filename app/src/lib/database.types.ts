@@ -150,3 +150,17 @@ export interface Database {
     CompositeTypes: Record<string, never>
   }
 }
+
+/** Eén bevestigde bestelling, voor "Bespaard!". Bedragen zijn vastgelegd op het moment zelf. */
+export interface Bestelling {
+  id: string
+  user_id: string
+  week_start_datum: string
+  besteld_op: string
+  winkel: 'ah' | 'jumbo'
+  personen: number
+  recept_ids: string[]
+  maaltijden: number
+  mandje_kosten: number
+  maaltijdbox_kosten: number
+}

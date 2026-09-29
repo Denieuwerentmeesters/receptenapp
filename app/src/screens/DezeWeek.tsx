@@ -4,6 +4,7 @@ import { Chip, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
+import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
 import { useDezeWeek, useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
 import { weekLabel, weekStart } from '../lib/week'
@@ -59,6 +60,7 @@ export function DezeWeek() {
 
   return (
     <Scherm>
+      <BespaardMelding />
       <Grens query={dezeWeek} ladenTekst="Je week ophalen">
         {/* Compact: de recepten zijn waar het om gaat, niet de kop. */}
         <Kop kleur="var(--c-red-bright)" style={{ paddingBottom: 14 }}>

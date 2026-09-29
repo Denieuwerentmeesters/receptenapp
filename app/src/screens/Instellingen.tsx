@@ -1,4 +1,4 @@
-import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
+import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens } from '../components/Staten'
 import { useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import type { Voorkeuren } from '../lib/database.types'
@@ -18,8 +18,11 @@ export function Instellingen() {
           return (
             <>
               <Kop kleur="var(--c-green)" style={{ padding: 'calc(env(safe-area-inset-top) + 20px) 22px 22px' }}>
-                <Label>Jouw voorkeuren</Label>
-                <div style={{ marginTop: 12 }}><Titel grootte={26}>Instellingen</Titel></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <TerugKnop />
+                  <Label>Jouw voorkeuren</Label>
+                </div>
+                <div style={{ marginTop: 14 }}><Titel grootte={26}>Instellingen</Titel></div>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
                   Wijzigingen gelden vanaf je volgende weekmenu.
                 </p>
