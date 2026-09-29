@@ -756,6 +756,12 @@
   "bio": null
  },
  {
+  "key": "friet",
+  "naam": "ah extra krokante friet",
+  "standaard": 580674,
+  "bio": null
+ },
+ {
   "key": "fusilli",
   "naam": "ah fusilli volkoren",
   "standaard": 468009,
@@ -1164,6 +1170,12 @@
   "bio": null
  },
  {
+  "key": "italiaanse saucijzen",
+  "naam": "ah chipolata worstjes 8 stuks",
+  "standaard": 187586,
+  "bio": null
+ },
+ {
   "key": "jalapeno",
   "naam": "ah jalapenos",
   "standaard": 140616,
@@ -1408,6 +1420,12 @@
   "naam": "ah scharrel kipdijfilet",
   "standaard": 531848,
   "bio": 600464
+ },
+ {
+  "key": "klapstuk",
+  "naam": "ah greenfields magere runderlappen",
+  "standaard": 4002,
+  "bio": null
  },
  {
   "key": "knoflook",
@@ -2976,6 +2994,18 @@
   "bio": 127726
  },
  {
+  "key": "vega rookworst",
+  "naam": "unox rookworst vegetarisch",
+  "standaard": 445001,
+  "bio": null
+ },
+ {
+  "key": "vega spekjes",
+  "naam": "ah terra plantaardige spekjes",
+  "standaard": 519526,
+  "bio": null
+ },
+ {
   "key": "vegagehakt",
   "naam": "ah terra plantaardige rulgehakt",
   "standaard": 620842,
@@ -3286,6 +3316,12 @@
   "naam": "ah sour cream",
   "standaard": 3869,
   "bio": null
+ },
+ {
+  "key": "zuurkool",
+  "naam": "ah biologisch zuurkool naturel",
+  "standaard": 51774,
+  "bio": 51774
  },
  {
   "key": "zwarte bonen",
