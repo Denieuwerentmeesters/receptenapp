@@ -9,9 +9,13 @@ import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useVoorraad 
 import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
 import type { Bestelling } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isDroogKruid } from '../lib/kruiden'
+import { inVoorraad } from '../lib/voorraad'
+import {
+  bewaarGehaktKeuzes, isGehakt, leesGehaktKeuzes, metGehaktKeuze, type GehaktKeuze,
+} from '../lib/gehakt'
 import { openBijWinkel } from '../lib/ah'
 import { useWinkel } from '../lib/winkel'
-import { groepeerOpSchap, voegSamen } from '../lib/lijst'
+import { groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
 import { weekStart } from '../lib/week'
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
@@ -60,15 +64,30 @@ export function Boodschappen() {
   // Staan droge kruiden in je voorraadkast, dan blijven kruiden op de lijst
   // maar gaan ze niet mee naar het mandje.
   const kruidenThuis = (voorraad.data ?? []).some((v) => v.ingredient_key === DROGE_KRUIDEN_KEY && v.in_huis)
-  const blijftThuis = (key: string) => kruidenThuis && isDroogKruid(key)
+  // Wat je ná het op de lijst zetten op "in huis" zette, staat er nog wel,
+  // maar hoort niet in het mandje.
+  const inHuis = useMemo(() => new Set((voorraad.data ?? [])
+    .filter((v) => v.in_huis && v.ingredient_key !== DROGE_KRUIDEN_KEY)
+    .map((v) => v.ingredient_key)), [voorraad.data])
+  const blijftThuis = (key: string) => (kruidenThuis && isDroogKruid(key)) || inVoorraad(key, inHuis)
   const naarWinkel = open.filter((r) => !blijftThuis(r.key))
-  const kruidenOpen = open.length - naarWinkel.length
+  const thuisOpen = open.length - naarWinkel.length
   const groepen = useMemo(() => groepeerOpSchap(regels), [regels])
+
+  const [gehaktKeuzes, setGehaktKeuzes] = useState(leesGehaktKeuzes)
+  const gehaktKeuze = (key: string): GehaktKeuze => gehaktKeuzes[key] ?? 'vega'
+  const kiesGehakt = (key: string, keuze: GehaktKeuze) => {
+    const nieuw = { ...gehaktKeuzes, [key]: keuze }
+    setGehaktKeuzes(nieuw)
+    bewaarGehaktKeuzes(nieuw)
+  }
+  /** De rij zoals hij naar de winkel gaat — met vegagehakt waar je dat koos. */
+  const voorWinkel = (regel: LijstRegel) => metGehaktKeuze(regel.voorbeeld, gehaktKeuze(regel.key))
 
   async function naarMandje() {
     setMandjeFout(null)
     setMelding(null)
-    const { url, gemapt, ongemapt } = winkel.mandjeLink(naarWinkel.map((r) => r.voorbeeld))
+    const { url, gemapt, ongemapt } = winkel.mandjeLink(naarWinkel.map(voorWinkel))
     if (gemapt.length === 0) {
       setMelding(
         `Geen van deze producten heeft nog een ${winkel.kort}-productnummer. ` +
@@ -191,15 +210,31 @@ export function Boodschappen() {
                       >
                         {regel.label}
                       </Checkbox>
+                      {isGehakt(regel.key) && !regel.afgevinkt && (
+                        <select
+                          value={gehaktKeuze(regel.key)}
+                          onChange={(e) => kiesGehakt(regel.key, e.target.value as GehaktKeuze)}
+                          aria-label={`Welk gehakt voor ${regel.naam}`}
+                          style={{
+                            display: 'block', marginTop: 6, marginLeft: 36, maxWidth: 'calc(100% - 36px)',
+                            fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
+                            color: 'var(--c-green)', background: 'var(--c-paper)',
+                            border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 10, padding: '6px 10px',
+                          }}
+                        >
+                          <option value="vega">Vegagehakt</option>
+                          <option value="recept">{regel.naam.charAt(0).toUpperCase() + regel.naam.slice(1)}</option>
+                        </select>
+                      )}
                     </div>
                     {blijftThuis(regel.key) ? (
                       <span style={{
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(20,20,20,0.5)',
                       }}>thuis</span>
-                    ) : !winkel.heeftProduct(regel.voorbeeld) && (
+                    ) : !winkel.heeftProduct(voorWinkel(regel)) && (
                       <a
-                        href={winkel.zoekLink(regel.naam)}
-                        onClick={(e) => { e.preventDefault(); void openBijWinkel(winkel.zoekLink(regel.naam)) }}
+                        href={winkel.zoekLink(voorWinkel(regel).naam)}
+                        onClick={(e) => { e.preventDefault(); void openBijWinkel(winkel.zoekLink(voorWinkel(regel).naam)) }}
                         style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
                       >zoek</a>
                     )}
@@ -281,8 +316,8 @@ export function Boodschappen() {
             }}>
               {naarWinkel.length === 0
                 ? 'Je lijst wordt leeggemaakt. Je recepten blijven in Deze week staan.'
-                : kruidenOpen > 0
-                  ? 'Afgevinkte producten en kruiden laten we uit je mandje. Check wel even je kruidenrek.'
+                : thuisOpen > 0
+                  ? 'Afgevinkte producten en wat je in huis hebt laten we uit je mandje. Check wel even je kruidenrek.'
                   : 'Afgevinkte producten laten we uit je mandje.'}
             </p>
           </Voet>
