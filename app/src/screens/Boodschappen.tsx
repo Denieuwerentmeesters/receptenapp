@@ -15,7 +15,7 @@ import {
 } from '../lib/vega'
 import { openBijWinkel } from '../lib/ah'
 import { tokoProduct } from '../lib/toko'
-import { useWinkel } from '../lib/winkel'
+import { productvoorkeur, useWinkel } from '../lib/winkel'
 import { groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
 import { weekStart } from '../lib/week'
 
@@ -120,7 +120,7 @@ export function Boodschappen() {
         recepten,
         kosten: mandjeKosten(
           naarWinkel, jumboMapping.data ?? {}, jumboPrijzen.data ?? {},
-          voorkeuren.data?.biologisch_voorkeur ?? false,
+          productvoorkeur(voorkeuren.data),
         ).totaal,
       })
     } catch {

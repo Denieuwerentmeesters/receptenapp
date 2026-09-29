@@ -14,6 +14,27 @@ export interface MandjeResultaat {
   url: string
 }
 
+/** Welke variant je wilt als een product er meerdere heeft (Instellingen → Boodschappen). */
+export interface Productvoorkeur {
+  biologisch: boolean
+  huismerk: boolean
+}
+
+/**
+ * Kiest uit standaard, bio en huismerk. Bio gaat voor huismerk: wie beide
+ * aanzet wil vooral biologisch, en de bio-variant is meestal zelf al huismerk.
+ * Ontbreekt de gewenste variant, dan de standaard — beter een ander merk op
+ * de lijst dan een ontbrekend artikel (plan §4.3).
+ */
+export function kiesVariant<T>(
+  varianten: { standaard: T | null | undefined; bio: T | null | undefined; huismerk: T | null | undefined },
+  voorkeur: Productvoorkeur,
+): T | null {
+  if (voorkeur.biologisch && varianten.bio) return varianten.bio
+  if (voorkeur.huismerk && varianten.huismerk) return varianten.huismerk
+  return varianten.standaard ?? null
+}
+
 /**
  * Bouwt de add-multiple-link uit de openstaande boodschappen.
  *
@@ -101,7 +122,7 @@ export function enkelvoudVormen(key: string): string[] {
 export function bouwMandjeLink(
   items: BoodschapItem[],
   mapping: Record<string, AhProduct>,
-  biologisch: boolean,
+  voorkeur: Productvoorkeur,
 ): MandjeResultaat {
   const gemapt: BoodschapItem[] = []
   const ongemapt: BoodschapItem[] = []
@@ -109,11 +130,11 @@ export function bouwMandjeLink(
 
   for (const item of items) {
     const product = zoekProduct(item, mapping)
-    // Bio-voorkeur aan maar geen bio-variant? Terugvallen op standaard —
-    // beter een niet-biologisch artikel op de lijst dan een ontbrekend (plan §4.3).
-    const productId = biologisch
-      ? product?.bio_product_id ?? product?.standaard_product_id
-      : product?.standaard_product_id
+    const productId = product && kiesVariant({
+      standaard: product.standaard_product_id,
+      bio: product.bio_product_id,
+      huismerk: product.huismerk_product_id,
+    }, voorkeur)
 
     if (!productId) {
       ongemapt.push(item)

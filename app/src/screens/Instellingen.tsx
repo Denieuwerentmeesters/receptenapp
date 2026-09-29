@@ -64,6 +64,12 @@ export function Instellingen() {
                       onWijzig={() => zet({ biologisch_voorkeur: !v.biologisch_voorkeur })}
                     />
                   </Rij>
+                  <Rij label="Huismerk als het kan" sub="Anders het merk dat we standaard kiezen">
+                    <Schakelaar
+                      aan={v.huismerk_voorkeur}
+                      onWijzig={() => zet({ huismerk_voorkeur: !v.huismerk_voorkeur })}
+                    />
+                  </Rij>
                 </Sectie>
 
                 <Sectie naam="Meldingen">

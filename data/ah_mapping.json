@@ -447,7 +447,8 @@
   "key": "cayennepeper",
   "naam": "verstegen cayennepeper",
   "standaard": 216612,
-  "bio": null
+  "bio": null,
+  "huismerk": 570444
  },
  {
   "key": "champignon",
@@ -567,7 +568,8 @@
   "key": "cornflake",
   "naam": "kellogg s cornflakes",
   "standaard": 162826,
-  "bio": 437373
+  "bio": 437373,
+  "huismerk": 471004
  },
  {
   "key": "cornichons",
@@ -927,7 +929,8 @@
   "key": "gerookte spekreepje",
   "naam": "meester en zn gerookte spekreepjes",
   "standaard": 221032,
-  "bio": 130257
+  "bio": 130257,
+  "huismerk": 130250
  },
  {
   "key": "gerookte zalm",
@@ -975,7 +978,8 @@
   "key": "gnocchi",
   "naam": "grand italia gnocchi di patate",
   "standaard": 386442,
-  "bio": null
+  "bio": null,
+  "huismerk": 210482
  },
  {
   "key": "gochujang",
@@ -1275,7 +1279,8 @@
   "key": "kaneel",
   "naam": "verstegen kaneel gemalen",
   "standaard": 216632,
-  "bio": null
+  "bio": null,
+  "huismerk": 197971
  },
  {
   "key": "kaneelpoeder",
@@ -1359,7 +1364,8 @@
   "key": "ketchup",
   "naam": "heinz tomato ketchup",
   "standaard": 465768,
-  "bio": null
+  "bio": null,
+  "huismerk": 403602
  },
  {
   "key": "ketjap",
@@ -1599,7 +1605,8 @@
   "key": "kroepoek",
   "naam": "itsu thai sweet chili kroepoek",
   "standaard": 606845,
-  "bio": null
+  "bio": null,
+  "huismerk": 490540
  },
  {
   "key": "kruidenboter",
@@ -1977,7 +1984,8 @@
   "key": "ontbijtkoek",
   "naam": "peijnenburg ontbijtkoek naturel gesneden",
   "standaard": 563725,
-  "bio": null
+  "bio": null,
+  "huismerk": 217848
  },
  {
   "key": "ontbijtspek",
@@ -2073,7 +2081,8 @@
   "key": "paprikapoeder",
   "naam": "verstegen paprikapoeder mild",
   "standaard": 216677,
-  "bio": null
+  "bio": null,
+  "huismerk": 197977
  },
  {
   "key": "parmaham",
@@ -2247,7 +2256,8 @@
   "key": "platte rijstnoedel",
   "naam": "conimex rijstnoedels 5mm",
   "standaard": 376579,
-  "bio": null
+  "bio": null,
+  "huismerk": 627342
  },
  {
   "key": "poedersuiker",
@@ -2385,7 +2395,8 @@
   "key": "rijstnoedel",
   "naam": "conimex rijstnoedels 5mm",
   "standaard": 376579,
-  "bio": null
+  "bio": null,
+  "huismerk": 627342
  },
  {
   "key": "rijstpapiervellen",
@@ -3243,7 +3254,8 @@
   "key": "volle yoghurt",
   "naam": "de zaanse hoeve volle yoghurt",
   "standaard": 118132,
-  "bio": 60746
+  "bio": 60746,
+  "huismerk": 33712
  },
  {
   "key": "walnoten",
@@ -3351,7 +3363,8 @@
   "key": "wokolie",
   "naam": "conimex wokolie",
   "standaard": 167783,
-  "bio": null
+  "bio": null,
+  "huismerk": 140639
  },
  {
   "key": "worcestersaus",
@@ -3501,7 +3514,8 @@
   "key": "zout",
   "naam": "drogheria molen roze himalaya zout",
   "standaard": 164641,
-  "bio": null
+  "bio": null,
+  "huismerk": 3372
  },
  {
   "key": "zure room",
@@ -3519,7 +3533,8 @@
   "key": "zwarte bonen",
   "naam": "hak zwarte bonen",
   "standaard": 374224,
-  "bio": 606104
+  "bio": 606104,
+  "huismerk": 188265
  },
  {
   "key": "zwarte olijven",

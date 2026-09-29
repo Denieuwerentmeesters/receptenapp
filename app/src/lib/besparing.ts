@@ -1,4 +1,5 @@
-import { zoekProduct } from './ah'
+import { zoekProduct, type Productvoorkeur } from './ah'
+import { jumboSku } from './jumbo'
 import { schatIngredient } from './prijsschatting'
 import type { JumboProduct } from './database.types'
 import type { LijstRegel } from './lijst'
@@ -62,7 +63,7 @@ export function mandjeKosten(
   regels: LijstRegel[],
   mapping: Record<string, JumboProduct>,
   prijzen: Record<string, number>,
-  biologisch: boolean,
+  voorkeur: Productvoorkeur,
 ): MandjeKosten {
   let totaal = 0
   let metPrijs = 0
@@ -73,7 +74,7 @@ export function mandjeKosten(
     if (uitRecept.length === 0) continue
 
     const product = zoekProduct(regel.voorbeeld, mapping)
-    const sku = biologisch ? product?.bio_sku ?? product?.standaard_sku : product?.standaard_sku
+    const sku = product && jumboSku(product, voorkeur)
     const prijs = sku ? prijzen[sku] : undefined
     if (prijs !== undefined) {
       totaal += prijs
