@@ -5,6 +5,8 @@ import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../component
 import { Fout, Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useBoodschapMuteren, useBoodschappen, useDezeWeek } from '../lib/queries'
+import { useVoorraad } from '../lib/queries2'
+import { DROGE_KRUIDEN_KEY, isDroogKruid } from '../lib/kruiden'
 import { openBijWinkel } from '../lib/ah'
 import { useWinkel } from '../lib/winkel'
 import { groepeerOpSchap, voegSamen } from '../lib/lijst'
@@ -29,6 +31,7 @@ export function Boodschappen() {
   const boodschappen = useBoodschappen(week)
   const dezeWeek = useDezeWeek(week)
   const winkel = useWinkel()
+  const voorraad = useVoorraad()
   const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
 
   const [nieuw, setNieuw] = useState('')
@@ -42,12 +45,18 @@ export function Boodschappen() {
   const items = useMemo(() => boodschappen.data ?? [], [boodschappen.data])
   const regels = useMemo(() => voegSamen(items), [items])
   const open = regels.filter((r) => !r.afgevinkt)
+  // Staan droge kruiden in je voorraadkast, dan blijven kruiden op de lijst
+  // maar gaan ze niet mee naar het mandje.
+  const kruidenThuis = (voorraad.data ?? []).some((v) => v.ingredient_key === DROGE_KRUIDEN_KEY && v.in_huis)
+  const blijftThuis = (key: string) => kruidenThuis && isDroogKruid(key)
+  const naarWinkel = open.filter((r) => !blijftThuis(r.key))
+  const kruidenOpen = open.length - naarWinkel.length
   const groepen = useMemo(() => groepeerOpSchap(regels), [regels])
 
   async function naarMandje() {
     setMandjeFout(null)
     setMelding(null)
-    const { url, gemapt, ongemapt } = winkel.mandjeLink(open.map((r) => r.voorbeeld))
+    const { url, gemapt, ongemapt } = winkel.mandjeLink(naarWinkel.map((r) => r.voorbeeld))
     if (gemapt.length === 0) {
       setMelding(
         `Geen van deze producten heeft nog een ${winkel.kort}-productnummer. ` +
@@ -66,7 +75,7 @@ export function Boodschappen() {
       // bij Jumbo kan het in een ander mandje landen dan dat in je Jumbo-app.
       setDoorgestuurd({
         ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length,
-        nietMee: regels.filter((r) => !r.afgevinkt && !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
+        nietMee: naarWinkel.filter((r) => !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
       })
     } catch {
       setMandjeFout('Het mandje is niet aangekomen. Je lijst is bewaard — er is niets kwijt.')
@@ -157,7 +166,11 @@ export function Boodschappen() {
                         {regel.label}
                       </Checkbox>
                     </div>
-                    {!winkel.heeftProduct(regel.voorbeeld) && (
+                    {blijftThuis(regel.key) ? (
+                      <span style={{
+                        fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(20,20,20,0.5)',
+                      }}>thuis</span>
+                    ) : !winkel.heeftProduct(regel.voorbeeld) && (
                       <a
                         href={winkel.zoekLink(regel.naam)}
                         onClick={(e) => { e.preventDefault(); void openBijWinkel(winkel.zoekLink(regel.naam)) }}
@@ -223,8 +236,8 @@ export function Boodschappen() {
 
         {regels.length > 0 && (
           <Voet meeschuiven>
-            {open.length === 0 ? (
-              // Alles afgevinkt: je bent klaar in de winkel. Dan mag de lijst leeg.
+            {naarWinkel.length === 0 ? (
+              // Alles afgevinkt (of alleen kruiden over): je bent klaar. Dan mag de lijst leeg.
               <Button
                 tone="green"
                 onClick={() => opruimen.mutate(regels.flatMap((r) => r.ids))}
@@ -234,15 +247,17 @@ export function Boodschappen() {
               <Button
                 onClick={() => { void naarMandje() }}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-              >{`Naar ${winkel.kort}-mandje (${open.length})`}</Button>
+              >{`Naar ${winkel.kort}-mandje (${naarWinkel.length})`}</Button>
             )}
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, margin: '8px 0 0',
               textAlign: 'center', color: 'rgba(20,20,20,0.6)',
             }}>
-              {open.length === 0
+              {naarWinkel.length === 0
                 ? 'Je lijst wordt leeggemaakt. Je recepten blijven in Deze week staan.'
-                : 'Afgevinkte producten laten we uit je mandje.'}
+                : kruidenOpen > 0
+                  ? 'Afgevinkte producten en kruiden laten we uit je mandje. Check wel even je kruidenrek.'
+                  : 'Afgevinkte producten laten we uit je mandje.'}
             </p>
           </Voet>
         )}
