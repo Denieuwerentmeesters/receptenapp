@@ -114,6 +114,15 @@ export interface AhProduct {
   laatst_geverifieerd: string
 }
 
+/** SKU's zijn codes met een verpakkingsachtervoegsel ("641085STK"), geen getallen. */
+export interface JumboProduct {
+  ingredient_key: string
+  weergavenaam: string | null
+  standaard_sku: string | null
+  bio_sku: string | null
+  laatst_geverifieerd: string
+}
+
 type Tabel<Rij, Invoer = Partial<Rij>> = { Row: Rij; Insert: Invoer; Update: Partial<Rij> }
 
 export interface Database {
@@ -126,6 +135,7 @@ export interface Database {
       gebruiker_voorkeuren: Tabel<Voorkeuren>
       boodschappenlijst_item: Tabel<BoodschapItem>
       ah_product_cache: Tabel<AhProduct>
+      jumbo_product_cache: Tabel<JumboProduct>
       favoriet: Tabel<Favoriet>
       voorraad_item: Tabel<VoorraadRij>
     }

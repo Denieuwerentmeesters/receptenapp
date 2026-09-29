@@ -4,7 +4,7 @@ import { huidigeUserId } from './auth'
 import { altijdInHuis } from './altijdInHuis'
 import { ingredientKey, schaalIngredienten } from './schaal'
 import { weekStart } from './week'
-import type { AhProduct, BoodschapItem, Recept, Voorkeuren } from './database.types'
+import type { AhProduct, BoodschapItem, JumboProduct, Recept, Voorkeuren } from './database.types'
 
 export const sleutels = {
   voorkeuren: ['voorkeuren'] as const,
@@ -12,6 +12,7 @@ export const sleutels = {
   boodschappen: (week: string) => ['boodschappen', week] as const,
   recept: (id: string) => ['recept', id] as const,
   ahMapping: ['ah-mapping'] as const,
+  jumboMapping: ['jumbo-mapping'] as const,
 }
 
 const userId = huidigeUserId
@@ -475,15 +476,30 @@ export function useBoodschapMuteren(week = weekStart()) {
  * en een Map overleeft JSON.stringify niet — die komt terug als leeg object,
  * waarna `.has()` niet meer bestaat. Een gewoon object wél.
  */
-export function useAhMapping() {
+export function useAhMapping(aan = true) {
   return useQuery({
     queryKey: sleutels.ahMapping,
+    enabled: aan,
     // De mapping verandert hooguit als het script draait; een uur cache is ruim.
     staleTime: 60 * 60 * 1000,
     queryFn: async (): Promise<Record<string, AhProduct>> => {
       const { data, error } = await db.from('ah_product_cache').select('*')
       if (error) throw error
       return Object.fromEntries((data as AhProduct[]).map((p) => [p.ingredient_key, p]))
+    },
+  })
+}
+
+/** Zelfde vorm als de AH-mapping; alleen opgehaald als Jumbo je winkel is. */
+export function useJumboMapping(aan: boolean) {
+  return useQuery({
+    queryKey: sleutels.jumboMapping,
+    enabled: aan,
+    staleTime: 60 * 60 * 1000,
+    queryFn: async (): Promise<Record<string, JumboProduct>> => {
+      const { data, error } = await db.from('jumbo_product_cache').select('*')
+      if (error) throw error
+      return Object.fromEntries((data as JumboProduct[]).map((p) => [p.ingredient_key, p]))
     },
   })
 }

@@ -4,23 +4,22 @@ import { Button, Checkbox, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
 import { Fout, Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
-import {
-  useAhMapping, useBoodschapMuteren, useBoodschappen, useDezeWeek, useVoorkeuren,
-} from '../lib/queries'
-import { bouwMandjeLink, openBijAh, zoekLink, zoekProduct } from '../lib/ah'
+import { useBoodschapMuteren, useBoodschappen, useDezeWeek } from '../lib/queries'
+import { openBijWinkel } from '../lib/ah'
+import { useWinkel } from '../lib/winkel'
 import { groepeerOpSchap, voegSamen } from '../lib/lijst'
 import { weekStart } from '../lib/week'
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
 
-/** Wat er naar AH ging, zodat we na terugkomst kunnen vragen of het aankwam. */
+/** Wat er naar de winkel ging, zodat we na terugkomst kunnen vragen of het aankwam. */
 interface Doorgestuurd {
   /** Rijen die van de lijst mogen als het mandje klopt: doorgestuurd + al afgevinkt. */
   ids: string[]
   gemapt: number
   ongemapt: number
-  /** Wat niet mee kon naar AH: dat blijft op de lijst, en dat melden we. */
-  nietBijAh: string[]
+  /** Wat niet mee kon naar de winkel: dat blijft op de lijst, en dat melden we. */
+  nietMee: string[]
 }
 
 export function Boodschappen() {
@@ -29,8 +28,7 @@ export function Boodschappen() {
 
   const boodschappen = useBoodschappen(week)
   const dezeWeek = useDezeWeek(week)
-  const voorkeuren = useVoorkeuren()
-  const mapping = useAhMapping()
+  const winkel = useWinkel()
   const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
 
   const [nieuw, setNieuw] = useState('')
@@ -38,7 +36,7 @@ export function Boodschappen() {
   const [melding, setMelding] = useState<string | null>(null)
   const [doorgestuurd, setDoorgestuurd] = useState<Doorgestuurd | null>(null)
   const [wisVraag, setWisVraag] = useState(false)
-  const [nietBijAh, setNietBijAh] = useState<string[] | null>(null)
+  const [nietMee, setNietMee] = useState<string[] | null>(null)
 
   const receptenOpLijst = (dezeWeek.data ?? []).filter((r) => r.opLijst).length
   const items = useMemo(() => boodschappen.data ?? [], [boodschappen.data])
@@ -49,27 +47,26 @@ export function Boodschappen() {
   async function naarMandje() {
     setMandjeFout(null)
     setMelding(null)
-    const { url, gemapt, ongemapt } = bouwMandjeLink(
-      open.map((r) => r.voorbeeld), mapping.data ?? {}, voorkeuren.data?.biologisch_voorkeur ?? false,
-    )
+    const { url, gemapt, ongemapt } = winkel.mandjeLink(open.map((r) => r.voorbeeld))
     if (gemapt.length === 0) {
       setMelding(
-        'Geen van deze producten heeft nog een AH-productnummer. ' +
+        `Geen van deze producten heeft nog een ${winkel.kort}-productnummer. ` +
         'Gebruik de zoeklinks bij de producten.',
       )
       return
     }
     try {
-      await openBijAh(url)
+      await openBijWinkel(url)
       const gemapteIds = new Set(gemapt.map((i) => i.id))
       const weg = regels
         .filter((r) => r.afgevinkt || gemapteIds.has(r.voorbeeld.id))
         .flatMap((r) => r.ids)
       // Bewust eerst vragen: we kunnen niet controleren of het aankwam. AH
-      // voegt niets toe als je daar niet ingelogd bent, zonder foutmelding.
+      // voegt niets toe als je daar niet ingelogd bent, zonder foutmelding, en
+      // bij Jumbo kan het in een ander mandje landen dan dat in je Jumbo-app.
       setDoorgestuurd({
         ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length,
-        nietBijAh: regels.filter((r) => !r.afgevinkt && !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
+        nietMee: regels.filter((r) => !r.afgevinkt && !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
       })
     } catch {
       setMandjeFout('Het mandje is niet aangekomen. Je lijst is bewaard — er is niets kwijt.')
@@ -82,7 +79,7 @@ export function Boodschappen() {
         kop="Je mandje is niet aangekomen"
         tekst={mandjeFout}
         stappen={[
-          'Log eerst in bij Albert Heijn — uitgelogd voegt AH niets toe, zonder melding.',
+          `Log eerst in bij ${winkel.naam} — uitgelogd kan je mandje leeg blijven, zonder melding.`,
           'Probeer het daarna opnieuw.',
           'Lukt het niet? Vink de lijst zelf af in de winkel.',
         ]}
@@ -160,10 +157,10 @@ export function Boodschappen() {
                         {regel.label}
                       </Checkbox>
                     </div>
-                    {!zoekProduct(regel.voorbeeld, mapping.data ?? {}) && (
+                    {!winkel.heeftProduct(regel.voorbeeld) && (
                       <a
-                        href={zoekLink(regel.naam)}
-                        onClick={(e) => { e.preventDefault(); void openBijAh(zoekLink(regel.naam)) }}
+                        href={winkel.zoekLink(regel.naam)}
+                        onClick={(e) => { e.preventDefault(); void openBijWinkel(winkel.zoekLink(regel.naam)) }}
                         style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
                       >zoek</a>
                     )}
@@ -237,7 +234,7 @@ export function Boodschappen() {
               <Button
                 onClick={() => { void naarMandje() }}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-              >{`Naar AH-mandje (${open.length})`}</Button>
+              >{`Naar ${winkel.kort}-mandje (${open.length})`}</Button>
             )}
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, margin: '8px 0 0',
@@ -253,12 +250,12 @@ export function Boodschappen() {
 
       <Dialoog
         open={Boolean(doorgestuurd)}
-        kop="Staat alles in je AH-mandje?"
+        kop={`Staat alles in je ${winkel.kort}-mandje?`}
         tekst={doorgestuurd
-          ? `${doorgestuurd.gemapt} product${doorgestuurd.gemapt === 1 ? '' : 'en'} doorgestuurd naar Albert Heijn. ` +
+          ? `${doorgestuurd.gemapt} product${doorgestuurd.gemapt === 1 ? '' : 'en'} doorgestuurd naar ${winkel.naam}. ` +
             'Zie je ze in je mandje, dan halen we ze van je lijst.' +
             (doorgestuurd.ongemapt > 0
-              ? ` ${doorgestuurd.ongemapt} product${doorgestuurd.ongemapt === 1 ? '' : 'en'} konden we niet bij AH vinden — die blijven staan.`
+              ? ` ${doorgestuurd.ongemapt} product${doorgestuurd.ongemapt === 1 ? '' : 'en'} konden we niet bij ${winkel.kort} vinden — die blijven staan.`
               : '')
           : undefined}
         onSluit={() => setDoorgestuurd(null)}
@@ -269,7 +266,7 @@ export function Boodschappen() {
             onClick: () => {
               if (doorgestuurd) {
                 opruimen.mutate(doorgestuurd.ids)
-                if (doorgestuurd.nietBijAh.length > 0) setNietBijAh(doorgestuurd.nietBijAh)
+                if (doorgestuurd.nietMee.length > 0) setNietMee(doorgestuurd.nietMee)
               }
               setDoorgestuurd(null)
             },
@@ -278,9 +275,12 @@ export function Boodschappen() {
             label: 'Nee, mijn mandje is leeg',
             onClick: () => {
               setDoorgestuurd(null)
-              setMelding(
-                'Dan ben je bij AH waarschijnlijk niet ingelogd — dan voegt AH niets toe, zonder melding. ' +
-                'Log daar in en tik opnieuw op Naar AH-mandje. Je lijst is niet veranderd.',
+              setMelding(winkel.id === 'jumbo'
+                ? 'Kijk ook in Safari op jumbo.com: staat de Jumbo-app los van Safari, dan kan je mandje ' +
+                  'daar terechtgekomen zijn. Log in Safari in bij Jumbo en tik opnieuw op Naar Jumbo-mandje. ' +
+                  'Je lijst is niet veranderd.'
+                : 'Dan ben je bij AH waarschijnlijk niet ingelogd — dan voegt AH niets toe, zonder melding. ' +
+                  'Log daar in en tik opnieuw op Naar AH-mandje. Je lijst is niet veranderd.',
               )
             },
           },
@@ -288,14 +288,14 @@ export function Boodschappen() {
       />
 
       <Dialoog
-        open={Boolean(nietBijAh)}
+        open={Boolean(nietMee)}
         kop="Let op: dit moet je zelf nog kopen"
-        tekst={nietBijAh
-          ? `Deze producten zitten níét in je AH-mandje: ${nietBijAh.join(', ')}. ` +
-            "Ze blijven op je lijst. Koop ze los — bij AH via 'zoek', of in een andere winkel."
+        tekst={nietMee
+          ? `Deze producten zitten níét in je ${winkel.kort}-mandje: ${nietMee.join(', ')}. ` +
+            `Ze blijven op je lijst. Koop ze los — bij ${winkel.kort} via 'zoek', of in een andere winkel.`
           : undefined}
-        onSluit={() => setNietBijAh(null)}
-        acties={[{ label: 'Oké, ik koop ze zelf', hoofd: true, onClick: () => setNietBijAh(null) }]}
+        onSluit={() => setNietMee(null)}
+        acties={[{ label: 'Oké, ik koop ze zelf', hoofd: true, onClick: () => setNietMee(null) }]}
       />
 
       <Dialoog

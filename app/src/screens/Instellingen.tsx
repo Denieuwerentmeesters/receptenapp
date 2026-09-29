@@ -49,9 +49,11 @@ export function Instellingen() {
 
                 <Sectie naam="Boodschappen">
                   <Rij label="Winkel" sub="Waar je mandje heen gaat">
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'var(--c-red)' }}>
-                      Albert Heijn
-                    </span>
+                    <Keuze
+                      opties={[['ah', 'AH'], ['jumbo', 'Jumbo']]}
+                      waarde={v.voorkeurswinkel}
+                      onWijzig={(w) => zet({ voorkeurswinkel: w })}
+                    />
                   </Rij>
                   <Rij label="Biologisch waar mogelijk" sub="Anders de standaardversie">
                     <Schakelaar
@@ -147,6 +149,38 @@ function Schakelaar({ aan, onWijzig }: { aan: boolean; onWijzig: () => void }) {
     >
       <span style={{ width: 24, height: 24, borderRadius: 'var(--radius-full)', background: 'var(--c-paper)' }} />
     </button>
+  )
+}
+
+function Keuze<W extends string>({ opties, waarde, onWijzig }: {
+  opties: [W, string][]
+  waarde: W
+  onWijzig: (w: W) => void
+}) {
+  return (
+    <div role="radiogroup" style={{
+      display: 'flex', flex: 'none', padding: 3, gap: 2,
+      borderRadius: 'var(--radius-full)', background: 'rgba(20,20,20,0.08)',
+    }}>
+      {opties.map(([w, label]) => {
+        const gekozen = w === waarde
+        return (
+          <button
+            key={w}
+            role="radio"
+            aria-checked={gekozen}
+            onClick={() => { if (!gekozen) onWijzig(w) }}
+            style={{
+              border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', cursor: 'pointer',
+              fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700,
+              background: gekozen ? 'var(--c-red)' : 'transparent',
+              color: gekozen ? 'var(--c-cream)' : 'rgba(20,20,20,0.6)',
+              transition: 'background var(--motion-fast) var(--ease)',
+            }}
+          >{label}</button>
+        )
+      })}
+    </div>
   )
 }
 
