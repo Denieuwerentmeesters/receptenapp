@@ -53,6 +53,13 @@ def main() -> None:
             except Exception as fout:  # noqa: BLE001 — we willen de naam erbij zien
                 sys.exit(f"\n{bestand.name} mislukt:\n{fout}")
 
+        # De Neon Data API (PostgREST) cachet het schema en merkt nieuwe tabellen
+        # niet vanzelf op: de app krijgt dan PGRST205 ("Could not find the table
+        # ... in the schema cache"). Altijd verversen, ook als er niets nieuws
+        # draaide — het kost niets en zo herstelt een handmatige run het ook.
+        verbinding.execute("notify pgrst, 'reload schema'")
+        print("  schema-cache van de Data API ververst")
+
     print("\nKlaar.")
 
 
