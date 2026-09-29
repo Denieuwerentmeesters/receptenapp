@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
-import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
-import { useAanmeldingen, useGeschiedenis, useFavorieten, useIsAdmin, useVoorraad } from '../lib/queries2'
+import { Inhoud, Kop, OnderBalk, Scherm, Stat, Titel } from '../components/Layout'
+import { useAanmeldingen, useBestellingen, useGeschiedenis, useIsAdmin, useVoorraad } from '../lib/queries2'
+import { MAALTIJDBOX, euro, totaalBespaard } from '../lib/besparing'
 import { useVoorkeuren } from '../lib/queries'
 import { logUit } from '../lib/auth'
 
@@ -9,7 +10,7 @@ export function Profiel() {
   const navigeer = useNavigate()
   const voorkeuren = useVoorkeuren()
   const geschiedenis = useGeschiedenis()
-  const favorieten = useFavorieten()
+  const bestellingen = useBestellingen()
   const voorraad = useVoorraad()
   const isAdmin = useIsAdmin()
   const aanmeldingen = useAanmeldingen()
@@ -20,13 +21,22 @@ export function Profiel() {
   const vega = gekookt.filter((g) => g.recept.tags.includes('vegetarisch')).length
   const vegaPct = gekookt.length > 0 ? Math.round((vega / gekookt.length) * 100) : 0
 
+  const bespaard = bestellingen.data ?? []
+
+  // Instellingen bovenaan: daar kom je het vaakst. Ontdekken zit al in de
+  // onderbalk, en het hartje zet een recept tegenwoordig in je week.
   const rijen = [
-    { label: 'Recept toevoegen', sub: 'Uit een kookboek of je eigen recept', pad: '/toevoegen' },
-    { label: 'Ontdekken', sub: 'Blader door alle recepten', pad: '/ontdekken' },
-    { label: 'Favorieten', sub: `${favorieten.data?.length ?? 0} bewaard`, pad: '/favorieten' },
+    { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
+    {
+      label: 'Bespaard!',
+      sub: bespaard.length > 0
+        ? `${euro(totaalBespaard(bespaard))} minder dan bij ${MAALTIJDBOX.naam}`
+        : `Wat je bespaart ten opzichte van ${MAALTIJDBOX.naam}`,
+      pad: '/bespaard',
+    },
     { label: 'Voorraadkast', sub: `${voorraad.data?.filter((v) => v.in_huis).length ?? 0} producten in huis`, pad: '/voorraadkast' },
     { label: 'Geschiedenis', sub: `${weken.length} ${weken.length === 1 ? 'week' : 'weken'}`, pad: '/geschiedenis' },
-    { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
+    { label: 'Recept toevoegen', sub: 'Uit een kookboek of je eigen recept', pad: '/toevoegen' },
     // Alleen zichtbaar als je admin bent (plan §7.7).
     ...(isAdmin.data
       ? [{
@@ -97,22 +107,5 @@ export function Profiel() {
 
       <OnderBalk />
     </Scherm>
-  )
-}
-
-function Stat({ getal, label }: { getal: string; label: string }) {
-  return (
-    <div style={{
-      flex: 1, background: 'var(--c-paper)', borderRadius: 'var(--radius-md)', padding: 14,
-      display: 'flex', flexDirection: 'column', gap: 4,
-    }}>
-      <span style={{
-        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, lineHeight: 1,
-        color: 'var(--c-red)',
-      }}>{getal}</span>
-      <span style={{
-        fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(20,20,20,0.6)',
-      }}>{label}</span>
-    </div>
   )
 }

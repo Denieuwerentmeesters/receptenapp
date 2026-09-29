@@ -20,6 +20,7 @@ app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
   src/lib/           auth, db, queries, schaal, ah, week, config, fouten
 db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
 scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
+                     jumbo_mapping, jumbo_prijzen,
                      genereer_afbeeldingen (TypeScript, via `npm run afbeeldingen`)
 data/recepten.json   581 gescrapete recepten (archief na import)
 data/ah_mapping.json ingrediënt → AH-productnummer
@@ -160,9 +161,30 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 - Wijzig je de prompt-lijsten, draai dan eerst `--dry-run --telling`: het doel is
   ongeveer half top-down, half schuin, en een derde zonder rekwisieten.
 
+## Bespaard!
+
+Wat je bespaart ten opzichte van een maaltijdbox (HelloFresh). Bij het openen
+van de app schuift het totaal even bovenin (`components/BespaardMelding.tsx`);
+de details staan in Mijn keuken → Bespaard!.
+
+- **Een bestelling telt** als je na de mandjeknop bevestigt dat het mandje
+  aankwam. Dan komt er een rij in `bestelling` met de bedragen van dat moment.
+- **Mandje:** in Jumbo-prijzen, ook voor AH-gebruikers — ah.nl is niet te
+  scrapen. Eén verpakking per regel, zoals de mandjelink. Zonder prijs de
+  klassenschatting uit `lib/prijsschatting.ts`. Zelf toegevoegde producten
+  tellen niet mee.
+- **Maaltijdbox:** prijs per portie naar aantal personen plus bezorging, in
+  `lib/besparing.ts` (`MAALTIJDBOX`), met bronnen en peildatum. Een recept
+  telt één keer per week.
+- **Prijzen bijwerken,** een paar keer per jaar: `python3 scripts/jumbo_prijzen.py`
+  en dan `--migratie` voor een nieuwe migratie. De HelloFresh-tabel pas je met
+  de hand aan in `lib/besparing.ts`.
+- Rekent zich bewust niet rijk: gewone prijs zonder aanbieding, hele
+  verpakkingen, geen premiumtoeslag aan de HelloFresh-kant.
+
 ## Wat er nog niet is
 
-- Prijsindicatie per recept — vraagt eenheidsprijzen per AH-product
+- Prijsindicatie per recept in echte prijzen — er is alleen de klassenschatting
 - Push (APNs), huisgenoten delen
 
 ## Werkwijze (verplicht)

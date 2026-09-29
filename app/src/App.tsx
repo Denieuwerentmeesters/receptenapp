@@ -4,6 +4,7 @@ import { DezeWeek } from './screens/DezeWeek'
 import { Kookmodus } from './screens/Kookmodus'
 import { Ontdekken } from './screens/Ontdekken'
 import { Favorieten } from './screens/Favorieten'
+import { Bespaard } from './screens/Bespaard'
 import { Voorraadkast } from './screens/Voorraadkast'
 import { Geschiedenis } from './screens/Geschiedenis'
 import { Profiel } from './screens/Profiel'
@@ -83,6 +84,7 @@ export default function App() {
         <Route path="/favorieten" element={<Favorieten />} />
         <Route path="/voorraadkast" element={<Voorraadkast />} />
         <Route path="/geschiedenis" element={<Geschiedenis />} />
+        <Route path="/bespaard" element={<Bespaard />} />
         <Route path="/profiel" element={<Profiel />} />
         <Route path="/toevoegen" element={<ReceptToevoegen />} />
         <Route path="/beoordelen" element={<Beoordelen />} />

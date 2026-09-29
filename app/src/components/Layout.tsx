@@ -3,7 +3,7 @@ import {
   type CSSProperties, type ReactNode, type Ref, type UIEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
 import { useBoodschappen, useDezeWeek } from '../lib/queries'
 import { voegSamen } from '../lib/lijst'
@@ -140,6 +140,33 @@ export function Kop({ children, kleur = 'var(--c-red)', tekstKleur = 'var(--c-cr
     }}>
       {children}
     </div>
+  )
+}
+
+/**
+ * Het ronde terugpijltje linksboven in een kop, zoals bij Recept toevoegen.
+ * Terug in de geschiedenis als die er is; open je het scherm rechtstreeks (een
+ * link, een herlaadbeurt), dan naar `anders` — anders zou je de app uit vallen.
+ */
+export function TerugKnop({ anders = '/profiel', donker = false, onClick }: {
+  anders?: string
+  /** Op een lichte kop (goud): donker pijltje. */
+  donker?: boolean
+  onClick?: () => void
+}) {
+  const navigeer = useNavigate()
+  const heeftVorige = ((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0
+  return (
+    <button
+      onClick={onClick ?? (() => (heeftVorige ? navigeer(-1) : navigeer(anders)))}
+      aria-label="Terug"
+      style={{
+        flex: 'none', border: 'none', width: 36, height: 36, borderRadius: 'var(--radius-full)',
+        background: donker ? 'rgba(20,20,20,0.1)' : 'rgba(255,246,232,0.22)',
+        color: donker ? 'var(--c-ink)' : 'var(--c-cream)', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+    ><Icon name="chevronLeft" size={18} /></button>
   )
 }
 
@@ -286,5 +313,23 @@ export function OnderBalk() {
       ))}
     </nav>,
     balkPlek,
+  )
+}
+
+/** Een getal met een label eronder, in een rij van drie (Mijn keuken, Bespaard!). */
+export function Stat({ getal, label }: { getal: string; label: string }) {
+  return (
+    <div style={{
+      flex: 1, background: 'var(--c-paper)', borderRadius: 'var(--radius-md)', padding: 14,
+      display: 'flex', flexDirection: 'column', gap: 4,
+    }}>
+      <span style={{
+        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, lineHeight: 1,
+        color: 'var(--c-red)',
+      }}>{getal}</span>
+      <span style={{
+        fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(20,20,20,0.6)',
+      }}>{label}</span>
+    </div>
   )
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Icon } from '../ds'
-import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
+import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel, Voet } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useVoorraad, useVoorraadMuteren, type VoorraadItem } from '../lib/queries2'
@@ -58,8 +58,11 @@ export function Voorraadkast() {
     <Scherm>
       <Grens query={voorraad} ladenTekst="Voorraadkast ophalen">
         <Kop kleur="var(--c-gold)" tekstKleur="var(--c-ink)" style={{ paddingBottom: 22 }}>
-          <Label kleur="var(--c-green)">In huis</Label>
-          <div style={{ marginTop: 12 }}><Titel grootte={26}>Voorraadkast</Titel></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <TerugKnop donker />
+            <Label kleur="var(--c-green)">In huis</Label>
+          </div>
+          <div style={{ marginTop: 14 }}><Titel grootte={26}>Voorraadkast</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
             Wat hier aan staat, laten we van je boodschappenlijst af.
           </p>

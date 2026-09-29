@@ -91,6 +91,17 @@ function kostenVan(ing: Ingredient, klasse: Klasse): number {
     : klasse.vast
 }
 
+/**
+ * Geschatte kosten van één ingrediënt, voor een product zonder Jumbo-prijs in
+ * de besparingsteller (lib/besparing.ts). Null voor basisvoorraad en olie.
+ */
+export function schatIngredient(ing: Ingredient): number | null {
+  const key = ingredientKey(ing.naam ?? '')
+  if (!key || altijdInHuis(key) || /olie/.test(key)) return null
+  const klasse = klasseVan(key)
+  return klasse ? kostenVan(ing, klasse) : null
+}
+
 /** Valt dit recept in "budget"? Zonder schatting: nee — liever te voorzichtig. */
 export function isBudget(recept: { prijs_pp_schatting: number | null }): boolean {
   return recept.prijs_pp_schatting !== null && Number(recept.prijs_pp_schatting) <= BUDGET_PER_PERSOON
