@@ -1,5 +1,6 @@
 /**
- * Wat iedereen in huis heeft: water, peper en zout, suiker, bouillon. Die
+ * Wat iedereen in huis heeft: water, peper en zout, suiker, bouillon, olie en
+ * olijfolie. Plus wat geen boodschap is: keukenmachine, bakpapier. Die
  * komen nooit op de boodschappenlijst — "1 l kokendheet water" of "peper en
  * zout" tussen je boodschappen is ruis. In het recept zelf blijven ze staan.
  *
@@ -7,7 +8,8 @@
  * accenten, "naar smaak", haakjes en de meervouds-s. Een sleutel telt alleen
  * mee als élk woord erin bij één groep hoort en er minstens één kernwoord in
  * zit. Zo valt "peper en zout" eraf, maar "rode peper", "watermeloen" en
- * "poedersuiker" niet.
+ * "poedersuiker" niet. Bij olie net zo: "olijfolie om te bakken" valt eraf,
+ * "sesamolie" en "truffelolie" niet — die heeft niet iedereen staan.
  */
 const GROEPEN: { kern: string[]; bijwoorden: string[] }[] = [
   {
@@ -31,6 +33,18 @@ const GROEPEN: { kern: string[]; bijwoorden: string[] }[] = [
       'tuinkruidenbouillon', 'rundervleesbouillon', 'kippenbouillontablet', 'groentebouillontablet'],
     bijwoorden: ['kippen', 'groente', 'runder', 'of', 'en', 'heet', 'hete', 'warm', 'warme',
       'blokje', 'blokjes', 'tablet', 'sterke', 'verkruimeld'],
+  },
+  {
+    kern: ['olie', 'olijfolie', 'zonnebloemolie', 'frituurolie'],
+    bijwoorden: ['neutrale', 'plantaardige', 'milde', 'goede', 'griekse', 'vierge', 'spray', 'plus',
+      'om', 'in', 'te', 'bakken', 'vetten', 'garneren', 'frituren', 'voor', 'de', 'pan', 'scheutje',
+      'beetje', 'wat', 'en', 'of'],
+  },
+  {
+    // Geen boodschap: keukengerei en "gemengd" als losgeraakte kop uit een recept.
+    kern: ['keukenmachine', 'staafmixer', 'blender', 'hakmolentje', 'ijsblokje', 'bakpapier',
+      'folie', 'ovenschaal', 'ovenschaaltje', 'maatbeker', 'gemengd'],
+    bijwoorden: ['of', 'met', 'hoge', 'plastic', 'van', 'cm'],
   },
 ]
 

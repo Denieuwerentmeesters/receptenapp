@@ -14,6 +14,7 @@ import {
   bewaarVegaKeuzes, leesVegaKeuzes, metVegaKeuze, vegaVervanger, type VegaKeuze,
 } from '../lib/vega'
 import { openBijWinkel } from '../lib/ah'
+import { tokoProduct } from '../lib/toko'
 import { useWinkel } from '../lib/winkel'
 import { groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
 import { weekStart } from '../lib/week'
@@ -231,13 +232,19 @@ export function Boodschappen() {
                       <span style={{
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(20,20,20,0.5)',
                       }}>thuis</span>
-                    ) : !winkel.heeftProduct(voorWinkel(regel)) && (
-                      <a
-                        href={winkel.zoekLink(voorWinkel(regel).naam)}
-                        onClick={(e) => { e.preventDefault(); void openBijWinkel(winkel.zoekLink(voorWinkel(regel).naam)) }}
-                        style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
-                      >zoek</a>
-                    )}
+                    ) : !winkel.heeftProduct(voorWinkel(regel)) && (() => {
+                      // Niet bij de winkel, wel bij de toko? Dan daarheen in plaats van zoeken.
+                      const toko = tokoProduct(regel.voorbeeld)
+                      const url = toko?.url ?? winkel.zoekLink(voorWinkel(regel).naam)
+                      return (
+                        <a
+                          href={url}
+                          onClick={(e) => { e.preventDefault(); void openBijWinkel(url) }}
+                          aria-label={toko ? `${toko.naam} bij Tjin's Toko` : undefined}
+                          style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
+                        >{toko ? 'toko' : 'zoek'}</a>
+                      )
+                    })()}
                     <button
                       onClick={() => verwijderen.mutate(regel.ids)}
                       aria-label={`${regel.naam} verwijderen`}

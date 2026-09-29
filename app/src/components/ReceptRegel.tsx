@@ -1,5 +1,6 @@
 import { Icon } from '../ds'
 import type { Recept } from '../lib/database.types'
+import { tokoIngredienten } from '../lib/toko'
 
 /** De twee roodtinten wisselen af — het merkritme uit de designs. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
@@ -21,6 +22,7 @@ export function ReceptRegel({ recept, index = 0, favoriet, onOpen, onFavoriet, a
   const meta = [
     recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
     vega ? 'vegetarisch' : recept.keuken,
+    tokoIngredienten(recept.ingredienten).length > 0 ? 'toko nodig' : null,
   ].filter(Boolean).join(' · ')
 
   return (

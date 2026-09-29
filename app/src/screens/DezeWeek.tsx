@@ -9,6 +9,8 @@ import { useOpLijst } from '../components/OpLijst'
 import { useDezeWeek, useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
 import { weekLabel, weekStart } from '../lib/week'
 import { isBudget } from '../lib/prijsschatting'
+import { tokoIngredienten } from '../lib/toko'
+import { TokoLabel } from '../components/TokoLabel'
 
 type Filter = 'alles' | 'lijst' | 'budget' | 'vega' | 'snel'
 
@@ -170,6 +172,7 @@ function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
   onLijst: () => void
   onWeg: () => void
 }) {
+  const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 20, padding: 4,
@@ -178,6 +181,7 @@ function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
       transition: 'background var(--motion-base) var(--ease)',
     }}>
       <div style={{ flex: 1, position: 'relative', display: 'flex' }}>
+      {toko && <TokoLabel />}
       <button
         onClick={onOpen}
         style={{
