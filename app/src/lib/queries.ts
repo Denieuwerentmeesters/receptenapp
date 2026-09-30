@@ -53,7 +53,12 @@ export function useVoorkeurenOpslaan() {
     onError: (_e, _v, context) => {
       if (context?.vorige) qc.setQueryData(sleutels.voorkeuren, context.vorige)
     },
-    onSettled: () => { void qc.invalidateQueries({ queryKey: sleutels.voorkeuren }) },
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: sleutels.voorkeuren })
+      // Een leeg weekmenu wacht misschien op deze voorkeuren: opnieuw ophalen
+      // laat de generator nog een keer lopen.
+      void qc.invalidateQueries({ queryKey: ['deze-week'] })
+    },
   })
 }
 
@@ -82,7 +87,10 @@ export function useDezeWeek(week = weekStart()) {
 
       // De generator is idempotent: bestaat de week al, dan doet 'ie niets.
       // Zo staat er ook een menu klaar als de cron nog niet gedraaid heeft.
-      await db.rpc('genereer_weekmenu', { p_user_id: id, p_week_start: week })
+      // Faalt de generator, dan willen we dat zien: stil doorlopen gaf een
+      // leeg weekmenu zonder uitleg.
+      const generator = await db.rpc('genereer_weekmenu', { p_user_id: id, p_week_start: week })
+      if (generator.error) throw generator.error
 
       const [getoond, gekozen] = await Promise.all([
         db
