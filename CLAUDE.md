@@ -185,7 +185,8 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 ## Bespaard!
 
 Wat je bespaart ten opzichte van een maaltijdbox (HelloFresh). Bij het openen
-van de app schuift het totaal even bovenin (`components/BespaardMelding.tsx`);
+van de app schuift het totaal even bovenin (`components/BespaardMelding.tsx`) —
+de eerste keer en daarna eens per drie keer openen, geteld in `localStorage`;
 de details staan in Mijn keuken → Bespaard!.
 
 - **Een bestelling telt** als je na de mandjeknop bevestigt dat het mandje

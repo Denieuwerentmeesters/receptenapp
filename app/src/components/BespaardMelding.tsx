@@ -4,7 +4,26 @@ import { Icon } from '../ds'
 import { useBestellingen } from '../lib/queries2'
 import { MAALTIJDBOX, euro, totaalBespaard } from '../lib/besparing'
 
-/** Eén keer per keer dat je de app opent, niet bij elk bezoek aan Deze week. */
+/**
+ * Niet elke keer: bij de eerste keer openen, en daarna eens per drie keer.
+ * Elke start van de app telt één keer, niet elk bezoek aan Deze week.
+ */
+const ELKE_ZOVEEL_KEER = 3
+const TELLER_SLEUTEL = 'bespaard-melding-teller'
+
+function telOpening(): boolean {
+  try {
+    const teller = Number(localStorage.getItem(TELLER_SLEUTEL) ?? '0') || 0
+    localStorage.setItem(TELLER_SLEUTEL, String(teller + 1))
+    return teller % ELKE_ZOVEEL_KEER === 0
+  } catch {
+    // Geen opslag (privévenster): liever geen melding dan elke keer.
+    return false
+  }
+}
+
+/** Deze keer openen we de app: mag de melding? Eén keer bepaald bij het laden. */
+const dezeKeerTonen = telOpening()
 let alGetoond = false
 
 const ZICHTBAAR_MS = 5000
@@ -26,7 +45,7 @@ export function BespaardMelding() {
 
   const lijst = bestellingen.data ?? []
   const totaal = totaalBespaard(lijst)
-  const tonen = !alGetoond && lijst.length > 0 && totaal > 0
+  const tonen = dezeKeerTonen && !alGetoond && lijst.length > 0 && totaal > 0
 
   useEffect(() => {
     if (!tonen) return
