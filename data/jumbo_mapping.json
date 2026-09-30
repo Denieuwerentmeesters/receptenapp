@@ -531,6 +531,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "bier",
+  "naam": "Heineken Premium Pilsener Bier Blik 6 x 500ml",
+  "standaard": "539048PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "bieslook",
   "naam": "Jumbo Bieslook 20 g",
   "standaard": "689594ZK",
@@ -624,6 +633,15 @@
   "key": "bleekselderijstengel",
   "naam": "Jumbo Bleekselderij",
   "standaard": "687251STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "bloedsinaasappel",
+  "naam": "Jumbo Handsinaasappelen 2 kg",
+  "standaard": "40589NET",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -3393,6 +3411,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "klapstuk",
+  "naam": "Jumbo Rund Sukadelappen 3 Stuks ca. 525 g",
+  "standaard": "58366KGR",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "knapperig brood",
   "naam": "Jumbo Boeren Wit Tarwe Maïs",
   "standaard": "430702STK",
@@ -5418,6 +5445,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "rauwe bietje",
+  "naam": "Jumbo Gekookte Bietjes Biologisch 500 g",
+  "standaard": "194938ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "rauwe gepelde garnalen",
   "naam": "Jumbo Garnalen 225 g",
   "standaard": "695593ZK",
@@ -5788,18 +5824,18 @@
  },
  {
   "key": "roma tomaat",
-  "naam": "Jumbo Tomaten Gepeld 400 g",
-  "standaard": "760811BLK",
-  "bio": "164091BLK",
+  "naam": "Jumbo Roma Tomaten 750 g",
+  "standaard": "417400SC",
+  "bio": null,
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
  },
  {
   "key": "roma tomaten",
-  "naam": "Jumbo Tomaten Gepeld 400 g",
-  "standaard": "760811BLK",
-  "bio": "164091BLK",
+  "naam": "Jumbo Roma Tomaten 750 g",
+  "standaard": "417400SC",
+  "bio": null,
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
@@ -5824,18 +5860,18 @@
  },
  {
   "key": "romatomaat",
-  "naam": "Jumbo Tomaten Gepeld 400 g",
-  "standaard": "760811BLK",
-  "bio": "164091BLK",
+  "naam": "Jumbo Roma Tomaten 750 g",
+  "standaard": "417400SC",
+  "bio": null,
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
  },
  {
   "key": "romatomaten",
-  "naam": "Jumbo Tomaten Gepeld 400 g",
-  "standaard": "760811BLK",
-  "bio": "164091BLK",
+  "naam": "Jumbo Roma Tomaten 750 g",
+  "standaard": "417400SC",
+  "bio": null,
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
@@ -6807,6 +6843,15 @@
   "key": "thaise rode currypasta",
   "naam": "Koh Thai Rode Curry Pasta 225g",
   "standaard": "69747POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "thaise roerbakgroentemix",
+  "naam": "Jumbo Wokgroenten Thais 400 g",
+  "standaard": "782262ZK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -7848,6 +7893,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "zachte taco",
+  "naam": "Jumbo Tortilla Naturel 8 Stuks",
+  "standaard": "356627PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "zalm",
   "naam": "Jumbo Zalmfilet Zonder Huid Naturel 230 g",
   "standaard": "715166STK",
@@ -7896,6 +7950,15 @@
   "key": "zalmsnipper",
   "naam": "Jumbo Zalmsnippers Houtgerookt 150 g",
   "standaard": "681086STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zeeduivelfilet",
+  "naam": "Jumbo Kabeljauwfilet Naturel 2 Stuks ca. 260 g",
+  "standaard": "681341KGR",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,

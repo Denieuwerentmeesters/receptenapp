@@ -372,6 +372,12 @@
   "bio": 119767
  },
  {
+  "key": "bier",
+  "naam": "heineken premium pilsener 6-pack",
+  "standaard": 80101,
+  "bio": null
+ },
+ {
   "key": "bieslook",
   "naam": "ah bieslook",
   "standaard": 238965,
@@ -435,6 +441,12 @@
   "key": "bleekselderijstengel",
   "naam": "ah bleekselderij per stuk",
   "standaard": 4178,
+  "bio": null
+ },
+ {
+  "key": "bloedsinaasappel",
+  "naam": "ah handsinaasappelen",
+  "standaard": 67896,
   "bio": null
  },
  {
@@ -2298,6 +2310,12 @@
   "bio": 600464
  },
  {
+  "key": "klapstuk",
+  "naam": "ah riblap ca. 720 g",
+  "standaard": 187574,
+  "bio": null
+ },
+ {
   "key": "knapperig brood",
   "naam": "ah kampioentjes 240 g",
   "standaard": 115219,
@@ -3700,6 +3718,12 @@
   "bio": null
  },
  {
+  "key": "rauwe bietje",
+  "naam": "ah biologisch rode bieten los",
+  "standaard": 203002,
+  "bio": 203002
+ },
+ {
   "key": "rauwe gepelde garnalen",
   "naam": "ah garnalen rauw en gepeld",
   "standaard": 371595,
@@ -3960,15 +3984,15 @@
  },
  {
   "key": "roma tomaat",
-  "naam": "ah tomaten gepeld",
-  "standaard": 803,
-  "bio": 207510
+  "naam": "ah roma tomaten 750 g",
+  "standaard": 67874,
+  "bio": null
  },
  {
   "key": "roma tomaten",
-  "naam": "ah tomaten gepeld",
-  "standaard": 803,
-  "bio": 207510
+  "naam": "ah roma tomaten 750 g",
+  "standaard": 67874,
+  "bio": null
  },
  {
   "key": "romaine sla",
@@ -3984,15 +4008,15 @@
  },
  {
   "key": "romatomaat",
-  "naam": "ah tomaten gepeld",
-  "standaard": 803,
-  "bio": 207510
+  "naam": "ah roma tomaten 750 g",
+  "standaard": 67874,
+  "bio": null
  },
  {
   "key": "romatomaten",
-  "naam": "ah tomaten gepeld",
-  "standaard": 803,
-  "bio": 207510
+  "naam": "ah roma tomaten 750 g",
+  "standaard": 67874,
+  "bio": null
  },
  {
   "key": "roodbaarsfilet",
@@ -4622,6 +4646,12 @@
   "key": "thaise massaman currypasta",
   "naam": "koh thai massaman currypasta",
   "standaard": 450179,
+  "bio": null
+ },
+ {
+  "key": "thaise roerbakgroentemix",
+  "naam": "ah thaise wokgroente prei rode peper 400 g",
+  "standaard": 67663,
   "bio": null
  },
  {
@@ -5335,6 +5365,12 @@
   "bio": null
  },
  {
+  "key": "zachte taco",
+  "naam": "ah tortilla naturel wraps medium 8 stuks",
+  "standaard": 136836,
+  "bio": null
+ },
+ {
   "key": "zalm",
   "naam": "ah zalmfilet",
   "standaard": 51335,
@@ -5374,6 +5410,12 @@
   "key": "zalmsnipper",
   "naam": "ah gerookte zalmsnippers",
   "standaard": 168829,
+  "bio": null
+ },
+ {
+  "key": "zeeduivelfilet",
+  "naam": "ah kabeljauwfilet",
+  "standaard": 416296,
   "bio": null
  },
  {
