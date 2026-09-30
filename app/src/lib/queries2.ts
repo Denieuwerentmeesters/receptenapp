@@ -1,5 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { db } from './db'
+import { effectieveUserId, gedeeld } from './huishouden'
 import { huidigeUserId } from './auth'
 import { ingredientKey } from './schaal'
 import { DROGE_KRUIDEN_KEY } from './kruiden'
@@ -199,7 +200,7 @@ export function useVoorraad() {
   return useQuery({
     queryKey: ['voorraad'],
     queryFn: async (): Promise<VoorraadItem[]> => {
-      const { data, error } = await db.from('voorraad_item').select('*').order('naam')
+      const { data, error } = await (await gedeeld('voorraad_item')).select('*').order('naam')
       if (error) throw error
       return data as VoorraadItem[]
     },
@@ -209,12 +210,12 @@ export function useVoorraad() {
 /** Zet een opgeraakt product op de lijst van deze week, tenzij het er al (open) op staat. */
 async function zetAanvullingOpLijst(naam: string, key: string) {
   const week = weekStart()
-  const al = await db.from('boodschappenlijst_item').select('id')
+  const al = await (await gedeeld('boodschappenlijst_item')).select('id')
     .eq('week_start_datum', week).eq('ingredient_key', key).eq('is_afgevinkt', false).limit(1)
   if (al.error) throw al.error
   if ((al.data ?? []).length > 0) return
-  const { error } = await db.from('boodschappenlijst_item').insert({
-    user_id: await huidigeUserId(),
+  const { error } = await (await gedeeld('boodschappenlijst_item')).insert({
+    user_id: await effectieveUserId(),
     week_start_datum: week,
     naam,
     ingredient_key: key,
@@ -231,7 +232,7 @@ async function zetAanvullingOpLijst(naam: string, key: string) {
 
 /** Haalt een nog niet gekochte voorraadaanvulling weer van de lijst. */
 async function haalAanvullingWeg(key: string) {
-  const { error } = await db.from('boodschappenlijst_item').delete()
+  const { error } = await (await gedeeld('boodschappenlijst_item')).delete()
     .eq('week_start_datum', weekStart()).eq('ingredient_key', key)
     .eq('voorraad_aanvulling', true).eq('is_afgevinkt', false)
   if (error) throw error
@@ -251,7 +252,7 @@ export function useVoorraadMuteren() {
    */
   const toggle = useMutation({
     mutationFn: async ({ key, inHuis, naam }: { key: string; inHuis: boolean; naam?: string }) => {
-      const { error } = await db.from('voorraad_item')
+      const { error } = await (await gedeeld('voorraad_item'))
         .update({ in_huis: inHuis, bijgewerkt_op: new Date().toISOString() })
         .eq('ingredient_key', key)
       if (error) throw error
@@ -284,8 +285,8 @@ export function useVoorraadMuteren() {
     mutationFn: async (naam: string) => {
       const schoon = naam.trim()
       if (!schoon) return
-      const { error } = await db.from('voorraad_item').upsert({
-        user_id: await huidigeUserId(),
+      const { error } = await (await gedeeld('voorraad_item')).upsert({
+        user_id: await effectieveUserId(),
         ingredient_key: ingredientKey(schoon),
         naam: schoon.charAt(0).toUpperCase() + schoon.slice(1),
         categorie: 'Zelf toegevoegd',
@@ -298,7 +299,7 @@ export function useVoorraadMuteren() {
 
   const verwijderen = useMutation({
     mutationFn: async (key: string) => {
-      const { error } = await db.from('voorraad_item').delete().eq('ingredient_key', key)
+      const { error } = await (await gedeeld('voorraad_item')).delete().eq('ingredient_key', key)
       if (error) throw error
     },
     onSuccess: ververs,
@@ -318,8 +319,7 @@ export function useGeschiedenis() {
   return useQuery({
     queryKey: ['geschiedenis'],
     queryFn: async (): Promise<WeekGeschiedenis[]> => {
-      const { data, error } = await db
-        .from('weekmenu_gekozen')
+      const { data, error } = await (await gedeeld('weekmenu_gekozen'))
         .select('week_start_datum, gekookt_op, recepten(*)')
         .order('week_start_datum', { ascending: false })
       if (error) throw error
@@ -343,7 +343,7 @@ export function useGekooktMarkeren(week = weekStart()) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async ({ receptId, gekookt }: { receptId: string; gekookt: boolean }) => {
-      const { error } = await db.from('weekmenu_gekozen')
+      const { error } = await (await gedeeld('weekmenu_gekozen'))
         .update({ gekookt_op: gekookt ? new Date().toISOString() : null })
         .eq('week_start_datum', week).eq('recept_id', receptId)
       if (error) throw error
@@ -498,7 +498,7 @@ export function useBestellingen() {
   return useQuery({
     queryKey: ['bestellingen'],
     queryFn: async (): Promise<Bestelling[]> => {
-      const { data, error } = await db.from('bestelling').select('*')
+      const { data, error } = await (await gedeeld('bestelling')).select('*')
         .order('besteld_op', { ascending: false })
       if (error) throw error
       // numeric komt als tekst uit PostgREST.
@@ -533,7 +533,7 @@ export function useBestellingVastleggen(week = weekStart()) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (invoer: BestellingInvoer): Promise<Bestelling> => {
-      const eerder = await db.from('bestelling').select('recept_ids').eq('week_start_datum', week)
+      const eerder = await (await gedeeld('bestelling')).select('recept_ids').eq('week_start_datum', week)
       if (eerder.error) throw eerder.error
       const rijen = eerder.data as { recept_ids: string[] }[]
       const alGeteld = new Set(rijen.flatMap((r) => r.recept_ids))
@@ -541,8 +541,8 @@ export function useBestellingVastleggen(week = weekStart()) {
       const nieuw = Object.keys(invoer.recepten).filter((id) => !alGeteld.has(id))
       const maaltijden = nieuw.reduce((som, id) => som + Math.max(1, invoer.recepten[id]), 0)
 
-      const { data, error } = await db.from('bestelling').insert({
-        user_id: await huidigeUserId(),
+      const { data, error } = await (await gedeeld('bestelling')).insert({
+        user_id: await effectieveUserId(),
         week_start_datum: week,
         winkel: invoer.winkel,
         personen: invoer.personen,

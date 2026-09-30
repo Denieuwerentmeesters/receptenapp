@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { db } from './db'
-import { huidigeUserId } from './auth'
+import { effectieveUserId, gedeeld, useDeeltLijst } from './huishouden'
 import { altijdInHuis } from './altijdInHuis'
 import { DROGE_KRUIDEN_KEY } from './kruiden'
 import { ingredientKey, schaalIngredienten } from './schaal'
@@ -17,7 +17,8 @@ export const sleutels = {
   jumboMapping: ['jumbo-mapping'] as const,
 }
 
-const userId = huidigeUserId
+// Alle tabellen hier zijn gedeeld met je huishouden: rijen staan op naam van de eigenaar.
+const userId = effectieveUserId
 
 /* -------------------------------------------------------------- voorkeuren */
 
@@ -25,8 +26,7 @@ export function useVoorkeuren() {
   return useQuery({
     queryKey: sleutels.voorkeuren,
     queryFn: async (): Promise<Voorkeuren> => {
-      const { data, error } = await db
-        .from('gebruiker_voorkeuren').select('*').single()
+      const { data, error } = await (await gedeeld('gebruiker_voorkeuren')).select('*').single()
       if (error) throw error
       return data as Voorkeuren
     },
@@ -37,8 +37,7 @@ export function useVoorkeurenOpslaan() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (wijziging: Partial<Voorkeuren>) => {
-      const { error } = await db
-        .from('gebruiker_voorkeuren')
+      const { error } = await (await gedeeld('gebruiker_voorkeuren'))
         .update({ ...wijziging, bijgewerkt_op: new Date().toISOString() })
         .eq('user_id', await userId())
       if (error) throw error
@@ -80,8 +79,10 @@ export interface WeekRecept extends Recept {
 }
 
 export function useDezeWeek(week = weekStart()) {
+  const samen = useDeeltLijst()
   return useQuery({
     queryKey: sleutels.dezeWeek(week),
+    refetchOnWindowFocus: samen,
     queryFn: async (): Promise<WeekRecept[]> => {
       const id = await userId()
 
@@ -93,13 +94,11 @@ export function useDezeWeek(week = weekStart()) {
       if (generator.error) throw generator.error
 
       const [getoond, gekozen] = await Promise.all([
-        db
-          .from('weekmenu_getoond')
+        (await gedeeld('weekmenu_getoond'))
           .select('positie, recept_id, verborgen_op, recepten(*)')
           .eq('week_start_datum', week)
           .order('positie'),
-        db
-          .from('weekmenu_gekozen')
+        (await gedeeld('weekmenu_gekozen'))
           .select('recept_id, aantal, van_lijst_op, gekookt_op, gekozen_op, recepten(*)')
           .eq('week_start_datum', week)
           .order('gekozen_op'),
@@ -176,9 +175,9 @@ export function useLijstActies(week = weekStart()) {
 
       const [recept, voorkeuren, voorraad, keuze] = await Promise.all([
         db.from('recepten').select('*').eq('id', receptId).single(),
-        db.from('gebruiker_voorkeuren').select('aantal_personen').single(),
-        db.from('voorraad_item').select('ingredient_key').eq('in_huis', true),
-        db.from('weekmenu_gekozen').select('aantal, van_lijst_op')
+        (await gedeeld('gebruiker_voorkeuren')).select('aantal_personen').single(),
+        (await gedeeld('voorraad_item')).select('ingredient_key').eq('in_huis', true),
+        (await gedeeld('weekmenu_gekozen')).select('aantal, van_lijst_op')
           .eq('week_start_datum', week).eq('recept_id', receptId).maybeSingle(),
       ])
       if (recept.error) throw recept.error
@@ -188,12 +187,12 @@ export function useLijstActies(week = weekStart()) {
       // Al gekocht of gewist: opnieuw op de lijst, vanaf één keer.
       const bestaand = keuze.data as { aantal: number; van_lijst_op: string | null } | null
       const { error } = !bestaand
-        ? await db.from('weekmenu_gekozen')
+        ? await (await gedeeld('weekmenu_gekozen'))
           .insert({
             user_id: id, week_start_datum: week, recept_id: receptId, aantal: 1,
             ...(automatisch ? { automatisch: true } : {}),
           })
-        : await db.from('weekmenu_gekozen')
+        : await (await gedeeld('weekmenu_gekozen'))
           .update(bestaand.van_lijst_op
             ? { aantal: 1, van_lijst_op: null }
             : { aantal: Math.min(9, bestaand.aantal + 1) })
@@ -226,7 +225,7 @@ export function useLijstActies(week = weekStart()) {
           is_afgevinkt: false,
         }))
       if (rijen.length === 0) return
-      const invoer = await db.from('boodschappenlijst_item').insert(rijen)
+      const invoer = await (await gedeeld('boodschappenlijst_item')).insert(rijen)
       if (invoer.error) throw invoer.error
     },
     onMutate: async (wat) => {
@@ -254,13 +253,13 @@ export function useLijstActies(week = weekStart()) {
    */
   const haalVanLijst = useMutation({
     mutationFn: async (receptId: string) => {
-      const items = await db.from('boodschappenlijst_item').delete()
+      const items = await (await gedeeld('boodschappenlijst_item')).delete()
         .eq('week_start_datum', week).eq('bron_recept_id', receptId)
       if (items.error) throw items.error
-      const suggestie = await db.from('weekmenu_getoond').select('id')
+      const suggestie = await (await gedeeld('weekmenu_getoond')).select('id')
         .eq('week_start_datum', week).eq('recept_id', receptId)
       if (suggestie.error) throw suggestie.error
-      const keuze = db.from('weekmenu_gekozen')
+      const keuze = (await gedeeld('weekmenu_gekozen'))
       const { error } = (suggestie.data ?? []).length > 0
         ? await keuze.delete().eq('week_start_datum', week).eq('recept_id', receptId)
         : await keuze.update({ aantal: 1, van_lijst_op: new Date().toISOString() })
@@ -290,12 +289,12 @@ export function useLijstActies(week = weekStart()) {
    */
   const zetInWeek = useMutation({
     mutationFn: async (recept: Recept) => {
-      const terug = await db.from('weekmenu_getoond').update({ verborgen_op: null })
+      const terug = await (await gedeeld('weekmenu_getoond')).update({ verborgen_op: null })
         .eq('week_start_datum', week).eq('recept_id', recept.id).select('id')
       if (terug.error) throw terug.error
       if ((terug.data ?? []).length > 0) return
 
-      const { error } = await db.from('weekmenu_gekozen').upsert({
+      const { error } = await (await gedeeld('weekmenu_gekozen')).upsert({
         user_id: await userId(),
         week_start_datum: week,
         recept_id: recept.id,
@@ -328,14 +327,14 @@ export function useLijstActies(week = weekStart()) {
   const haalUitWeek = useMutation({
     mutationFn: async (invoer: string | { receptId: string; geruild: boolean }) => {
       const { receptId, geruild } = typeof invoer === 'string' ? { receptId: invoer, geruild: false } : invoer
-      const items = await db.from('boodschappenlijst_item').delete()
+      const items = await (await gedeeld('boodschappenlijst_item')).delete()
         .eq('week_start_datum', week).eq('bron_recept_id', receptId)
       if (items.error) throw items.error
-      const keuze = await db.from('weekmenu_gekozen').delete()
+      const keuze = await (await gedeeld('weekmenu_gekozen')).delete()
         .eq('week_start_datum', week).eq('recept_id', receptId)
       if (keuze.error) throw keuze.error
       const nu = new Date().toISOString()
-      const { error } = await db.from('weekmenu_getoond')
+      const { error } = await (await gedeeld('weekmenu_getoond'))
         .update(geruild ? { verborgen_op: nu, geruild_op: nu } : { verborgen_op: nu })
         .eq('week_start_datum', week).eq('recept_id', receptId)
       if (error) throw error
@@ -373,11 +372,15 @@ export function useRecept(id: string | undefined) {
 /* ---------------------------------------------------------- boodschappen */
 
 export function useBoodschappen(week = weekStart()) {
+  // Deel je de lijst, dan elke 5 seconden en bij terugkeren naar de app verversen:
+  // afvinken is zo binnen een paar tellen bij je huisgenoot te zien.
+  const samen = useDeeltLijst()
   return useQuery({
     queryKey: sleutels.boodschappen(week),
+    refetchInterval: samen ? 5000 : false,
+    refetchOnWindowFocus: samen,
     queryFn: async (): Promise<BoodschapItem[]> => {
-      const { data, error } = await db
-        .from('boodschappenlijst_item').select('*')
+      const { data, error } = await (await gedeeld('boodschappenlijst_item')).select('*')
         .eq('week_start_datum', week)
         .order('naam')
       if (error) throw error
@@ -404,7 +407,7 @@ export function useBoodschapMuteren(week = weekStart()) {
 
   const afvinken = useMutation({
     mutationFn: async ({ itemIds, afgevinkt }: { itemIds: string[]; afgevinkt: boolean }) => {
-      const { error } = await db.from('boodschappenlijst_item')
+      const { error } = await (await gedeeld('boodschappenlijst_item'))
         .update({ is_afgevinkt: afgevinkt }).in('id', itemIds)
       if (error) throw error
     },
@@ -427,7 +430,7 @@ export function useBoodschapMuteren(week = weekStart()) {
     mutationFn: async (naam: string) => {
       const schoon = naam.trim()
       if (!schoon) return
-      const { error } = await db.from('boodschappenlijst_item').insert({
+      const { error } = await (await gedeeld('boodschappenlijst_item')).insert({
         user_id: await userId(),
         week_start_datum: week,
         naam: schoon.charAt(0).toUpperCase() + schoon.slice(1),
@@ -446,7 +449,7 @@ export function useBoodschapMuteren(week = weekStart()) {
 
   const verwijderen = useMutation({
     mutationFn: async (itemIds: string[]) => {
-      const { error } = await db.from('boodschappenlijst_item').delete().in('id', itemIds)
+      const { error } = await (await gedeeld('boodschappenlijst_item')).delete().in('id', itemIds)
       if (error) throw error
     },
     onSuccess: ververs,
@@ -462,20 +465,20 @@ export function useBoodschapMuteren(week = weekStart()) {
     mutationFn: async (itemIds: string[]) => {
       if (itemIds.length > 0) {
         // Wat via de "Op"-knop uit de voorraadkast kwam, is nu gekocht: weer in huis.
-        const aanvulling = await db.from('boodschappenlijst_item').select('ingredient_key')
+        const aanvulling = await (await gedeeld('boodschappenlijst_item')).select('ingredient_key')
           .in('id', itemIds).eq('voorraad_aanvulling', true)
         if (aanvulling.error) throw aanvulling.error
-        const { error } = await db.from('boodschappenlijst_item').delete().in('id', itemIds)
+        const { error } = await (await gedeeld('boodschappenlijst_item')).delete().in('id', itemIds)
         if (error) throw error
         const keys = [...new Set((aanvulling.data as { ingredient_key: string }[]).map((r) => r.ingredient_key))]
         if (keys.length > 0) {
-          const terug = await db.from('voorraad_item')
+          const terug = await (await gedeeld('voorraad_item'))
             .update({ in_huis: true, bijgewerkt_op: new Date().toISOString() })
             .in('ingredient_key', keys)
           if (terug.error) throw terug.error
         }
       }
-      const over = await db.from('boodschappenlijst_item').select('bron_recept_id, ingredient_key')
+      const over = await (await gedeeld('boodschappenlijst_item')).select('bron_recept_id, ingredient_key')
         .eq('week_start_datum', week).not('bron_recept_id', 'is', null)
       if (over.error) throw over.error
       // Een onzichtbare "peper en zout" mag een recept niet op de lijst houden.
@@ -485,7 +488,7 @@ export function useBoodschapMuteren(week = weekStart()) {
           .map((r) => r.bron_recept_id),
       )]
 
-      let vraag = db.from('weekmenu_gekozen')
+      let vraag = (await gedeeld('weekmenu_gekozen'))
         .update({ van_lijst_op: new Date().toISOString() })
         .eq('week_start_datum', week).is('van_lijst_op', null)
       if (nogOpLijst.length > 0) vraag = vraag.not('recept_id', 'in', `(${nogOpLijst.join(',')})`)
@@ -501,9 +504,9 @@ export function useBoodschapMuteren(week = weekStart()) {
   /** "Alles wissen": de lijst leeg, alle recepten eraf. */
   const allesWissen = useMutation({
     mutationFn: async () => {
-      const items = await db.from('boodschappenlijst_item').delete().eq('week_start_datum', week)
+      const items = await (await gedeeld('boodschappenlijst_item')).delete().eq('week_start_datum', week)
       if (items.error) throw items.error
-      const { error } = await db.from('weekmenu_gekozen')
+      const { error } = await (await gedeeld('weekmenu_gekozen'))
         .update({ van_lijst_op: new Date().toISOString() })
         .eq('week_start_datum', week).is('van_lijst_op', null)
       if (error) throw error
