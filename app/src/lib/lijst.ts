@@ -1,5 +1,6 @@
 import { enkelvoudVormen } from './ah'
 import type { BoodschapItem } from './database.types'
+import { naarEenheid, type Verpakking } from './eenheden'
 import { canoniek, TENEN } from './synoniemen'
 import { LOOPROUTE, schapVoor, type Schap } from './winkelindeling'
 
@@ -113,10 +114,34 @@ function perStuk(key: string, winkel: 'ah' | 'jumbo'): boolean {
 }
 
 /**
+ * Eenheden die zelf een verpakking zijn: twee recepten met "1 blik tomaten"
+ * zijn twee blikken, niet één.
+ */
+const VERPAKKING = /^(blik|blikje|blikjes|blikken|pak|pakje|pakjes|pakken|zak|zakje|zakjes|zakken|fles|flesje|flesjes|flessen|pot|potje|potjes|potten)\b/
+
+/**
  * Hoeveel verpakkingen van deze regel in het mandje moeten. Opgeteld over alle
  * recepten erachter en naar boven afgerond: een halve paprika is er één.
+ *
+ * Vier gevallen, in deze volgorde:
+ *  - staat het in het recept als verpakking (blik, pak, zak, fles, pot), dan
+ *    tellen we die op;
+ *  - kennen we de inhoud van de verpakking (`verpakking`, nu alleen bij
+ *    Jumbo), dan: wat nodig is gedeeld door de inhoud, naar boven afgerond;
+ *  - groente die per stuk verkocht wordt: het aantal stuks;
+ *  - al het andere: één verpakking. Liever eens een ui te weinig dan twee
+ *    netten te veel; de totale hoeveelheid staat op de lijst.
  */
-export function aantalVerpakkingen(regel: LijstRegel, winkel: 'ah' | 'jumbo'): number {
+export function aantalVerpakkingen(regel: LijstRegel, winkel: 'ah' | 'jumbo', verpakking?: Verpakking): number {
+  const inVerpakking = regel.items.filter((i) => VERPAKKING.test((i.eenheid ?? '').trim().toLowerCase()))
+  if (inVerpakking.length > 0) {
+    const totaal = inVerpakking.reduce((som, i) => som + (i.hoeveelheid ?? 1), 0)
+    return Math.max(1, Math.ceil(totaal - 0.01))
+  }
+  if (verpakking) {
+    const nodig = nodigIn(regel, verpakking)
+    if (nodig !== null) return verpakkingenVoor(nodig, verpakking)
+  }
   if (!perStuk(regel.key, winkel)) return 1
   let stuks = 0
   for (const item of regel.items) {
@@ -124,6 +149,33 @@ export function aantalVerpakkingen(regel: LijstRegel, winkel: 'ah' | 'jumbo'): n
     stuks += item.hoeveelheid
   }
   return Math.max(1, Math.ceil(stuks))
+}
+
+/** Nooit meer dan dit van één product: bij meer klopt er vast iets niet. */
+const MAX_VERPAKKINGEN = 6
+
+/**
+ * Wat alle recepten samen vragen, in de eenheid van de verpakking. Null als
+ * geen enkele regel om te rekenen is (alleen el, tl, "naar smaak").
+ */
+function nodigIn(regel: LijstRegel, verpakking: Verpakking): number | null {
+  let totaal = 0
+  let geteld = false
+  for (const item of regel.items) {
+    const waarde = naarEenheid(item.hoeveelheid, item.eenheid, regel.key, verpakking.eenheid)
+    if (waarde === null) continue
+    totaal += waarde
+    geteld = true
+  }
+  return geteld ? totaal : null
+}
+
+/**
+ * Tien procent speling: 550 g gehakt bij pakken van 500 g is één pak. Liever
+ * een beetje krap dan een halve verpakking die overblijft.
+ */
+function verpakkingenVoor(nodig: number, verpakking: Verpakking): number {
+  return Math.min(MAX_VERPAKKINGEN, Math.max(1, Math.ceil(nodig / verpakking.inhoud - 0.1)))
 }
 
 function formatteer(waarde: number): string {

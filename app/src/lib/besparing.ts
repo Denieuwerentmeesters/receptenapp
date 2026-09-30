@@ -3,6 +3,7 @@ import { jumboSku } from './jumbo'
 import { schatIngredient } from './prijsschatting'
 import type { JumboProduct } from './database.types'
 import { aantalVerpakkingen, type LijstRegel } from './lijst'
+import type { Verpakking } from './eenheden'
 
 /**
  * "Bespaard!": wat je mandje kost naast wat dezelfde avondmaaltijden bij een
@@ -54,8 +55,8 @@ export interface MandjeKosten {
 
 /**
  * Wat de regels die naar de winkel gaan kosten, in Jumbo-prijzen — ook als je
- * bij AH bestelt; die liggen dicht genoeg bij elkaar. Eén verpakking per
- * regel, net als in de mandjelink. Zonder Jumbo-prijs de klassenschatting uit
+ * bij AH bestelt; die liggen dicht genoeg bij elkaar. Zoveel verpakkingen
+ * als de mandjelink (aantalVerpakkingen). Zonder Jumbo-prijs de klassenschatting uit
  * lib/prijsschatting.ts. Zelf toegevoegde producten (koffie, wc-papier) tellen
  * niet mee: die zitten ook niet in een maaltijdbox.
  */
@@ -64,6 +65,7 @@ export function mandjeKosten(
   mapping: Record<string, JumboProduct>,
   prijzen: Record<string, number>,
   voorkeur: Productvoorkeur,
+  verpakkingen: Record<string, Verpakking> = {},
 ): MandjeKosten {
   let totaal = 0
   let metPrijs = 0
@@ -77,7 +79,7 @@ export function mandjeKosten(
     const sku = product && jumboSku(product, voorkeur)
     const prijs = sku ? prijzen[sku] : undefined
     if (prijs !== undefined) {
-      totaal += prijs * aantalVerpakkingen(regel, 'jumbo')
+      totaal += prijs * aantalVerpakkingen(regel, 'jumbo', verpakkingen[sku!])
       metPrijs++
       continue
     }

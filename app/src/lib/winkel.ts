@@ -1,5 +1,7 @@
 import { bouwMandjeLink, zoekLink, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
-import { bouwJumboLink, jumboZoekLink } from './jumbo'
+import { bouwJumboLink, jumboSku, jumboZoekLink } from './jumbo'
+import { useJumboVerpakkingen } from './queries2'
+import type { Verpakking } from './eenheden'
 import { useAhMapping, useJumboMapping, useVoorkeuren } from './queries'
 import type { BoodschapItem, Voorkeuren } from './database.types'
 
@@ -17,6 +19,8 @@ export interface Winkel {
   /** Heeft dit ingrediënt een productnummer bij deze winkel? Anders: zoeklink. */
   heeftProduct: (item: BoodschapItem) => boolean
   mandjeLink: (items: MandjeItem[]) => MandjeResultaat
+  /** Inhoud van het product dat voor dit item in het mandje gaat, als we die kennen (nu alleen Jumbo). */
+  verpakkingVoor: (item: BoodschapItem) => Verpakking | undefined
   zoekLink: (naam: string) => string
 }
 
@@ -27,6 +31,7 @@ export function useWinkel(): Winkel {
 
   const ah = useAhMapping(id === 'ah')
   const jumbo = useJumboMapping(id === 'jumbo')
+  const verpakkingen = useJumboVerpakkingen(id === 'jumbo')
 
   if (id === 'jumbo') {
     const mapping = jumbo.data ?? {}
@@ -36,6 +41,11 @@ export function useWinkel(): Winkel {
       kort: 'Jumbo',
       heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
       mandjeLink: (items) => bouwJumboLink(items, mapping, voorkeur),
+      verpakkingVoor: (item) => {
+        const product = zoekProduct(item, mapping)
+        const sku = product && jumboSku(product, voorkeur)
+        return sku ? verpakkingen.data?.[sku] : undefined
+      },
       zoekLink: jumboZoekLink,
     }
   }
@@ -47,6 +57,7 @@ export function useWinkel(): Winkel {
     kort: 'AH',
     heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
     mandjeLink: (items) => bouwMandjeLink(items, mapping, voorkeur),
+    verpakkingVoor: () => undefined,
     zoekLink,
   }
 }

@@ -5,7 +5,7 @@ import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../component
 import { Fout, Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
-import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useVoorraad } from '../lib/queries2'
+import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from '../lib/queries2'
 import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
 import type { Bestelling } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isBijzonderKruid, isDroogKruid } from '../lib/kruiden'
@@ -17,6 +17,7 @@ import { openBijWinkel } from '../lib/ah'
 import { tokoProduct } from '../lib/toko'
 import { productvoorkeur, useWinkel } from '../lib/winkel'
 import { aantalVerpakkingen, groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
+import { inhoudTekst } from '../lib/eenheden'
 import { weekStart } from '../lib/week'
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
@@ -46,6 +47,7 @@ export function Boodschappen() {
   // Voor de besparingsteller altijd in Jumbo-prijzen, ook als je bij AH bestelt.
   const jumboMapping = useJumboMapping(true)
   const jumboPrijzen = useJumboPrijzen()
+  const jumboVerpakkingen = useJumboVerpakkingen()
   const bestellingen = useBestellingen()
   const vastleggen = useBestellingVastleggen(week)
   const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
@@ -104,7 +106,7 @@ export function Boodschappen() {
     const mee = naarWinkel.filter((r) => !zonder.has(r.key))
     // Per stuk verkochte groente in het aantal uit het recept: vier paprika's, niet één.
     const { url, gemapt, ongemapt } = winkel.mandjeLink(mee.map((r) => ({
-      ...voorWinkel(r), aantal: aantalVerpakkingen(r, winkel.id),
+      ...voorWinkel(r), aantal: aantalVerpakkingen(r, winkel.id, winkel.verpakkingVoor(voorWinkel(r))),
     })))
     if (gemapt.length === 0) {
       setMelding(
@@ -137,7 +139,7 @@ export function Boodschappen() {
         recepten,
         kosten: mandjeKosten(
           mee, jumboMapping.data ?? {}, jumboPrijzen.data ?? {},
-          productvoorkeur(voorkeuren.data),
+          productvoorkeur(voorkeuren.data), jumboVerpakkingen.data ?? {},
         ).totaal,
       })
     } catch {
@@ -228,6 +230,18 @@ export function Boodschappen() {
                       >
                         {regel.label}
                       </Checkbox>
+                      {!regel.afgevinkt && !blijftThuis(regel.key) && (() => {
+                        // "2× 500 g": dan zie je waarom er twee in je mandje gaan.
+                        const verpakking = winkel.verpakkingVoor(voorWinkel(regel))
+                        if (!verpakking) return null
+                        const aantal = aantalVerpakkingen(regel, winkel.id, verpakking)
+                        return (
+                          <span style={{
+                            display: 'block', marginLeft: 36, marginTop: 2,
+                            fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.55)',
+                          }}>{aantal}× {inhoudTekst(verpakking)}</span>
+                        )
+                      })()}
                       {vegaVervanger(regel.key) && !regel.afgevinkt && (
                         <select
                           value={vegaKeuze(regel.key)}

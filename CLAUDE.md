@@ -20,7 +20,7 @@ app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
   src/lib/           auth, db, queries, schaal, ah, week, config, fouten
 db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
 scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
-                     jumbo_mapping, jumbo_prijzen,
+                     jumbo_mapping, jumbo_prijzen, jumbo_verpakkingen,
                      genereer_afbeeldingen (TypeScript, via `npm run afbeeldingen`)
 data/recepten.json   581 gescrapete recepten (archief na import)
 data/ah_mapping.json ingrediënt → AH-productnummer
@@ -119,6 +119,12 @@ kiest; `src/lib/jumbo.ts` bouwt de link.
   `data/ah_mapping.json` op en schrijft `data/jumbo_mapping.json`; nakijken,
   dan `python3 scripts/jumbo_mapping.py --migratie` voor een nieuwe migratie.
   Zelfde regel als bij AH: bij twijfel geen mapping.
+- **Verpakkingen:** de inhoud per SKU (`jumbo_verpakking`) komt uit de
+  productnaam ("… 500 g"). Na het bijwerken van de mapping:
+  `python3 scripts/jumbo_verpakkingen.py` en dan `--migratie`. Daarmee telt
+  `aantalVerpakkingen` (`src/lib/lijst.ts`) hoeveel pakken er nodig zijn. Voor
+  AH is er geen inhoud; daar blijft het één verpakking per ingrediënt, behalve
+  blikken/pakken uit het recept en groente per stuk.
 - **Niet getest op een iPhone:** of de Jumbo-app de link als Universal Link
   opvangt en de `add`-parameter dan ook verwerkt, is nog onbekend. In Safari
   werkt het.
