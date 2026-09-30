@@ -66,10 +66,12 @@ mandje leeg — zonder foutmelding. Zie `src/lib/ah.ts`.
 **Mandjelinks gaan via `/doorsturen.html`.** Een ah.nl-link geeft iOS aan de
 AH-app (Universal Link); die gaat open maar voegt niets toe, want
 `add-multiple` werkt alleen op de website. Het tussenstation op ons eigen
-domein stuurt na 400 ms door. Dat alleen bleek niet genoeg: de AH-link zelf
-eindigt daarom op een slash (`/mijnlijst/add-multiple/`), want AH claimt alleen
-het pad zonder slash voor de app. ah.nl stuurt zelf door en voegt gewoon toe.
-Haal die slash dus niet weg. Het AH-mandje hoort
+domein stuurt na 1,1 s door (WebKit geeft een tik tot 1 s door aan timers).
+Dat alleen is niet genoeg: de AH-link zelf heeft een **dubbele slash**
+(`/mijnlijst//add-multiple`). AH claimt alleen `/mijnlijst/add-multiple` voor
+de app, en de dubbele slash geeft direct de pagina. Een slash erachter werkt
+níét: ah.nl stuurt die door, en bij een doorverwijzing opent iOS alsnog de app.
+Haal die dubbele slash dus niet weg. Het AH-mandje hoort
 bij je account, dus het staat daarna ook in de AH-app. Alleen ah.nl en
 jumbo.com zijn toegestaan als doel.
 

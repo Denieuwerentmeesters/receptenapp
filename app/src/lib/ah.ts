@@ -5,13 +5,15 @@ import { canoniek } from './synoniemen'
 import type { AhProduct, BoodschapItem } from './database.types'
 
 /**
- * Met een slash erachter, en dat is geen slordigheid. AH claimt
+ * Met een dubbele slash, en dat is geen slordigheid. AH claimt
  * `/mijnlijst/add-multiple` exact als Universal Link, dus iOS geeft die aan de
- * AH-app, die niets toevoegt. De variant met slash staat niet in AH's
- * apple-app-site-association: iOS laat 'm in Safari, en ah.nl stuurt zelf door
- * naar het pad zonder slash en voegt de producten toe (getest op 30-09-2026).
+ * AH-app, die niets toevoegt. Een slash erachter hielp niet: ah.nl stuurt die
+ * door naar het pad zonder slash, en bij een doorverwijzing kijkt iOS opnieuw
+ * en opent alsnog de app. `//add-multiple` staat niet in AH's lijst én geeft
+ * direct de pagina, zonder doorverwijzing — de producten komen gewoon in het
+ * mandje (getest op 30-09-2026). Niet "opschonen".
  */
-const ADD_MULTIPLE = 'https://www.ah.nl/mijnlijst/add-multiple/'
+const ADD_MULTIPLE = 'https://www.ah.nl/mijnlijst//add-multiple'
 const ZOEKEN = 'https://www.ah.nl/zoeken'
 
 /** Een boodschapregel op weg naar het mandje, met hoeveel verpakkingen. */

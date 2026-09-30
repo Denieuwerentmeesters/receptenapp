@@ -56,8 +56,9 @@
       var winkel = doel.hostname.indexOf('jumbo') >= 0 ? 'Jumbo' : 'Albert Heijn';
       document.getElementById('tekst').textContent = 'We sturen je door naar de website van ' + winkel + '.';
       document.getElementById('hulp').hidden = false;
-      // Na een korte pauze, zodat iOS dit niet meer als tik ziet en de link in Safari houdt.
-      setTimeout(function () { location.replace(doel.toString()); }, 400);
+      // Na iets meer dan een seconde: WebKit geeft een tik door aan timers tot
+      // 1 seconde, en een doorverwijzing zonder tik opent geen Universal Link.
+      setTimeout(function () { location.replace(doel.toString()); }, 1100);
     })();
   </script>
 </body>
