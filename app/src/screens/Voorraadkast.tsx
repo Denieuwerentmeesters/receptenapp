@@ -6,6 +6,13 @@ import { Dialoog } from '../components/Dialoog'
 import { useVoorraad, useVoorraadMuteren, type VoorraadItem } from '../lib/queries2'
 import { DROGE_KRUIDEN, DROGE_KRUIDEN_KEY, DROGE_KRUIDEN_UITLEG } from '../lib/kruiden'
 import { ingredientKey } from '../lib/schaal'
+import { useBoodschappen } from '../lib/queries'
+
+/**
+ * Wat altijd in huis is en dus nooit op de lijst komt (lib/altijdInHuis.ts).
+ * Raakt het tóch op, dan zet de "Op"-knop het als los product op je lijst.
+ */
+const ALTIJD_IN_HUIS = ['Zout', 'Peper', 'Suiker', 'Bouillon', 'Olijfolie', 'Zonnebloemolie']
 
 /**
  * Wat de meeste mensen standaard in huis hebben. We tonen er steeds een paar;
@@ -23,10 +30,16 @@ const ZICHTBAAR = 8
 /**
  * Wat je in huis hebt. Staat een ingrediënt hier aan, dan valt het van je
  * boodschappenlijst af — dat scheelt de derde fles olijfolie.
+ *
+ * Raakt iets op, tik dan op "in huis": het gaat op "op" en komt op je lijst.
+ * Na de boodschappen staat het vanzelf weer op "in huis".
  */
 export function Voorraadkast() {
   const voorraad = useVoorraad()
-  const { toggle, toevoegen, verwijderen } = useVoorraadMuteren()
+  const { toggle, altijdOp, toevoegen, verwijderen } = useVoorraadMuteren()
+  const boodschappen = useBoodschappen()
+  // Wat nu open op je lijst staat, om "op je lijst" te kunnen tonen.
+  const opLijst = new Set((boodschappen.data ?? []).filter((b) => !b.is_afgevinkt).map((b) => b.ingredient_key))
   const [nieuw, setNieuw] = useState('')
   const [kruidenUitleg, setKruidenUitleg] = useState(false)
 
@@ -64,7 +77,8 @@ export function Voorraadkast() {
           </div>
           <div style={{ marginTop: 14 }}><Titel grootte={26}>Voorraadkast</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
-            Wat hier aan staat, laten we van je boodschappenlijst af.
+            Wat hier aan staat, laten we van je boodschappenlijst af. Iets op? Tik op
+            "in huis", dan zetten we het op je lijst.
           </p>
         </Kop>
 
@@ -123,15 +137,17 @@ export function Voorraadkast() {
                       color: item.in_huis ? 'var(--color-ink)' : 'rgba(20,20,20,0.45)',
                     }}>
                       {item.naam}
-                      {item.ingredient_key === DROGE_KRUIDEN_KEY && (
-                        <span style={{ display: 'block', fontSize: 12, marginTop: 2, color: 'rgba(20,20,20,0.6)' }}>
+                      {item.ingredient_key === DROGE_KRUIDEN_KEY ? (
+                        <span style={subStijl}>
                           {item.in_huis ? 'Wel op je lijst, niet in je mandje' : 'Gaan weer mee naar je mandje'}
                         </span>
+                      ) : !item.in_huis && opLijst.has(item.ingredient_key) && (
+                        <span style={subStijl}>Op je boodschappenlijst</span>
                       )}
                     </span>
 
                     <button
-                      onClick={() => toggle.mutate({ key: item.ingredient_key, inHuis: !item.in_huis })}
+                      onClick={() => toggle.mutate({ key: item.ingredient_key, inHuis: !item.in_huis, naam: item.naam })}
                       style={{
                         flex: 'none', borderRadius: 'var(--radius-full)', padding: '8px 14px', cursor: 'pointer',
                         border: item.in_huis ? 'none' : '1.5px solid rgba(20,20,20,0.18)',
@@ -154,6 +170,31 @@ export function Voorraadkast() {
                 ))}
               </div>
             ))}
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <span style={{ ...kopStijl, paddingBottom: 6 }}>Altijd in huis</span>
+              {ALTIJD_IN_HUIS.map((naam) => {
+                const op = opLijst.has(ingredientKey(naam))
+                return (
+                  <div key={naam} style={rijStijl}>
+                    <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-body)', fontSize: 15 }}>
+                      {naam}
+                      <span style={subStijl}>{op ? 'Op je boodschappenlijst' : 'Komt nooit vanzelf op je lijst'}</span>
+                    </span>
+                    <button
+                      onClick={() => altijdOp.mutate({ naam, op: !op })}
+                      style={{
+                        flex: 'none', borderRadius: 'var(--radius-full)', padding: '8px 14px', cursor: 'pointer',
+                        border: op ? 'none' : '1.5px solid rgba(20,20,20,0.18)',
+                        background: op ? 'var(--c-red)' : 'transparent',
+                        color: op ? 'var(--c-cream)' : 'var(--c-ink)',
+                        fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
+                      }}
+                    >{op ? 'op je lijst' : 'op?'}</button>
+                  </div>
+                )
+              })}
+            </div>
 
             {suggesties.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -198,4 +239,18 @@ function groepeer(items: VoorraadItem[]) {
     perCategorie.set(naam, [...(perCategorie.get(naam) ?? []), item])
   }
   return [...perCategorie].map(([naam, items]) => ({ naam, items }))
+}
+
+const subStijl: React.CSSProperties = {
+  display: 'block', fontSize: 12, marginTop: 2, color: 'rgba(20,20,20,0.6)',
+}
+
+const kopStijl: React.CSSProperties = {
+  fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
+  textTransform: 'uppercase', color: 'var(--c-red)',
+}
+
+const rijStijl: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 10, padding: '11px 2px',
+  borderBottom: '1.5px solid rgba(20,20,20,0.12)',
 }
