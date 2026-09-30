@@ -163,6 +163,14 @@ export function zoekLink(naam: string): string {
   return `${ZOEKEN}?query=${encodeURIComponent(naam)}`
 }
 
+/** Waar de website draait; de iOS-app heeft zelf geen https-adres. */
+const WEBSITE = 'https://receptenapp.vercel.app'
+
+/** Een link die producten in je mandje zet (en niet alleen een zoekpagina). */
+function isMandjeLink(url: string): boolean {
+  return url.startsWith(`${ADD_MULTIPLE}?`) || url.startsWith('https://www.jumbo.com/mandje/')
+}
+
 /**
  * Opent een winkel-URL (ah.nl of jumbo.com) in de systeembrowser — nooit in
  * een in-app webview.
@@ -170,15 +178,23 @@ export function zoekLink(naam: string): string {
  * Dit is de valkuil uit tech-stack §5: `@capacitor/browser` en een gewone
  * `<a href>` blijven in een omgeving met een eigen cookiejar. Ben je daar niet
  * ingelogd bij AH, dan landen je artikelen op een anonieme lijst en is je mandje
- * leeg als je de AH-app opent — zonder foutmelding. AppLauncher.openUrl geeft de
- * URL aan het besturingssysteem, dat 'm doorzet naar de app van de winkel
- * (Universal Link) of naar Safari, waar je normale sessie zit.
+ * leeg als je de AH-app opent — zonder foutmelding.
+ *
+ * Mandjelinks gaan via /doorsturen.html op ons eigen domein. Een ah.nl-link
+ * rechtstreeks openen geeft iOS aan de AH-app (Universal Link), en die gaat
+ * open zonder iets toe te voegen: "add-multiple" werkt alleen op de website.
+ * Het tussenstation stuurt na een korte pauze door, en dan blijft iOS in
+ * Safari. Je AH-mandje hoort bij je account, dus wat de website toevoegt
+ * staat daarna ook in de AH-app.
  */
 export async function openBijWinkel(url: string): Promise<void> {
-  if (Capacitor.isNativePlatform()) {
-    await AppLauncher.openUrl({ url })
+  const native = Capacitor.isNativePlatform()
+  const doel = isMandjeLink(url)
+    ? `${native ? WEBSITE : window.location.origin}/doorsturen.html?naar=${encodeURIComponent(url)}`
+    : url
+  if (native) {
+    await AppLauncher.openUrl({ url: doel })
     return
   }
-  // In de browser tijdens ontwikkelen is een nieuw tabblad het equivalent.
-  window.open(url, '_blank', 'noopener,noreferrer')
+  window.open(doel, '_blank', 'noopener,noreferrer')
 }

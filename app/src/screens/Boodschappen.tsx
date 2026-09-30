@@ -387,6 +387,7 @@ export function Boodschappen() {
         tekst={doorgestuurd
           ? `${doorgestuurd.gemapt} product${doorgestuurd.gemapt === 1 ? '' : 'en'} doorgestuurd naar ${winkel.naam}. ` +
             'Zie je ze in je mandje, dan halen we ze van je lijst.' +
+            (winkel.id === 'ah' ? ' Is je mandje leeg? Log dan één keer in op ah.nl in Safari en probeer het opnieuw.' : '') +
             (doorgestuurd.ongemapt > 0
               ? ` ${doorgestuurd.ongemapt} product${doorgestuurd.ongemapt === 1 ? '' : 'en'} konden we niet bij ${winkel.kort} vinden — die blijven staan.`
               : '')

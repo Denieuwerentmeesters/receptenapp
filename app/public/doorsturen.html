@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Naar je mandje</title>
+  <!--
+    Tussenstation voor de mandjeknop (zie openBijWinkel in src/lib/ah.ts).
+
+    Tik je op een ah.nl-link, dan geeft iOS die aan de AH-app als die
+    geïnstalleerd is (Universal Link). De AH-app gaat dan open maar voegt
+    niets toe: "add-multiple" werkt alleen op de website. Een doorverwijzing
+    die niet direct uit een tik komt, laat iOS in Safari. Daarom gaat de
+    knop eerst hierheen en sturen we na een korte pauze door.
+
+    Alleen naar ah.nl en jumbo.com: anders is dit een open doorverwijzing
+    die iedereen voor phishing kan gebruiken.
+  -->
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: #AB2328; color: #FFF6E8; padding: 24px; box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; text-align: center;
+    }
+    main { max-width: 340px; }
+    h1 { font-size: 22px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: .02em; }
+    p { font-size: 15px; line-height: 1.5; margin: 0 0 10px; opacity: .92; }
+    .klein { font-size: 13px; opacity: .75; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 id="kop">Even naar je mandje…</h1>
+    <p id="tekst">We sturen je door naar de website van je supermarkt.</p>
+    <p class="klein" id="hulp" hidden>
+      Komt er niets in je mandje? Log dan één keer in op de website in Safari
+      en tik in de receptenapp opnieuw op de mandjeknop.
+    </p>
+  </main>
+  <script>
+    (function () {
+      var TOEGESTAAN = ['www.ah.nl', 'ah.nl', 'www.jumbo.com', 'jumbo.com'];
+      var doel;
+      try {
+        doel = new URL(new URLSearchParams(location.search).get('naar') || '');
+      } catch (e) {
+        doel = null;
+      }
+      if (!doel || doel.protocol !== 'https:' || TOEGESTAAN.indexOf(doel.hostname) === -1) {
+        document.getElementById('kop').textContent = 'Deze link klopt niet';
+        document.getElementById('tekst').textContent = 'Ga terug naar de receptenapp en probeer het opnieuw.';
+        return;
+      }
+      var winkel = doel.hostname.indexOf('jumbo') >= 0 ? 'Jumbo' : 'Albert Heijn';
+      document.getElementById('tekst').textContent = 'We sturen je door naar de website van ' + winkel + '.';
+      document.getElementById('hulp').hidden = false;
+      // Na een korte pauze, zodat iOS dit niet meer als tik ziet en de link in Safari houdt.
+      setTimeout(function () { location.replace(doel.toString()); }, 400);
+    })();
+  </script>
+</body>
+</html>

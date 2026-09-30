@@ -63,6 +63,13 @@ een gewone `<a href>`. Die blijven in een webview met een eigen cookiejar; ben j
 daar niet ingelogd bij AH, dan landen je artikelen op een anonieme lijst en is je
 mandje leeg — zonder foutmelding. Zie `src/lib/ah.ts`.
 
+**Mandjelinks gaan via `/doorsturen.html`.** Een ah.nl-link geeft iOS aan de
+AH-app (Universal Link); die gaat open maar voegt niets toe, want
+`add-multiple` werkt alleen op de website. Het tussenstation op ons eigen
+domein stuurt na 400 ms door, en dan blijft iOS in Safari. Het AH-mandje hoort
+bij je account, dus het staat daarna ook in de AH-app. Alleen ah.nl en
+jumbo.com zijn toegestaan als doel.
+
 **`ingredient_key` bestaat op drie plekken en moet identiek zijn:**
 `db/migrations/...ingredient_key.sql`, `app/src/lib/schaal.ts` (`ingredientKey`)
 en `scripts/ah_mapping.py`. Wijk je op één plek af, dan matcht de AH-mapping
