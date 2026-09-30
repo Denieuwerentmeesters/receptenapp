@@ -18,7 +18,7 @@ import { tokoProduct } from '../lib/toko'
 import { productvoorkeur, useWinkel } from '../lib/winkel'
 import { aantalVerpakkingen, groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
 import { inhoudTekst } from '../lib/eenheden'
-import { bonusVoor, totTekst, useBonus } from '../lib/bonus'
+import { bonusVoor, bonusVoordeel, totTekst, useBonus } from '../lib/bonus'
 import { bezorgdagen, dagLabel, useBezorgkeuze } from '../lib/bezorgdag'
 import { BonusBron } from '../components/Bonus'
 import { weekStart } from '../lib/week'
@@ -48,6 +48,8 @@ interface Doorgestuurd {
   /** Voor "Bespaard!": vastgelegd zodra je bevestigt dat het mandje aankwam. */
   recepten: Record<string, number>
   kosten: number
+  /** Wat de bonus scheelde op producten die zelf in de actie zaten. */
+  bonusVoordeel: number
 }
 
 export function Boodschappen() {
@@ -177,8 +179,20 @@ export function Boodschappen() {
           if (i.bron_recept_id) recepten[i.bron_recept_id] = aantalPerRecept.get(i.bron_recept_id) ?? 1
         }
       }
+      // Bonus telt alleen als het product in je mandje zelf in de actie zit,
+      // en je genoeg stuks koopt (1 + 1 gratis: twee).
+      let voordeel = 0
+      for (const r of mee) {
+        if (!gemapteIds.has(r.voorbeeld.id)) continue
+        const item = voorWinkel(r)
+        const product = winkel.productVoor(item)
+        const aantal = aantalVerpakkingen(r, winkel.id, winkel.verpakkingVoor(item))
+        const acties = (bonusVoor(r.naam, bonus.data, r.key) ?? []).filter((a) => a.extern_id === product)
+        voordeel += Math.max(0, ...acties.map((a) => bonusVoordeel(a, aantal)))
+      }
       setDoorgestuurd({
         ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length,
+        bonusVoordeel: Math.round(voordeel * 100) / 100,
         nietMee: mee.filter((r) => !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
         recepten,
         kosten: mandjeKosten(
@@ -528,6 +542,7 @@ export function Boodschappen() {
                   recepten: doorgestuurd.recepten,
                   mandjeKosten: doorgestuurd.kosten,
                   bezorgdatum: bonus.peildatum.peil,
+                  bonusVoordeel: doorgestuurd.bonusVoordeel,
                 }, {
                   // Alleen vieren als er maaltijden bij kwamen; een tweede ronde
                   // voor een vergeten ui is geen besparing.
