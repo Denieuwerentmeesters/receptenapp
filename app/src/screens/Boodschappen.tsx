@@ -18,6 +18,8 @@ import { tokoProduct } from '../lib/toko'
 import { productvoorkeur, useWinkel } from '../lib/winkel'
 import { aantalVerpakkingen, groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
 import { inhoudTekst } from '../lib/eenheden'
+import { bonusVoor, totTekst, useBonus } from '../lib/bonus'
+import { BonusBron } from '../components/Bonus'
 import { weekStart } from '../lib/week'
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
@@ -48,6 +50,7 @@ export function Boodschappen() {
   const jumboMapping = useJumboMapping(true)
   const jumboPrijzen = useJumboPrijzen()
   const jumboVerpakkingen = useJumboVerpakkingen()
+  const bonus = useBonus()
   const bestellingen = useBestellingen()
   const vastleggen = useBestellingVastleggen(week)
   const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
@@ -230,6 +233,21 @@ export function Boodschappen() {
                       >
                         {regel.label}
                       </Checkbox>
+                      {!regel.afgevinkt && !blijftThuis(regel.key) && (() => {
+                        // "Bonus: 3 voor 4.99 t/m zondag": alleen als tip, het mandje verandert niet.
+                        const acties = bonusVoor(regel.naam, bonus.data, regel.key)
+                        if (!acties?.length) return null
+                        const a = acties[0]
+                        return (
+                          <span style={{
+                            display: 'block', marginLeft: 36, marginTop: 3,
+                            fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
+                          }}>
+                            Bonus: {a.mechanisme ?? 'in de aanbieding'} {totTekst(a.geldig_tot)}
+                            <span style={{ fontWeight: 400 }}> · <BonusBron klein /></span>
+                          </span>
+                        )
+                      })()}
                       {!regel.afgevinkt && !blijftThuis(regel.key) && (() => {
                         // "2× 500 g": dan zie je waarom er twee in je mandje gaan.
                         const verpakking = winkel.verpakkingVoor(voorWinkel(regel))

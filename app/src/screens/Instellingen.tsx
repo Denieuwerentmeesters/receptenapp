@@ -2,6 +2,8 @@ import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../comp
 import { Grens } from '../components/Staten'
 import { useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import type { Voorkeuren } from '../lib/database.types'
+import { BONUS_BRON } from '../lib/bonus'
+import { BonusBron } from '../components/Bonus'
 
 const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
 
@@ -101,6 +103,13 @@ export function Instellingen() {
                       style={selectStijl}
                     />
                   </Rij>
+                </Sectie>
+
+                <Sectie naam="Over de app">
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '0 0 6px' }}>
+                    {BONUS_BRON.uitleg}
+                  </p>
+                  <BonusBron />
                 </Sectie>
               </Inhoud>
             </>
