@@ -75,8 +75,10 @@ export function DezeWeek() {
   const personen = voorkeuren.data?.aantal_personen ?? 4
   const kookavonden = voorkeuren.data?.kookavonden ?? 4
 
-  // Kandidaten voor vullen en ruilen: suggesties die je nog niet koos.
-  const kandidaten = recepten.filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp)
+  // Kandidaten voor vullen en ruilen: suggesties die je nog niet koos. Bonus weegt mee.
+  const kandidaten = recepten
+    .filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp)
+    .map((r) => ({ ...r, inBonus: Boolean(bonusPerRecept.get(r.id)) }))
   // Wat al in je week zit telt mee, ook als je het al gekocht of gekookt hebt.
   const gekozen = recepten.filter((r) => r.gekozen)
   const inHuis = new Set((voorraad.data ?? []).filter((v) => v.in_huis).map((v) => v.ingredient_key))

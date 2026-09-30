@@ -10,10 +10,11 @@ import type { Ingredient } from './database.types'
  * 1. Wat al op je lijst staat blijft staan en telt mee.
  * 2. De vega-verhouding uit je voorkeuren (vega_minimum is "van de 10").
  * 3. Niet twee keer dezelfde keuken, als het anders kan.
- * 4. Liefst recepten die ingrediënten delen met wat al gekozen is: dan
+ * 4. Liefst een recept met het hoofdingrediënt in de bonus bij je winkel.
+ * 5. Liefst recepten die ingrediënten delen met wat al gekozen is: dan
  *    blijven er minder halve zakken spinazie over.
- * 5. Daarna de volgorde van de generator (positie), die al rekening houdt
- *    met favorieten en favoriete keukens.
+ * 6. Daarna de volgorde van de generator (positie), die al rekening houdt
+ *    met favorieten, favoriete keukens en bonus.
  *
  * Puur: geen database, zodat het te testen is. De keuze gaat daarna via de
  * gewone "zet op lijst"-flow, dus voorraadkast en basisvoorraad werken mee.
@@ -25,6 +26,8 @@ export interface Kandidaat {
   keuken: string | null
   tags: string[]
   ingredienten: Ingredient[]
+  /** Hoofdingrediënt in de bonus bij je winkel (lib/bonus.ts). */
+  inBonus?: boolean
 }
 
 export interface WeekVoorkeuren {
@@ -88,9 +91,9 @@ export function kiesWeek(
       const nieuweKeuken = !r.keuken || !keukens.has(r.keuken)
       let delen = 0
       for (const k of sleutelsVan.get(r.id)!) if (gedeeld.has(k)) delen++
-      // Keuken weegt het zwaarst, dan delen (afgetopt, zodat één groot
-      // recept niet alles wint), dan de volgorde van de generator.
-      const score = (nieuweKeuken ? 1000 : 0) + Math.min(delen, 3) * 10 - (r.positie ?? 99) * 0.1
+      // Keuken weegt het zwaarst, dan bonus, dan delen (afgetopt, zodat één
+      // groot recept niet alles wint), dan de volgorde van de generator.
+      const score = (nieuweKeuken ? 1000 : 0) + (r.inBonus ? 40 : 0) + Math.min(delen, 3) * 10 - (r.positie ?? 99) * 0.1
       if (score > besteScore) { beste = r; besteScore = score }
     }
 
