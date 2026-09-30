@@ -8,7 +8,7 @@ import { useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, use
 import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useVoorraad } from '../lib/queries2'
 import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
 import type { Bestelling } from '../lib/database.types'
-import { DROGE_KRUIDEN_KEY, isDroogKruid } from '../lib/kruiden'
+import { DROGE_KRUIDEN_KEY, isBijzonderKruid, isDroogKruid } from '../lib/kruiden'
 import { inVoorraad } from '../lib/voorraad'
 import {
   bewaarVegaKeuzes, leesVegaKeuzes, metVegaKeuze, vegaVervanger, type VegaKeuze,
@@ -57,6 +57,7 @@ export function Boodschappen() {
   const [wisVraag, setWisVraag] = useState(false)
   const [nietMee, setNietMee] = useState<string[] | null>(null)
   const [bespaard, setBespaard] = useState<Bestelling | null>(null)
+  const [kruidVraag, setKruidVraag] = useState<LijstRegel[] | null>(null)
 
   const receptenOpLijst = (dezeWeek.data ?? []).filter((r) => r.opLijst).length
   const items = useMemo(() => boodschappen.data ?? [], [boodschappen.data])
@@ -85,11 +86,23 @@ export function Boodschappen() {
   /** De rij zoals hij naar de winkel gaat — met de vega-versie waar je die koos. */
   const voorWinkel = (regel: LijstRegel) => metVegaKeuze(regel.voorbeeld, vegaKeuze(regel.key))
 
-  async function naarMandje() {
+  /**
+   * `zonder`: bijzondere kruiden die je volgens de vraag hieronder al in huis
+   * hebt. `gevraagd`: die vraag is al gesteld.
+   */
+  async function naarMandje(zonder: ReadonlySet<string> = new Set(), gevraagd = false) {
     setMandjeFout(null)
     setMelding(null)
+    // Heb je "Droge kruiden" in huis, dan gaan sumak en za'atar toch mee: die
+    // heeft niet iedereen staan. Maar we vragen het eerst.
+    const bijzonder = kruidenThuis ? naarWinkel.filter((r) => isBijzonderKruid(r.key)) : []
+    if (!gevraagd && bijzonder.length > 0) {
+      setKruidVraag(bijzonder)
+      return
+    }
+    const mee = naarWinkel.filter((r) => !zonder.has(r.key))
     // Per stuk verkochte groente in het aantal uit het recept: vier paprika's, niet één.
-    const { url, gemapt, ongemapt } = winkel.mandjeLink(naarWinkel.map((r) => ({
+    const { url, gemapt, ongemapt } = winkel.mandjeLink(mee.map((r) => ({
       ...voorWinkel(r), aantal: aantalVerpakkingen(r, winkel.id),
     })))
     if (gemapt.length === 0) {
@@ -112,17 +125,17 @@ export function Boodschappen() {
       // maaltijdbox levert ook het hele recept.
       const aantalPerRecept = new Map((dezeWeek.data ?? []).map((r) => [r.id, r.aantal]))
       const recepten: Record<string, number> = {}
-      for (const r of naarWinkel) {
+      for (const r of mee) {
         for (const i of r.items) {
           if (i.bron_recept_id) recepten[i.bron_recept_id] = aantalPerRecept.get(i.bron_recept_id) ?? 1
         }
       }
       setDoorgestuurd({
         ids: weg, gemapt: gemapt.length, ongemapt: ongemapt.length,
-        nietMee: naarWinkel.filter((r) => !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
+        nietMee: mee.filter((r) => !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
         recepten,
         kosten: mandjeKosten(
-          naarWinkel, jumboMapping.data ?? {}, jumboPrijzen.data ?? {},
+          mee, jumboMapping.data ?? {}, jumboPrijzen.data ?? {},
           productvoorkeur(voorkeuren.data),
         ).totaal,
       })
@@ -335,6 +348,25 @@ export function Boodschappen() {
       </Grens>
 
       <Dialoog
+        open={Boolean(kruidVraag)}
+        kop="Heb je deze kruiden in huis?"
+        tekst={kruidVraag
+          ? `${naamLijst(kruidVraag.map((r) => r.naam))} heeft niet iedereen staan. Zullen we ${kruidVraag.length === 1 ? 'het' : 'ze'} in je mandje doen?`
+          : undefined}
+        onSluit={() => setKruidVraag(null)}
+        acties={[
+          { label: 'Ja, doe in mijn mandje', hoofd: true, onClick: () => { setKruidVraag(null); void naarMandje(new Set(), true) } },
+          {
+            label: 'Nee, heb ik al',
+            onClick: () => {
+              const zonder = new Set((kruidVraag ?? []).map((r) => r.key))
+              setKruidVraag(null)
+              void naarMandje(zonder, true)
+            },
+          },
+        ]}
+      />
+      <Dialoog
         open={Boolean(doorgestuurd)}
         kop={`Staat alles in je ${winkel.kort}-mandje?`}
         tekst={doorgestuurd
@@ -427,4 +459,11 @@ export function Boodschappen() {
       <OnderBalk />
     </Scherm>
   )
+}
+
+/** "sumak, kardemom en za'atar" */
+function naamLijst(namen: string[]): string {
+  const eerste = namen[0].charAt(0).toUpperCase() + namen[0].slice(1)
+  const rest = [eerste, ...namen.slice(1)]
+  return rest.length === 1 ? rest[0] : `${rest.slice(0, -1).join(', ')} en ${rest[rest.length - 1]}`
 }

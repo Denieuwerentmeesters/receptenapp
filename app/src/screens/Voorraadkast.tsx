@@ -183,7 +183,7 @@ export function Voorraadkast() {
       <Dialoog
         open={kruidenUitleg}
         kop="Droge kruiden in huis"
-        tekst={`${DROGE_KRUIDEN_UITLEG} Ze blijven op je boodschappenlijst staan, zodat je ziet wat een recept vraagt, maar we zetten ze niet meer in je mandje.`}
+        tekst={`${DROGE_KRUIDEN_UITLEG} Ze blijven op je boodschappenlijst staan, zodat je ziet wat een recept vraagt, maar we zetten ze niet meer in je mandje. Bijzondere kruiden, zoals sumak of kardemom, vragen we na.`}
         onSluit={() => setKruidenUitleg(false)}
         acties={[{ label: 'Begrepen', hoofd: true, onClick: () => setKruidenUitleg(false) }]}
       />
