@@ -97,6 +97,30 @@ export function receptBonus(ingredienten: Ingredient[], bonus: BonusMap | undefi
   return acties?.length ? { naam: hoofd.naam, acties } : null
 }
 
+/** Eén product van een recept dat in de bonus is. */
+export interface BonusProduct { naam: string; acties: BonusActie[] }
+
+/**
+ * Welke producten van dit recept in de bonus zijn: alles wat je moet kopen,
+ * niet wat je altijd in huis hebt of gedroogde kruiden. Het hoofdingrediënt
+ * vooraan. Voor het label op de foto; wat meeweegt in weekmenu en Vul mijn
+ * week blijft receptBonus (alleen het hoofdingrediënt).
+ */
+export function receptBonusProducten(ingredienten: Ingredient[], bonus: BonusMap | undefined): BonusProduct[] {
+  if (!bonus) return []
+  const hoofd = hoofdingredient(ingredienten)
+  const gezien = new Set<string>()
+  const uit: BonusProduct[] = []
+  for (const ing of hoofd ? [hoofd, ...ingredienten] : ingredienten) {
+    const key = canoniek(ingredientKey(ing.naam))
+    if (!key || gezien.has(key) || altijdInHuis(key) || isDroogKruid(key)) continue
+    gezien.add(key)
+    const acties = bonusVoor(ing.naam, bonus)
+    if (acties?.length) uit.push({ naam: ing.naam, acties })
+  }
+  return uit
+}
+
 /** "Kipfilet 1 kg · 2e halve prijs t/m zondag · € 4,99 (was € 6,49)" */
 export function actieTekst(a: BonusActie): string {
   const prijs = a.prijs_nu !== null
