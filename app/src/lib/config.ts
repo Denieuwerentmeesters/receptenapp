@@ -34,7 +34,22 @@ export function config(): Config {
 
   gecached = {
     neonDataApiUrl: import.meta.env.VITE_NEON_DATA_API_URL,
-    neonAuthUrl: import.meta.env.VITE_NEON_AUTH_URL,
+    neonAuthUrl: authViaEigenDomein() ? `${window.location.origin}/api/auth` : import.meta.env.VITE_NEON_AUTH_URL,
   }
   return gecached
+}
+
+/**
+ * Op de website loopt inloggen via /api/auth op het eigen domein (api/auth.ts).
+ * Neon Auth zit op een ander domein, en Safari gooit een cookie van een ander
+ * domein weg — in een app op het beginscherm altijd. Dan leek inloggen te
+ * lukken en stond je meteen weer op het inlogscherm.
+ *
+ * Niet in de iOS-app (daar is het domein capacitor://localhost en is er geen
+ * /api) en niet lokaal met `npm run dev` (daar draaien de functies niet).
+ */
+function authViaEigenDomein(): boolean {
+  if (typeof window === 'undefined') return false
+  const { protocol, hostname } = window.location
+  return protocol === 'https:' && hostname !== 'localhost'
 }
