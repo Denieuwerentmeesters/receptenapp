@@ -2,6 +2,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import { db } from './db'
 import { huidigeUserId } from './auth'
 import { ingredientKey } from './schaal'
+import { DROGE_KRUIDEN_KEY } from './kruiden'
 import { weekStart } from './week'
 import { sleutels } from './queries'
 import type { Bestelling, BronType, DeelStatus, Recept } from './database.types'
@@ -197,6 +198,37 @@ export function useVoorraad() {
   })
 }
 
+/** Zet een opgeraakt product op de lijst van deze week, tenzij het er al (open) op staat. */
+async function zetAanvullingOpLijst(naam: string, key: string) {
+  const week = weekStart()
+  const al = await db.from('boodschappenlijst_item').select('id')
+    .eq('week_start_datum', week).eq('ingredient_key', key).eq('is_afgevinkt', false).limit(1)
+  if (al.error) throw al.error
+  if ((al.data ?? []).length > 0) return
+  const { error } = await db.from('boodschappenlijst_item').insert({
+    user_id: await huidigeUserId(),
+    week_start_datum: week,
+    naam,
+    ingredient_key: key,
+    hoeveelheid: null,
+    eenheid: null,
+    categorie: 'Voorraad aanvullen',
+    bron_type: 'extra',
+    bron_recept_id: null,
+    is_afgevinkt: false,
+    voorraad_aanvulling: true,
+  })
+  if (error) throw error
+}
+
+/** Haalt een nog niet gekochte voorraadaanvulling weer van de lijst. */
+async function haalAanvullingWeg(key: string) {
+  const { error } = await db.from('boodschappenlijst_item').delete()
+    .eq('week_start_datum', weekStart()).eq('ingredient_key', key)
+    .eq('voorraad_aanvulling', true).eq('is_afgevinkt', false)
+  if (error) throw error
+}
+
 export function useVoorraadMuteren() {
   const qc = useQueryClient()
   const ververs = () => {
@@ -204,12 +236,20 @@ export function useVoorraadMuteren() {
     void qc.invalidateQueries({ queryKey: sleutels.boodschappen(weekStart()) })
   }
 
+  /**
+   * In huis of op. Zet je iets op "op", dan komt het ook op je lijst van deze
+   * week (als voorraadaanvulling); zet je het terug, dan gaat het er weer af.
+   * Droge kruiden niet: "Droge kruiden" is geen boodschap.
+   */
   const toggle = useMutation({
-    mutationFn: async ({ key, inHuis }: { key: string; inHuis: boolean }) => {
+    mutationFn: async ({ key, inHuis, naam }: { key: string; inHuis: boolean; naam?: string }) => {
       const { error } = await db.from('voorraad_item')
         .update({ in_huis: inHuis, bijgewerkt_op: new Date().toISOString() })
         .eq('ingredient_key', key)
       if (error) throw error
+      if (key === DROGE_KRUIDEN_KEY) return
+      if (inHuis) await haalAanvullingWeg(key)
+      else if (naam) await zetAanvullingOpLijst(naam, key)
     },
     onMutate: async ({ key, inHuis }) => {
       await qc.cancelQueries({ queryKey: ['voorraad'] })
@@ -219,6 +259,16 @@ export function useVoorraadMuteren() {
       return { vorige }
     },
     onError: (_e, _v, c) => { if (c?.vorige) qc.setQueryData(['voorraad'], c.vorige) },
+    onSettled: ververs,
+  })
+
+  /** "Op" bij iets uit Altijd in huis: alleen op de lijst, er is geen voorraadregel. */
+  const altijdOp = useMutation({
+    mutationFn: async ({ naam, op }: { naam: string; op: boolean }) => {
+      const key = ingredientKey(naam)
+      if (op) await zetAanvullingOpLijst(naam, key)
+      else await haalAanvullingWeg(key)
+    },
     onSettled: ververs,
   })
 
@@ -246,7 +296,7 @@ export function useVoorraadMuteren() {
     onSuccess: ververs,
   })
 
-  return { toggle, toevoegen, verwijderen }
+  return { toggle, altijdOp, toevoegen, verwijderen }
 }
 
 /* ------------------------------------------------------------ geschiedenis */

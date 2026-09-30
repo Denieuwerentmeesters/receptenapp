@@ -72,7 +72,8 @@ export function Boodschappen() {
     .filter((v) => v.in_huis && v.ingredient_key !== DROGE_KRUIDEN_KEY)
     .map((v) => v.ingredient_key)), [voorraad.data])
   const blijftThuis = (key: string) => (kruidenThuis && isDroogKruid(key)) || inVoorraad(key, inHuis)
-  const naarWinkel = open.filter((r) => !blijftThuis(r.key))
+  // Wat je via de "Op"-knop in de voorraadkast op de lijst zette, is juist op: dat gaat altijd mee.
+  const naarWinkel = open.filter((r) => r.items.some((i) => i.voorraad_aanvulling) || !blijftThuis(r.key))
   const thuisOpen = open.length - naarWinkel.length
   const groepen = useMemo(() => groepeerOpSchap(regels), [regels])
 

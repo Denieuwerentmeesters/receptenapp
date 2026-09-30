@@ -374,8 +374,10 @@ export function useBoodschappen(week = weekStart()) {
         .order('naam')
       if (error) throw error
       // Oudere lijsten kunnen nog "peper en zout" of "water" bevatten van
-      // vóór lib/altijdInHuis.ts; die laten we niet meer zien.
-      return (data as BoodschapItem[]).filter((i) => !altijdInHuis(i.ingredient_key))
+      // vóór lib/altijdInHuis.ts; die laten we niet meer zien. Wat je zelf
+      // toevoegde wel: is het zout op, dan wil je het ook op je lijst.
+      return (data as BoodschapItem[])
+        .filter((i) => i.bron_type === 'extra' || !altijdInHuis(i.ingredient_key))
     },
   })
 }
@@ -451,8 +453,19 @@ export function useBoodschapMuteren(week = weekStart()) {
   const opruimen = useMutation({
     mutationFn: async (itemIds: string[]) => {
       if (itemIds.length > 0) {
+        // Wat via de "Op"-knop uit de voorraadkast kwam, is nu gekocht: weer in huis.
+        const aanvulling = await db.from('boodschappenlijst_item').select('ingredient_key')
+          .in('id', itemIds).eq('voorraad_aanvulling', true)
+        if (aanvulling.error) throw aanvulling.error
         const { error } = await db.from('boodschappenlijst_item').delete().in('id', itemIds)
         if (error) throw error
+        const keys = [...new Set((aanvulling.data as { ingredient_key: string }[]).map((r) => r.ingredient_key))]
+        if (keys.length > 0) {
+          const terug = await db.from('voorraad_item')
+            .update({ in_huis: true, bijgewerkt_op: new Date().toISOString() })
+            .in('ingredient_key', keys)
+          if (terug.error) throw terug.error
+        }
       }
       const over = await db.from('boodschappenlijst_item').select('bron_recept_id, ingredient_key')
         .eq('week_start_datum', week).not('bron_recept_id', 'is', null)
@@ -471,7 +484,10 @@ export function useBoodschapMuteren(week = weekStart()) {
       const { error } = await vraag
       if (error) throw error
     },
-    onSuccess: ververs,
+    onSuccess: () => {
+      ververs()
+      void qc.invalidateQueries({ queryKey: ['voorraad'] })
+    },
   })
 
   /** "Alles wissen": de lijst leeg, alle recepten eraf. */

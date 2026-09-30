@@ -93,6 +93,8 @@ export interface BoodschapItem {
   categorie: string | null
   bron_type: 'recept' | 'extra'
   bron_recept_id: string | null
+  /** Kwam via de "Op"-knop uit de voorraadkast; na de boodschappen weer in huis. */
+  voorraad_aanvulling?: boolean
   is_afgevinkt: boolean
   aangemaakt_op: string
 }
