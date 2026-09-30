@@ -1,4 +1,4 @@
-import { zoekProduct } from './ah'
+import { zoekProduct } from './zoekProduct'
 import { altijdInHuis } from './altijdInHuis'
 import { isDroogKruid } from './kruiden'
 import { schatIngredient } from './prijsschatting'
