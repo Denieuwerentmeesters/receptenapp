@@ -5,7 +5,7 @@ import { useVoorkeuren } from './queries'
 import type { AllergeenRegel, BoodschapItem } from './database.types'
 
 /**
- * Allergieën (migratie 20260930230000_allergieen.sql). Je stelt ze één keer in
+ * Allergieën (migratie 20260930233000_allergieen.sql). Je stelt ze één keer in
  * bij Instellingen; daarna gelden ze overal:
  *
  * - Weekmenu, Ontdekken, Vul mijn week en Ruil laten recepten weg met een

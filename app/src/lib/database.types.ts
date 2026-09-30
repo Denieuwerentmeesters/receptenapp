@@ -145,7 +145,7 @@ export interface JumboProduct {
   laatst_geverifieerd: string
 }
 
-/** Eén patroon uit allergeen_regel; zie migratie 20260930230000_allergieen.sql. */
+/** Eén patroon uit allergeen_regel; zie migratie 20260930233000_allergieen.sql. */
 export interface AllergeenRegel {
   id: number
   allergeen: string

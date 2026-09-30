@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { allergeenTekst, opsomming, receptAllergie, treffers, vervangerVoor } from './allergenen'
 import type { AllergeenRegel } from './database.types'
-import migratie from '../../../db/migrations/20260930230000_allergieen.sql?raw'
+import migratie from '../../../db/migrations/20260930233000_allergieen.sql?raw'
 
 /**
  * De echte regels, uit de migratie gelezen: zo testen we ook dat elk patroon
