@@ -1,16 +1,30 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/extraheer.ts": { "maxDuration": 60 },
-    "api/afbeeldingen.ts": { "maxDuration": 60 }
+    "api/extraheer.ts": {
+      "maxDuration": 60
+    },
+    "api/afbeeldingen.ts": {
+      "maxDuration": 60
+    }
   },
   "crons": [
-    { "path": "/api/afbeeldingen", "schedule": "0 3 * * *" }
+    {
+      "path": "/api/afbeeldingen",
+      "schedule": "0 3 * * *"
+    }
   ],
   "installCommand": "npm install && cd app && npm install",
   "buildCommand": "cd app && npm run build",
   "outputDirectory": "app/dist",
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/api/auth/:pad*",
+      "destination": "/api/auth?pad=:pad*"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
