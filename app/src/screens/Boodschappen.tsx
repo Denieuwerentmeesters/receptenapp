@@ -22,6 +22,18 @@ import { bonusVoor, bonusVoordeel, totTekst, useBonus } from '../lib/bonus'
 import { bezorgdagen, dagLabel, useBezorgkeuze } from '../lib/bezorgdag'
 import { BonusBron } from '../components/Bonus'
 import { weekStart } from '../lib/week'
+import {
+  bewaarAllergieKeuzes, leesAllergieKeuzes, metAllergieKeuze, opsomming, treffers,
+  useAllergeenRegels, useAllergieen, vervangerVoor, type AllergieKeuze,
+} from '../lib/allergenen'
+
+/** De keuzelijst onder een regel: vega of vlees, vervanger of origineel. */
+const keuzeStijl: React.CSSProperties = {
+  display: 'block', marginTop: 6, marginLeft: 36, maxWidth: 'calc(100% - 36px)',
+  fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
+  color: 'var(--c-green)', background: 'var(--c-paper)',
+  border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 10, padding: '6px 10px',
+}
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
 
@@ -103,8 +115,25 @@ export function Boodschappen() {
     setVegaKeuzes(nieuw)
     bewaarVegaKeuzes(nieuw)
   }
-  /** De rij zoals hij naar de winkel gaat — met de vega-versie waar je die koos. */
-  const voorWinkel = (regel: LijstRegel) => metVegaKeuze(regel.voorbeeld, vegaKeuze(regel.key))
+  // Allergieën: de glutenvrije of plantaardige versie gaat standaard mee,
+  // net als vega. Per regel terug te zetten; dat onthouden we op dit toestel.
+  const allergieen = useAllergieen()
+  const opgehaaldeRegels = useAllergeenRegels(allergieen.length > 0).data
+  const allergieRegels = allergieen.length > 0 ? opgehaaldeRegels ?? [] : []
+  const [allergieKeuzes, setAllergieKeuzes] = useState(leesAllergieKeuzes)
+  const allergieKeuze = (key: string): AllergieKeuze => allergieKeuzes[key] ?? 'vervanger'
+  const kiesAllergie = (key: string, keuze: AllergieKeuze) => {
+    const nieuw = { ...allergieKeuzes, [key]: keuze }
+    setAllergieKeuzes(nieuw)
+    bewaarAllergieKeuzes(nieuw)
+  }
+  const allergieVervanger = (regel: LijstRegel) => vervangerVoor(regel.naam, allergieRegels, allergieen)
+
+  /** De rij zoals hij naar de winkel gaat — met de vega-versie en de allergievervanger waar je die koos. */
+  const voorWinkel = (regel: LijstRegel) => metAllergieKeuze(
+    metVegaKeuze(regel.voorbeeld, vegaKeuze(regel.key)),
+    allergieKeuze(regel.key), allergieRegels, allergieen,
+  )
 
   /**
    * `zonder`: bijzondere kruiden die je volgens de vraag hieronder al in huis
@@ -291,17 +320,43 @@ export function Boodschappen() {
                           value={vegaKeuze(regel.key)}
                           onChange={(e) => kiesVega(regel.key, e.target.value as VegaKeuze)}
                           aria-label={`Vega of vlees voor ${regel.naam}`}
-                          style={{
-                            display: 'block', marginTop: 6, marginLeft: 36, maxWidth: 'calc(100% - 36px)',
-                            fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
-                            color: 'var(--c-green)', background: 'var(--c-paper)',
-                            border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 10, padding: '6px 10px',
-                          }}
+                          style={keuzeStijl}
                         >
                           <option value="vega">{vegaVervanger(regel.key)?.label}</option>
                           <option value="recept">{regel.naam.charAt(0).toUpperCase() + regel.naam.slice(1)}</option>
                         </select>
                       )}
+                      {!regel.afgevinkt && allergieen.length > 0 && (() => {
+                        const vervanger = allergieVervanger(regel)
+                        if (vervanger) {
+                          return (
+                            <select
+                              value={allergieKeuze(regel.key)}
+                              onChange={(e) => kiesAllergie(regel.key, e.target.value as AllergieKeuze)}
+                              aria-label={`Vervanger of origineel voor ${regel.naam}`}
+                              style={keuzeStijl}
+                            >
+                              <option value="vervanger">{vervanger.charAt(0).toUpperCase() + vervanger.slice(1)}</option>
+                              <option value="recept">{regel.naam.charAt(0).toUpperCase() + regel.naam.slice(1)}</option>
+                            </select>
+                          )
+                        }
+                        // Geen vervanger: zeggen wat erin zit, of dat het etiket beslist.
+                        const mijn = treffers(regel.naam, allergieRegels).filter((t) => allergieen.includes(t.allergeen))
+                        if (mijn.length === 0) return null
+                        const zeker = mijn.filter((t) => t.zeker).map((t) => t.allergeen)
+                        return (
+                          <span style={{
+                            display: 'block', marginLeft: 36, marginTop: 3,
+                            fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
+                            color: zeker.length > 0 ? 'var(--c-red)' : 'rgba(20,20,20,0.6)',
+                          }}>
+                            {zeker.length > 0
+                              ? `Bevat ${opsomming(zeker)}`
+                              : `Check het etiket op ${opsomming(mijn.map((t) => t.allergeen))}`}
+                          </span>
+                        )
+                      })()}
                     </div>
                     {blijftThuis(regel.key) ? (
                       <span style={{

@@ -19,6 +19,8 @@ export interface OntdekFilters {
   keuken: string | null
   alleenVega: boolean
   alleenBudget: boolean
+  /** Laat recepten weg die een van deze allergenen vast bevatten (lib/allergenen.ts). */
+  zonderAllergenen: string[]
 }
 
 const PER_PAGINA = 30
@@ -29,6 +31,7 @@ interface Filterbaar {
   lte(kolom: string, waarde: number): Filterbaar
   eq(kolom: string, waarde: string): Filterbaar
   contains(kolom: string, waarde: string[]): Filterbaar
+  not(kolom: string, operator: string, waarde: string): Filterbaar
 }
 
 /**
@@ -49,6 +52,10 @@ function metFilters<T>(vraag: T, filters: OntdekFilters): T {
   if (filters.keuken) v = v.eq('keuken', filters.keuken)
   if (filters.alleenVega) v = v.contains('tags', ['vegetarisch'])
   if (filters.alleenBudget) v = v.lte('prijs_pp_schatting', BUDGET_PER_PERSOON)
+  // not.ov: geen overlap tussen allergenen_vast en jouw allergieën.
+  if (filters.zonderAllergenen.length > 0) {
+    v = v.not('allergenen_vast', 'ov', `{${filters.zonderAllergenen.join(',')}}`)
+  }
   return v as unknown as T
 }
 

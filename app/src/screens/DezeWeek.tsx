@@ -16,6 +16,7 @@ import { BONUS_BRON, receptBonus, useBonus, type BonusActie } from '../lib/bonus
 import { dagLabel } from '../lib/bezorgdag'
 import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
+import { useAllergieen, vastVoorJou } from '../lib/allergenen'
 
 type Filter = 'alles' | 'lijst' | 'bonus' | 'budget' | 'vega' | 'snel'
 
@@ -60,7 +61,14 @@ export function DezeWeek() {
   const [bezig, setBezig] = useState(false)
   const [suggestiesOp, setSuggestiesOp] = useState(false)
 
-  const recepten = useMemo(() => dezeWeek.data ?? [], [dezeWeek.data])
+  // Een suggestie met een allergeen zonder vervanger laten we weg — ook als je
+  // je allergie pas instelde nadat dit weekmenu er al stond. Wat je zelf koos
+  // blijft staan. Zo doen Vul mijn week en Ruil er ook niets mee.
+  const allergieen = useAllergieen()
+  const recepten = useMemo(
+    () => (dezeWeek.data ?? []).filter((r) => r.gekozen || vastVoorJou(r, allergieen).length === 0),
+    [dezeWeek.data, allergieen],
+  )
   const bonus = useBonus()
   const bonusPerRecept = useMemo(() => new Map(recepten.map((r) => [r.id, receptBonus(r.ingredienten, bonus.data)])), [recepten, bonus.data])
   const zichtbaar = recepten.filter((r) =>

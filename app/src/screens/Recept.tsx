@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { ReceptAllergie } from '../lib/allergenen'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button, Icon, IconButton } from '../ds'
 import { Inhoud, Label, Scherm, Titel, Voet } from '../components/Layout'
@@ -11,6 +12,7 @@ import { ingredientKey, schaalIngredienten } from '../lib/schaal'
 import { weekStart } from '../lib/week'
 import { tokoIngredienten, tokoProduct } from '../lib/toko'
 import { openBijWinkel } from '../lib/ah'
+import { allergeenNaam, opsomming, receptAllergie, useAllergeenRegels, useAllergieen } from '../lib/allergenen'
 
 export function Recept() {
   const { id } = useParams<{ id: string }>()
@@ -24,6 +26,8 @@ export function Recept() {
   // Het hartje werkt hier net als in Ontdekken: het recept in "Deze week" zetten.
   const { zetInWeek, haalUitWeek } = useLijstActies(week)
   const [wegVraag, setWegVraag] = useState(false)
+  const allergieen = useAllergieen()
+  const regels = useAllergeenRegels(allergieen.length > 0)
 
   // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
   // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
@@ -44,6 +48,9 @@ export function Recept() {
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
           const vegetarisch = r.tags.includes('vegetarisch')
           const toko = tokoIngredienten(r.ingredienten)
+          const allergie = allergieen.length > 0 && regels.data
+            ? receptAllergie(r.ingredienten.map((i) => i.naam), regels.data, allergieen)
+            : null
 
           return (
             <>
@@ -163,6 +170,8 @@ export function Recept() {
                   </div>
                 )}
 
+                {allergie && <AllergieBlok allergie={allergie} allergieen={allergieen} />}
+
                 {ingredienten.map((ing, i) => {
                   const tokoIng = tokoProduct({ ingredient_key: ingredientKey(ing.naam), naam: ing.naam })
                   return (
@@ -270,5 +279,47 @@ export function Recept() {
         })()}
       </Grens>
     </Scherm>
+  )
+}
+
+/**
+ * Wat dit recept met jouw allergieën doet: wat erin zit, wat we op je lijst
+ * vervangen en van welke producten je het etiket moet lezen. Niets aan de
+ * hand? Dan zeggen we dat ook, kort.
+ */
+function AllergieBlok({ allergie, allergieen }: { allergie: ReceptAllergie; allergieen: string[] }) {
+  const { bevat, vervangen, etiket } = allergie
+  const klein = (naam: string) => naam.charAt(0).toLowerCase() + naam.slice(1)
+  const regel: React.CSSProperties = { margin: 0 }
+  const niets = bevat.length + vervangen.length + etiket.length === 0
+
+  return (
+    <div style={{
+      background: bevat.length > 0 ? 'var(--c-warm-300)' : 'var(--c-paper)',
+      border: bevat.length > 0 ? 'none' : '1.5px solid rgba(20,20,20,0.12)',
+      borderRadius: 'var(--radius-sm)', padding: '12px 14px', margin: '4px 0 8px',
+      fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45,
+      display: 'flex', flexDirection: 'column', gap: 6,
+    }}>
+      {niets && <p style={regel}><strong>Geen {opsomming(allergieen)}</strong>, volgens de ingrediëntenlijst.</p>}
+      {bevat.length > 0 && (
+        <p style={regel}>
+          <strong>Bevat {opsomming([...new Set(bevat.flatMap((b) => b.allergenen))])}:</strong>{' '}
+          {bevat.map((b) => klein(b.naam)).join(', ')}.
+        </p>
+      )}
+      {vervangen.length > 0 && (
+        <p style={regel}>
+          <strong>Op je lijst vervangen:</strong>{' '}
+          {vervangen.map((v) => `${klein(v.naam)} door ${v.vervanger}`).join(', ')}.
+        </p>
+      )}
+      {etiket.length > 0 && (
+        <p style={regel}>
+          <strong>Check het etiket:</strong>{' '}
+          {etiket.map((e) => `${klein(e.naam)} (${e.allergenen.map(allergeenNaam).join(', ')})`).join(', ')}.
+        </p>
+      )}
+    </div>
   )
 }
