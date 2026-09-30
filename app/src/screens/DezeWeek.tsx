@@ -13,6 +13,7 @@ import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusBron, BonusLabel } from '../components/Bonus'
 import { BONUS_BRON, receptBonus, useBonus, type BonusActie } from '../lib/bonus'
+import { dagLabel } from '../lib/bezorgdag'
 import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
 
@@ -133,7 +134,7 @@ export function DezeWeek() {
 
         {filter === 'bonus' && (
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, color: 'rgba(20,20,20,0.6)', margin: '6px 22px 0' }}>
-            Het hoofdingrediënt is in de bonus op je eerste bezorgdag. {BONUS_BRON.uitleg} <BonusBron klein />
+            Het hoofdingrediënt is in de bonus {bonus.peildatum.zelfHalen ? 'vandaag' : `op je bezorgdag (${dagLabel(bonus.peildatum.peil)})`}. {BONUS_BRON.uitleg} <BonusBron klein />
           </p>
         )}
 

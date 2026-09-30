@@ -74,6 +74,8 @@ export interface Voorkeuren {
   huismerk_voorkeur: boolean
   voorkeurswinkel: 'ah' | 'jumbo'
   aantal_personen: number
+  /** Je haalt zelf in de winkel: de bonus van vandaag telt, niet die van de bezorgdag. */
+  zelf_halen: boolean
   /** Hoeveel recepten "Vul mijn week" op je lijst zet, 1 t/m 7. */
   kookavonden: number
   pushbericht_aan: boolean
@@ -175,4 +177,6 @@ export interface Bestelling {
   maaltijden: number
   mandje_kosten: number
   maaltijdbox_kosten: number
+  /** De dag van bezorgen of ophalen, voor de bonus van de juiste week. */
+  bezorgdatum: string | null
 }
