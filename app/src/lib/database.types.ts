@@ -40,6 +40,12 @@ export interface Recept {
   aangemaakt_op: string
   /** Ruwe schatting in euro's (lib/prijsschatting.ts); null als er niets te schatten viel. */
   prijs_pp_schatting: number | null
+  /** Allergenen die er zeker in zitten (trigger, lib/allergenen.ts). */
+  allergenen?: string[]
+  /** Idem, zonder vervanger: die gaan bij een allergie uit de pool. */
+  allergenen_vast?: string[]
+  /** Alleen "mogelijk": etiket checken. */
+  allergenen_twijfel?: string[]
 }
 
 export interface WeekmenuGetoond {
@@ -78,6 +84,8 @@ export interface Voorkeuren {
   zelf_halen: boolean
   /** Hoeveel recepten "Vul mijn week" op je lijst zet, 1 t/m 7. */
   kookavonden: number
+  /** Allergieën (lib/allergenen.ts); gelden in weekmenu, Ontdekken, recept en lijst. */
+  allergieen?: string[]
   pushbericht_aan: boolean
   pushbericht_dag: number
   pushbericht_tijd: string
@@ -137,6 +145,16 @@ export interface JumboProduct {
   laatst_geverifieerd: string
 }
 
+/** Eén patroon uit allergeen_regel; zie migratie 20260930230000_allergieen.sql. */
+export interface AllergeenRegel {
+  id: number
+  allergeen: string
+  patroon: string
+  uitzondering: string | null
+  zekerheid: 'bevat' | 'mogelijk'
+  vervanger: string | null
+}
+
 type Tabel<Rij, Invoer = Partial<Rij>> = { Row: Rij; Insert: Invoer; Update: Partial<Rij> }
 
 export interface Database {
@@ -152,6 +170,7 @@ export interface Database {
       jumbo_product_cache: Tabel<JumboProduct>
       favoriet: Tabel<Favoriet>
       voorraad_item: Tabel<VoorraadRij>
+      allergeen_regel: Tabel<AllergeenRegel>
     }
     Views: Record<string, never>
     Functions: {

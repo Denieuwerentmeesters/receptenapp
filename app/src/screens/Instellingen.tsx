@@ -4,6 +4,8 @@ import { useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import type { Voorkeuren } from '../lib/database.types'
 import { BONUS_BRON } from '../lib/bonus'
 import { BonusBron } from '../components/Bonus'
+import { Chip } from '../ds'
+import { ALLERGENEN } from '../lib/allergenen'
 
 const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
 
@@ -55,6 +57,30 @@ export function Instellingen() {
                     weergave={v.max_bereidingstijd ? `${v.max_bereidingstijd} min` : 'geen limiet'}
                     onWijzig={(n) => zet({ max_bereidingstijd: n === 0 ? null : n })}
                   />
+                </Sectie>
+
+                <Sectie naam="Allergieën">
+                  <p style={{
+                    fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45,
+                    color: 'rgba(20,20,20,0.6)', margin: '0 0 10px',
+                  }}>
+                    Recepten waar het in zit laten we weg. Gluten en koemelk vervangen we waar het
+                    kan, dan krijg je op je lijst bijvoorbeeld glutenvrije pasta of havermelk. Staat
+                    er een product in waarvan alleen het etiket het zeker weet, dan zeggen we dat erbij.
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingBottom: 14 }}>
+                    {ALLERGENEN.map((a) => {
+                      const mijn = v.allergieen ?? []
+                      const aan = mijn.includes(a.id)
+                      return (
+                        <Chip
+                          key={a.id}
+                          selected={aan}
+                          onClick={() => zet({ allergieen: aan ? mijn.filter((x) => x !== a.id) : [...mijn, a.id] })}
+                        >{a.label}</Chip>
+                      )
+                    })}
+                  </div>
                 </Sectie>
 
                 <Sectie naam="Boodschappen">
