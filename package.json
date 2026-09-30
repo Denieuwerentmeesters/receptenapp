@@ -4,7 +4,8 @@
   "type": "module",
   "description": "Root-dependencies voor de serverless functies (api/) en de scripts die buiten de app draaien. De app zelf zit in app/.",
   "scripts": {
-    "afbeeldingen": "tsx scripts/genereer_afbeeldingen.ts"
+    "afbeeldingen": "tsx scripts/genereer_afbeeldingen.ts",
+    "zoekgaten": "tsx scripts/zoekgaten.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
