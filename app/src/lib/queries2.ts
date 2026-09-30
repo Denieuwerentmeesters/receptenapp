@@ -497,6 +497,7 @@ export function useBestellingen() {
       // numeric komt als tekst uit PostgREST.
       return (data as Bestelling[]).map((b) => ({
         ...b, mandje_kosten: Number(b.mandje_kosten), maaltijdbox_kosten: Number(b.maaltijdbox_kosten),
+        bonus_voordeel: Number(b.bonus_voordeel ?? 0),
       }))
     },
   })
@@ -510,6 +511,8 @@ export interface BestellingInvoer {
   mandjeKosten: number
   /** Dag van bezorgen of ophalen (lib/bezorgdag.ts). */
   bezorgdatum?: string
+  /** Wat de bonus scheelde op de producten in je mandje. */
+  bonusVoordeel?: number
 }
 
 /**
@@ -541,10 +544,11 @@ export function useBestellingVastleggen(week = weekStart()) {
         mandje_kosten: invoer.mandjeKosten,
         maaltijdbox_kosten: maaltijdboxKosten(maaltijden, invoer.personen, rijen.length === 0),
         ...(invoer.bezorgdatum ? { bezorgdatum: invoer.bezorgdatum } : {}),
+        ...(invoer.bonusVoordeel ? { bonus_voordeel: invoer.bonusVoordeel } : {}),
       }).select().single()
       if (error) throw error
       const b = data as Bestelling
-      return { ...b, mandje_kosten: Number(b.mandje_kosten), maaltijdbox_kosten: Number(b.maaltijdbox_kosten) }
+      return { ...b, mandje_kosten: Number(b.mandje_kosten), maaltijdbox_kosten: Number(b.maaltijdbox_kosten), bonus_voordeel: Number(b.bonus_voordeel ?? 0) }
     },
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ['bestellingen'] }) },
   })

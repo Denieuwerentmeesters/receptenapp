@@ -1,4 +1,4 @@
-import { bouwMandjeLink, zoekLink, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
+import { bouwMandjeLink, kiesVariant, zoekLink, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
 import { bouwJumboLink, jumboSku, jumboZoekLink } from './jumbo'
 import { useJumboVerpakkingen } from './queries2'
 import type { Verpakking } from './eenheden'
@@ -19,6 +19,8 @@ export interface Winkel {
   /** Heeft dit ingrediënt een productnummer bij deze winkel? Anders: zoeklink. */
   heeftProduct: (item: BoodschapItem) => boolean
   mandjeLink: (items: MandjeItem[]) => MandjeResultaat
+  /** Het productnummer dat voor dit item in het mandje gaat (AH-id of Jumbo-SKU), of null. */
+  productVoor: (item: BoodschapItem) => string | null
   /** Inhoud van het product dat voor dit item in het mandje gaat, als we die kennen (nu alleen Jumbo). */
   verpakkingVoor: (item: BoodschapItem) => Verpakking | undefined
   zoekLink: (naam: string) => string
@@ -41,6 +43,10 @@ export function useWinkel(): Winkel {
       kort: 'Jumbo',
       heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
       mandjeLink: (items) => bouwJumboLink(items, mapping, voorkeur),
+      productVoor: (item) => {
+        const product = zoekProduct(item, mapping)
+        return product ? jumboSku(product, voorkeur) : null
+      },
       verpakkingVoor: (item) => {
         const product = zoekProduct(item, mapping)
         const sku = product && jumboSku(product, voorkeur)
@@ -57,6 +63,13 @@ export function useWinkel(): Winkel {
     kort: 'AH',
     heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
     mandjeLink: (items) => bouwMandjeLink(items, mapping, voorkeur),
+    productVoor: (item) => {
+      const product = zoekProduct(item, mapping)
+      const id = product && kiesVariant({
+        standaard: product.standaard_product_id, bio: product.bio_product_id, huismerk: product.huismerk_product_id,
+      }, voorkeur)
+      return id ? String(id) : null
+    },
     verpakkingVoor: () => undefined,
     zoekLink,
   }

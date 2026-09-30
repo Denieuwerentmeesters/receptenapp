@@ -3,6 +3,7 @@ import { Inhoud, Kop, Label, OnderBalk, Scherm, Stat, TerugKnop, Titel } from '.
 import { Grens, Leeg } from '../components/Staten'
 import { useBestellingen } from '../lib/queries2'
 import { useVoorkeuren } from '../lib/queries'
+import { BonusBron } from '../components/Bonus'
 import { MAALTIJDBOX, bespaardMet, euro, prijsPerPortie, totaalBespaard } from '../lib/besparing'
 
 const DATUM = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'short' })
@@ -18,6 +19,8 @@ export function Bespaard() {
   const voorkeuren = useVoorkeuren()
   const lijst = bestellingen.data ?? []
   const totaal = totaalBespaard(lijst)
+  // Los van het hoofdgetal: dat rekent bewust in gewone prijzen.
+  const bonusTotaal = lijst.reduce((som, b) => som + (b.bonus_voordeel ?? 0), 0)
   const maaltijden = lijst.reduce((som, b) => som + b.maaltijden, 0)
   const personen = voorkeuren.data?.aantal_personen ?? 4
 
@@ -39,6 +42,11 @@ export function Bespaard() {
               `${lijst.length === 1 ? 'bestelling' : 'bestellingen'}.`
             : `Wat je bespaart ten opzichte van een maaltijdbox als ${MAALTIJDBOX.naam}.`}
         </p>
+        {bonusTotaal > 0 && (
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, lineHeight: 1.5, margin: '6px 0 0', color: 'var(--c-yellow)' }}>
+            Plus {euro(bonusTotaal, true)} met de bonus.
+          </p>
+        )}
       </Kop>
 
       <Grens query={bestellingen} ladenTekst="Besparingen ophalen">
@@ -75,6 +83,7 @@ export function Bespaard() {
                       </span>
                       <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(20,20,20,0.6)' }}>
                         Mandje {euro(b.mandje_kosten, true)} · {MAALTIJDBOX.naam} {euro(b.maaltijdbox_kosten, true)}
+                        {b.bonus_voordeel > 0 && ` · bonus ${euro(b.bonus_voordeel, true)}`}
                       </span>
                     </span>
                     <span style={{
@@ -101,6 +110,11 @@ export function Bespaard() {
               </Uitleg>
               <Uitleg>
                 Een recept telt één keer per week, ook als je in twee keer bestelt.
+              </Uitleg>
+              <Uitleg>
+                <b>De bonus</b> staat er los onder, niet in het grote getal. Die telt alleen als het
+                product in je mandje zelf in de actie zat, en je genoeg stuks kocht: bij 1 + 1 gratis
+                twee. We rekenen met de actie op je bezorgdag. <BonusBron klein />
               </Uitleg>
             </div>
           </Inhoud>

@@ -31,6 +31,8 @@ export const BONUS_BRON = {
 
 export interface BonusActie {
   ingredient_key: string
+  /** Productnummer bij de winkel (AH wi-nummer, Jumbo-SKU); ontbreekt in oudere tests. */
+  extern_id?: string
   titel: string
   prijs_nu: number | null
   prijs_was: number | null
@@ -101,4 +103,31 @@ export function actieTekst(a: BonusActie): string {
     ? ` · € ${a.prijs_nu.toFixed(2).replace('.', ',')}${a.prijs_was !== null && a.prijs_was > a.prijs_nu ? ` (was € ${a.prijs_was.toFixed(2).replace('.', ',')})` : ''}`
     : ''
   return `${a.titel}${a.mechanisme ? ` · ${a.mechanisme}` : ''} ${totTekst(a.geldig_tot)}${prijs}`
+}
+
+/**
+ * Hoeveel stuks je minstens moet kopen voor de actie: "1 + 1 gratis" → 2,
+ * "2e halve prijs" → 2, "3 voor 4.99" → 3, een percentage → 1.
+ */
+export function minimaalAantal(mechanisme: string | null): number {
+  const m = (mechanisme ?? '').toLowerCase()
+  const plus = m.match(/(\d+)\s*\+\s*(\d+)/)
+  if (plus) return Number(plus[1]) + Number(plus[2])
+  const tweede = m.match(/(\d+)e\s/)
+  if (tweede) return Number(tweede[1])
+  const voor = m.match(/(\d+)\s*voor\b/)
+  if (voor) return Number(voor[1])
+  return 1
+}
+
+/**
+ * Wat de actie je scheelt bij dit aantal: (gewone prijs − actieprijs) per
+ * stuk, alleen voor hele "setjes" van de actie. Koop je één stuk bij 1 + 1
+ * gratis, dan scheelt het niets. Bespaard! rekent zich niet rijk.
+ */
+export function bonusVoordeel(actie: BonusActie, aantal: number): number {
+  if (actie.prijs_nu === null || actie.prijs_was === null || actie.prijs_was <= actie.prijs_nu) return 0
+  const minimaal = minimaalAantal(actie.mechanisme)
+  const stuks = Math.floor(aantal / minimaal) * minimaal
+  return Math.round((actie.prijs_was - actie.prijs_nu) * stuks * 100) / 100
 }
