@@ -43,8 +43,10 @@ const GROEPEN: { kern: string[]; bijwoorden: string[] }[] = [
   {
     // Geen boodschap: keukengerei en "gemengd" als losgeraakte kop uit een recept.
     kern: ['keukenmachine', 'staafmixer', 'blender', 'hakmolentje', 'ijsblokje', 'bakpapier',
-      'folie', 'ovenschaal', 'ovenschaaltje', 'maatbeker', 'gemengd'],
-    bijwoorden: ['of', 'met', 'hoge', 'plastic', 'van', 'cm'],
+      'folie', 'ovenschaal', 'ovenschaaltje', 'maatbeker', 'gemengd', 'keukentouw', 'springvorm',
+      'taartvorm', 'stoofpan', 'slowcooker', 'bakplaat', 'spuitzak', 'spuitmondje', 'pot'],
+    bijwoorden: ['of', 'met', 'hoge', 'plastic', 'van', 'cm', 'ml', 'ronde', 'ovenbestendige',
+      'deksel', 'eventueel', 'een', 'en', 'grof', 'grote'],
   },
 ]
 

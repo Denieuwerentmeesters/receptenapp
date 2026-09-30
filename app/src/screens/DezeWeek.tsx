@@ -127,9 +127,9 @@ export function DezeWeek() {
           <Leeg
             icoon="utensils"
             kop="Nog geen weekmenu"
-            tekst="Zodra je voorkeuren staan zetten we elke week 10 recepten klaar."
-            knop="Voorkeuren instellen"
-            onKnop={() => navigeer('/instellingen')}
+            tekst="We zetten elke week 10 recepten voor je klaar. Je voorkeuren kun je altijd nog aanpassen in Instellingen."
+            knop={dezeWeek.isFetching ? 'Even zoeken…' : 'Zet mijn week klaar'}
+            onKnop={() => { if (!dezeWeek.isFetching) void dezeWeek.refetch() }}
           />
         ) : (
           <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>

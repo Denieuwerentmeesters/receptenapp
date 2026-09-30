@@ -24,7 +24,7 @@ interface Timer {
 }
 
 /**
- * Koken op donkere achtergrond, één stap tegelijk, grote letters.
+ * Koken op paarse achtergrond, één stap tegelijk, grote letters.
  *
  * Twee dingen die het scherm bruikbaar maken met vette handen: de tekst is
  * 19px in plaats van 15, en het scherm blijft aan zolang je kookt.
@@ -95,7 +95,7 @@ export function Kookmodus() {
   }
 
   return (
-    <Scherm achtergrond="var(--c-ink)">
+    <Scherm achtergrond="var(--c-purple)">
       <Grens query={recept} ladenTekst="Recept ophalen">
         {recept.data && (() => {
           const r = recept.data
@@ -194,7 +194,7 @@ export function Kookmodus() {
                 )}
 
                 <div style={{
-                  background: 'var(--c-red)', borderRadius: 'var(--radius-lg)', padding: 20,
+                  background: 'rgba(20,20,20,0.22)', borderRadius: 'var(--radius-lg)', padding: 20,
                   display: 'flex', flexDirection: 'column', gap: 14,
                 }}>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
