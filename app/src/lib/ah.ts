@@ -4,7 +4,14 @@ import { ingredientKey } from './schaal'
 import { canoniek } from './synoniemen'
 import type { AhProduct, BoodschapItem } from './database.types'
 
-const ADD_MULTIPLE = 'https://www.ah.nl/mijnlijst/add-multiple'
+/**
+ * Met een slash erachter, en dat is geen slordigheid. AH claimt
+ * `/mijnlijst/add-multiple` exact als Universal Link, dus iOS geeft die aan de
+ * AH-app, die niets toevoegt. De variant met slash staat niet in AH's
+ * apple-app-site-association: iOS laat 'm in Safari, en ah.nl stuurt zelf door
+ * naar het pad zonder slash en voegt de producten toe (getest op 30-09-2026).
+ */
+const ADD_MULTIPLE = 'https://www.ah.nl/mijnlijst/add-multiple/'
 const ZOEKEN = 'https://www.ah.nl/zoeken'
 
 /** Een boodschapregel op weg naar het mandje, met hoeveel verpakkingen. */
