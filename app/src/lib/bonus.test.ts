@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { eersteBezorgdag, isoDatum, totTekst } from './bonus'
+import { bonusVoordeel, minimaalAantal } from './bonusRegels'
 
 const dag = (iso: string) => new Date(`${iso}T09:00:00`)
 
@@ -26,4 +27,22 @@ describe('totTekst', () => {
   test('verder weg de datum', () => {
     expect(totTekst('2026-10-20', dag('2026-09-30'))).toBe('t/m 20 oktober')
   })
+})
+
+
+describe('minimaalAantal', () => {
+  test.each([['1 + 1 gratis', 2], ['5 + 1 gratis', 6], ['2e halve prijs', 2], ['3 voor 4.99', 3], ['25% korting', 1], [null, 1]])(
+    '%s → %i', (m, verwacht) => { expect(minimaalAantal(m)).toBe(verwacht) },
+  )
+})
+
+describe('bonusVoordeel', () => {
+  const actie = (mechanisme: string, nu: number, was: number) => ({
+    ingredient_key: 'x', titel: 'x', mechanisme, prijs_nu: nu, prijs_was: was, geldig_van: '2026-09-28', geldig_tot: '2026-10-04',
+  })
+  test('percentage: per stuk', () => { expect(bonusVoordeel(actie('25% korting', 3, 4), 1)).toBe(1) })
+  test('1 + 1 gratis met één stuk: niets', () => { expect(bonusVoordeel(actie('1 + 1 gratis', 1, 2), 1)).toBe(0) })
+  test('1 + 1 gratis met twee: twee keer het verschil', () => { expect(bonusVoordeel(actie('1 + 1 gratis', 1, 2), 2)).toBe(2) })
+  test('3 voor … met vier: alleen het setje van drie', () => { expect(bonusVoordeel(actie('3 voor 4.99', 1.66, 2.29), 4)).toBe(1.89) })
+  test('zonder was-prijs: niets', () => { expect(bonusVoordeel({ ...actie('25% korting', 3, 4), prijs_was: null }, 2)).toBe(0) })
 })

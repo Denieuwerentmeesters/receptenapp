@@ -17,7 +17,7 @@ function useAlleBonus(winkel: 'ah' | 'jumbo', aan: boolean) {
     staleTime: 60 * 60 * 1000,
     queryFn: async (): Promise<BonusActie[]> => {
       const { data, error } = await db.from('bonus_actie')
-        .select('ingredient_key, titel, prijs_nu, prijs_was, mechanisme, geldig_van, geldig_tot')
+        .select('ingredient_key, extern_id, titel, prijs_nu, prijs_was, mechanisme, geldig_van, geldig_tot')
         .eq('winkel', winkel).gte('geldig_tot', vandaag)
       if (error) throw error
       return (data as BonusActie[]).map((r) => ({

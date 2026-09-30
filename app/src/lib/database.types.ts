@@ -179,4 +179,6 @@ export interface Bestelling {
   maaltijdbox_kosten: number
   /** De dag van bezorgen of ophalen, voor de bonus van de juiste week. */
   bezorgdatum: string | null
+  /** Wat de bonus scheelde; los van het hoofdgetal (maaltijdbox min mandje). */
+  bonus_voordeel: number
 }
