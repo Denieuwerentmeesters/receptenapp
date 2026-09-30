@@ -6,6 +6,7 @@ import { BONUS_BRON } from '../lib/bonus'
 import { BonusBron } from '../components/Bonus'
 import { Chip } from '../ds'
 import { ALLERGENEN } from '../lib/allergenen'
+import { HuishoudenBlok } from '../components/Huishouden'
 
 const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
 
@@ -135,6 +136,10 @@ export function Instellingen() {
                       style={selectStijl}
                     />
                   </Rij>
+                </Sectie>
+
+                <Sectie naam="Huishouden">
+                  <HuishoudenBlok />
                 </Sectie>
 
                 <Sectie naam="Over de app">
