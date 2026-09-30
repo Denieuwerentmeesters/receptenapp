@@ -508,6 +508,8 @@ export interface BestellingInvoer {
   /** Recept-id → hoe vaak je het deze week maakt. */
   recepten: Record<string, number>
   mandjeKosten: number
+  /** Dag van bezorgen of ophalen (lib/bezorgdag.ts). */
+  bezorgdatum?: string
 }
 
 /**
@@ -538,6 +540,7 @@ export function useBestellingVastleggen(week = weekStart()) {
         maaltijden,
         mandje_kosten: invoer.mandjeKosten,
         maaltijdbox_kosten: maaltijdboxKosten(maaltijden, invoer.personen, rijen.length === 0),
+        ...(invoer.bezorgdatum ? { bezorgdatum: invoer.bezorgdatum } : {}),
       }).select().single()
       if (error) throw error
       const b = data as Bestelling

@@ -19,6 +19,7 @@ import { productvoorkeur, useWinkel } from '../lib/winkel'
 import { aantalVerpakkingen, groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
 import { inhoudTekst } from '../lib/eenheden'
 import { bonusVoor, totTekst, useBonus } from '../lib/bonus'
+import { bezorgdagen, dagLabel, useBezorgkeuze } from '../lib/bezorgdag'
 import { BonusBron } from '../components/Bonus'
 import { weekStart } from '../lib/week'
 
@@ -51,6 +52,8 @@ export function Boodschappen() {
   const jumboPrijzen = useJumboPrijzen()
   const jumboVerpakkingen = useJumboVerpakkingen()
   const bonus = useBonus()
+  const kiesBezorgdag = useBezorgkeuze((s) => s.kies)
+  const [bezorgVraag, setBezorgVraag] = useState(false)
   const bestellingen = useBestellingen()
   const vastleggen = useBestellingVastleggen(week)
   const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
@@ -81,6 +84,15 @@ export function Boodschappen() {
   const naarWinkel = open.filter((r) => r.items.some((i) => i.voorraad_aanvulling) || !blijftThuis(r.key))
   const thuisOpen = open.length - naarWinkel.length
   const groepen = useMemo(() => groepeerOpSchap(regels), [regels])
+  // Bonus op wat je nog moet halen, en wat er afloopt vóór je bezorgdag.
+  const metBonus = naarWinkel.filter((r) => bonusVoor(r.naam, bonus.data, r.key)?.length)
+  const verloopt = bonus.peildatum.gekozen
+    ? naarWinkel.flatMap((r) => {
+      if (bonusVoor(r.naam, bonus.data, r.key)?.length) return []
+      const vroeg = bonusVoor(r.naam, bonus.vroegst, r.key)
+      return vroeg?.length ? [{ naam: r.naam, tot: vroeg[0].geldig_tot }] : []
+    })
+    : []
 
   const [vegaKeuzes, setVegaKeuzes] = useState(leesVegaKeuzes)
   const vegaKeuze = (key: string): VegaKeuze => vegaKeuzes[key] ?? 'vega'
@@ -361,10 +373,35 @@ export function Boodschappen() {
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
               >Klaar met boodschappen</Button>
             ) : (
+              <>
+              {!bonus.peildatum.zelfHalen && (metBonus.length > 0 || verloopt.length > 0) && (
+                <div style={{
+                  fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, margin: '0 0 10px',
+                  display: 'flex', flexDirection: 'column', gap: 4, textAlign: 'center',
+                }}>
+                  <span>
+                    Bezorging op: <strong>{dagLabel(bonus.peildatum.peil)}</strong> ·{' '}
+                    <button
+                      onClick={() => setBezorgVraag(true)}
+                      style={{
+                        border: 'none', background: 'none', padding: 0, cursor: 'pointer', color: 'var(--c-red)',
+                        fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700, textDecoration: 'underline',
+                      }}
+                    >wijzig</button>
+                  </span>
+                  {verloopt.slice(0, 2).map((v) => (
+                    <span key={v.naam} style={{ color: 'var(--c-red)', fontWeight: 700 }}>
+                      {v.naam.charAt(0).toUpperCase() + v.naam.slice(1)} is nog {totTekst(v.tot)} in de bonus.
+                      Laat je eerder bezorgen?
+                    </span>
+                  ))}
+                </div>
+              )}
               <Button
                 onClick={() => { void naarMandje() }}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
               >{`Naar ${winkel.kort}-mandje (${naarWinkel.length})`}</Button>
+              </>
             )}
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, margin: '8px 0 0',
@@ -380,6 +417,17 @@ export function Boodschappen() {
         )}
       </Grens>
 
+      <Dialoog
+        open={bezorgVraag}
+        kop="Wanneer laat je bezorgen?"
+        tekst="De bonus geldt voor de dag van bezorgen. Kies de dag die je bij je winkel kiest, dan kloppen de bonuslabels."
+        onSluit={() => setBezorgVraag(false)}
+        acties={bezorgdagen().map((dag, i) => ({
+          label: dagLabel(dag),
+          hoofd: dag === bonus.peildatum.peil,
+          onClick: () => { kiesBezorgdag(i === 0 ? null : dag); setBezorgVraag(false) },
+        }))}
+      />
       <Dialoog
         open={Boolean(kruidVraag)}
         kop="Heb je deze kruiden in huis?"
@@ -424,6 +472,7 @@ export function Boodschappen() {
                   personen: voorkeuren.data?.aantal_personen ?? 4,
                   recepten: doorgestuurd.recepten,
                   mandjeKosten: doorgestuurd.kosten,
+                  bezorgdatum: bonus.peildatum.peil,
                 }, {
                   // Alleen vieren als er maaltijden bij kwamen; een tweede ronde
                   // voor een vergeten ui is geen besparing.

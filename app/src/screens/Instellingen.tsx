@@ -71,6 +71,12 @@ export function Instellingen() {
                       onWijzig={() => zet({ biologisch_voorkeur: !v.biologisch_voorkeur })}
                     />
                   </Rij>
+                  <Rij label="Zelf halen in de winkel" sub="Dan telt de bonus van vandaag, niet die van de bezorgdag">
+                    <Schakelaar
+                      aan={v.zelf_halen ?? false}
+                      onWijzig={() => zet({ zelf_halen: !v.zelf_halen })}
+                    />
+                  </Rij>
                   <Rij label="Huismerk als het kan" sub="Anders het merk dat we standaard kiezen">
                     <Schakelaar
                       aan={v.huismerk_voorkeur}
