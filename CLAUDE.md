@@ -216,6 +216,32 @@ de details staan in Mijn keuken → Bespaard!.
 - Rekent zich bewust niet rijk: gewone prijs zonder aanbieding, hele
   verpakkingen, geen premiumtoeslag aan de HelloFresh-kant.
 
+## Allergieën
+
+Je stelt ze één keer in bij Instellingen (`gebruiker_voorkeuren.allergieen`):
+gluten, koemelk, ei, noten, pinda, vis, schaaldieren, soja, sesam.
+
+- **Regels in de database:** `allergeen_regel` heeft per allergeen een
+  regex-patroon op de ingrediëntnaam, een uitzondering, `bevat`/`mogelijk` en
+  een optionele vervanger. Een trigger vult per recept `allergenen`,
+  `allergenen_vast` (zonder vervanger) en `allergenen_twijfel` (alleen
+  "mogelijk"). De app leest dezelfde tabel (`src/lib/allergenen.ts`) voor het
+  receptscherm en de lijst.
+- **Patronen simpel houden:** alleen `^ $ ( | ) ? .` — dat werkt gelijk in
+  Postgres en JavaScript. Géén `\b`: dat is in Postgres een backspace.
+  `allergenen.test.ts` leest de regels uit de migratie en test ze.
+- **Regels veranderen:** nieuwe migratie, en daarin herrekenen met
+  `update recepten set ingredienten = ingredienten;`.
+- **Weg uit de pool** gaat alleen wat een allergeen zonder vervanger bevat
+  (weekmenu-generator, Ontdekken, Vul mijn week, Ruil). "Mogelijk" blijft
+  zichtbaar met "check het etiket". Gluten en koemelk hebben vervangers; die
+  gaan standaard naar de lijst, per regel terug te zetten (zoals vega).
+- **Ontdekken:** de chip "Zonder …" zet het filter met één tik uit, tot een
+  herstart — vaak heeft maar één iemand in huis een allergie.
+- Vervangers hebben nog geen AH- of Jumbo-productnummer: die gaan als zoeklink.
+- Bij twijfel: als allergeen tellen. Liever een recept te weinig dan een
+  allergeen dat erdoor glipt.
+
 ## Wat er nog niet is
 
 - Prijsindicatie per recept in echte prijzen — er is alleen de klassenschatting

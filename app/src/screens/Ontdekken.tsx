@@ -11,6 +11,9 @@ import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusLabel } from '../components/Bonus'
 import { receptBonus, useBonus } from '../lib/bonus'
+import { opsomming, useAllergieen, vastVoorJou } from '../lib/allergenen'
+
+const GEEN: string[] = []
 
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
@@ -40,6 +43,10 @@ const onthouden = {
   keuken: null as string | null,
   alleenVega: false,
   alleenBudget: false,
+  // Het allergiefilter staat standaard aan. Uitzetten geldt tot een herstart:
+  // vaak heeft maar één iemand in het gezin een allergie, en dan wil je even
+  // alles zien — maar niet dat het ongemerkt uit blijft.
+  allergieFilter: true,
   scrollTop: 0,
 }
 
@@ -55,10 +62,13 @@ export function Ontdekken() {
   const [keuken, setKeuken] = useState<string | null>(onthouden.keuken)
   const [alleenVega, setAlleenVega] = useState(onthouden.alleenVega)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
+  const [allergieFilter, setAllergieFilter] = useState(onthouden.allergieFilter)
+  const allergieen = useAllergieen()
+  const zonderAllergenen = allergieFilter ? allergieen : GEEN
 
   const filters: OntdekFilters = useMemo(
-    () => ({ zoek, maxTijd, keuken, alleenVega, alleenBudget }),
-    [zoek, maxTijd, keuken, alleenVega, alleenBudget],
+    () => ({ zoek, maxTijd, keuken, alleenVega, alleenBudget, zonderAllergenen }),
+    [zoek, maxTijd, keuken, alleenVega, alleenBudget, zonderAllergenen],
   )
 
   // Ander filter = andere lijst: dan hoort de oude scrollpositie er niet meer bij.
@@ -66,9 +76,9 @@ export function Ontdekken() {
   useEffect(() => {
     if (vorigeFilters.current === filters) return
     vorigeFilters.current = filters
-    Object.assign(onthouden, { zoek, maxTijd, keuken, alleenVega, alleenBudget, scrollTop: 0 })
+    Object.assign(onthouden, { zoek, maxTijd, keuken, alleenVega, alleenBudget, allergieFilter, scrollTop: 0 })
     scroller.current?.scrollTo({ top: 0 })
-  }, [filters, zoek, maxTijd, keuken, alleenVega, alleenBudget])
+  }, [filters, zoek, maxTijd, keuken, alleenVega, alleenBudget, allergieFilter])
 
   const resultaten = useOntdek(filters)
   const telling = useOntdekTelling(filters)
@@ -142,6 +152,11 @@ export function Ontdekken() {
           <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setAlleenVega(false); setAlleenBudget(false) }}>
             Alles
           </Chip>
+          {allergieen.length > 0 && (
+            <Chip selected={allergieFilter} onClick={() => setAllergieFilter(!allergieFilter)}>
+              Zonder {opsomming(allergieen)}
+            </Chip>
+          )}
           <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
           <Chip selected={alleenVega} onClick={() => setAlleenVega(!alleenVega)}>Vegetarisch</Chip>
           {TIJDEN.map((t) => (
@@ -194,6 +209,7 @@ export function Ontdekken() {
                   recept={r}
                   index={i}
                   week={inWeek.get(r.id)}
+                  bevat={vastVoorJou(r, allergieen)}
                   onOpen={() => navigeer(`/recept/${r.id}`)}
                   onHartje={() => (inWeek.has(r.id) ? haalUitWeek.mutate(r.id) : zetInWeek.mutate(r))}
                 />
@@ -227,10 +243,12 @@ export function Ontdekken() {
  * Een recept als foto met de tekst eronder. Het hartje rechtsboven zet 'm in
  * "Deze week" (of haalt 'm eruit); staat 'ie op je lijst, dan de gele rand.
  */
-function FotoKaart({ recept, index, week, onOpen, onHartje }: {
+function FotoKaart({ recept, index, week, bevat, onOpen, onHartje }: {
   recept: Recept
   index: number
   week: WeekRecept | undefined
+  /** Jouw allergenen die erin zitten, zonder vervanger. Alleen als het filter uit staat. */
+  bevat: string[]
   onOpen: () => void
   onHartje: () => void
 }) {
@@ -299,6 +317,11 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
           {meta}
           {isBudget(recept) && <BudgetLabel />}
         </span>
+        {bevat.length > 0 && (
+          <span style={{
+            fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
+          }}>Bevat {opsomming(bevat)}</span>
+        )}
         {status && (
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
