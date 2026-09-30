@@ -9,6 +9,7 @@ function recept(deel: Partial<Kandidaat> & { ingr?: string[] } = {}): Kandidaat 
     positie: deel.positie ?? n,
     keuken: deel.keuken ?? `keuken${n}`,
     tags: deel.tags ?? [],
+    inBonus: deel.inBonus,
     ingredienten: (deel.ingr ?? []).map((naam) => ({ naam, hoeveelheid: null, eenheid: null })),
   } as Kandidaat
 }
@@ -67,6 +68,16 @@ describe('kiesWeek', () => {
     const al = recept({ id: 'al', ingr: ['rijst'] })
     const s = [recept({ id: 'eerst', positie: 1 }), recept({ id: 'rijst', positie: 2, ingr: ['rijst'] })]
     expect(kiesWeek(s, { vega_minimum: 0, kookavonden: 2 }, [al], new Set(['rijst']))).toEqual(['eerst'])
+  })
+
+  test('bonus gaat voor gedeelde ingrediënten, niet voor de keuken', () => {
+    const al = recept({ id: 'al', keuken: 'Thais', ingr: ['spinazie'] })
+    const s = [
+      recept({ id: 'delen', positie: 1, keuken: 'Grieks', ingr: ['spinazie'] }),
+      recept({ id: 'bonus', positie: 2, keuken: 'Italiaans', inBonus: true } as Partial<Kandidaat>),
+      recept({ id: 'thais-bonus', positie: 3, keuken: 'Thais', inBonus: true } as Partial<Kandidaat>),
+    ]
+    expect(kiesWeek(s, { vega_minimum: 0, kookavonden: 2 }, [al])).toEqual(['bonus'])
   })
 
   test('stopt als de suggesties op zijn', () => {
