@@ -214,21 +214,55 @@ function isMandjeLink(url: string): boolean {
  * ingelogd bij AH, dan landen je artikelen op een anonieme lijst en is je mandje
  * leeg als je de AH-app opent — zonder foutmelding.
  *
- * Mandjelinks gaan via /doorsturen.html op ons eigen domein. Een ah.nl-link
- * rechtstreeks openen geeft iOS aan de AH-app (Universal Link), en die gaat
- * open zonder iets toe te voegen: "add-multiple" werkt alleen op de website.
- * Het tussenstation stuurt na een korte pauze door, en dan blijft iOS in
- * Safari. Je AH-mandje hoort bij je account, dus wat de website toevoegt
- * staat daarna ook in de AH-app.
+ * Mandjelinks mogen niet in de AH-app belanden: die gaat open maar voegt
+ * niets toe, "add-multiple" werkt alleen op de website. Iedere link die via
+ * iOS loopt, geeft iOS aan de app van de winkel (Universal Link). Dat geldt
+ * voor de iOS-app en voor de app op het beginscherm; alleen een gewoon
+ * Safari-tabblad opent een nieuw tabblad en blijft in Safari.
+ *
+ * Daarom openen app en beginscherm mandjelinks met `x-safari-https://`: dan
+ * opent iOS altijd Safari, waar je bij AH ingelogd bent. Werkt dat niet
+ * (ouder dan iOS 17), dan valt het terug op /doorsturen.html. Je AH-mandje
+ * hoort bij je account, dus wat de website toevoegt staat daarna ook in de
+ * AH-app.
  */
 export async function openBijWinkel(url: string): Promise<void> {
   const native = Capacitor.isNativePlatform()
-  const doel = isMandjeLink(url)
-    ? `${native ? WEBSITE : window.location.origin}/doorsturen.html?naar=${encodeURIComponent(url)}`
-    : url
-  if (native) {
-    await AppLauncher.openUrl({ url: doel })
+  if (!isMandjeLink(url)) {
+    if (native) await AppLauncher.openUrl({ url })
+    else window.open(url, '_blank', 'noopener,noreferrer')
     return
   }
-  window.open(doel, '_blank', 'noopener,noreferrer')
+
+  const viaSafari = `x-safari-${url}`
+  const tussenstation = `${native ? WEBSITE : window.location.origin}/doorsturen.html?naar=${encodeURIComponent(url)}`
+
+  if (native) {
+    const gelukt = await AppLauncher.openUrl({ url: viaSafari })
+      .then((r) => r.completed, () => false)
+    if (!gelukt) await AppLauncher.openUrl({ url: tussenstation })
+    return
+  }
+
+  if (!isBeginschermApp()) {
+    window.open(tussenstation, '_blank', 'noopener,noreferrer')
+    return
+  }
+
+  // Gaat Safari open, dan verdwijnt deze app naar de achtergrond. Blijft 'ie
+  // in beeld, dan kende iOS x-safari-https niet: dan toch het tussenstation.
+  let weg = false
+  const opWeg = () => { if (document.visibilityState === 'hidden') weg = true }
+  document.addEventListener('visibilitychange', opWeg)
+  window.location.href = viaSafari
+  window.setTimeout(() => {
+    document.removeEventListener('visibilitychange', opWeg)
+    if (!weg) window.open(tussenstation, '_blank', 'noopener,noreferrer')
+  }, 1500)
+}
+
+/** Draait de website als app op het beginscherm (en niet in een Safari-tabblad)? */
+function isBeginschermApp(): boolean {
+  return (navigator as Navigator & { standalone?: boolean }).standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches
 }

@@ -63,7 +63,13 @@ een gewone `<a href>`. Die blijven in een webview met een eigen cookiejar; ben j
 daar niet ingelogd bij AH, dan landen je artikelen op een anonieme lijst en is je
 mandje leeg — zonder foutmelding. Zie `src/lib/ah.ts`.
 
-**Mandjelinks gaan via `/doorsturen.html`.** Een ah.nl-link geeft iOS aan de
+**Mandjelinks openen met `x-safari-https://`** in de iOS-app en in de app op
+het beginscherm. Elke link die via iOS loopt gaat naar de AH-app (Universal
+Link), en die voegt niets toe. `x-safari-https://` dwingt Safari af (iOS 17+,
+niet officieel gedocumenteerd door Apple). Alleen een gewoon Safari-tabblad
+heeft dit niet nodig. Lukt het niet, dan is de terugval hieronder.
+
+**Terugval: `/doorsturen.html`.** Een ah.nl-link geeft iOS aan de
 AH-app (Universal Link); die gaat open maar voegt niets toe, want
 `add-multiple` werkt alleen op de website. Het tussenstation op ons eigen
 domein stuurt na 1,1 s door (WebKit geeft een tik tot 1 s door aan timers).
@@ -71,7 +77,8 @@ Dat alleen is niet genoeg: de AH-link zelf heeft een **dubbele slash**
 (`/mijnlijst//add-multiple`). AH claimt alleen `/mijnlijst/add-multiple` voor
 de app, en de dubbele slash geeft direct de pagina. Een slash erachter werkt
 níét: ah.nl stuurt die door, en bij een doorverwijzing opent iOS alsnog de app.
-Haal die dubbele slash dus niet weg. Het AH-mandje hoort
+Haal die dubbele slash dus niet weg. Let op: vanaf het beginscherm hielp dit
+níét (getest 30-09-2026) — daar is `x-safari-https://` de echte oplossing. Het AH-mandje hoort
 bij je account, dus het staat daarna ook in de AH-app. Alleen ah.nl en
 jumbo.com zijn toegestaan als doel.
 
