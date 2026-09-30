@@ -135,6 +135,13 @@ export function useDezeWeek(week = weekStart()) {
   })
 }
 
+/** Een recept-id, of een id met de vlag dat de app het koos ("Vul mijn week"). */
+export type OpLijstInvoer = string | { receptId: string; automatisch: boolean }
+
+function leesInvoer(invoer: OpLijstInvoer) {
+  return typeof invoer === 'string' ? { receptId: invoer, automatisch: false } : invoer
+}
+
 /**
  * Een recept op de lijst zetten, en er weer af halen.
  *
@@ -155,7 +162,8 @@ export function useLijstActies(week = weekStart()) {
   }
 
   const zetOpLijst = useMutation({
-    mutationFn: async (receptId: string) => {
+    mutationFn: async (wat: OpLijstInvoer) => {
+      const { receptId, automatisch } = leesInvoer(wat)
       const id = await userId()
 
       const [recept, voorkeuren, voorraad, keuze] = await Promise.all([
@@ -173,7 +181,10 @@ export function useLijstActies(week = weekStart()) {
       const bestaand = keuze.data as { aantal: number; van_lijst_op: string | null } | null
       const { error } = !bestaand
         ? await db.from('weekmenu_gekozen')
-          .insert({ user_id: id, week_start_datum: week, recept_id: receptId, aantal: 1 })
+          .insert({
+            user_id: id, week_start_datum: week, recept_id: receptId, aantal: 1,
+            ...(automatisch ? { automatisch: true } : {}),
+          })
         : await db.from('weekmenu_gekozen')
           .update(bestaand.van_lijst_op
             ? { aantal: 1, van_lijst_op: null }
@@ -210,7 +221,8 @@ export function useLijstActies(week = weekStart()) {
       const invoer = await db.from('boodschappenlijst_item').insert(rijen)
       if (invoer.error) throw invoer.error
     },
-    onMutate: async (receptId) => {
+    onMutate: async (wat) => {
+      const { receptId } = leesInvoer(wat)
       await qc.cancelQueries({ queryKey: sleutels.dezeWeek(week) })
       const vorige = qc.getQueryData<WeekRecept[]>(sleutels.dezeWeek(week))
       const nu = vorige?.find((r) => r.id === receptId)
@@ -303,21 +315,25 @@ export function useLijstActies(week = weekStart()) {
   /**
    * Haalt een recept helemaal uit je week — het kruisje. De ingrediënten gaan
    * van de lijst, een eigen keuze verdwijnt, een suggestie wordt verborgen.
+   * Bij ruilen onthoudt de suggestie wanneer dat gebeurde.
    */
   const haalUitWeek = useMutation({
-    mutationFn: async (receptId: string) => {
+    mutationFn: async (invoer: string | { receptId: string; geruild: boolean }) => {
+      const { receptId, geruild } = typeof invoer === 'string' ? { receptId: invoer, geruild: false } : invoer
       const items = await db.from('boodschappenlijst_item').delete()
         .eq('week_start_datum', week).eq('bron_recept_id', receptId)
       if (items.error) throw items.error
       const keuze = await db.from('weekmenu_gekozen').delete()
         .eq('week_start_datum', week).eq('recept_id', receptId)
       if (keuze.error) throw keuze.error
+      const nu = new Date().toISOString()
       const { error } = await db.from('weekmenu_getoond')
-        .update({ verborgen_op: new Date().toISOString() })
+        .update(geruild ? { verborgen_op: nu, geruild_op: nu } : { verborgen_op: nu })
         .eq('week_start_datum', week).eq('recept_id', receptId)
       if (error) throw error
     },
-    onMutate: async (receptId) => {
+    onMutate: async (invoer) => {
+      const receptId = typeof invoer === 'string' ? invoer : invoer.receptId
       await qc.cancelQueries({ queryKey: sleutels.dezeWeek(week) })
       const vorige = qc.getQueryData<WeekRecept[]>(sleutels.dezeWeek(week))
       qc.setQueryData<WeekRecept[]>(sleutels.dezeWeek(week), (oud) => oud?.filter((r) => r.id !== receptId))

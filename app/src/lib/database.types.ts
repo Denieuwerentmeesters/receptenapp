@@ -49,6 +49,7 @@ export interface WeekmenuGetoond {
   recept_id: string
   positie: number
   is_vegetarisch: boolean
+  geruild_op: string | null
 }
 
 export interface WeekmenuGekozen {
@@ -60,6 +61,8 @@ export interface WeekmenuGekozen {
   gekookt_op: string | null
   aantal: number
   van_lijst_op: string | null
+  /** De app koos dit recept via "Vul mijn week". */
+  automatisch: boolean
 }
 
 export interface Voorkeuren {
@@ -71,6 +74,8 @@ export interface Voorkeuren {
   huismerk_voorkeur: boolean
   voorkeurswinkel: 'ah' | 'jumbo'
   aantal_personen: number
+  /** Hoeveel recepten "Vul mijn week" op je lijst zet, 1 t/m 7. */
+  kookavonden: number
   pushbericht_aan: boolean
   pushbericht_dag: number
   pushbericht_tijd: string

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Chip, Icon } from '../ds'
+import { Button, Chip, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
@@ -11,6 +11,8 @@ import { weekLabel, weekStart } from '../lib/week'
 import { isBudget } from '../lib/prijsschatting'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
+import { useVoorraad } from '../lib/queries2'
+import { kiesWeek } from '../lib/weekvullen'
 
 type Filter = 'alles' | 'lijst' | 'budget' | 'vega' | 'snel'
 
@@ -35,6 +37,9 @@ function isVega(recept: WeekRecept) {
  * het op je boodschappenlijst en krijgt het een gele rand; met het kruisje
  * haal je het helemaal uit je week. Na de boodschappen verdwijnt de gele
  * rand, maar het recept blijft staan — hiervandaan kook je.
+ *
+ * "Vul mijn week" kiest in één tik zoveel recepten als je kookavonden hebt
+ * (lib/weekvullen.ts). Wat je dan niet ziet zitten ruil je per kaart.
  */
 export function DezeWeek() {
   const week = weekStart()
@@ -44,9 +49,12 @@ export function DezeWeek() {
   const dezeWeek = useDezeWeek(week)
   const voorkeuren = useVoorkeuren()
   const { voegToe, dialoog } = useOpLijst(week)
-  const { haalUitWeek } = useLijstActies(week)
+  const { zetOpLijst, haalUitWeek } = useLijstActies(week)
+  const voorraad = useVoorraad()
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<WeekRecept | null>(null)
+  const [bezig, setBezig] = useState(false)
+  const [suggestiesOp, setSuggestiesOp] = useState(false)
 
   const recepten = useMemo(() => dezeWeek.data ?? [], [dezeWeek.data])
   const zichtbaar = recepten.filter((r) =>
@@ -59,6 +67,40 @@ export function DezeWeek() {
   const opLijst = recepten.filter((r) => r.opLijst).length
   const vegaAantal = recepten.filter(isVega).length
   const personen = voorkeuren.data?.aantal_personen ?? 4
+  const kookavonden = voorkeuren.data?.kookavonden ?? 4
+
+  // Kandidaten voor vullen en ruilen: suggesties die je nog niet koos.
+  const kandidaten = recepten.filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp)
+  // Wat al in je week zit telt mee, ook als je het al gekocht of gekookt hebt.
+  const gekozen = recepten.filter((r) => r.gekozen)
+  const inHuis = new Set((voorraad.data ?? []).filter((v) => v.in_huis).map((v) => v.ingredient_key))
+  const vegaMinimum = voorkeuren.data?.vega_minimum ?? 0
+  const toonVullen = gekozen.length < kookavonden && kandidaten.length > 0
+
+  async function vulWeek() {
+    setBezig(true)
+    try {
+      const ids = kiesWeek(kandidaten, { vega_minimum: vegaMinimum, kookavonden }, gekozen, inHuis)
+      // Na elkaar, zodat een fout halverwege niet de helft stil laat mislukken.
+      for (const id of ids) await zetOpLijst.mutateAsync({ receptId: id, automatisch: true })
+    } finally {
+      setBezig(false)
+    }
+  }
+
+  /** Haalt een recept van je lijst en zet het volgende passende recept uit de tien ervoor in de plaats. */
+  async function ruil(recept: WeekRecept) {
+    const rest = gekozen.filter((r) => r.id !== recept.id)
+    const [vervanger] = kiesWeek(kandidaten, { vega_minimum: vegaMinimum, kookavonden: rest.length + 1 }, rest, inHuis)
+    if (!vervanger) { setSuggestiesOp(true); return }
+    setBezig(true)
+    try {
+      await haalUitWeek.mutateAsync({ receptId: recept.id, geruild: true })
+      await zetOpLijst.mutateAsync({ receptId: vervanger, automatisch: true })
+    } finally {
+      setBezig(false)
+    }
+  }
 
   return (
     <Scherm>
@@ -103,6 +145,15 @@ export function DezeWeek() {
               </span>
             </div>
 
+            {toonVullen && (
+              <Button
+                tone="yellow" icon="shuffle" disabled={bezig} onClick={() => void vulWeek()}
+                style={{ width: '100%', marginBottom: 14 }}
+              >
+                {bezig ? 'Even kiezen…' : `Vul mijn week · nog ${kookavonden - gekozen.length} ${kookavonden - gekozen.length === 1 ? 'recept' : 'recepten'}`}
+              </Button>
+            )}
+
             {zichtbaar.length === 0 ? (
               <div style={{ padding: '48px 20px', textAlign: 'center' }}>
                 <Icon name="utensils" size={28} />
@@ -127,6 +178,7 @@ export function DezeWeek() {
                     onOpen={() => navigeer(`/recept/${recept.id}`)}
                     onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
                     onWeg={() => (recept.opLijst ? setWegVraag(recept) : haalUitWeek.mutate(recept.id))}
+                    onRuil={recept.opLijst && !recept.gekooktOp && !bezig ? () => void ruil(recept) : undefined}
                   />
                 ))}
               </div>
@@ -149,6 +201,16 @@ export function DezeWeek() {
           { label: 'Laat maar', onClick: () => setWegVraag(null) },
         ]}
       />
+      <Dialoog
+        open={suggestiesOp}
+        kop="De suggesties zijn op"
+        tekst="Alle tien recepten van deze week zijn gekozen of weggeklikt. In Ontdekken vind je er meer."
+        onSluit={() => setSuggestiesOp(false)}
+        acties={[
+          { label: 'Naar Ontdekken', hoofd: true, onClick: () => { setSuggestiesOp(false); navigeer('/ontdekken') } },
+          { label: 'Laat maar', onClick: () => setSuggestiesOp(false) },
+        ]}
+      />
       <OnderBalk />
     </Scherm>
   )
@@ -164,13 +226,15 @@ function knopTekst(recept: WeekRecept): string {
   return 'Zet op je lijst'
 }
 
-function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
+function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg, onRuil }: {
   recept: WeekRecept
   vlak: string
   personen: number
   onOpen: () => void
   onLijst: () => void
   onWeg: () => void
+  /** Alleen op kaarten die op je lijst staan: ruil voor een ander recept uit de tien. */
+  onRuil?: () => void
 }) {
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   return (
@@ -230,11 +294,13 @@ function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
       ><Icon name="x" size={16} /></button>
       </div>
 
+      <div style={{ display: 'flex', gap: 6, margin: '0 4px 4px' }}>
       <button
         onClick={onLijst}
         style={{
+          flex: 1, minWidth: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, height: 34,
-          margin: '0 4px 4px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
+          borderRadius: 'var(--radius-full)', cursor: 'pointer',
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
           border: `1.5px solid ${recept.opLijst ? 'var(--c-red)' : 'rgba(20,20,20,0.14)'}`,
           color: recept.opLijst ? 'var(--c-red)' : 'var(--c-ink)',
@@ -243,6 +309,19 @@ function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg }: {
         <Icon name={recept.opLijst ? 'check' : 'plus'} size={14} />
         {knopTekst(recept)}
       </button>
+      {onRuil && (
+        <button
+          onClick={onRuil}
+          aria-label="Ruil voor een ander recept"
+          title="Ruil"
+          style={{
+            flex: 'none', width: 34, height: 34, borderRadius: 'var(--radius-full)', cursor: 'pointer',
+            background: 'var(--c-paper)', border: '1.5px solid var(--c-red)', color: 'var(--c-red)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
+          }}
+        ><Icon name="shuffle" size={14} /></button>
+      )}
+      </div>
     </div>
   )
 }
