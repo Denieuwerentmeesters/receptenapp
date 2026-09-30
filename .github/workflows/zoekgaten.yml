@@ -1,0 +1,37 @@
+# Totaaloverzicht van ingrediënten die in de app een zoeklink krijgen
+# (scripts/zoekgaten.ts), uit de echte database. Alleen lezen.
+#
+# Starten: gh workflow run zoekgaten.yml
+# Ophalen: gh run download <run-id> -n zoekgaten
+name: Zoekgaten
+
+on:
+  workflow_dispatch:
+
+jobs:
+  overzicht:
+    name: Zoekgaten opsommen
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+
+      - name: Node opzetten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Het script gebruikt de functies van de app, dus ook die dependencies.
+      - name: Dependencies installeren
+        run: npm ci && (cd app && npm ci)
+
+      - name: Overzicht maken
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm run zoekgaten
+
+      - name: Overzicht bewaren
+        uses: actions/upload-artifact@v4
+        with:
+          name: zoekgaten
+          path: zoekgaten.md
