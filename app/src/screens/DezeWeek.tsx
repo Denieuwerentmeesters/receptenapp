@@ -11,14 +11,17 @@ import { weekLabel, weekStart } from '../lib/week'
 import { isBudget } from '../lib/prijsschatting'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
+import { BonusBron, BonusLabel } from '../components/Bonus'
+import { BONUS_BRON, receptBonus, useBonus, type BonusActie } from '../lib/bonus'
 import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
 
-type Filter = 'alles' | 'lijst' | 'budget' | 'vega' | 'snel'
+type Filter = 'alles' | 'lijst' | 'bonus' | 'budget' | 'vega' | 'snel'
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: 'alles', label: 'Alles' },
   { id: 'lijst', label: 'Op mijn lijst' },
+  { id: 'bonus', label: 'In de bonus' },
   { id: 'budget', label: 'Budget' },
   { id: 'vega', label: 'Vegetarisch' },
   { id: 'snel', label: 'Binnen 30 min' },
@@ -57,9 +60,12 @@ export function DezeWeek() {
   const [suggestiesOp, setSuggestiesOp] = useState(false)
 
   const recepten = useMemo(() => dezeWeek.data ?? [], [dezeWeek.data])
+  const bonus = useBonus()
+  const bonusPerRecept = useMemo(() => new Map(recepten.map((r) => [r.id, receptBonus(r.ingredienten, bonus.data)])), [recepten, bonus.data])
   const zichtbaar = recepten.filter((r) =>
     filter === 'alles' ? true
       : filter === 'lijst' ? r.opLijst
+      : filter === 'bonus' ? Boolean(bonusPerRecept.get(r.id))
       : filter === 'budget' ? isBudget(r)
       : filter === 'vega' ? isVega(r)
       : (r.bereidingstijd_minuten ?? 999) <= 30)
@@ -123,6 +129,12 @@ export function DezeWeek() {
           ))}
         </div>
 
+        {filter === 'bonus' && (
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, color: 'rgba(20,20,20,0.6)', margin: '6px 22px 0' }}>
+            Het hoofdingrediënt is in de bonus op je eerste bezorgdag. {BONUS_BRON.uitleg} <BonusBron klein />
+          </p>
+        )}
+
         {recepten.length === 0 ? (
           <Leeg
             icoon="utensils"
@@ -174,6 +186,7 @@ export function DezeWeek() {
                     key={recept.id}
                     recept={recept}
                     vlak={VLAKKEN[i % VLAKKEN.length]}
+                    bonus={bonusPerRecept.get(recept.id) ?? null}
                     personen={personen}
                     onOpen={() => navigeer(`/recept/${recept.id}`)}
                     onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
@@ -226,9 +239,11 @@ function knopTekst(recept: WeekRecept): string {
   return 'Zet op je lijst'
 }
 
-function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg, onRuil }: {
+function ReceptKaart({ recept, vlak, bonus, personen, onOpen, onLijst, onWeg, onRuil }: {
   recept: WeekRecept
   vlak: string
+  /** Hoofdingrediënt in de bonus bij je winkel: het gele label op de foto. */
+  bonus: { naam: string; acties: BonusActie[] } | null
   personen: number
   onOpen: () => void
   onLijst: () => void
@@ -246,6 +261,7 @@ function ReceptKaart({ recept, vlak, personen, onOpen, onLijst, onWeg, onRuil }:
     }}>
       <div style={{ flex: 1, position: 'relative', display: 'flex' }}>
       {toko && <TokoLabel />}
+      {bonus && <BonusLabel naam={bonus.naam} acties={bonus.acties} />}
       <button
         onClick={onOpen}
         style={{

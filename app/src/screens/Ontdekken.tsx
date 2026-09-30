@@ -9,6 +9,8 @@ import type { Recept } from '../lib/database.types'
 import { isBudget } from '../lib/prijsschatting'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
+import { BonusLabel } from '../components/Bonus'
+import { receptBonus, useBonus } from '../lib/bonus'
 
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
@@ -239,6 +241,8 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
   ].filter(Boolean).join(' · ')
   const status = week?.opLijst ? 'Op je lijst' : week ? "In 'Deze week' geplaatst" : null
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
+  const bonusData = useBonus().data
+  const bonus = useMemo(() => receptBonus(recept.ingredienten, bonusData), [recept.ingredienten, bonusData])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
@@ -261,6 +265,7 @@ function FotoKaart({ recept, index, week, onOpen, onHartje }: {
           }}
         >{recept.afbeelding_url ? '' : 'foto'}</button>
         {toko && <TokoLabel />}
+        {bonus && <BonusLabel naam={bonus.naam} acties={bonus.acties} />}
 
         <button
           onClick={onHartje}

@@ -12,10 +12,12 @@ export interface DialoogActie {
  * groot genoeg voor een duim, ook met natte handen in de keuken.
  * Tik naast de vraag om 'm te sluiten zonder iets te doen.
  */
-export function Dialoog({ open, kop, tekst, acties, onSluit }: {
+export function Dialoog({ open, kop, tekst, acties, onSluit, children }: {
   open: boolean
   kop: string
   tekst?: string
+  /** Extra inhoud tussen de tekst en de knoppen, zoals een lijstje of een bronvermelding. */
+  children?: React.ReactNode
   acties: DialoogActie[]
   onSluit: () => void
 }) {
@@ -53,6 +55,7 @@ export function Dialoog({ open, kop, tekst, acties, onSluit }: {
             color: 'rgba(20,20,20,0.7)',
           }}>{tekst}</p>
         )}
+        {children}
         {acties.map((actie) => (
           <Button
             key={actie.label}
