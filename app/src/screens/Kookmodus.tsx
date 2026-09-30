@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
 import { Scherm } from '../components/Layout'
@@ -6,13 +6,32 @@ import { Grens } from '../components/Staten'
 import { useRecept, useVoorkeuren } from '../lib/queries'
 import { useGekooktMarkeren } from '../lib/queries2'
 import { schaalIngredienten } from '../lib/schaal'
+import { formatteerDuur, tijdenUitStap } from '../lib/kookmodus'
+import { bereidGeluidVoor, houdSchermAan, planWekker, trekWekkerIn, wekkerAfgelopen } from '../lib/kookwekker'
+
+/**
+ * Eén timer tegelijk. Loopt hij, dan onthouden we het eindtijdstip in plaats
+ * van af te tellen: een webview die even in de achtergrond stond telt niet
+ * door, de klok wel.
+ */
+interface Timer {
+  label: string
+  /** De stap waar de timer bij hoort, voor de balk bovenin. */
+  stap: number
+  eindOp: number | null
+  /** Resterende seconden zolang de timer gepauzeerd of afgelopen is. */
+  resterend: number
+}
 
 /**
  * Koken op donkere achtergrond, één stap tegelijk, grote letters.
  *
  * Twee dingen die het scherm bruikbaar maken met vette handen: de tekst is
- * 19px in plaats van 15, en het scherm blijft aan zolang je kookt (Wake Lock,
- * waar de browser dat ondersteunt).
+ * 19px in plaats van 15, en het scherm blijft aan zolang je kookt.
+ *
+ * Noemt een stap een tijd ("15 minuten laten sudderen"), dan staat die als
+ * eerste timerknop klaar. Loopt de timer af, dan hoor je dat ook met het
+ * scherm op slot: de iOS-app plant er een lokale melding voor.
  */
 export function Kookmodus() {
   const { id } = useParams<{ id: string }>()
@@ -22,30 +41,58 @@ export function Kookmodus() {
   const gekooktMarkeren = useGekooktMarkeren()
 
   const [stap, setStap] = useState(0)
-  const [seconden, setSeconden] = useState<number | null>(null)
-  const [loopt, setLoopt] = useState(false)
+  const [timer, setTimer] = useState<Timer | null>(null)
+  const [nu, setNu] = useState(() => Date.now())
 
   // Scherm aan houden tijdens het koken.
-  useEffect(() => {
-    let sentinel: { release: () => Promise<void> } | null = null
-    const wakeLock = (navigator as Navigator & {
-      wakeLock?: { request: (type: 'screen') => Promise<{ release: () => Promise<void> }> }
-    }).wakeLock
-    void wakeLock?.request('screen').then((s) => { sentinel = s }).catch(() => { /* niet ondersteund */ })
-    return () => { void sentinel?.release().catch(() => { /* al vrijgegeven */ }) }
-  }, [])
+  useEffect(() => houdSchermAan(), [])
 
-  const tik = useRef<number | null>(null)
+  // Verlaat je de kookmodus, dan gaat de timer mee weg, en de melding ook.
+  useEffect(() => () => { void trekWekkerIn() }, [])
+
+  const loopt = timer?.eindOp != null
   useEffect(() => {
-    if (!loopt || seconden === null) return
-    tik.current = window.setInterval(() => {
-      setSeconden((s) => {
-        if (s === null || s <= 1) { setLoopt(false); return 0 }
-        return s - 1
-      })
-    }, 1000)
-    return () => { if (tik.current) window.clearInterval(tik.current) }
-  }, [loopt, seconden === null])
+    if (!loopt) return
+    const tik = window.setInterval(() => setNu(Date.now()), 250)
+    return () => window.clearInterval(tik)
+  }, [loopt])
+
+  const resterend = timer === null ? null
+    : timer.eindOp === null ? timer.resterend
+    : Math.max(0, Math.ceil((timer.eindOp - nu) / 1000))
+
+  useEffect(() => {
+    if (loopt && resterend === 0) {
+      wekkerAfgelopen()
+      setTimer((t) => t && { ...t, eindOp: null, resterend: 0 })
+    }
+  }, [loopt, resterend])
+
+  const titel = recept.data ? (recept.data.titel_nl ?? recept.data.titel) : ''
+
+  function startTimer(seconden: number, label: string, bijStap: number) {
+    bereidGeluidVoor()
+    const eindOp = Date.now() + seconden * 1000
+    setNu(Date.now())
+    setTimer({ label, stap: bijStap, eindOp, resterend: seconden })
+    void planWekker(eindOp, `${label} · ${titel}`)
+  }
+
+  function pauzeer() {
+    if (!timer || resterend === null) return
+    setTimer({ ...timer, eindOp: null, resterend })
+    void trekWekkerIn()
+  }
+
+  function hervat() {
+    if (!timer || !resterend) return
+    startTimer(resterend, timer.label, timer.stap)
+  }
+
+  function zetUit() {
+    setTimer(null)
+    void trekWekkerIn()
+  }
 
   return (
     <Scherm achtergrond="var(--c-ink)">
@@ -64,6 +111,11 @@ export function Kookmodus() {
             const woord = i.naam.toLowerCase().split(/[\s(,]/)[0]
             return woord.length >= 4 && tekst.includes(woord)
           }).slice(0, 6)
+
+          // Tijden uit de stap eerst, de vaste 5/10/15 erachter als terugval.
+          const stapTijden = tijdenUitStap(stappen[stap]).slice(0, 3)
+          const terugval = [5, 10, 15].filter((m) => !stapTijden.some((t) => t.seconden === m * 60))
+          const deTimer = timer?.stap === stap ? timer : null
 
           return (
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: 'var(--c-cream)' }}>
@@ -98,6 +150,29 @@ export function Kookmodus() {
                 </div>
               </div>
 
+              {timer && timer.stap !== stap && resterend !== null && (
+                <div style={{ flex: 'none', padding: '12px 22px 0' }}>
+                  <button
+                    onClick={() => setStap(timer.stap)}
+                    style={{
+                      width: '100%', border: 'none', borderRadius: 'var(--radius-full)',
+                      background: resterend === 0 ? 'var(--c-yellow)' : 'rgba(255,246,232,0.14)',
+                      color: resterend === 0 ? 'var(--c-ink)' : 'var(--c-cream)',
+                      padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
+                      fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, textAlign: 'left',
+                    }}
+                  >
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18 }}>
+                      {resterend === 0 ? 'Klaar' : formatteer(resterend)}
+                    </span>
+                    <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {timer.label} · stap {timer.stap + 1}
+                    </span>
+                    {!loopt && resterend > 0 && <span>gepauzeerd</span>}
+                  </button>
+                </div>
+              )}
+
               <div style={{
                 flex: 1, overflowY: 'auto', padding: '26px 22px 8px',
                 display: 'flex', flexDirection: 'column', gap: 20,
@@ -120,32 +195,41 @@ export function Kookmodus() {
 
                 <div style={{
                   background: 'var(--c-red)', borderRadius: 'var(--radius-lg)', padding: 20,
-                  display: 'flex', alignItems: 'center', gap: 16,
+                  display: 'flex', flexDirection: 'column', gap: 14,
                 }}>
-                  <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     <span style={{
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--c-yellow)',
-                    }}>Timer</span>
+                    }}>{deTimer ? deTimer.label : 'Timer'}</span>
                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 34, lineHeight: 1 }}>
-                      {seconden === null ? '––:––' : formatteer(seconden)}
+                      {deTimer && resterend !== null ? formatteer(resterend) : '––:––'}
                     </span>
                   </span>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    {seconden === null ? (
-                      [5, 10, 15].map((m) => (
-                        <button
-                          key={m}
-                          onClick={() => { setSeconden(m * 60); setLoopt(true) }}
-                          style={timerKnop}
-                        >{m}m</button>
-                      ))
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {deTimer && resterend !== null ? (
+                      <>
+                        {resterend > 0 && (
+                          <button onClick={loopt ? pauzeer : hervat} style={timerKnop}>
+                            {loopt ? 'Pauze' : 'Start'}
+                          </button>
+                        )}
+                        <button onClick={zetUit} style={timerKnop}>{resterend === 0 ? 'Klaar' : 'Uit'}</button>
+                      </>
                     ) : (
                       <>
-                        <button onClick={() => setLoopt(!loopt)} style={timerKnop}>
-                          {loopt ? 'Pauze' : seconden === 0 ? 'Klaar' : 'Start'}
-                        </button>
-                        <button onClick={() => { setSeconden(null); setLoopt(false) }} style={timerKnop}>Uit</button>
+                        {stapTijden.map((t) => (
+                          <button key={t.seconden} onClick={() => startTimer(t.seconden, t.label, stap)} style={timerKnop}>
+                            {t.label}
+                          </button>
+                        ))}
+                        {terugval.map((m) => (
+                          <button
+                            key={m}
+                            onClick={() => startTimer(m * 60, formatteerDuur(m * 60), stap)}
+                            style={stapTijden.length > 0 ? timerKnopStil : timerKnop}
+                          >{m}m</button>
+                        ))}
                       </>
                     )}
                   </div>
@@ -196,8 +280,15 @@ const timerKnop: React.CSSProperties = {
   fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, cursor: 'pointer',
 }
 
+const timerKnopStil: React.CSSProperties = {
+  ...timerKnop,
+  background: 'transparent', color: 'var(--c-cream)',
+  boxShadow: 'inset 0 0 0 1.5px rgba(255,246,232,0.5)',
+}
+
 function formatteer(s: number): string {
-  const m = Math.floor(s / 60)
-  const rest = s % 60
-  return `${m}:${rest < 10 ? '0' : ''}${rest}`
+  const twee = (n: number) => `${n < 10 ? '0' : ''}${n}`
+  const u = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  return u > 0 ? `${u}:${twee(m)}:${twee(s % 60)}` : `${m}:${twee(s % 60)}`
 }
