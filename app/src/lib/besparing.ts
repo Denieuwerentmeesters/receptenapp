@@ -2,7 +2,7 @@ import { zoekProduct, type Productvoorkeur } from './ah'
 import { jumboSku } from './jumbo'
 import { schatIngredient } from './prijsschatting'
 import type { JumboProduct } from './database.types'
-import type { LijstRegel } from './lijst'
+import { aantalVerpakkingen, type LijstRegel } from './lijst'
 
 /**
  * "Bespaard!": wat je mandje kost naast wat dezelfde avondmaaltijden bij een
@@ -77,7 +77,7 @@ export function mandjeKosten(
     const sku = product && jumboSku(product, voorkeur)
     const prijs = sku ? prijzen[sku] : undefined
     if (prijs !== undefined) {
-      totaal += prijs
+      totaal += prijs * aantalVerpakkingen(regel, 'jumbo')
       metPrijs++
       continue
     }

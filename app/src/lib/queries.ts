@@ -4,6 +4,7 @@ import { huidigeUserId } from './auth'
 import { altijdInHuis } from './altijdInHuis'
 import { DROGE_KRUIDEN_KEY } from './kruiden'
 import { ingredientKey, schaalIngredienten } from './schaal'
+import { inVoorraad } from './voorraad'
 import { weekStart } from './week'
 import type { AhProduct, BoodschapItem, JumboProduct, Recept, Voorkeuren } from './database.types'
 
@@ -192,7 +193,7 @@ export function useLijstActies(week = weekStart()) {
 
       const rijen = schaalIngredienten(r.ingredienten, r.personen, personen)
         .map((ing) => ({ ing, key: ingredientKey(ing.naam) }))
-        .filter(({ key }) => key && !inHuis.has(key) && !altijdInHuis(key))
+        .filter(({ key }) => key && !inVoorraad(key, inHuis) && !altijdInHuis(key))
         .map(({ ing, key }) => ({
           user_id: id,
           week_start_datum: week,

@@ -1,10 +1,17 @@
 import { AppLauncher } from '@capacitor/app-launcher'
 import { Capacitor } from '@capacitor/core'
 import { ingredientKey } from './schaal'
+import { canoniek } from './synoniemen'
 import type { AhProduct, BoodschapItem } from './database.types'
 
 const ADD_MULTIPLE = 'https://www.ah.nl/mijnlijst/add-multiple'
 const ZOEKEN = 'https://www.ah.nl/zoeken'
+
+/** Een boodschapregel op weg naar het mandje, met hoeveel verpakkingen. */
+export type MandjeItem = BoodschapItem & {
+  /** Aantal verpakkingen; zonder opgave één (zie aantalVerpakkingen in lijst.ts). */
+  aantal?: number
+}
 
 export interface MandjeResultaat {
   /** Items die als p=ID:AANTAL meegingen. */
@@ -64,7 +71,10 @@ export function zoekProduct<P>(
   item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
   mapping: Record<string, P>,
 ): P | undefined {
-  const direct = mapping[item.ingredient_key] ?? mapping[ingredientKey(item.naam)]
+  // Eerst de synoniemen: "knoflookteentje" is gewoon knoflook, ook al staat
+  // er een aparte sleutel voor een potje teentjes in de mapping.
+  const direct = mapping[canoniek(item.ingredient_key)] ?? mapping[canoniek(ingredientKey(item.naam))]
+    ?? mapping[item.ingredient_key] ?? mapping[ingredientKey(item.naam)]
   if (direct) return direct
 
   for (const vorm of enkelvoudVormen(ingredientKey(item.naam))) {
@@ -120,7 +130,7 @@ export function enkelvoudVormen(key: string): string[] {
 }
 
 export function bouwMandjeLink(
-  items: BoodschapItem[],
+  items: MandjeItem[],
   mapping: Record<string, AhProduct>,
   voorkeur: Productvoorkeur,
 ): MandjeResultaat {
@@ -141,7 +151,7 @@ export function bouwMandjeLink(
       continue
     }
     gemapt.push(item)
-    aantallen.set(productId, (aantallen.get(productId) ?? 0) + 1)
+    aantallen.set(productId, (aantallen.get(productId) ?? 0) + (item.aantal ?? 1))
   }
 
   const params = [...aantallen].map(([id, aantal]) => `p=${id}:${aantal}`).join('&')

@@ -1,4 +1,4 @@
-import { kiesVariant, zoekProduct, type MandjeResultaat, type Productvoorkeur } from './ah'
+import { kiesVariant, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
 import type { BoodschapItem, JumboProduct } from './database.types'
 
 const MANDJE = 'https://www.jumbo.com/mandje/'
@@ -17,7 +17,7 @@ const ZOEKEN = 'https://www.jumbo.com/producten/'
  * verpakkingsachtervoegsel ("641085STK", "213102PAK") — die gaat ongewijzigd mee.
  */
 export function bouwJumboLink(
-  items: BoodschapItem[],
+  items: MandjeItem[],
   mapping: Record<string, JumboProduct>,
   voorkeur: Productvoorkeur,
 ): MandjeResultaat {
@@ -34,7 +34,7 @@ export function bouwJumboLink(
       continue
     }
     gemapt.push(item)
-    aantallen.set(sku, (aantallen.get(sku) ?? 0) + 1)
+    aantallen.set(sku, (aantallen.get(sku) ?? 0) + (item.aantal ?? 1))
   }
 
   const add = [...aantallen].map(([sku, quantity]) => ({ sku, quantity }))

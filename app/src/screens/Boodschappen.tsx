@@ -16,7 +16,7 @@ import {
 import { openBijWinkel } from '../lib/ah'
 import { tokoProduct } from '../lib/toko'
 import { productvoorkeur, useWinkel } from '../lib/winkel'
-import { groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
+import { aantalVerpakkingen, groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
 import { weekStart } from '../lib/week'
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
@@ -88,7 +88,10 @@ export function Boodschappen() {
   async function naarMandje() {
     setMandjeFout(null)
     setMelding(null)
-    const { url, gemapt, ongemapt } = winkel.mandjeLink(naarWinkel.map(voorWinkel))
+    // Per stuk verkochte groente in het aantal uit het recept: vier paprika's, niet één.
+    const { url, gemapt, ongemapt } = winkel.mandjeLink(naarWinkel.map((r) => ({
+      ...voorWinkel(r), aantal: aantalVerpakkingen(r, winkel.id),
+    })))
     if (gemapt.length === 0) {
       setMelding(
         `Geen van deze producten heeft nog een ${winkel.kort}-productnummer. ` +

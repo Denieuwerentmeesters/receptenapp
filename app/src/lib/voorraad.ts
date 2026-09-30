@@ -1,4 +1,5 @@
 import { enkelvoudVormen } from './ah'
+import { canoniek } from './synoniemen'
 
 /**
  * Staat dit ingrediënt in je voorraadkast?
@@ -10,10 +11,11 @@ import { enkelvoudVormen } from './ah'
  *
  * Naast een exacte match ook het enkelvoud ("preien" → "prei") en een
  * voorraadnaam als laatste woord(en): "grove mosterd" is mosterd. Niet als
- * eerste woord: "rijst azijn" is geen rijst.
+ * eerste woord: "rijst azijn" is geen rijst. En synoniemen: knoflooktenen
+ * zijn knoflook.
  */
 export function inVoorraad(key: string, voorraad: ReadonlySet<string>): boolean {
-  if (voorraad.has(key)) return true
+  if (voorraad.has(key) || voorraad.has(canoniek(key))) return true
   if (enkelvoudVormen(key).some((vorm) => voorraad.has(vorm))) return true
   for (const v of voorraad) {
     if (key.endsWith(' ' + v)) return true

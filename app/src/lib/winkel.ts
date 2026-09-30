@@ -1,4 +1,4 @@
-import { bouwMandjeLink, zoekLink, zoekProduct, type MandjeResultaat, type Productvoorkeur } from './ah'
+import { bouwMandjeLink, zoekLink, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
 import { bouwJumboLink, jumboZoekLink } from './jumbo'
 import { useAhMapping, useJumboMapping, useVoorkeuren } from './queries'
 import type { BoodschapItem, Voorkeuren } from './database.types'
@@ -16,7 +16,7 @@ export interface Winkel {
   kort: string
   /** Heeft dit ingrediënt een productnummer bij deze winkel? Anders: zoeklink. */
   heeftProduct: (item: BoodschapItem) => boolean
-  mandjeLink: (items: BoodschapItem[]) => MandjeResultaat
+  mandjeLink: (items: MandjeItem[]) => MandjeResultaat
   zoekLink: (naam: string) => string
 }
 

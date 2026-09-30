@@ -1,10 +1,13 @@
+import { enkelvoudVormen } from './ah'
 import type { BoodschapItem } from './database.types'
+import { canoniek, TENEN } from './synoniemen'
 import { LOOPROUTE, schapVoor, type Schap } from './winkelindeling'
 
 /**
  * Eén regel op het scherm. In de database staat een rij per ingrediënt per
  * recept; hier voegen we ze samen op ingredient_key, zodat twee recepten met
- * tomaten één regel "tomaten" opleveren.
+ * tomaten één regel "tomaten" opleveren. Synoniemen gaan ook samen:
+ * "knoflooktenen" en "knoflook" worden één regel knoflook.
  */
 export interface LijstRegel {
   key: string
@@ -26,32 +29,37 @@ export interface LijstGroep {
 export function voegSamen(items: BoodschapItem[]): LijstRegel[] {
   const perKey = new Map<string, BoodschapItem[]>()
   for (const item of items) {
-    const rij = perKey.get(item.ingredient_key) ?? []
+    const key = canoniek(item.ingredient_key)
+    const rij = perKey.get(key) ?? []
     rij.push(item)
-    perKey.set(item.ingredient_key, rij)
+    perKey.set(key, rij)
   }
 
-  return [...perKey].map(([key, rij]) => ({
-    key,
-    naam: rij[0].naam,
-    items: rij,
-    ids: rij.map((i) => i.id),
-    // Pas afgevinkt als álles erachter afgevinkt is. Komt er een recept bij
-    // met hetzelfde ingrediënt, dan staat de regel weer open.
-    afgevinkt: rij.every((i) => i.is_afgevinkt),
-    label: labelVan(rij),
-    voorbeeld: rij[0],
-  }))
+  return [...perKey].map(([key, rij]) => {
+    // Bij een synoniem de gewone naam: "knoflook", niet "knoflooktenen".
+    const naam = rij.find((i) => i.ingredient_key === key)?.naam ?? key
+    return {
+      key,
+      naam,
+      items: rij,
+      ids: rij.map((i) => i.id),
+      // Pas afgevinkt als álles erachter afgevinkt is. Komt er een recept bij
+      // met hetzelfde ingrediënt, dan staat de regel weer open.
+      afgevinkt: rij.every((i) => i.is_afgevinkt),
+      label: labelVan(rij, naam),
+      voorbeeld: rij[0],
+    }
+  })
 }
 
 /**
  * Optellen kan alleen bij dezelfde eenheid. Verschillen ze ("200 g" en
  * "1 blik"), dan tonen we ze naast elkaar in plaats van er een te laten vallen.
  */
-function labelVan(rij: BoodschapItem[]): string {
+function labelVan(rij: BoodschapItem[], naam: string): string {
   const perEenheid = new Map<string, number | null>()
   for (const item of rij) {
-    const eenheid = (item.eenheid ?? '').trim()
+    const eenheid = eenheidVan(item)
     const huidig = perEenheid.get(eenheid)
     if (item.hoeveelheid === null) {
       if (!perEenheid.has(eenheid)) perEenheid.set(eenheid, null)
@@ -62,9 +70,60 @@ function labelVan(rij: BoodschapItem[]): string {
 
   const delen = [...perEenheid]
     .filter(([, waarde]) => waarde !== null)
-    .map(([eenheid, waarde]) => `${formatteer(waarde as number)} ${eenheid}`.trim())
-  const naam = rij[0].naam.toLowerCase()
-  return delen.length > 0 ? `${delen.join(' + ')} ${naam}` : naam
+    .map(([eenheid, waarde]) => {
+      const tekst = eenheid === 'tenen' && waarde === 1 ? 'teen' : eenheid
+      return `${formatteer(waarde as number)} ${tekst}`.trim()
+    })
+  const kleineNaam = naam.toLowerCase()
+  return delen.length > 0 ? `${delen.join(' + ')} ${kleineNaam}` : kleineNaam
+}
+
+/**
+ * Teen, teentje en tenen tellen op tot één getal. Ook "3 knoflooktenen" zonder
+ * eenheid zijn tenen, anders stond er "2 tenen + 3 knoflook".
+ */
+function eenheidVan(item: BoodschapItem): string {
+  const eenheid = (item.eenheid ?? '').trim().toLowerCase()
+  if (TENEN.has(eenheid)) return 'tenen'
+  if (!eenheid && canoniek(item.ingredient_key) === 'knoflook' && item.ingredient_key !== 'knoflook') return 'tenen'
+  return (item.eenheid ?? '').trim()
+}
+
+/**
+ * Groente die per stuk verkocht wordt, bij AH én bij Jumbo. Alleen voor deze
+ * producten sturen we het aantal uit het recept door: "4 paprika's" wordt
+ * vier paprika's in je mandje. Voor de rest blijft het één verpakking — "4
+ * uien" zijn één net, en "4 wortels" één zak.
+ *
+ * Bewust een vaste lijst en geen gok: een te hoog aantal legt stilletjes vier
+ * netten citroenen in je mandje. Citroen en limoen verkoopt AH per stuk, Jumbo
+ * per net of drietal; daarom die twee alleen bij AH.
+ */
+const PER_STUK = new Set([
+  'paprika', 'rode paprika', 'gele paprika', 'groene paprika',
+  'courgette', 'aubergine', 'komkommer', 'prei', 'avocado', 'mango',
+  'bloemkool', 'knolselderij', 'venkel', 'venkelknol', 'chinese kool', 'sla',
+])
+const PER_STUK_AH = new Set(['citroen', 'limoen'])
+const STUKS = new Set(['', 'st', 'stuk', 'stuks', 'krop', 'kroppen'])
+
+function perStuk(key: string, winkel: 'ah' | 'jumbo'): boolean {
+  const lijst = winkel === 'ah' ? [PER_STUK, PER_STUK_AH] : [PER_STUK]
+  return [key, ...enkelvoudVormen(key)].some((vorm) => lijst.some((s) => s.has(vorm)))
+}
+
+/**
+ * Hoeveel verpakkingen van deze regel in het mandje moeten. Opgeteld over alle
+ * recepten erachter en naar boven afgerond: een halve paprika is er één.
+ */
+export function aantalVerpakkingen(regel: LijstRegel, winkel: 'ah' | 'jumbo'): number {
+  if (!perStuk(regel.key, winkel)) return 1
+  let stuks = 0
+  for (const item of regel.items) {
+    if (item.hoeveelheid === null || !STUKS.has((item.eenheid ?? '').trim().toLowerCase())) continue
+    stuks += item.hoeveelheid
+  }
+  return Math.max(1, Math.ceil(stuks))
 }
 
 function formatteer(waarde: number): string {

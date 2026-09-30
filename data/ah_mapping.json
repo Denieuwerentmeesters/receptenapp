@@ -1609,6 +1609,18 @@
   "huismerk": 490540
  },
  {
+  "key": "krop sla",
+  "naam": "ah kropsla",
+  "standaard": 382984,
+  "bio": null
+ },
+ {
+  "key": "kropsla",
+  "naam": "ah kropsla",
+  "standaard": 382984,
+  "bio": null
+ },
+ {
   "key": "kruidenboter",
   "naam": "ah kruidenboter",
   "standaard": 560663,
@@ -2723,6 +2735,12 @@
   "bio": 162461
  },
  {
+  "key": "sla",
+  "naam": "ah kropsla",
+  "standaard": 382984,
+  "bio": null
+ },
+ {
   "key": "slagroom",
   "naam": "ah slagroom",
   "standaard": 509633,
@@ -3448,6 +3466,12 @@
   "key": "zalmsalade",
   "naam": "ah gerookte zalmsalade",
   "standaard": 376532,
+  "bio": null
+ },
+ {
+  "key": "zalmsnipper",
+  "naam": "ah gerookte zalmsnippers",
+  "standaard": 168829,
   "bio": null
  },
  {
