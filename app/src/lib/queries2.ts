@@ -9,6 +9,7 @@ import type { Bestelling, BronType, DeelStatus, Recept } from './database.types'
 import type { Concept } from './extractie'
 import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
 import { maaltijdboxKosten } from './besparing'
+import type { Verpakking } from './eenheden'
 
 /* --------------------------------------------------------------- ontdekken */
 
@@ -458,6 +459,21 @@ export function useBeoordelen() {
 /* ---------------------------------------------------------------- bespaard */
 
 /** Gewone Jumbo-prijs per SKU (scripts/jumbo_prijzen.py). Een object, geen Map: zie useAhMapping. */
+/** Inhoud per Jumbo-SKU (jumbo_verpakking), om verpakkingen te tellen. */
+export function useJumboVerpakkingen(aan = true) {
+  return useQuery({
+    queryKey: ['jumbo-verpakkingen'],
+    enabled: aan,
+    staleTime: 60 * 60 * 1000,
+    queryFn: async (): Promise<Record<string, Verpakking>> => {
+      const { data, error } = await db.from('jumbo_verpakking').select('sku, inhoud, eenheid')
+      if (error) throw error
+      return Object.fromEntries((data as { sku: string; inhoud: number | string; eenheid: Verpakking['eenheid'] }[])
+        .map((v) => [v.sku, { inhoud: Number(v.inhoud), eenheid: v.eenheid }]))
+    },
+  })
+}
+
 export function useJumboPrijzen() {
   return useQuery({
     queryKey: ['jumbo-prijzen'],
