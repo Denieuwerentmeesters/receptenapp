@@ -29,25 +29,10 @@ import { ingredientKey } from '../app/src/lib/schaal'
 import { canoniek } from '../app/src/lib/synoniemen'
 import { schapVoor } from '../app/src/lib/winkelindeling'
 import type { Ingredient } from '../app/src/lib/database.types'
+import { WINKELS, haalActies, productnummer, zonderMaat, type Actie, type Winkel } from '../lib/bonus/prijsprofeet'
 
-const API = 'https://www.prijsprofeet.nl/api/v1/products'
-const UA = 'Receptenapp/0.1 (+https://receptenapp.vercel.app)'
-const WINKELS = { ah: 'albert_heijn', jumbo: 'jumbo' } as const
-type Winkel = keyof typeof WINKELS
 
-interface Actie {
-  name: string
-  product_url: string
-  price: number | null
-  original_price: number | null
-  promotion_type: string | null
-  promotion_status: string
-  valid_from: string
-  valid_until: string
-  unified_category: string
-}
 
-const wacht = (ms: number) => new Promise((r) => setTimeout(r, ms))
 const datum = (d: Date) => d.toISOString().slice(0, 10)
 
 /** Eerste mogelijke bezorgdag: morgen, en valt morgen op zondag, dan maandag. */
@@ -58,47 +43,26 @@ export function eersteBezorgdag(vandaag: Date): Date {
   return d
 }
 
-async function haalActies(winkel: Winkel): Promise<Actie[]> {
+async function haalActiesMetCache(winkel: Winkel): Promise<Actie[]> {
   // Een uur bewaren: een tweede run hoeft PrijsProfeet niet opnieuw te belasten.
   const cache = join(tmpdir(), `bonus-proef-${winkel}.json`)
   if (existsSync(cache) && Date.now() - statSync(cache).mtimeMs < 3600_000) {
     return JSON.parse(readFileSync(cache, 'utf8')) as Actie[]
   }
-  const uit: Actie[] = []
-  for (let pagina = 1; ; pagina++) {
-    const url = `${API}?retailer=${WINKELS[winkel]}&is_promotional=true&page_size=100&page=${pagina}`
-    const antwoord = await fetch(url, { headers: { 'User-Agent': UA } })
-    if (!antwoord.ok) throw new Error(`${winkel} pagina ${pagina}: HTTP ${antwoord.status}`)
-    const data = await antwoord.json() as { total: number; products: Actie[] }
-    uit.push(...data.products)
-    process.stdout.write(`\r${winkel}: ${uit.length} van ${data.total}`)
-    if (uit.length >= data.total || data.products.length === 0) break
-    await wacht(2100)
-  }
+  const uit = await haalActies(winkel, process.env.PRIJSPROFEET_API_KEY || undefined,
+    (n, totaal) => process.stdout.write(`\r${winkel}: ${n} van ${totaal}`))
   process.stdout.write('\n')
   writeFileSync(cache, JSON.stringify(uit))
   return uit
 }
 
-/** Productnaam zonder maat, aantal en verpakking: "AH Kipfilet 500 g" → "ah kipfilet". */
-function zonderMaat(naam: string): string {
-  return woorden(naam.replace(/\d+([.,]\d+)?\s*(x\s*\d+\s*)?(kg|g|gr|gram|ml|l|cl|liter|stuks?|st|pack|pak)\b/gi, ' ')
-    .replace(/\bca\.?/gi, ' ')).filter((w) => !['stuk', 'stuks', 'pack', 'voordeelverpakking', 'grootverpakking', 'kleinverpakking'].includes(w)).join(' ')
-}
 
 function productNamen(winkel: Winkel): [string, { key: string; naam: string }][] {
   const rijen = JSON.parse(readFileSync(new URL(`../data/${winkel}_mapping.json`, import.meta.url), 'utf8')) as { key: string; naam: string }[]
   return rijen.filter((r) => r.naam).map((r) => [r.key, r])
 }
 
-const woorden = (t: string): string[] => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-  .replace(/'s\b/g, '').match(/[a-z]+/g) ?? []
 
-/** AH: wi575084 uit de url; Jumbo: de SKU aan het eind (474843DSL). */
-function productnummer(winkel: Winkel, url: string): string | null {
-  const m = winkel === 'ah' ? url.match(/\/wi(\d+)/) : url.match(/-(\d+[A-Z]+)(?:[/?#]|$)/)
-  return m ? m[1] : null
-}
 
 /** Productnummer → sleutels in onze mapping (standaard, bio en huismerk). */
 function nummersNaarSleutels(pad: string): Map<string, string[]> {
@@ -140,7 +104,7 @@ async function main() {
     { titel: string; titel_nl: string | null; ingredienten: Ingredient[] }[]
 
   for (const winkel of Object.keys(WINKELS) as Winkel[]) {
-    const acties = await haalActies(winkel)
+    const acties = await haalActiesMetCache(winkel)
     const mapping = nummersNaarSleutels(winkel === 'ah' ? 'data/ah_mapping.json' : 'data/jumbo_mapping.json')
 
     const geldig = acties.filter((a) => a.valid_from <= peil && peil <= a.valid_until)

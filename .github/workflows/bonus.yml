@@ -1,0 +1,28 @@
+# Vult bonus_actie nu meteen, met dezelfde code als de nachtelijke cron
+# (api/bonus.ts). Handmatig: gh workflow run bonus.yml
+name: Bonus ophalen
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ophalen:
+    name: Bonus ophalen
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+
+      - name: Node opzetten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Dependencies installeren
+        run: npm ci
+
+      - name: Ophalen en koppelen
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PRIJSPROFEET_API_KEY: ${{ secrets.PRIJSPROFEET_API_KEY }}
+        run: npm run bonus-ophalen

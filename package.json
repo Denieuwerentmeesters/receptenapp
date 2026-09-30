@@ -6,7 +6,8 @@
   "scripts": {
     "afbeeldingen": "tsx scripts/genereer_afbeeldingen.ts",
     "zoekgaten": "tsx scripts/zoekgaten.ts",
-    "bonus-proef": "tsx scripts/bonus_proef.ts"
+    "bonus-proef": "tsx scripts/bonus_proef.ts",
+    "bonus-ophalen": "tsx scripts/bonus_ophalen.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
