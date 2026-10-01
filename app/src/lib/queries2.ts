@@ -31,6 +31,7 @@ interface Filterbaar {
   or(filter: string): Filterbaar
   lte(kolom: string, waarde: number): Filterbaar
   eq(kolom: string, waarde: string): Filterbaar
+  in(kolom: string, waarden: string[]): Filterbaar
   contains(kolom: string, waarde: string[]): Filterbaar
   not(kolom: string, operator: string, waarde: string): Filterbaar
 }
@@ -60,26 +61,73 @@ function metFilters<T>(vraag: T, filters: OntdekFilters): T {
   return v as unknown as T
 }
 
+/** Alleen je voorkeurskeukens, of juist alles daarbuiten. Zelfde casts als metFilters. */
+function metKeukenFase<T>(vraag: T, fase: 'voorkeur' | 'rest', voorkeur: string[]): T {
+  let v = vraag as unknown as Filterbaar
+  if (fase === 'voorkeur') v = v.in('keuken', voorkeur)
+  else if (voorkeur.length > 0) {
+    // Aanhalingstekens: een keukennaam kan een spatie of streepje hebben.
+    const lijst = voorkeur.map((k) => `"${k.replace(/"/g, '\\"')}"`).join(',')
+    v = v.or(`keuken.is.null,keuken.not.in.(${lijst})`)
+  }
+  return v as unknown as T
+}
+
+/** Waar de volgende pagina begint: eerst je voorkeurskeukens, dan de rest. */
+interface OntdekPlek {
+  fase: 'voorkeur' | 'rest'
+  van: number
+}
+
+interface OntdekPagina {
+  recepten: Recept[]
+  volgende: OntdekPlek | undefined
+}
+
 /**
  * Alle recepten doorbladeren met filters. Paginerend, want 475 recepten in één
  * keer ophalen is zonde van de verbinding als je er tien bekijkt.
+ *
+ * Heb je bij Instellingen keukens gekozen, dan komen die eerst en de rest
+ * daarna — elk deel in de gewone volgorde. Met een keukenfilter aan doet de
+ * voorkeur er niet toe.
  */
-export function useOntdek(filters: OntdekFilters) {
+export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []) {
+  const voorkeur = filters.keuken ? [] : voorkeurKeukens
   return useInfiniteQuery({
-    queryKey: ['ontdek', filters],
-    initialPageParam: 0,
-    getNextPageParam: (laatste: Recept[], allePaginas) =>
-      laatste.length < PER_PAGINA ? undefined : allePaginas.length,
-    queryFn: async ({ pageParam }) => {
-      const van = (pageParam as number) * PER_PAGINA
-      // Gemengde, vaste volgorde met gemiddeld meer vega bovenaan; zie migratie
-      // 20260929000000_ontdek_volgorde.sql. `id` als tiebreaker voor stabiele pagina's.
-      const { data, error } = await metFilters(db.from('recepten').select('*'), filters)
-        .order('ontdek_volgorde')
-        .order('id')
-        .range(van, van + PER_PAGINA - 1)
-      if (error) throw error
-      return data as Recept[]
+    queryKey: ['ontdek', filters, voorkeur],
+    initialPageParam: { fase: voorkeur.length > 0 ? 'voorkeur' : 'rest', van: 0 } as OntdekPlek,
+    getNextPageParam: (laatste: OntdekPagina) => laatste.volgende,
+    queryFn: async ({ pageParam }): Promise<OntdekPagina> => {
+      const haal = async (fase: OntdekPlek['fase'], van: number): Promise<Recept[]> => {
+        const vraag = metKeukenFase(metFilters(db.from('recepten').select('*'), filters), fase, voorkeur)
+        // Gemengde, vaste volgorde met gemiddeld meer vega bovenaan; zie migratie
+        // 20260929000000_ontdek_volgorde.sql. `id` als tiebreaker voor stabiele pagina's.
+        const { data, error } = await vraag
+          .order('ontdek_volgorde')
+          .order('id')
+          .range(van, van + PER_PAGINA - 1)
+        if (error) throw error
+        return data as Recept[]
+      }
+
+      let { fase, van } = pageParam as OntdekPlek
+      const recepten: Recept[] = []
+      if (fase === 'voorkeur') {
+        const deel = await haal('voorkeur', van)
+        recepten.push(...deel)
+        if (deel.length === PER_PAGINA) return { recepten, volgende: { fase, van: van + PER_PAGINA } }
+        // Voorkeur op: in dezelfde pagina door met de rest, zodat er nooit een
+        // lege pagina tussen zit (en "niets gevonden" niet te vroeg verschijnt).
+        fase = 'rest'
+        van = 0
+      }
+      const deel = await haal('rest', van)
+      recepten.push(...deel)
+      return {
+        recepten,
+        volgende: deel.length === PER_PAGINA ? { fase: 'rest', van: van + PER_PAGINA } : undefined,
+      }
     },
   })
 }
