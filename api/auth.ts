@@ -34,6 +34,7 @@ export default async function handler(request: Request): Promise<Response> {
   request.headers.forEach((waarde, naam) => {
     if (!NIET_DOOR.has(naam.toLowerCase())) headers.set(naam, waarde)
   })
+  if (isAppOrigin(request.headers.get('origin'))) headers.set('origin', binnen.origin)
 
   const antwoord = await fetch(doel, {
     method: request.method,
@@ -68,4 +69,17 @@ export function eigenCookie(cookie: string): string {
     .map((deel) => deel.trim())
     .filter((deel) => !/^domain=/i.test(deel) && !/^partitioned$/i.test(deel))
     .join('; ')
+}
+
+/**
+ * De iOS-app stuurt capacitor://localhost als origin, of helemaal geen. Neon
+ * Auth kent alleen het adres van de website en weigert de rest ("Invalid
+ * origin"). Voor die twee gevallen vullen we dus ons eigen adres in.
+ *
+ * Een webpagina kan dit niet misbruiken: een browser stuurt bij een verzoek
+ * vanaf een ander domein altijd zijn eigen https-origin mee, en die laten we
+ * staan.
+ */
+export function isAppOrigin(origin: string | null): boolean {
+  return origin === null || origin === '' || origin === 'capacitor://localhost'
 }

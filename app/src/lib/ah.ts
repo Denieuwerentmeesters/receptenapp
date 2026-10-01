@@ -1,5 +1,6 @@
 import { AppLauncher } from '@capacitor/app-launcher'
 import { Capacitor } from '@capacitor/core'
+import { WEBSITE } from './config'
 import type { AhProduct, BoodschapItem } from './database.types'
 import { zoekProduct } from './zoekProduct'
 
@@ -96,9 +97,6 @@ export function bouwMandjeLink(
 export function zoekLink(naam: string): string {
   return `${ZOEKEN}?query=${encodeURIComponent(naam)}`
 }
-
-/** Waar de website draait; de iOS-app heeft zelf geen https-adres. */
-const WEBSITE = 'https://receptenapp.vercel.app'
 
 /** Een link die producten in je mandje zet (en niet alleen een zoekpagina). */
 function isMandjeLink(url: string): boolean {

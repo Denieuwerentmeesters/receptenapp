@@ -74,10 +74,20 @@ python3 scripts/ah_mapping.py --top 150 --schrijf  # dan wegschrijven
 
 ```bash
 cd app
-npm run build
-npx cap sync ios
-npx cap open ios     # signing instellen in Xcode, dan Run
+npm run ios          # bouwt, synct naar ios/ en opent Xcode
 ```
+
+Eén keer vooraf: Xcode → Settings → Accounts → je Apple ID toevoegen. Het
+team staat al in het project (automatische signing).
+
+- **Op je eigen telefoon:** telefoon aan de Mac, bovenin als doel kiezen, Run.
+- **TestFlight:** doel "Any iOS Device", Product → Archive, dan Distribute App →
+  App Store Connect. De eerste keer maakt Xcode de app aan in App Store
+  Connect. Verhoog bij elke upload het buildnummer (target App → General →
+  Build).
+
+Icoon en opstartscherm komen uit `app/ios/ontwerp/maak.mjs`
+(`node app/ios/ontwerp/maak.mjs` vanuit de root).
 
 ## Nog te doen
 
