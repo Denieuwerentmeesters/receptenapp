@@ -36,17 +36,18 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
       height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
       background: 'var(--c-red)', color: 'var(--c-cream)', overflowY: 'auto',
     }}>
+      <Woordmerk hoogte={40} style={{ margin: 'calc(env(safe-area-inset-top) + 20px) 26px 0' }} />
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        gap: 12, padding: '60px 26px 0',
+        gap: 12, padding: '28px 26px 0',
       }}>
-        <Woordmerk hoogte={56} style={{ marginBottom: 8 }} />
 
-        <Titel grootte={32}>{nieuw ? 'Maak een account' : 'Van recept tot mandje'}</Titel>
+        {/* 'Thuisbezorging' past op 32 niet op één regel. */}
+        <Titel grootte={nieuw ? 32 : 27}>{nieuw ? 'Maak een account' : 'Van recept tot thuisbezorging'}</Titel>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>
           {nieuw
             ? 'Kies een wachtwoord van minstens 8 tekens. Daarna hoef je hier nooit meer te zijn op dit toestel.'
-            : 'Log één keer in, dan onthoudt de app je op dit toestel.'}
+            : 'Veelzijdiger, goedkoper, lekkerder'}
         </p>
 
         {fout && (
