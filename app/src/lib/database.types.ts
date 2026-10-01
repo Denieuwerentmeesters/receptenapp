@@ -46,6 +46,10 @@ export interface Recept {
   allergenen_vast?: string[]
   /** Alleen "mogelijk": etiket checken. */
   allergenen_twijfel?: string[]
+  /** vegan, pescotarisch, koolhydraatarm, keto (trigger, lib/dieet.ts). */
+  dieet?: string[]
+  /** Geschatte koolhydraten per persoon in gram; null als er niets te schatten viel. */
+  koolhydraten_pp?: number | null
 }
 
 export interface WeekmenuGetoond {

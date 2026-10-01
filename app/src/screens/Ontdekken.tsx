@@ -14,6 +14,7 @@ import { receptBonusProducten, useBonus } from '../lib/bonus'
 import { ALLERGENEN_OP_VOORKOMEN, opsomming, useAllergieen, vastVoorJou } from '../lib/allergenen'
 import { Dialoog } from '../components/Dialoog'
 import { useVoorkeuren } from '../lib/queries'
+import { DIETEN, dieetLabels, wisselDieet, type Dieet } from '../lib/dieet'
 
 const GEEN: string[] = []
 
@@ -42,7 +43,7 @@ const onthouden = {
   zoek: '',
   maxTijd: null as number | null,
   keuken: null as string | null,
-  alleenVega: false,
+  dieet: [] as Dieet[],
   alleenBudget: false,
   // Het allergiefilter begint met je allergieën uit Instellingen (null = nog
   // niet aangeraakt). Wat je hier aan- of uitvinkt geldt tot een herstart:
@@ -53,7 +54,7 @@ const onthouden = {
 }
 
 /**
- * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en vegetarisch —
+ * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en dieet —
  * precies de dingen waarop je een doordeweekse avond selecteert. Het hartje
  * zet een recept in "Deze week"; daar kies je of het op je lijst gaat.
  */
@@ -62,7 +63,7 @@ export function Ontdekken() {
   const [zoek, setZoek] = useState(onthouden.zoek)
   const [maxTijd, setMaxTijd] = useState<number | null>(onthouden.maxTijd)
   const [keuken, setKeuken] = useState<string | null>(onthouden.keuken)
-  const [alleenVega, setAlleenVega] = useState(onthouden.alleenVega)
+  const [dieet, setDieet] = useState(onthouden.dieet)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
   const [zonder, setZonder] = useState(onthouden.zonder)
   const [allergieOpen, setAllergieOpen] = useState(false)
@@ -71,8 +72,8 @@ export function Ontdekken() {
   const voorkeurKeukens = useVoorkeuren().data?.favoriete_keukens ?? GEEN
 
   const filters: OntdekFilters = useMemo(
-    () => ({ zoek, maxTijd, keuken, alleenVega, alleenBudget, zonderAllergenen }),
-    [zoek, maxTijd, keuken, alleenVega, alleenBudget, zonderAllergenen],
+    () => ({ zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen }),
+    [zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen],
   )
 
   // Ander filter = andere lijst: dan hoort de oude scrollpositie er niet meer bij.
@@ -80,9 +81,9 @@ export function Ontdekken() {
   useEffect(() => {
     if (vorigeFilters.current === filters) return
     vorigeFilters.current = filters
-    Object.assign(onthouden, { zoek, maxTijd, keuken, alleenVega, alleenBudget, zonder, scrollTop: 0 })
+    Object.assign(onthouden, { zoek, maxTijd, keuken, dieet, alleenBudget, zonder, scrollTop: 0 })
     scroller.current?.scrollTo({ top: 0 })
-  }, [filters, zoek, maxTijd, keuken, alleenVega, alleenBudget, zonder])
+  }, [filters, zoek, maxTijd, keuken, dieet, alleenBudget, zonder])
 
   const resultaten = useOntdek(filters, voorkeurKeukens)
   const telling = useOntdekTelling(filters)
@@ -114,7 +115,7 @@ export function Ontdekken() {
     scroller.current.scrollTop = onthouden.scrollTop
     nogHerstellen.current = false
   }, [recepten.length])
-  const heeftFilter = Boolean(maxTijd || keuken || alleenVega || alleenBudget)
+  const heeftFilter = Boolean(maxTijd || keuken || dieet.length > 0 || alleenBudget)
   const totaal = telling.data ?? recepten.length
 
   // Vanzelf verder laden zodra je bij de onderkant komt; de knop blijft als
@@ -161,14 +162,18 @@ export function Ontdekken() {
 
       <div style={{ flex: 'none', padding: '14px 22px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
-          <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setAlleenVega(false); setAlleenBudget(false) }}>
+          <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setDieet([]); setAlleenBudget(false) }}>
             Alles
           </Chip>
           <Chip selected={zonderAllergenen.length > 0} onClick={() => setAllergieOpen(true)}>
             {zonderAllergenen.length > 0 ? `Zonder ${opsomming(zonderAllergenen)}` : 'Allergieën'} ▾
           </Chip>
           <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
-          <Chip selected={alleenVega} onClick={() => setAlleenVega(!alleenVega)}>Vegetarisch</Chip>
+          {DIETEN.map((d) => (
+            <Chip key={d.id} selected={dieet.includes(d.id)} onClick={() => setDieet(wisselDieet(dieet, d.id))}>
+              {d.label}
+            </Chip>
+          ))}
           {TIJDEN.map((t) => (
             <Chip key={t.waarde} selected={maxTijd === t.waarde} onClick={() => setMaxTijd(maxTijd === t.waarde ? null : t.waarde)}>
               {t.label}
@@ -293,10 +298,11 @@ function FotoKaart({ recept, index, week, bevat, onOpen, onHartje }: {
   onOpen: () => void
   onHartje: () => void
 }) {
-  const vega = recept.tags.includes('vegetarisch')
+  // Eén label houdt de regel kort: vegan of vegetarisch gaat voor de keuken.
+  const [label] = dieetLabels(recept)
   const meta = [
     recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
-    vega ? 'vegetarisch' : recept.keuken,
+    label === 'vegan' || label === 'vegetarisch' ? label : recept.keuken,
   ].filter(Boolean).join(' · ')
   const status = week?.opLijst ? 'Op je lijst' : week ? "In 'Deze week' geplaatst" : null
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
