@@ -81,10 +81,9 @@ Eén keer vooraf: Xcode → Settings → Accounts → je Apple ID toevoegen. Het
 team staat al in het project (automatische signing).
 
 - **Op je eigen telefoon:** telefoon aan de Mac, bovenin als doel kiezen, Run.
-- **TestFlight:** doel "Any iOS Device", Product → Archive, dan Distribute App →
-  App Store Connect. De eerste keer maakt Xcode de app aan in App Store
-  Connect. Verhoog bij elke upload het buildnummer (target App → General →
-  Build).
+- **TestFlight:** `npm run testflight` bouwt, ondertekent en uploadt. De app
+  staat in App Store Connect als "Pinch weekmenu"
+  (`nl.reinoudtencate.receptenapp`); het buildnummer hoogt Apple zelf op.
 
 Icoon en opstartscherm komen uit `app/ios/ontwerp/maak.mjs`
 (`node app/ios/ontwerp/maak.mjs` vanuit de root).

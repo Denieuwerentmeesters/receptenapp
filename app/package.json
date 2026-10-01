@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "ios": "npm run build && cap sync ios && cap open ios"
+    "ios": "npm run build && cap sync ios && cap open ios",
+    "testflight": "npm run build && cap sync ios && ./ios/testflight.sh"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",
