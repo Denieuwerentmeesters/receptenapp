@@ -11,6 +11,12 @@ const config: CapacitorConfig = {
     backgroundColor: '#FFF6E8',
   },
   plugins: {
+    CapacitorHttp: {
+      // fetch loopt via iOS in plaats van via de webview. Nodig voor het
+      // inloggen: de webview gooit de sessiecookie van een ander domein weg.
+      // Zie src/lib/config.ts.
+      enabled: true,
+    },
     SplashScreen: {
       launchAutoHide: false,
       backgroundColor: '#AB2328',

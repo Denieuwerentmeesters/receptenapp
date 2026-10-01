@@ -6,6 +6,11 @@
  * een wit scherm in plaats van het foutscherm dat vertelt wát er mist.
  */
 
+import { Capacitor } from '@capacitor/core'
+
+/** Waar de website draait; de iOS-app heeft zelf geen https-adres. */
+export const WEBSITE = 'https://receptenapp.vercel.app'
+
 interface Config {
   neonDataApiUrl: string
   neonAuthUrl: string
@@ -34,7 +39,7 @@ export function config(): Config {
 
   gecached = {
     neonDataApiUrl: import.meta.env.VITE_NEON_DATA_API_URL,
-    neonAuthUrl: authViaEigenDomein() ? `${window.location.origin}/api/auth` : import.meta.env.VITE_NEON_AUTH_URL,
+    neonAuthUrl: authBasis(),
   }
   return gecached
 }
@@ -45,11 +50,19 @@ export function config(): Config {
  * domein weg — in een app op het beginscherm altijd. Dan leek inloggen te
  * lukken en stond je meteen weer op het inlogscherm.
  *
- * Niet in de iOS-app (daar is het domein capacitor://localhost en is er geen
- * /api) en niet lokaal met `npm run dev` (daar draaien de functies niet).
+ * De iOS-app gaat langs hetzelfde doorgeefluik, op het adres van de website.
+ * Rechtstreeks naar Neon Auth lukt daar niet: die weigert de origin
+ * capacitor://localhost ("Invalid origin"), en de webview gooit de cookie
+ * net als Safari weg. Daarom staat CapacitorHttp aan (capacitor.config.ts):
+ * verzoeken lopen dan via iOS zelf, met een eigen cookiepot en zonder CORS.
+ *
+ * Lokaal met `npm run dev` draaien de functies niet; daar gaat het
+ * rechtstreeks naar Neon Auth.
  */
-function authViaEigenDomein(): boolean {
-  if (typeof window === 'undefined') return false
-  const { protocol, hostname } = window.location
-  return protocol === 'https:' && hostname !== 'localhost'
+function authBasis(): string {
+  if (Capacitor.isNativePlatform()) return `${WEBSITE}/api/auth`
+  if (typeof window === 'undefined') return import.meta.env.VITE_NEON_AUTH_URL
+  const { protocol, hostname, origin } = window.location
+  if (protocol === 'https:' && hostname !== 'localhost') return `${origin}/api/auth`
+  return import.meta.env.VITE_NEON_AUTH_URL
 }

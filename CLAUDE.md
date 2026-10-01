@@ -93,6 +93,22 @@ meervouds-s (sojasaus blijft sojasaus, aardappels wordt aardappel) en apostrofs
 echte browser. Vandaar dat `scripts/ah_mapping.py` in de praktijk niet werkt en
 de mapping via de browser is opgebouwd.
 
+## iOS-app
+
+Capacitor verpakt `app/dist` als app (`app/ios`, Swift Package Manager, geen
+CocoaPods). Bouwen: `npm run ios` in `app/`; zie docs/setup.md §4.
+
+- **Inloggen loopt via `receptenapp.vercel.app/api/auth`**, net als op de
+  website, met `CapacitorHttp` aan. Rechtstreeks naar Neon Auth kan niet: die
+  weigert de origin `capacitor://localhost`, en de webview gooit de cookie van
+  een ander domein weg. `api/auth.ts` zet voor de app de origin van de website.
+  De app hangt dus aan de productie-deploy, ook een testbuild.
+- **`CapacitorHttp` vangt élke `fetch` af** en stuurt 'm via iOS. Gedraagt een
+  verzoek zich in de app anders dan in de browser, kijk dan daar eerst.
+- **Het opstartscherm gaat niet vanzelf weg** (`launchAutoHide: false`);
+  `main.tsx` haalt het weg. Valt dat weg, dan hangt de app op een rood scherm.
+- Alleen iPhone, alleen staand. Push staat nog niet aan (geen entitlement).
+
 ## AH-mapping — hoe het hoort te werken
 
 De mapping (`ah_product_cache`) koppelt een genormaliseerde `ingredient_key` aan

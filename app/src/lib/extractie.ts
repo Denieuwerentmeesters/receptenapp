@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core'
+import { WEBSITE } from './config'
 import type { Ingredient } from './database.types'
 
 /**
@@ -26,7 +27,7 @@ export interface Concept {
  */
 function endpoint(): string {
   return import.meta.env.VITE_EXTRACTIE_URL
-    || (Capacitor.isNativePlatform() ? 'https://receptenapp.vercel.app/api/extraheer' : '/api/extraheer')
+    || (Capacitor.isNativePlatform() ? `${WEBSITE}/api/extraheer` : '/api/extraheer')
 }
 
 async function vraag(body: unknown): Promise<Concept> {

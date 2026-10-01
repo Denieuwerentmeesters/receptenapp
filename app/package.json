@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "ios": "npm run build && cap sync ios && cap open ios"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",
