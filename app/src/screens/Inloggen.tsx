@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '../ds'
+import { Button, Woordmerk } from '../ds'
 import { Titel } from '../components/Layout'
 import { logIn, maakAccount } from '../lib/auth'
 import { foutTekst } from '../lib/fouten'
@@ -40,10 +40,7 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
         flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
         gap: 12, padding: '60px 26px 0',
       }}>
-        <div style={{
-          fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
-          letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--c-yellow)',
-        }}>Receptenapp</div>
+        <Woordmerk hoogte={56} style={{ marginBottom: 8 }} />
 
         <Titel grootte={32}>{nieuw ? 'Maak een account' : 'Van recept tot mandje'}</Titel>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>

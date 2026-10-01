@@ -2,38 +2,48 @@
 // Draaien vanuit de root: node app/ios/ontwerp/maak.mjs
 import sharp from 'sharp'
 
-const ROOD = '#AB2328', CREME = '#FFF6E8', GEEL = '#FFF000'
+const ROOD = '#AB2328', FEL = '#E8202E', CREME = '#FFF6E8', WIT = '#FFFFFF', GEEL = '#FFF000'
 const ASSETS = new URL('../App/App/Assets.xcassets/', import.meta.url).pathname
 
-/** Een pan met drie sliertjes stoom, getekend in een vlak van 1024. */
-const pan = `
-  <g fill="none" stroke="${GEEL}" stroke-width="44" stroke-linecap="round">
-    <path d="M372 150c-44 44 44 88 0 132s44 88 0 132"/>
-    <path d="M512 110c-44 48 44 96 0 144s44 96 0 144"/>
-    <path d="M652 150c-44 44 44 88 0 132s44 88 0 132"/>
-  </g>
-  <g fill="${CREME}">
-    <rect x="212" y="482" width="600" height="64" rx="32"/>
-    <path d="M252 590h520v130c0 88-72 160-160 160H412c-88 0-160-72-160-160z"/>
-    <rect x="128" y="610" width="150" height="72" rx="36"/>
-    <rect x="746" y="610" width="150" height="72" rx="36"/>
-  </g>`
+// Het logo van Pinch; dezelfde tekening als src/ds/Logo.tsx en public/favicon.svg.
 
-const svg = (maat, schaal) => {
-  const s = (maat * schaal) / 1024, weg = (maat - maat * schaal) / 2
+/** Het beeldmerk: de p met de zoutkorrel, getekend in een vlak van 120. */
+const beeldmerk = `
+  <g fill="none" stroke="${WIT}" stroke-width="20">
+    <path d="M34 28V106"/>
+    <circle cx="62" cy="56" r="19"/>
+  </g>
+  <rect x="82" y="8" width="18" height="18" rx="3.5" transform="rotate(20 91 17)" fill="${GEEL}"/>`
+
+/** Het woordmerk "pinch", getekend in een vlak van 240 bij 104 (vanaf -4, -16). */
+const woordmerk = `
+  <g fill="none" stroke="${CREME}" stroke-width="16">
+    <path d="M8 16V84"/>
+    <circle cx="32" cy="40" r="16"/>
+    <path d="M70 16V64"/>
+    <path d="M92 64V38A16 16 0 0 1 124 38V64"/>
+    <path d="M173.3 28.7A16 16 0 1 0 173.3 51.3"/>
+    <path d="M192 -6V64"/>
+    <path d="M192 64V38A16 16 0 0 1 224 38V64"/>
+  </g>
+  <rect x="62" y="-7" width="16" height="16" rx="3" transform="rotate(20 70 1)" fill="${GEEL}"/>`
+
+/** Een vierkant van `maat` in `kleur`, met de tekening (`breed` bij `hoog`, vanaf x0, y0) in het midden op `schaal` van de breedte. */
+const svg = (maat, kleur, tekening, [x0, y0, breed, hoog], schaal) => {
+  const s = (maat * schaal) / breed
   return Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${maat}" height="${maat}">
-      <rect width="100%" height="100%" fill="${ROOD}"/>
-      <g transform="translate(${weg} ${weg}) scale(${s})">${pan}</g>
+      <rect width="100%" height="100%" fill="${kleur}"/>
+      <g transform="translate(${(maat - breed * s) / 2 - x0 * s} ${(maat - hoog * s) / 2 - y0 * s}) scale(${s})">${tekening}</g>
     </svg>`)
 }
 
 // Icoon: zonder doorzichtigheid, anders weigert App Store Connect 'm.
-await sharp(svg(1024, 0.78)).flatten({ background: ROOD }).png()
+await sharp(svg(1024, FEL, beeldmerk, [0, 0, 120, 120], 0.78)).flatten({ background: FEL }).png()
   .toFile(`${ASSETS}AppIcon.appiconset/AppIcon-512@2x.png`)
 
-// Opstartscherm: iOS snijdt het vierkant bij tot het scherm, dus de pan klein in het midden.
-const splash = await sharp(svg(2732, 0.2)).flatten({ background: ROOD }).png().toBuffer()
+// Opstartscherm: iOS snijdt het vierkant bij tot het scherm, dus het woordmerk klein in het midden.
+const splash = await sharp(svg(2732, ROOD, woordmerk, [-4, -16, 240, 104], 0.2)).flatten({ background: ROOD }).png().toBuffer()
 for (const naam of ['splash-2732x2732.png', 'splash-2732x2732-1.png', 'splash-2732x2732-2.png']) {
   await sharp(splash).toFile(`${ASSETS}Splash.imageset/${naam}`)
 }
