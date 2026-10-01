@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'nl.receptenapp.app',
-  appName: 'Receptenapp',
+  appId: 'nl.reinoudtencate.receptenapp',
+  appName: 'Pinch',
   webDir: 'dist',
   ios: {
     // De app tekent zelf tot achter de statusbalk; elk scherm heeft al

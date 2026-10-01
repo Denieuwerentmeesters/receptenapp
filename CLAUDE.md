@@ -96,7 +96,9 @@ de mapping via de browser is opgebouwd.
 ## iOS-app
 
 Capacitor verpakt `app/dist` als app (`app/ios`, Swift Package Manager, geen
-CocoaPods). Bouwen: `npm run ios` in `app/`; zie docs/setup.md §4.
+CocoaPods). Bouwen: `npm run ios` in `app/`; naar TestFlight:
+`npm run testflight`. Zie docs/setup.md §4. De app heet Pinch; de bundle-id
+is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
 
 - **Inloggen loopt via `receptenapp.vercel.app/api/auth`**, net als op de
   website, met `CapacitorHttp` aan. Rechtstreeks naar Neon Auth kan niet: die
