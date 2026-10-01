@@ -220,35 +220,33 @@ export function Recept() {
 
               <Voet meeschuiven>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <Button
-                    variant={opLijst ? 'secondary' : 'primary'}
-                    disabled={bezig || dezeWeek.isPending}
-                    icon={opLijst ? 'check' : 'plus'}
-                    onClick={() => {
-                      // Het aantal personen dat je hier koos wordt je voorkeur, zodat
-                      // de boodschappenlijst met dezelfde hoeveelheden werkt.
-                      if (lokaalPersonen && lokaalPersonen !== voorkeuren.data?.aantal_personen) {
-                        opslaan.mutate({ aantal_personen: lokaalPersonen })
-                      }
-                      voegToe({
-                        id: r.id,
-                        titel: r.titel_nl ?? r.titel,
-                        gekozen,
-                        opLijst,
-                        aantal: inWeek?.aantal ?? 0,
-                      })
-                    }}
-                    style={{ flex: 1, padding: '17px 20px', fontSize: 16 }}
-                  >
-                    {opLijst
-                      ? (inWeek && inWeek.aantal > 1 ? `Op je lijst · ${inWeek.aantal}x` : 'Op je lijst')
-                      : 'Zet op de boodschappenlijst'}
-                  </Button>
+                  {/* Staat het al op je lijst, dan wil je alleen nog koken. */}
+                  {!opLijst && (
+                    <Button
+                      disabled={bezig || dezeWeek.isPending}
+                      icon="plus"
+                      onClick={() => {
+                        // Het aantal personen dat je hier koos wordt je voorkeur, zodat
+                        // de boodschappenlijst met dezelfde hoeveelheden werkt.
+                        if (lokaalPersonen && lokaalPersonen !== voorkeuren.data?.aantal_personen) {
+                          opslaan.mutate({ aantal_personen: lokaalPersonen })
+                        }
+                        voegToe({
+                          id: r.id,
+                          titel: r.titel_nl ?? r.titel,
+                          gekozen,
+                          opLijst,
+                          aantal: inWeek?.aantal ?? 0,
+                        })
+                      }}
+                      style={{ flex: 1, padding: '17px 20px', fontSize: 16 }}
+                    >Zet op de boodschappenlijst</Button>
+                  )}
                   {gekozen && (
                     <Button
                       tone="yellow"
                       onClick={() => navigeer(`/koken/${r.id}`)}
-                      style={{ flex: 'none', padding: '17px 20px', fontSize: 16 }}
+                      style={{ flex: opLijst ? 1 : 'none', padding: '17px 20px', fontSize: 16 }}
                     >Koken</Button>
                   )}
                 </div>
