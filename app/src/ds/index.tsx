@@ -3,6 +3,7 @@ import { Icon } from './Icon'
 
 export { Icon } from './Icon'
 export type { IconName } from './Icon'
+export { Woordmerk } from './Logo'
 
 /* ---------------------------------------------------------------- Button */
 
