@@ -21,6 +21,7 @@ const GEEN: string[] = []
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
   { label: 'Binnen 30 min', waarde: 30 },
+  { label: 'Binnen 45 min', waarde: 45 },
 ]
 
 /**
@@ -66,7 +67,8 @@ export function Ontdekken() {
   const [dieet, setDieet] = useState(onthouden.dieet)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
   const [zonder, setZonder] = useState(onthouden.zonder)
-  const [allergieOpen, setAllergieOpen] = useState(false)
+  // Welke keuzelijst onderin openstaat: kooktijd, dieet of allergieën.
+  const [open, setOpen] = useState<'tijd' | 'dieet' | 'allergie' | null>(null)
   const allergieen = useAllergieen()
   const zonderAllergenen = zonder ?? allergieen
   const voorkeurKeukens = useVoorkeuren().data?.favoriete_keukens ?? GEEN
@@ -165,20 +167,16 @@ export function Ontdekken() {
           <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setDieet([]); setAlleenBudget(false) }}>
             Alles
           </Chip>
-          <Chip selected={zonderAllergenen.length > 0} onClick={() => setAllergieOpen(true)}>
+          <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
+          <Chip selected={maxTijd !== null} onClick={() => setOpen('tijd')}>
+            {maxTijd ? `Binnen ${maxTijd} min` : 'Kooktijd'} ▾
+          </Chip>
+          <Chip selected={dieet.length > 0} onClick={() => setOpen('dieet')}>
+            {dieet.length > 0 ? DIETEN.filter((d) => dieet.includes(d.id)).map((d) => d.label).join(' · ') : 'Dieet'} ▾
+          </Chip>
+          <Chip selected={zonderAllergenen.length > 0} onClick={() => setOpen('allergie')}>
             {zonderAllergenen.length > 0 ? `Zonder ${opsomming(zonderAllergenen)}` : 'Allergieën'} ▾
           </Chip>
-          <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
-          {DIETEN.map((d) => (
-            <Chip key={d.id} selected={dieet.includes(d.id)} onClick={() => setDieet(wisselDieet(dieet, d.id))}>
-              {d.label}
-            </Chip>
-          ))}
-          {TIJDEN.map((t) => (
-            <Chip key={t.waarde} selected={maxTijd === t.waarde} onClick={() => setMaxTijd(maxTijd === t.waarde ? null : t.waarde)}>
-              {t.label}
-            </Chip>
-          ))}
         </div>
 
         {keukenChips.length > 0 && (
@@ -250,38 +248,77 @@ export function Ontdekken() {
       </Grens>
 
       <Dialoog
-        open={allergieOpen}
+        open={open === 'tijd'}
+        kop="Kooktijd"
+        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        onSluit={() => setOpen(null)}
+      >
+        <Keuzelijst
+          keuzes={TIJDEN.map((t) => ({ id: String(t.waarde), label: t.label }))}
+          gekozen={maxTijd ? [String(maxTijd)] : []}
+          onWissel={(id) => setMaxTijd(maxTijd === Number(id) ? null : Number(id))}
+        />
+      </Dialoog>
+
+      <Dialoog
+        open={open === 'dieet'}
+        kop="Dieet"
+        tekst="Koolhydraatarm en keto zijn een schatting op basis van de ingrediënten."
+        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        onSluit={() => setOpen(null)}
+      >
+        <Keuzelijst
+          keuzes={DIETEN}
+          gekozen={dieet}
+          onWissel={(id) => setDieet(wisselDieet(dieet, id as Dieet))}
+        />
+      </Dialoog>
+
+      <Dialoog
+        open={open === 'allergie'}
         kop="Zonder allergenen"
         tekst="Recepten waar het in zit laten we weg. Geldt tot je de app opnieuw opent; je vaste allergieën stel je in bij Instellingen."
-        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setAllergieOpen(false) }]}
-        onSluit={() => setAllergieOpen(false)}
+        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        onSluit={() => setOpen(null)}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
-          {ALLERGENEN_OP_VOORKOMEN.map((a) => {
-            const aan = zonderAllergenen.includes(a.id)
-            return (
-              <label key={a.id} style={{
-                display: 'flex', alignItems: 'center', gap: 12, padding: '11px 2px', cursor: 'pointer',
-                borderBottom: '1.5px solid rgba(20,20,20,0.12)',
-                fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
-              }}>
-                <input
-                  type="checkbox"
-                  checked={aan}
-                  onChange={() => setZonder(aan
-                    ? zonderAllergenen.filter((x) => x !== a.id)
-                    : [...zonderAllergenen, a.id])}
-                  style={{ width: 22, height: 22, accentColor: 'var(--c-red)', flex: 'none' }}
-                />
-                {a.label}
-              </label>
-            )
-          })}
-        </div>
+        <Keuzelijst
+          keuzes={ALLERGENEN_OP_VOORKOMEN}
+          gekozen={zonderAllergenen}
+          onWissel={(id) => setZonder(zonderAllergenen.includes(id)
+            ? zonderAllergenen.filter((x) => x !== id)
+            : [...zonderAllergenen, id])}
+        />
       </Dialoog>
 
       <OnderBalk />
     </Scherm>
+  )
+}
+
+/** De vinkjeslijst in een keuzedialoog: kooktijd, dieet en allergieën. */
+function Keuzelijst({ keuzes, gekozen, onWissel }: {
+  keuzes: readonly { id: string; label: string }[]
+  gekozen: readonly string[]
+  onWissel: (id: string) => void
+}) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
+      {keuzes.map((k) => (
+        <label key={k.id} style={{
+          display: 'flex', alignItems: 'center', gap: 12, padding: '11px 2px', cursor: 'pointer',
+          borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+          fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
+        }}>
+          <input
+            type="checkbox"
+            checked={gekozen.includes(k.id)}
+            onChange={() => onWissel(k.id)}
+            style={{ width: 22, height: 22, accentColor: 'var(--c-red)', flex: 'none' }}
+          />
+          {k.label}
+        </label>
+      ))}
+    </div>
   )
 }
 
