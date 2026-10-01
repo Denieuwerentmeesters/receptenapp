@@ -82,7 +82,7 @@ export interface Voorkeuren {
   aantal_personen: number
   /** Je haalt zelf in de winkel: de bonus van vandaag telt, niet die van de bezorgdag. */
   zelf_halen: boolean
-  /** Hoeveel recepten "Vul mijn week" op je lijst zet, 1 t/m 7. */
+  /** Niet meer in gebruik: stuurde "Vul mijn week" aan, die knop is weg. De kolom blijft staan. */
   kookavonden: number
   /** Allergieën (lib/allergenen.ts); gelden in weekmenu, Ontdekken, recept en lijst. */
   allergieen?: string[]
