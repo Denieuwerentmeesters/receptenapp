@@ -1,5 +1,6 @@
 import { enkelvoudVormen } from './ah'
 import type { BoodschapItem } from './database.types'
+import { isKruid } from './kruiden'
 import { naarEenheid, type Verpakking } from './eenheden'
 import { canoniek, TENEN } from './synoniemen'
 import { LOOPROUTE, schapVoor, type Schap } from './winkelindeling'
@@ -47,7 +48,9 @@ export function voegSamen(items: BoodschapItem[]): LijstRegel[] {
       // Pas afgevinkt als álles erachter afgevinkt is. Komt er een recept bij
       // met hetzelfde ingrediënt, dan staat de regel weer open.
       afgevinkt: rij.every((i) => i.is_afgevinkt),
-      label: labelVan(rij, naam),
+      // Kruiden zonder hoeveelheid: "1 theelepel + 10 gram kurkuma" zegt niets
+      // in de winkel. Het recept laat zien hoeveel erin gaat.
+      label: isKruid(key) ? key : labelVan(rij, naam),
       voorbeeld: rij[0],
     }
   })
