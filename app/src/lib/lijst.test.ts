@@ -97,3 +97,25 @@ describe('aantalVerpakkingen met inhoud (Jumbo)', () => {
     expect(aantalVerpakkingen(regel(rij('kokosmelk', 2, 'blik')), 'jumbo', { inhoud: 400, eenheid: 'ml' })).toBe(2)
   })
 })
+
+describe('kruiden op de lijst', () => {
+  test('theelepels en grammen kurkuma worden één regel zonder hoeveelheid', () => {
+    const regels = voegSamen([rij('kurkuma', 1, 'theelepel'), rij('kurkuma', 10, 'gram')])
+    expect(regels).toHaveLength(1)
+    expect(regels[0].label).toBe('kurkuma')
+  })
+
+  test('kurkumapoeder en een maat in de naam vallen samen met kurkuma', () => {
+    const regels = voegSamen([rij('kurkuma', 1, 'tl'), rij('kurkumapoeder', 2, 'tl'), rij('gram kurkuma', 10, null)])
+    expect(regels).toHaveLength(1)
+    expect(regels[0].label).toBe('kurkuma')
+  })
+
+  test('paprikapoeder blijft iets anders dan paprika', () => {
+    expect(voegSamen([rij('paprika', 2, null), rij('paprikapoeder', 1, 'tl')])).toHaveLength(2)
+  })
+
+  test('gewone producten houden hun hoeveelheid', () => {
+    expect(regel(rij('spinazie', 100, 'g'), rij('spinazie', 100, 'g')).label).toBe('200 g spinazie')
+  })
+})

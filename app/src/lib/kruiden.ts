@@ -38,3 +38,12 @@ export function isDroogKruid(key: string): boolean {
 export function isBijzonderKruid(key: string): boolean {
   return BIJZONDER.test(key)
 }
+
+/**
+ * Een potje uit het kruidenrek, gewoon of bijzonder. Op de lijst staat alleen
+ * de naam: je koopt een potje, geen theelepel. Hoeveel erin gaat zie je in
+ * het recept.
+ */
+export function isKruid(key: string): boolean {
+  return schapVoor(key) === 'Kruiden & specerijen' && !GEEN_KRUID.test(key)
+}

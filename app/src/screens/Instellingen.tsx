@@ -7,6 +7,7 @@ import { BonusBron } from '../components/Bonus'
 import { Chip } from '../ds'
 import { ALLERGENEN } from '../lib/allergenen'
 import { HuishoudenBlok } from '../components/Huishouden'
+import { useKeukens } from '../lib/queries2'
 
 const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
 
@@ -14,6 +15,7 @@ export function Instellingen() {
   const voorkeuren = useVoorkeuren()
   const opslaan = useVoorkeurenOpslaan()
   const zet = (wijziging: Partial<Voorkeuren>) => opslaan.mutate(wijziging)
+  const keukens = useKeukens()
 
   return (
     <Scherm>
@@ -54,6 +56,42 @@ export function Instellingen() {
                     onWijzig={(n) => zet({ max_bereidingstijd: n === 0 ? null : n })}
                   />
                 </Sectie>
+
+                {keukens.data && keukens.data.length > 0 && (
+                  <Sectie naam="Keukens">
+                    <p style={{
+                      fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45,
+                      color: 'rgba(20,20,20,0.6)', margin: '0 0 10px',
+                    }}>
+                      Wat je het liefst eet. Deze keukens komen vaker in je weekmenu en staan
+                      bovenaan in Ontdekken; de rest komt nog af en toe langs. Tik uit wat je
+                      minder graag eet.
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingBottom: 14 }}>
+                      {(() => {
+                        // Een lege lijst betekent "alles aan": zo staat het standaard,
+                        // en zo telt een keuken die er later bijkomt vanzelf mee.
+                        const alle = keukens.data.map((k) => k.keuken)
+                        const mijn = v.favoriete_keukens ?? []
+                        const gekozen = mijn.length > 0 ? alle.filter((k) => mijn.includes(k)) : alle
+                        return alle.map((k) => {
+                          const aan = gekozen.includes(k)
+                          return (
+                            <Chip
+                              key={k}
+                              selected={aan}
+                              onClick={() => {
+                                const nieuw = aan ? gekozen.filter((x) => x !== k) : [...gekozen, k]
+                                // Alles aan of alles uit is hetzelfde: geen voorkeur.
+                                zet({ favoriete_keukens: nieuw.length === alle.length ? [] : nieuw })
+                              }}
+                            >{k}</Chip>
+                          )
+                        })
+                      })()}
+                    </div>
+                  </Sectie>
+                )}
 
                 <Sectie naam="Allergieën">
                   <p style={{
