@@ -114,8 +114,10 @@ export function DezeWeek() {
       <Grens query={dezeWeek} ladenTekst="Je week ophalen">
         {/* Compact: de recepten zijn waar het om gaat, niet de kop. */}
         <Kop kleur="var(--c-red-bright)" style={{ paddingBottom: 14 }}>
-          <Woordmerk hoogte={32} style={{ marginBottom: 12 }} />
-          <Label>Week van {weekLabel(week)}</Label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <Label>Week van {weekLabel(week)}</Label>
+            <Woordmerk hoogte={24} />
+          </div>
           <div style={{ marginTop: 6 }}><Titel grootte={22}>Wat eet jij deze week?</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, margin: '6px 0 0' }}>
             {recepten.length} recepten · {vegaAantal} vegetarisch · voor {personen} {personen === 1 ? 'persoon' : 'personen'}
