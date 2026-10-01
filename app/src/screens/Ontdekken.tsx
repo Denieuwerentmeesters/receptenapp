@@ -10,7 +10,7 @@ import { isBudget } from '../lib/prijsschatting'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusLabel } from '../components/Bonus'
-import { receptBonus, useBonus } from '../lib/bonus'
+import { receptBonusProducten, useBonus } from '../lib/bonus'
 import { opsomming, useAllergieen, vastVoorJou } from '../lib/allergenen'
 
 const GEEN: string[] = []
@@ -260,7 +260,7 @@ function FotoKaart({ recept, index, week, bevat, onOpen, onHartje }: {
   const status = week?.opLijst ? 'Op je lijst' : week ? "In 'Deze week' geplaatst" : null
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   const bonusData = useBonus().data
-  const bonus = useMemo(() => receptBonus(recept.ingredienten, bonusData), [recept.ingredienten, bonusData])
+  const bonus = useMemo(() => receptBonusProducten(recept.ingredienten, bonusData), [recept.ingredienten, bonusData])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
@@ -283,7 +283,7 @@ function FotoKaart({ recept, index, week, bevat, onOpen, onHartje }: {
           }}
         >{recept.afbeelding_url ? '' : 'foto'}</button>
         {toko && <TokoLabel />}
-        {bonus && <BonusLabel naam={bonus.naam} acties={bonus.acties} />}
+        <BonusLabel producten={bonus} />
 
         <button
           onClick={onHartje}

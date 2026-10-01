@@ -12,7 +12,7 @@ import { isBudget } from '../lib/prijsschatting'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusBron, BonusLabel } from '../components/Bonus'
-import { BONUS_BRON, receptBonus, useBonus, type BonusActie } from '../lib/bonus'
+import { BONUS_BRON, receptBonus, receptBonusProducten, useBonus, type BonusProduct } from '../lib/bonus'
 import { dagLabel } from '../lib/bezorgdag'
 import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
@@ -70,11 +70,14 @@ export function DezeWeek() {
     [dezeWeek.data, allergieen],
   )
   const bonus = useBonus()
-  const bonusPerRecept = useMemo(() => new Map(recepten.map((r) => [r.id, receptBonus(r.ingredienten, bonus.data)])), [recepten, bonus.data])
+  // Het label en het filter: een of meer producten in de bonus. Vullen en
+  // ruilen wegen alleen het hoofdingrediënt, net als de weekmenu-generator.
+  const bonusPerRecept = useMemo(() => new Map(recepten.map((r) => [r.id, receptBonusProducten(r.ingredienten, bonus.data)])), [recepten, bonus.data])
+  const hoofdInBonus = useMemo(() => new Set(recepten.filter((r) => receptBonus(r.ingredienten, bonus.data)).map((r) => r.id)), [recepten, bonus.data])
   const zichtbaar = recepten.filter((r) =>
     filter === 'alles' ? true
       : filter === 'lijst' ? r.opLijst
-      : filter === 'bonus' ? Boolean(bonusPerRecept.get(r.id))
+      : filter === 'bonus' ? (bonusPerRecept.get(r.id)?.length ?? 0) > 0
       : filter === 'budget' ? isBudget(r)
       : filter === 'vega' ? isVega(r)
       : (r.bereidingstijd_minuten ?? 999) <= 30)
@@ -87,7 +90,7 @@ export function DezeWeek() {
   // Kandidaten voor vullen en ruilen: suggesties die je nog niet koos. Bonus weegt mee.
   const kandidaten = recepten
     .filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp)
-    .map((r) => ({ ...r, inBonus: Boolean(bonusPerRecept.get(r.id)) }))
+    .map((r) => ({ ...r, inBonus: hoofdInBonus.has(r.id) }))
   // Wat al in je week zit telt mee, ook als je het al gekocht of gekookt hebt.
   const gekozen = recepten.filter((r) => r.gekozen)
   const inHuis = new Set((voorraad.data ?? []).filter((v) => v.in_huis).map((v) => v.ingredient_key))
@@ -142,7 +145,7 @@ export function DezeWeek() {
 
         {filter === 'bonus' && (
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, color: 'rgba(20,20,20,0.6)', margin: '6px 22px 0' }}>
-            Het hoofdingrediënt is in de bonus {bonus.peildatum.zelfHalen ? 'vandaag' : `op je bezorgdag (${dagLabel(bonus.peildatum.peil)})`}. {BONUS_BRON.uitleg} <BonusBron klein />
+            Een of meer producten van het recept zijn in de bonus {bonus.peildatum.zelfHalen ? 'vandaag' : `op je bezorgdag (${dagLabel(bonus.peildatum.peil)})`}. {BONUS_BRON.uitleg} <BonusBron klein />
           </p>
         )}
 
@@ -197,7 +200,7 @@ export function DezeWeek() {
                     key={recept.id}
                     recept={recept}
                     vlak={VLAKKEN[i % VLAKKEN.length]}
-                    bonus={bonusPerRecept.get(recept.id) ?? null}
+                    bonus={bonusPerRecept.get(recept.id) ?? []}
                     personen={personen}
                     onOpen={() => navigeer(`/recept/${recept.id}`)}
                     onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
@@ -253,8 +256,8 @@ function knopTekst(recept: WeekRecept): string {
 function ReceptKaart({ recept, vlak, bonus, personen, onOpen, onLijst, onWeg, onRuil }: {
   recept: WeekRecept
   vlak: string
-  /** Hoofdingrediënt in de bonus bij je winkel: het gele label op de foto. */
-  bonus: { naam: string; acties: BonusActie[] } | null
+  /** Producten van het recept in de bonus bij je winkel: het gele label op de foto. */
+  bonus: BonusProduct[]
   personen: number
   onOpen: () => void
   onLijst: () => void
@@ -272,7 +275,7 @@ function ReceptKaart({ recept, vlak, bonus, personen, onOpen, onLijst, onWeg, on
     }}>
       <div style={{ flex: 1, position: 'relative', display: 'flex' }}>
       {toko && <TokoLabel />}
-      {bonus && <BonusLabel naam={bonus.naam} acties={bonus.acties} />}
+      <BonusLabel producten={bonus} />
       <button
         onClick={onOpen}
         style={{

@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import { eersteBezorgdag, isoDatum, totTekst } from './bonus'
-import { bonusVoordeel, minimaalAantal } from './bonusRegels'
+import { bonusVoordeel, minimaalAantal, receptBonusProducten, type BonusMap } from './bonusRegels'
+import { ingredientKey } from './schaal'
+import { canoniek } from './synoniemen'
 
 const dag = (iso: string) => new Date(`${iso}T09:00:00`)
 
@@ -45,4 +47,27 @@ describe('bonusVoordeel', () => {
   test('1 + 1 gratis met twee: twee keer het verschil', () => { expect(bonusVoordeel(actie('1 + 1 gratis', 1, 2), 2)).toBe(2) })
   test('3 voor … met vier: alleen het setje van drie', () => { expect(bonusVoordeel(actie('3 voor 4.99', 1.66, 2.29), 4)).toBe(1.89) })
   test('zonder was-prijs: niets', () => { expect(bonusVoordeel({ ...actie('25% korting', 3, 4), prijs_was: null }, 2)).toBe(0) })
+})
+
+describe('receptBonusProducten', () => {
+  const ing = (naam: string) => ({ hoeveelheid: null, eenheid: null, naam })
+  const actie = (naam: string) => ({
+    ingredient_key: naam, titel: naam, prijs_nu: null, prijs_was: null, mechanisme: '1 + 1 gratis',
+    geldig_van: '2026-09-28', geldig_tot: '2026-10-04',
+  })
+  const bonus = (...namen: string[]): BonusMap =>
+    Object.fromEntries(namen.map((n) => [canoniek(ingredientKey(n)), [actie(n)]]))
+  const recept = [ing('ui'), ing('paprika'), ing('kipfilet'), ing('zout')]
+
+  test('ook producten naast het hoofdingrediënt, hoofdingrediënt vooraan', () => {
+    const uit = receptBonusProducten(recept, bonus('paprika', 'kipfilet'))
+    expect(uit.map((p) => p.naam)).toEqual(['kipfilet', 'paprika'])
+  })
+  test('niets in de bonus: leeg', () => {
+    expect(receptBonusProducten(recept, bonus('zalm'))).toEqual([])
+    expect(receptBonusProducten(recept, undefined)).toEqual([])
+  })
+  test('zout telt niet, dat heb je altijd in huis', () => {
+    expect(receptBonusProducten(recept, bonus('zout'))).toEqual([])
+  })
 })

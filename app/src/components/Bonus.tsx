@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Dialoog } from './Dialoog'
-import { BONUS_BRON, actieTekst, type BonusActie } from '../lib/bonus'
+import { BONUS_BRON, actieTekst, type BonusProduct } from '../lib/bonus'
 
 /**
  * Bronvermelding onder alle bonusinformatie. Verplicht bij het gratis gebruik
@@ -22,16 +22,18 @@ export function BonusBron({ klein = false }: { klein?: boolean }) {
 }
 
 /**
- * "Bonus" op een receptfoto: het hoofdingrediënt is in de bonus bij jouw
- * winkel. Tik erop voor welke producten en welke actie.
+ * "Bonus" op een receptfoto: een of meer producten van het recept zijn in de
+ * bonus bij jouw winkel. Tik erop voor welke producten en welke actie.
  */
-export function BonusLabel({ naam, acties }: { naam: string; acties: BonusActie[] }) {
+export function BonusLabel({ producten }: { producten: BonusProduct[] }) {
   const [open, setOpen] = useState(false)
+  if (producten.length === 0) return null
+  const een = producten.length === 1
   return (
     <>
       <button
         onClick={(e) => { e.stopPropagation(); setOpen(true) }}
-        aria-label={`${naam} is in de bonus`}
+        aria-label={een ? 'Een product van dit recept is in de bonus' : `${producten.length} producten van dit recept zijn in de bonus`}
         style={{
           position: 'absolute', left: 8, bottom: 8, zIndex: 1, border: 'none', cursor: 'pointer',
           background: 'var(--c-yellow)', color: 'var(--c-ink)', borderRadius: 'var(--radius-full)',
@@ -42,15 +44,26 @@ export function BonusLabel({ naam, acties }: { naam: string; acties: BonusActie[
       <Dialoog
         open={open}
         kop="In de bonus"
-        tekst={`${naam.charAt(0).toUpperCase()}${naam.slice(1)} is deze week in de aanbieding bij je winkel:`}
+        tekst={een
+          ? 'Een product van dit recept is deze week in de aanbieding bij je winkel:'
+          : `${producten.length} producten van dit recept zijn deze week in de aanbieding bij je winkel:`}
         onSluit={() => setOpen(false)}
         acties={[{ label: 'Sluiten', hoofd: true, onClick: () => setOpen(false) }]}
       >
-        <ul style={{ margin: '0 0 4px', paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {acties.slice(0, 4).map((a, i) => (
-            <li key={i} style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4 }}>{actieTekst(a)}</li>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '0 0 4px' }}>
+          {producten.map((p) => (
+            <div key={p.naam}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700 }}>
+                {p.naam.charAt(0).toUpperCase()}{p.naam.slice(1)}
+              </div>
+              <ul style={{ margin: '2px 0 0', paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {p.acties.slice(0, 3).map((a, i) => (
+                  <li key={i} style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4 }}>{actieTekst(a)}</li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
         <BonusBron />
       </Dialoog>
     </>
