@@ -43,11 +43,6 @@ export function Instellingen() {
                     onWijzig={(n) => zet({ aantal_personen: n })}
                   />
                   <Stapper
-                    label="Kookavonden" sub="Zoveel recepten zet Vul mijn week op je lijst"
-                    waarde={v.kookavonden ?? 4} min={1} max={7}
-                    onWijzig={(n) => zet({ kookavonden: n })}
-                  />
-                  <Stapper
                     label="Vega-minimum" sub="Van de 10 recepten per week"
                     waarde={v.vega_minimum} min={0} max={10}
                     onWijzig={(n) => zet({ vega_minimum: n })}

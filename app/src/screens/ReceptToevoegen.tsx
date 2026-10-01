@@ -4,7 +4,7 @@ import { Button, Icon } from '../ds'
 import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { foutTekst } from '../lib/fouten'
 import { extractieBeschikbaar, leesFoto, leesTekst, type Concept } from '../lib/extractie'
-import { useIsAdmin, useReceptOpslaan } from '../lib/queries2'
+import { useReceptOpslaan } from '../lib/queries2'
 import type { BronType } from '../lib/database.types'
 
 type Stap = 'kiezen' | 'invoer' | 'bezig' | 'concept'
@@ -14,13 +14,8 @@ type Stap = 'kiezen' | 'invoer' | 'bezig' | 'concept'
  *
  *  prive_kookboek — foto van een kookboekpagina, blijft altijd van jou alleen.
  *  eigen          — je eigen bedenksel, mag je aanmelden om te delen.
- *  pool           — alleen voor admins: de foto is je bron om uit te lezen, wat
- *                   je opslaat is een eigen herschreven versie die meteen in de
- *                   gedeelde pool komt. Dat mag omdat een ingrediëntenlijst niet
- *                   auteursrechtelijk beschermd is en de bereidingstekst die je
- *                   opslaat van jou is — niet die uit het boek.
  */
-type Route = 'prive_kookboek' | 'eigen' | 'pool'
+type Route = 'prive_kookboek' | 'eigen'
 
 const LEEG: Concept = {
   titel: '', personen: 4, tags: [], ingredienten: [], bereiding_nl: [],
@@ -42,7 +37,6 @@ export function ReceptToevoegen() {
   const navigeer = useNavigate()
   const opslaan = useReceptOpslaan()
 
-  const isAdmin = useIsAdmin()
   const [stap, setStap] = useState<Stap>('kiezen')
   const [route, setRoute] = useState<Route>('eigen')
   const [tekst, setTekst] = useState('')
@@ -51,10 +45,7 @@ export function ReceptToevoegen() {
   const [fout, setFout] = useState('')
   const bestandKiezer = useRef<HTMLInputElement>(null)
 
-  // Alleen de privéroute is een kookboekrecept in de zin van de datamodelregel.
-  // De adminroute slaat een herschreven eigen versie op, dus die telt als eigen_input.
   const bron: BronType = route === 'prive_kookboek' ? 'kookboek_foto' : 'eigen_input'
-  const fotoInvoer = route !== 'eigen'
   const kookboek = route === 'prive_kookboek'
 
   async function verwerk(actie: () => Promise<Concept>) {
@@ -75,7 +66,7 @@ export function ReceptToevoegen() {
         bronType: bron,
         // Kookboekrecepten kunnen nooit gedeeld worden (plan §7.3) — hier én in
         // de database afgedwongen met een check-constraint.
-        deelStatus: kookboek ? 'prive' : route === 'pool' ? 'goedgekeurd' : delen ? 'aangevraagd' : 'prive',
+        deelStatus: kookboek ? 'prive' : delen ? 'aangevraagd' : 'prive',
       },
       {
         onSuccess: (id) => navigeer(`/recept/${id}`),
@@ -120,24 +111,16 @@ export function ReceptToevoegen() {
         <Inhoud style={{ gap: 12 }}>
           <Keuze
             icoon="chefHat"
-            kop="Uit een kookboek"
-            tekst="Maak een foto van de pagina. We lezen 'm uit; de foto zelf bewaren we niet. Blijft alleen voor jou."
+            kop="Maak een foto van een recept"
+            tekst="We lezen 'm uit; de foto zelf bewaren we niet. Het recept komt in jouw omgeving, maar mag niet gedeeld worden."
             onClick={() => { setRoute('prive_kookboek'); setStap('invoer') }}
           />
           <Keuze
             icoon="pencil"
-            kop="Mijn eigen recept"
+            kop="Maak een eigen recept"
             tekst="Typ in eigen woorden hoe je het maakt. Geen vaste vorm nodig."
             onClick={() => { setRoute('eigen'); setStap('invoer') }}
           />
-          {isAdmin.data && (
-            <Keuze
-              icoon="users"
-              kop="Voor de gedeelde pool"
-              tekst="Foto als bron, herschreven tekst als resultaat. Komt meteen bij iedereen in de app."
-              onClick={() => { setRoute('pool'); setStap('invoer') }}
-            />
-          )}
         </Inhoud>
       )}
 
@@ -154,20 +137,9 @@ export function ReceptToevoegen() {
               </div>
             )}
 
-            {route === 'pool' && (
-              <div style={{
-                background: 'var(--c-warm-300)', color: 'var(--c-ink)', borderRadius: 'var(--radius-sm)',
-                padding: '14px 16px', fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5,
-              }}>
-                Dit komt meteen bij iedereen in de app. De foto gebruiken we om uit te lezen
-                en bewaren we niet; de bereiding die je opslaat is een herschreven versie in
-                eigen woorden. Neem geen tekst letterlijk over uit het boek.
-              </div>
-            )}
-
             {extractieBeschikbaar() ? (
               <>
-                {fotoInvoer ? (
+                {kookboek ? (
                   <>
                     <input
                       ref={bestandKiezer}

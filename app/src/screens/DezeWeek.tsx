@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Chip, Icon } from '../ds'
+import { Chip, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
@@ -43,8 +43,7 @@ function isVega(recept: WeekRecept) {
  * haal je het helemaal uit je week. Na de boodschappen verdwijnt de gele
  * rand, maar het recept blijft staan — hiervandaan kook je.
  *
- * "Vul mijn week" kiest in één tik zoveel recepten als je kookavonden hebt
- * (lib/weekvullen.ts). Wat je dan niet ziet zitten ruil je per kaart.
+ * Wat je niet ziet zitten ruil je per kaart (lib/weekvullen.ts).
  */
 export function DezeWeek() {
   const week = weekStart()
@@ -63,15 +62,15 @@ export function DezeWeek() {
 
   // Een suggestie met een allergeen zonder vervanger laten we weg — ook als je
   // je allergie pas instelde nadat dit weekmenu er al stond. Wat je zelf koos
-  // blijft staan. Zo doen Vul mijn week en Ruil er ook niets mee.
+  // blijft staan. Zo doet Ruil er ook niets mee.
   const allergieen = useAllergieen()
   const recepten = useMemo(
     () => (dezeWeek.data ?? []).filter((r) => r.gekozen || vastVoorJou(r, allergieen).length === 0),
     [dezeWeek.data, allergieen],
   )
   const bonus = useBonus()
-  // Het label en het filter: een of meer producten in de bonus. Vullen en
-  // ruilen wegen alleen het hoofdingrediënt, net als de weekmenu-generator.
+  // Het label en het filter: een of meer producten in de bonus. Ruilen
+  // weegt alleen het hoofdingrediënt, net als de weekmenu-generator.
   const bonusPerRecept = useMemo(() => new Map(recepten.map((r) => [r.id, receptBonusProducten(r.ingredienten, bonus.data)])), [recepten, bonus.data])
   const hoofdInBonus = useMemo(() => new Set(recepten.filter((r) => receptBonus(r.ingredienten, bonus.data)).map((r) => r.id)), [recepten, bonus.data])
   const zichtbaar = recepten.filter((r) =>
@@ -85,9 +84,8 @@ export function DezeWeek() {
   const opLijst = recepten.filter((r) => r.opLijst).length
   const vegaAantal = recepten.filter(isVega).length
   const personen = voorkeuren.data?.aantal_personen ?? 4
-  const kookavonden = voorkeuren.data?.kookavonden ?? 4
 
-  // Kandidaten voor vullen en ruilen: suggesties die je nog niet koos. Bonus weegt mee.
+  // Kandidaten voor ruilen: suggesties die je nog niet koos. Bonus weegt mee.
   const kandidaten = recepten
     .filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp)
     .map((r) => ({ ...r, inBonus: hoofdInBonus.has(r.id) }))
@@ -95,18 +93,6 @@ export function DezeWeek() {
   const gekozen = recepten.filter((r) => r.gekozen)
   const inHuis = new Set((voorraad.data ?? []).filter((v) => v.in_huis).map((v) => v.ingredient_key))
   const vegaMinimum = voorkeuren.data?.vega_minimum ?? 0
-  const toonVullen = gekozen.length < kookavonden && kandidaten.length > 0
-
-  async function vulWeek() {
-    setBezig(true)
-    try {
-      const ids = kiesWeek(kandidaten, { vega_minimum: vegaMinimum, kookavonden }, gekozen, inHuis)
-      // Na elkaar, zodat een fout halverwege niet de helft stil laat mislukken.
-      for (const id of ids) await zetOpLijst.mutateAsync({ receptId: id, automatisch: true })
-    } finally {
-      setBezig(false)
-    }
-  }
 
   /** Haalt een recept van je lijst en zet het volgende passende recept uit de tien ervoor in de plaats. */
   async function ruil(recept: WeekRecept) {
@@ -170,15 +156,6 @@ export function DezeWeek() {
                 {opLijst} op je lijst
               </span>
             </div>
-
-            {toonVullen && (
-              <Button
-                tone="yellow" icon="shuffle" disabled={bezig} onClick={() => void vulWeek()}
-                style={{ width: '100%', marginBottom: 14 }}
-              >
-                {bezig ? 'Even kiezen…' : `Vul mijn week · nog ${kookavonden - gekozen.length} ${kookavonden - gekozen.length === 1 ? 'recept' : 'recepten'}`}
-              </Button>
-            )}
 
             {zichtbaar.length === 0 ? (
               <div style={{ padding: '48px 20px', textAlign: 'center' }}>
