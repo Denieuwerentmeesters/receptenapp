@@ -13,6 +13,8 @@ import { weekStart } from '../lib/week'
 import { tokoIngredienten, tokoProduct } from '../lib/toko'
 import { openBijWinkel } from '../lib/ah'
 import { allergeenNaam, opsomming, receptAllergie, useAllergeenRegels, useAllergieen } from '../lib/allergenen'
+import { BonusBron } from '../components/Bonus'
+import { receptBonusProducten, totTekst, useBonus } from '../lib/bonus'
 
 export function Recept() {
   const { id } = useParams<{ id: string }>()
@@ -28,6 +30,7 @@ export function Recept() {
   const [wegVraag, setWegVraag] = useState(false)
   const allergieen = useAllergieen()
   const regels = useAllergeenRegels(allergieen.length > 0)
+  const bonus = useBonus()
 
   // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
   // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
@@ -51,6 +54,9 @@ export function Recept() {
           const allergie = allergieen.length > 0 && regels.data
             ? receptAllergie(r.ingredienten.map((i) => i.naam), regels.data, allergieen)
             : null
+          // Wat er van dit recept in de bonus is, per ingrediënt: dezelfde
+          // producten als het gele label op de foto in Deze week en Ontdekken.
+          const inBonus = new Map(receptBonusProducten(r.ingredienten, bonus.data).map((p) => [ingredientKey(p.naam), p.acties[0]]))
 
           return (
             <>
@@ -174,6 +180,7 @@ export function Recept() {
 
                 {ingredienten.map((ing, i) => {
                   const tokoIng = tokoProduct({ ingredient_key: ingredientKey(ing.naam), naam: ing.naam })
+                  const actie = inBonus.get(ingredientKey(ing.naam))
                   return (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'baseline', gap: 12, padding: '11px 2px',
@@ -183,7 +190,14 @@ export function Recept() {
                       flex: 'none', width: 88, fontFamily: 'var(--font-body)', fontSize: 14,
                       fontWeight: 700, color: 'var(--c-red-bright)',
                     }}>{ing.weergave}</span>
-                    <span style={{ flex: 1, fontFamily: 'var(--font-body)', fontSize: 15 }}>{ing.naam}</span>
+                    <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-body)', fontSize: 15 }}>
+                      {ing.naam}
+                      {actie && (
+                        <span style={{
+                          display: 'block', marginTop: 3, fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
+                        }}>Bonus: {actie.mechanisme ?? 'in de aanbieding'} {totTekst(actie.geldig_tot)}</span>
+                      )}
+                    </span>
                     {tokoIng && (
                       <a
                         href={tokoIng.url}
@@ -195,6 +209,15 @@ export function Recept() {
                   </div>
                   )
                 })}
+
+                {inBonus.size > 0 && (
+                  <div style={{ marginTop: 6 }}>
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.55)' }}>
+                      Bonus {bonus.peildatum.zelfHalen ? 'vandaag' : 'op je bezorgdag'} ·{' '}
+                    </span>
+                    <BonusBron klein />
+                  </div>
+                )}
 
                 <div style={{
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
