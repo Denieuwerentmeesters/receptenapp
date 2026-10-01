@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'nl.receptenapp.app',
+  appId: 'nl.reinoudtencate.receptenapp',
   appName: 'Receptenapp',
   webDir: 'dist',
   ios: {
