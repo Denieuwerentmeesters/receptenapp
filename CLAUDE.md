@@ -236,11 +236,21 @@ gluten, koemelk, ei, noten, pinda, vis, schaaldieren, soja, sesam.
   (weekmenu-generator, Ontdekken, Vul mijn week, Ruil). "Mogelijk" blijft
   zichtbaar met "check het etiket". Gluten en koemelk hebben vervangers; die
   gaan standaard naar de lijst, per regel terug te zetten (zoals vega).
-- **Ontdekken:** de chip "Zonder …" zet het filter met één tik uit, tot een
-  herstart — vaak heeft maar één iemand in huis een allergie.
+- **Ontdekken:** de chip "Allergieën ▾" opent een lijst om aan te vinken, van
+  vaak naar zelden (`ALLERGENEN_OP_VOORKOMEN`). Hij begint met je allergieën
+  uit Instellingen; wat je daar wijzigt geldt tot een herstart — vaak heeft
+  maar één iemand in huis een allergie, of eet er iemand mee.
 - Vervangers hebben nog geen AH- of Jumbo-productnummer: die gaan als zoeklink.
 - Bij twijfel: als allergeen tellen. Liever een recept te weinig dan een
   allergeen dat erdoor glipt.
+
+## Keukenvoorkeur
+
+Bij Instellingen tik je uit welke keukens je minder graag eet
+(`gebruiker_voorkeuren.favoriete_keukens`). Een lege lijst betekent "alles
+aan" — de standaard. Het is een voorkeur, geen filter: de generator weegt de
+gekozen keukens 3× zwaarder, en Ontdekken toont ze eerst (`useOntdek` haalt
+in twee fasen op: voorkeur, dan de rest) en zet hun chips vooraan.
 
 ## Wat er nog niet is
 
