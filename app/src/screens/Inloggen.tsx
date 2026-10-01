@@ -43,7 +43,7 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
         <div style={{
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
           letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--c-yellow)',
-        }}>Receptenapp</div>
+        }}>Pinch</div>
 
         <Titel grootte={32}>{nieuw ? 'Maak een account' : 'Van recept tot mandje'}</Titel>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>
