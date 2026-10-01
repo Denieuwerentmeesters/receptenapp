@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core'
 import type { Ingredient } from './database.types'
 
 /**
@@ -18,20 +19,14 @@ export interface Concept {
   bereiding_nl: string[]
 }
 
+/**
+ * De functie draait op hetzelfde Vercel-project als de app. In de browser is
+ * dat dus een pad op ons eigen domein; de iOS-app draait op capacitor:// en
+ * moet het hele adres hebben. VITE_EXTRACTIE_URL wint, voor lokaal testen.
+ */
 function endpoint(): string {
-  const basis = import.meta.env.VITE_EXTRACTIE_URL
-  if (!basis) {
-    throw new Error(
-      'VITE_EXTRACTIE_URL ontbreekt in .env.local — zonder die functie kan de app ' +
-      'geen foto uitlezen. Je kunt het recept wel met de hand invullen.',
-    )
-  }
-  return basis
-}
-
-/** Is de extractie beschikbaar? Zo niet, dan tonen we alleen handmatige invoer. */
-export function extractieBeschikbaar(): boolean {
-  return Boolean(import.meta.env.VITE_EXTRACTIE_URL)
+  return import.meta.env.VITE_EXTRACTIE_URL
+    || (Capacitor.isNativePlatform() ? 'https://receptenapp.vercel.app/api/extraheer' : '/api/extraheer')
 }
 
 async function vraag(body: unknown): Promise<Concept> {
