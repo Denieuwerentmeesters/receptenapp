@@ -264,6 +264,29 @@ gluten, koemelk, ei, noten, pinda, vis, schaaldieren, soja, sesam.
 - Bij twijfel: als allergeen tellen. Liever een recept te weinig dan een
   allergeen dat erdoor glipt.
 
+## Dieetfilters
+
+Ontdekken en Deze week filteren op vegetarisch, vegan, pescotarisch,
+koolhydraatarm en keto (`src/lib/dieet.ts`). Vegetarisch is de tag; de andere
+vier zet een trigger in `recepten.dieet`, afgeleid uit de ingrediënten.
+
+- **Regels in de database:** `dieet_regel` heeft patronen voor vlees,
+  weekdieren, honing/gelatine en koolhydraatbronnen. Zuivel, ei en vis komen
+  uit `allergeen_regel` — verander je die, dan verandert vegan mee.
+- **Vegan** = de tag vegetarisch, zonder zuivel, ei, honing of gelatine; ook
+  "mogelijk" (pesto, bladerdeeg) telt als niet vegan.
+- **Pescotarisch** = vegetarisch, of vis zonder vlees. Bouillon telt niet als
+  vlees.
+- **Koolhydraatarm en keto zijn een schatting** (`recepten.koolhydraten_pp`):
+  gram maal koolhydraten per 100 g, per persoon; tot 25 g en tot 12 g. Er is
+  geen voedingswaardetabel. Wat geen regel heeft telt als nul, en een stuk
+  zonder gewicht is een gok (`gram_per_stuk`).
+- **Regels veranderen:** nieuwe migratie, daarna
+  `update recepten set ingredienten = ingredienten;`. Zelfde patroonafspraak
+  als bij de allergieën.
+- Het is alleen een filter: de weekmenu-generator kent nog geen dieetvoorkeur
+  behalve het vega-minimum.
+
 ## Keukenvoorkeur
 
 Bij Instellingen tik je uit welke keukens je minder graag eet

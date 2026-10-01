@@ -11,6 +11,7 @@ import type { Concept } from './extractie'
 import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
 import { maaltijdboxKosten } from './besparing'
 import type { Verpakking } from './eenheden'
+import type { Dieet } from './dieet'
 
 /* --------------------------------------------------------------- ontdekken */
 
@@ -18,7 +19,8 @@ export interface OntdekFilters {
   zoek: string
   maxTijd: number | null
   keuken: string | null
-  alleenVega: boolean
+  /** Alle gekozen diëten moeten kloppen (lib/dieet.ts). */
+  dieet: Dieet[]
   alleenBudget: boolean
   /** Laat recepten weg die een van deze allergenen vast bevatten (lib/allergenen.ts). */
   zonderAllergenen: string[]
@@ -52,7 +54,9 @@ function metFilters<T>(vraag: T, filters: OntdekFilters): T {
   }
   if (filters.maxTijd) v = v.lte('bereidingstijd_minuten', filters.maxTijd)
   if (filters.keuken) v = v.eq('keuken', filters.keuken)
-  if (filters.alleenVega) v = v.contains('tags', ['vegetarisch'])
+  if (filters.dieet.includes('vegetarisch')) v = v.contains('tags', ['vegetarisch'])
+  const afgeleid = filters.dieet.filter((d) => d !== 'vegetarisch')
+  if (afgeleid.length > 0) v = v.contains('dieet', afgeleid)
   if (filters.alleenBudget) v = v.lte('prijs_pp_schatting', BUDGET_PER_PERSOON)
   // not.ov: geen overlap tussen allergenen_vast en jouw allergieën.
   if (filters.zonderAllergenen.length > 0) {

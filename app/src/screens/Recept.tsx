@@ -12,6 +12,7 @@ import { ingredientKey, schaalIngredienten } from '../lib/schaal'
 import { weekStart } from '../lib/week'
 import { tokoIngredienten, tokoProduct } from '../lib/toko'
 import { openBijWinkel } from '../lib/ah'
+import { dieetLabels } from '../lib/dieet'
 import { allergeenNaam, opsomming, receptAllergie, useAllergeenRegels, useAllergieen } from '../lib/allergenen'
 import { BonusBron } from '../components/Bonus'
 import { receptBonusProducten, totTekst, useBonus } from '../lib/bonus'
@@ -49,7 +50,7 @@ export function Recept() {
         {recept.data && (() => {
           const r = recept.data
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
-          const vegetarisch = r.tags.includes('vegetarisch')
+          const dieet = dieetLabels(r)
           const toko = tokoIngredienten(r.ingredienten)
           const allergie = allergieen.length > 0 && regels.data
             ? receptAllergie(r.ingredienten.map((i) => i.naam), regels.data, allergieen)
@@ -118,7 +119,7 @@ export function Recept() {
 
                   <div style={{ position: 'absolute', left: 22, right: 22, bottom: 22 }}>
                     <Label>
-                      {r.keuken ?? 'Recept'}{vegetarisch ? ' · vegetarisch' : ''}{isBudget(r) ? ' · budget' : ''}{toko.length > 0 ? ' · toko nodig' : ''}
+                      {r.keuken ?? 'Recept'}{dieet.map((d) => ` · ${d}`).join('')}{isBudget(r) ? ' · budget' : ''}{toko.length > 0 ? ' · toko nodig' : ''}
                     </Label>
                     <div style={{ marginTop: 8, textShadow: '0 2px 12px rgba(0,0,0,0.35)' }}>
                       <Titel grootte={30}>{r.titel_nl ?? r.titel}</Titel>

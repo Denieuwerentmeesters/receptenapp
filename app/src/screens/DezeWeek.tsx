@@ -17,23 +17,27 @@ import { dagLabel } from '../lib/bezorgdag'
 import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
 import { useAllergieen, vastVoorJou } from '../lib/allergenen'
+import { DIETEN, pastBijDieet, type Dieet } from '../lib/dieet'
 
-type Filter = 'alles' | 'lijst' | 'bonus' | 'budget' | 'vega' | 'snel'
+type Filter = 'alles' | 'lijst' | 'bonus' | 'budget' | 'snel' | Dieet
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: 'alles', label: 'Alles' },
   { id: 'lijst', label: 'Op mijn lijst' },
   { id: 'bonus', label: 'In de bonus' },
   { id: 'budget', label: 'Budget' },
-  { id: 'vega', label: 'Vegetarisch' },
+  { id: 'vegetarisch', label: 'Vegetarisch' },
   { id: 'snel', label: 'Binnen 30 min' },
 ]
+
+/** Na de vaste filters; alleen zichtbaar als er deze week een recept bij past. */
+const DIEET_FILTERS = DIETEN.filter((d) => d.id !== 'vegetarisch')
 
 /** De kaarten wisselen af tussen de twee roodtinten — het merkritme uit de designs. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
 
 function isVega(recept: WeekRecept) {
-  return recept.tags.includes('vegetarisch')
+  return pastBijDieet(recept, 'vegetarisch')
 }
 
 /**
@@ -78,8 +82,10 @@ export function DezeWeek() {
       : filter === 'lijst' ? r.opLijst
       : filter === 'bonus' ? (bonusPerRecept.get(r.id)?.length ?? 0) > 0
       : filter === 'budget' ? isBudget(r)
-      : filter === 'vega' ? isVega(r)
-      : (r.bereidingstijd_minuten ?? 999) <= 30)
+      : filter === 'snel' ? (r.bereidingstijd_minuten ?? 999) <= 30
+      : pastBijDieet(r, filter))
+  // Tien recepten is weinig: een dieetchip zonder één treffer laten we weg.
+  const filters = [...FILTERS, ...DIEET_FILTERS.filter((d) => recepten.some((r) => pastBijDieet(r, d.id)))]
 
   const opLijst = recepten.filter((r) => r.opLijst).length
   const vegaAantal = recepten.filter(isVega).length
@@ -125,7 +131,7 @@ export function DezeWeek() {
         </Kop>
 
         <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '12px 22px 4px', overflowX: 'auto' }}>
-          {FILTERS.map((f) => (
+          {filters.map((f) => (
             <Chip key={f.id} selected={filter === f.id} onClick={() => setFilter(f.id)}>
               {f.label}
             </Chip>
