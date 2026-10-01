@@ -75,8 +75,35 @@ function zonderVerkleining(woord: string): string[] {
  * Bewust op hele woorden en niet op letterreeksen: "amandelmelk" bevat "melk",
  * maar dat is een ander product. Zo'n gok legt stilletjes het verkeerde artikel
  * in je mandje, en dat merk je pas bij de kassa.
+ *
+ * Geeft het recept een keuze ("wraps of pitabroodjes"), dan nemen we de eerste.
+ * Zonder die regel won de sleutel die toevallig het eerst in de mapping stond.
  */
 export function zoekProduct<P>(
+  item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
+  mapping: Record<string, P>,
+): P | undefined {
+  const eerste = eersteKeuze(item.naam)
+  if (eerste) {
+    const product = zoekZonderKeuze({ ingredient_key: ingredientKey(eerste), naam: eerste }, mapping)
+    if (product) return product
+  }
+  return zoekZonderKeuze(item, mapping)
+}
+
+/**
+ * "wraps of pitabroodjes" → "wraps". Niets bij een gedeeld woorddeel
+ * ("kippen- of groentebouillon") of als er voor de "of" geen product staat
+ * ("verse of diepvries doperwten"): dan zoeken we op de hele naam.
+ */
+export function eersteKeuze(naam: string): string | undefined {
+  if (/-\s+of\s/.test(naam)) return undefined
+  const key = ingredientKey(naam)
+  const plek = key.indexOf(' of ')
+  return plek > 0 ? key.slice(0, plek) : undefined
+}
+
+function zoekZonderKeuze<P>(
   item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
   mapping: Record<string, P>,
 ): P | undefined {

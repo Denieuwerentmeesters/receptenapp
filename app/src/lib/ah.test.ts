@@ -18,3 +18,22 @@ describe('verkleinwoorden', () => {
     expect(enkelvoudVormen('ui')).toEqual([])
   })
 })
+
+describe('keuze in het recept: de eerste telt', () => {
+  const KEUZE: Record<string, string> = {
+    pitabroodje: 'Pita', wraps: 'Wraps', sojasaus: 'Sojasaus', groentebouillon: 'Groentebouillon',
+    doperwten: 'Doperwten', winterwortel: 'Winterwortel',
+  }
+  const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, KEUZE)
+
+  test.each([
+    ['wraps of pitabroodjes', 'Wraps'],
+    ['pitabroodjes of wraps', 'Pita'],
+    // De eerste staat niet in de mapping: dan de tweede.
+    ['tamari of sojasaus', 'Sojasaus'],
+    // Gedeeld woorddeel of geen product voor de "of": zoeken op de hele naam.
+    ['kippen- of groentebouillon', 'Groentebouillon'],
+    ['verse of diepvries doperwten', 'Doperwten'],
+    ['winterwortel, in blokjes of plakjes', 'Winterwortel'],
+  ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
+})
