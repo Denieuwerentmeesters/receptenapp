@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Icon } from '../ds'
 import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { foutTekst } from '../lib/fouten'
-import { extractieBeschikbaar, leesFoto, leesTekst, type Concept } from '../lib/extractie'
+import { leesFoto, leesTekst, type Concept } from '../lib/extractie'
 import { useReceptOpslaan } from '../lib/queries2'
 import type { BronType } from '../lib/database.types'
 
@@ -137,15 +137,13 @@ export function ReceptToevoegen() {
               </div>
             )}
 
-            {extractieBeschikbaar() ? (
-              <>
+            <>
                 {kookboek ? (
                   <>
                     <input
                       ref={bestandKiezer}
                       type="file"
                       accept="image/*"
-                      capture="environment"
                       style={{ display: 'none' }}
                       onChange={(e) => {
                         const bestand = e.target.files?.[0]
@@ -184,16 +182,7 @@ export function ReceptToevoegen() {
                   onClick={() => { setConcept(LEEG); setStap('concept') }}
                   style={tekstKnop}
                 >Liever zelf invullen</button>
-              </>
-            ) : (
-              <>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0 }}>
-                  Automatisch uitlezen staat nog niet aan. Je kunt het recept wel zelf invullen.
-                </p>
-                <Button tone="purple" onClick={() => { setConcept(LEEG); setStap('concept') }}
-                  style={{ width: '100%', padding: '17px 24px' }}>Zelf invullen</Button>
-              </>
-            )}
+            </>
           </Inhoud>
         </>
       )}
