@@ -32,6 +32,14 @@ export const ALLERGENEN = [
   { id: 'sesam', label: 'Sesam' },
 ] as const
 
+/**
+ * Van vaak naar zelden, voor het filter in Ontdekken: gluten en koemelk worden
+ * het meest gemeden, sesam het minst. Een ruwe volgorde, geen statistiek.
+ */
+export const ALLERGENEN_OP_VOORKOMEN = (
+  ['gluten', 'koemelk', 'noten', 'pinda', 'ei', 'schaaldieren', 'vis', 'soja', 'sesam'] as const
+).map((id) => ALLERGENEN.find((a) => a.id === id)!)
+
 export type Allergeen = (typeof ALLERGENEN)[number]['id']
 
 /** "gluten", "koemelk", "pinda's" — klein, voor midden in een zin. */

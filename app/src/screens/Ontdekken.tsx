@@ -11,14 +11,15 @@ import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusLabel } from '../components/Bonus'
 import { receptBonusProducten, useBonus } from '../lib/bonus'
-import { opsomming, useAllergieen, vastVoorJou } from '../lib/allergenen'
+import { ALLERGENEN_OP_VOORKOMEN, opsomming, useAllergieen, vastVoorJou } from '../lib/allergenen'
+import { Dialoog } from '../components/Dialoog'
+import { useVoorkeuren } from '../lib/queries'
 
 const GEEN: string[] = []
 
 const TIJDEN = [
   { label: 'Binnen 20 min', waarde: 20 },
   { label: 'Binnen 30 min', waarde: 30 },
-  { label: 'Binnen 45 min', waarde: 45 },
 ]
 
 /**
@@ -43,10 +44,11 @@ const onthouden = {
   keuken: null as string | null,
   alleenVega: false,
   alleenBudget: false,
-  // Het allergiefilter staat standaard aan. Uitzetten geldt tot een herstart:
-  // vaak heeft maar één iemand in het gezin een allergie, en dan wil je even
-  // alles zien — maar niet dat het ongemerkt uit blijft.
-  allergieFilter: true,
+  // Het allergiefilter begint met je allergieën uit Instellingen (null = nog
+  // niet aangeraakt). Wat je hier aan- of uitvinkt geldt tot een herstart:
+  // vaak heeft maar één iemand in het gezin een allergie, of eet er iemand mee
+  // die iets niet mag — maar het moet niet ongemerkt blijven hangen.
+  zonder: null as string[] | null,
   scrollTop: 0,
 }
 
@@ -62,9 +64,11 @@ export function Ontdekken() {
   const [keuken, setKeuken] = useState<string | null>(onthouden.keuken)
   const [alleenVega, setAlleenVega] = useState(onthouden.alleenVega)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
-  const [allergieFilter, setAllergieFilter] = useState(onthouden.allergieFilter)
+  const [zonder, setZonder] = useState(onthouden.zonder)
+  const [allergieOpen, setAllergieOpen] = useState(false)
   const allergieen = useAllergieen()
-  const zonderAllergenen = allergieFilter ? allergieen : GEEN
+  const zonderAllergenen = zonder ?? allergieen
+  const voorkeurKeukens = useVoorkeuren().data?.favoriete_keukens ?? GEEN
 
   const filters: OntdekFilters = useMemo(
     () => ({ zoek, maxTijd, keuken, alleenVega, alleenBudget, zonderAllergenen }),
@@ -76,13 +80,21 @@ export function Ontdekken() {
   useEffect(() => {
     if (vorigeFilters.current === filters) return
     vorigeFilters.current = filters
-    Object.assign(onthouden, { zoek, maxTijd, keuken, alleenVega, alleenBudget, allergieFilter, scrollTop: 0 })
+    Object.assign(onthouden, { zoek, maxTijd, keuken, alleenVega, alleenBudget, zonder, scrollTop: 0 })
     scroller.current?.scrollTo({ top: 0 })
-  }, [filters, zoek, maxTijd, keuken, alleenVega, alleenBudget, allergieFilter])
+  }, [filters, zoek, maxTijd, keuken, alleenVega, alleenBudget, zonder])
 
-  const resultaten = useOntdek(filters)
+  const resultaten = useOntdek(filters, voorkeurKeukens)
   const telling = useOntdekTelling(filters)
   const keukens = useKeukens()
+  // Je voorkeurskeukens vooraan in de rij; daarbinnen blijft de volgorde op aantal.
+  const keukenChips = useMemo(() => {
+    const alle = keukens.data ?? []
+    return [
+      ...alle.filter((k) => voorkeurKeukens.includes(k.keuken)),
+      ...alle.filter((k) => !voorkeurKeukens.includes(k.keuken)),
+    ]
+  }, [keukens.data, voorkeurKeukens])
   const dezeWeek = useDezeWeek()
   const { zetInWeek, haalUitWeek } = useLijstActies()
   // Geen Map als querydata (zie useAhMapping), maar hier is het afgeleid.
@@ -91,7 +103,7 @@ export function Ontdekken() {
     [dezeWeek.data],
   )
 
-  const recepten = resultaten.data?.pages.flat() ?? []
+  const recepten = resultaten.data?.pages.flatMap((p) => p.recepten) ?? []
 
   // Terug van een recept: zodra de lijst er (uit de cache) weer staat, springen
   // we naar waar je was. Eén keer; daarna scroll je zelf.
@@ -152,11 +164,9 @@ export function Ontdekken() {
           <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setAlleenVega(false); setAlleenBudget(false) }}>
             Alles
           </Chip>
-          {allergieen.length > 0 && (
-            <Chip selected={allergieFilter} onClick={() => setAllergieFilter(!allergieFilter)}>
-              Zonder {opsomming(allergieen)}
-            </Chip>
-          )}
+          <Chip selected={zonderAllergenen.length > 0} onClick={() => setAllergieOpen(true)}>
+            {zonderAllergenen.length > 0 ? `Zonder ${opsomming(zonderAllergenen)}` : 'Allergieën'} ▾
+          </Chip>
           <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
           <Chip selected={alleenVega} onClick={() => setAlleenVega(!alleenVega)}>Vegetarisch</Chip>
           {TIJDEN.map((t) => (
@@ -166,9 +176,9 @@ export function Ontdekken() {
           ))}
         </div>
 
-        {keukens.data && keukens.data.length > 0 && (
+        {keukenChips.length > 0 && (
           <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
-            {keukens.data.map((k) => (
+            {keukenChips.map((k) => (
               <Chip key={k.keuken} selected={keuken === k.keuken} onClick={() => setKeuken(keuken === k.keuken ? null : k.keuken)}>
                 {k.keuken}
               </Chip>
@@ -233,6 +243,37 @@ export function Ontdekken() {
           </Inhoud>
         )}
       </Grens>
+
+      <Dialoog
+        open={allergieOpen}
+        kop="Zonder allergenen"
+        tekst="Recepten waar het in zit laten we weg. Geldt tot je de app opnieuw opent; je vaste allergieën stel je in bij Instellingen."
+        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setAllergieOpen(false) }]}
+        onSluit={() => setAllergieOpen(false)}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
+          {ALLERGENEN_OP_VOORKOMEN.map((a) => {
+            const aan = zonderAllergenen.includes(a.id)
+            return (
+              <label key={a.id} style={{
+                display: 'flex', alignItems: 'center', gap: 12, padding: '11px 2px', cursor: 'pointer',
+                borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+                fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
+              }}>
+                <input
+                  type="checkbox"
+                  checked={aan}
+                  onChange={() => setZonder(aan
+                    ? zonderAllergenen.filter((x) => x !== a.id)
+                    : [...zonderAllergenen, a.id])}
+                  style={{ width: 22, height: 22, accentColor: 'var(--c-red)', flex: 'none' }}
+                />
+                {a.label}
+              </label>
+            )
+          })}
+        </div>
+      </Dialoog>
 
       <OnderBalk />
     </Scherm>
