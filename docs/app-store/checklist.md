@@ -5,7 +5,8 @@ Wat Apple nodig heeft voordat Pinch door de review kan. Afvinken wat klaar is.
 ## In de app (code)
 
 - [x] Account verwijderen in de app (Profiel → Account) — richtlijn 5.1.1(v)
-- [x] Privacyverklaring bereikbaar in de app (Account en het inlogscherm)
+- [x] Privacybeleid en voorwaarden bereikbaar in de app (Account en het
+      inlogscherm), in het Nederlands en Engels (`…#en`)
 - [x] Uitleg bij camera en fotobibliotheek (`Info.plist`)
 - [x] Geen eigen versleuteling (`ITSAppUsesNonExemptEncryption` = nee)
 - [ ] Account verwijderen getest met een wegwerpaccount op productie
@@ -15,6 +16,10 @@ Wat Apple nodig heeft voordat Pinch door de review kan. Afvinken wat klaar is.
 
 - [ ] **Privacybeleid-URL:** `https://receptenapp.vercel.app/privacy.html`
 - [ ] **Support-URL:** `https://receptenapp.vercel.app/support.html`
+- [ ] **Voorwaarden** (optioneel veld "License Agreement", of in de beschrijving):
+      `https://receptenapp.vercel.app/voorwaarden.html`
+- [ ] `support@justapinch.nl` werkt en wordt gelezen. Verhuist de site naar
+      justapinch.nl, pas dan `WEBSITE` in `src/lib/config.ts` en deze adressen aan.
 - [ ] **Demo-account** voor de reviewer (e-mail + wachtwoord) bij App Review
       Information, met een gevuld weekmenu en een paar recepten op de lijst
 - [ ] **Notitie voor de reviewer:** de mandjeknop opent ah.nl of jumbo.com in

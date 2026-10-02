@@ -308,10 +308,12 @@ in twee fasen op: voorkeur, dan de rest) en zet hun chips vooraan.
 - **Nieuwe tabel met gebruikersgegevens?** Geef die een
   `references gebruiker (id) on delete cascade`, anders blijft er na
   verwijderen iets achter.
-- **Privacyverklaring en support** zijn losse pagina's in `app/public`
-  (`/privacy.html`, `/support.html`); de adressen staan in `src/lib/config.ts`.
-  Bewaart de app iets nieuws of komt er een dienst bij, werk dan de
-  privacyverklaring én de privacyvragen in App Store Connect bij.
+- **Privacybeleid, voorwaarden en support** zijn losse pagina's in
+  `app/public` (`/privacy.html`, `/voorwaarden.html`, `/support.html`), elk
+  in het Nederlands en Engels op één pagina (`#en`; `paginas.js` wisselt).
+  De adressen staan in `src/lib/config.ts`. Bewaart de app iets nieuws of
+  komt er een dienst bij, werk dan beide talen bij én de privacyvragen in
+  App Store Connect. Beloof er niets wat de app niet doet.
 - De rest van de aanmelding staat in `docs/app-store/checklist.md`.
 
 ## Wat er nog niet is

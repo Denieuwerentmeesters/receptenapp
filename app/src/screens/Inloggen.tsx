@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button, Woordmerk } from '../ds'
 import { Titel } from '../components/Layout'
 import { logIn, maakAccount } from '../lib/auth'
-import { PRIVACY_URL } from '../lib/config'
+import { PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
 
 /**
@@ -110,18 +110,22 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
           {nieuw ? 'Ik heb al een account' : 'Nog geen account? Maak er een'}
         </button>
 
-        <a
-          href={PRIVACY_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--c-cream)', opacity: 0.85,
-            textAlign: 'center', textDecoration: 'underline', textUnderlineOffset: 3,
-          }}
-        >Privacyverklaring</a>
+        <p style={{
+          fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.5, margin: 0,
+          textAlign: 'center', opacity: 0.85,
+        }}>
+          Met een account ga je akkoord met de{' '}
+          <a href={VOORWAARDEN_URL} target="_blank" rel="noopener noreferrer" style={linkStijl}>voorwaarden</a>
+          {' '}en het{' '}
+          <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" style={linkStijl}>privacybeleid</a>.
+        </p>
       </form>
     </div>
   )
+}
+
+const linkStijl: React.CSSProperties = {
+  color: 'var(--c-cream)', textDecoration: 'underline', textUnderlineOffset: 3,
 }
 
 const veldStijl: React.CSSProperties = {

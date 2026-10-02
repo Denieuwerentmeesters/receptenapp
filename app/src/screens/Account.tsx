@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { Button } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { huidigeSessie, logUit, verwijderAccount } from '../lib/auth'
-import { PRIVACY_URL, SUPPORT_URL } from '../lib/config'
+import { PRIVACY_URL, SUPPORT_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
 
 /**
- * Je account: waarmee je bent ingelogd, de privacyverklaring, en verwijderen.
+ * Je account: waarmee je bent ingelogd, privacybeleid en voorwaarden, en verwijderen.
  * Verwijderen moet in de app zelf kunnen (App Review 5.1.1(v)), en vraagt
  * een tweede tik omdat het niet terug te draaien is.
  */
@@ -53,7 +53,8 @@ export function Account() {
             We bewaren je e-mailadres, je voorkeuren en wat je in de app doet: weekmenu's, je lijst,
             je voorraadkast en je eigen recepten. Geen advertenties, geen volgsoftware.
           </Tekst>
-          <Link href={PRIVACY_URL}>Privacyverklaring</Link>
+          <Link href={PRIVACY_URL}>Privacybeleid</Link>
+          <Link href={VOORWAARDEN_URL}>Algemene voorwaarden</Link>
           <Link href={SUPPORT_URL}>Hulp en contact</Link>
         </div>
 

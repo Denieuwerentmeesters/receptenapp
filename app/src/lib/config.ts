@@ -13,6 +13,7 @@ export const WEBSITE = 'https://receptenapp.vercel.app'
 
 /** Openbare pagina's in app/public; App Store Connect verwijst naar dezelfde adressen. */
 export const PRIVACY_URL = `${WEBSITE}/privacy.html`
+export const VOORWAARDEN_URL = `${WEBSITE}/voorwaarden.html`
 export const SUPPORT_URL = `${WEBSITE}/support.html`
 
 interface Config {
