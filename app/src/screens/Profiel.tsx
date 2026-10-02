@@ -45,6 +45,7 @@ export function Profiel() {
           pad: '/beoordelen',
         }]
       : []),
+    { label: 'Account', sub: 'Privacy, hulp en account verwijderen', pad: '/account' },
   ]
 
   return (

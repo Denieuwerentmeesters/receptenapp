@@ -296,6 +296,24 @@ aan" — de standaard. Het is een voorkeur, geen filter: de generator weegt de
 gekozen keukens 3× zwaarder, en Ontdekken toont ze eerst (`useOntdek` haalt
 in twee fasen op: voorkeur, dan de rest) en zet hun chips vooraan.
 
+## Account, privacy en de App Store
+
+- **Account verwijderen** zit in Profiel → Account, en loopt via
+  `api/account-verwijderen.ts`. Apple eist dat (5.1.1(v)). De functie draait
+  met `DATABASE_URL`, dus zonder RLS: het user-id komt alleen uit de sessie
+  die Neon Auth bevestigt, nooit uit het verzoek. Eén transactie wist de rij
+  in `gebruiker` (de rest hangt eraan met `on delete cascade`) en het account
+  in `neon_auth."user"`. Goedgekeurd gedeelde recepten blijven, met
+  `user_id` null.
+- **Nieuwe tabel met gebruikersgegevens?** Geef die een
+  `references gebruiker (id) on delete cascade`, anders blijft er na
+  verwijderen iets achter.
+- **Privacyverklaring en support** zijn losse pagina's in `app/public`
+  (`/privacy.html`, `/support.html`); de adressen staan in `src/lib/config.ts`.
+  Bewaart de app iets nieuws of komt er een dienst bij, werk dan de
+  privacyverklaring én de privacyvragen in App Store Connect bij.
+- De rest van de aanmelding staat in `docs/app-store/checklist.md`.
+
 ## Wat er nog niet is
 
 - Prijsindicatie per recept in echte prijzen — er is alleen de klassenschatting

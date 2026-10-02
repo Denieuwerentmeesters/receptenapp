@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button, Woordmerk } from '../ds'
 import { Titel } from '../components/Layout'
 import { logIn, maakAccount } from '../lib/auth'
+import { PRIVACY_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
 
 /**
@@ -108,6 +109,16 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
         >
           {nieuw ? 'Ik heb al een account' : 'Nog geen account? Maak er een'}
         </button>
+
+        <a
+          href={PRIVACY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--c-cream)', opacity: 0.85,
+            textAlign: 'center', textDecoration: 'underline', textUnderlineOffset: 3,
+          }}
+        >Privacyverklaring</a>
       </form>
     </div>
   )

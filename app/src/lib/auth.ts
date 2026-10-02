@@ -1,5 +1,6 @@
 import { createAuthClient, type VanillaBetterAuthClient } from '@neondatabase/auth'
-import { config } from './config'
+import { Capacitor } from '@capacitor/core'
+import { WEBSITE, config } from './config'
 
 /**
  * Identiteit via Neon Auth — dezelfde dienst als de database, geen tweede account.
@@ -89,6 +90,24 @@ export async function logUit(): Promise<void> {
   await authClient().signOut()
   client = null
   tokenCache = null
+}
+
+/**
+ * Verwijdert je account en alles wat erbij hoort (api/account-verwijderen.ts).
+ * Daarna is ook de sessie weg; de opslag op dit toestel ruimen we zelf op,
+ * anders staat je weekmenu nog in de cache van de volgende gebruiker.
+ */
+export async function verwijderAccount(): Promise<void> {
+  const endpoint = Capacitor.isNativePlatform() ? `${WEBSITE}/api/account-verwijderen` : '/api/account-verwijderen'
+  const respons = await fetch(endpoint, { method: 'POST', credentials: 'include' })
+  if (!respons.ok) {
+    const { fout } = (await respons.json().catch(() => ({}))) as { fout?: string }
+    throw new Error(fout ?? 'Verwijderen lukte niet. Probeer het later opnieuw.')
+  }
+  await authClient().signOut().catch(() => undefined)
+  client = null
+  tokenCache = null
+  try { localStorage.clear() } catch { /* geen opslag: niets op te ruimen */ }
 }
 
 let tokenCache: { token: string; verlooptOp: number } | null = null
