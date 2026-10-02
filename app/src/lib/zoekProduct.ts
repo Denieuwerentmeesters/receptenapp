@@ -1,5 +1,5 @@
 import { ingredientKey } from './schaal'
-import { canoniek } from './synoniemen'
+import { canoniek, lijstSleutel } from './synoniemen'
 import type { BoodschapItem } from './database.types'
 
 /*
@@ -107,6 +107,13 @@ function zoekZonderKeuze<P>(
   item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
   mapping: Record<string, P>,
 ): P | undefined {
+  // Een gedroogd kruid krijgt nooit het verse product: liever een zoeklink
+  // dan een bosje koriander waar een potje gemalen koriander bedoeld is.
+  const sleutel = lijstSleutel({ ingredient_key: ingredientKey(item.naam), naam: item.naam })
+  if (sleutel !== canoniek(ingredientKey(item.naam))) {
+    return mapping[sleutel] ?? mapping[sleutel.replace(/^gemalen (.+)$/, '$1poeder')]
+  }
+
   // Eerst de synoniemen: "knoflookteentje" is gewoon knoflook, ook al staat
   // er een aparte sleutel voor een potje teentjes in de mapping.
   const direct = mapping[canoniek(item.ingredient_key)] ?? mapping[canoniek(ingredientKey(item.naam))]

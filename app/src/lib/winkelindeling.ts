@@ -64,7 +64,7 @@ const UITZONDERINGEN: Record<string, Schap> = {
 const REGELS: [Schap, RegExp][] = [
   // Verse peulvruchten, vóór "bonen" bij de conserven.
   ['Groente & aardappelen', /sperziebon|snijbon|tuinbon|sojabon|edamame|sugar ?snap|doperwt/],
-  ['Kruiden & specerijen', /poeder|kruiden|zout|peperkorrel|zwarte peper|witte peper|cayennepeper|kaneel|komijn|kurkuma|nootmuskaat|kardemom|kruidnagel|steranijs|piment|laurier|jeneverbes|karwij|mosterdzaad|korianderzaad|sumak|garam masala|chilivlok|oregano|ras el hanout|za.?atar|saffraan/],
+  ['Kruiden & specerijen', /^gemalen |^gedroogde |poeder|kruiden|zout|peperkorrel|zwarte peper|witte peper|cayennepeper|kaneel|komijn|kurkuma|nootmuskaat|kardemom|kruidnagel|steranijs|piment|laurier|jeneverbes|karwij|mosterdzaad|korianderzaad|sumak|garam masala|chilivlok|oregano|ras el hanout|za.?atar|saffraan/],
   ['Olie, azijn & bouillon', /olie|azijn|balsamico|bouillon/],
   ['Wereldkeuken', /soja ?saus|ketjap|curry|tikka|sambal|vissaus|oestersaus|mirin|miso|gochujang|kimchi|nori|sriracha|sweet chili|teriyaki|tahin|harissa|tamarinde|trassie|seroendeng|kroepoek|ponzu|kokos|laos|gyoza|roti|tortilla|wraps?\b|naan|pita|flatbread|chutney|hot sauce|tabasco|chipotle|zeewier|trassi|nacho/],
   ['Conserven & sauzen', /passata|tomatenpuree|tomatenblok|zongedroogd|geroosterde paprika|zilveruitje|bonen|bonenmix|kikkererwt|linzen|spliterwt|olijven|kappertje|artisjok|pesto|ketchup|mayo|mosterd|saus|hummus|guacamole|worcestershire|maiskorrel|cornichon|augurk/],

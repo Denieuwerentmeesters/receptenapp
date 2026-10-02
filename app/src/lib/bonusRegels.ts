@@ -3,7 +3,7 @@ import { altijdInHuis } from './altijdInHuis'
 import { isDroogKruid } from './kruiden'
 import { schatIngredient } from './prijsschatting'
 import { ingredientKey } from './schaal'
-import { canoniek } from './synoniemen'
+import { lijstSleutel } from './synoniemen'
 import { schapVoor } from './winkelindeling'
 import type { Ingredient } from './database.types'
 
@@ -80,7 +80,7 @@ export function hoofdingredient(ingredienten: Ingredient[]): Ingredient | null {
   let beste: Ingredient | null = null
   let besteScore = -1
   for (const ing of ingredienten) {
-    const key = canoniek(ingredientKey(ing.naam))
+    const key = lijstSleutel({ ingredient_key: ingredientKey(ing.naam), naam: ing.naam })
     if (!key || altijdInHuis(key) || isDroogKruid(key)) continue
     const schap = schapVoor(key)
     const score = (schap === 'Vlees' || schap === 'Vis' ? 1000 : 0) + (schatIngredient(ing) ?? 0)
@@ -112,7 +112,7 @@ export function receptBonusProducten(ingredienten: Ingredient[], bonus: BonusMap
   const gezien = new Set<string>()
   const uit: BonusProduct[] = []
   for (const ing of hoofd ? [hoofd, ...ingredienten] : ingredienten) {
-    const key = canoniek(ingredientKey(ing.naam))
+    const key = lijstSleutel({ ingredient_key: ingredientKey(ing.naam), naam: ing.naam })
     if (!key || gezien.has(key) || altijdInHuis(key) || isDroogKruid(key)) continue
     gezien.add(key)
     const acties = bonusVoor(ing.naam, bonus)

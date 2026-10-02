@@ -2,7 +2,7 @@ import { enkelvoudVormen } from './ah'
 import type { BoodschapItem } from './database.types'
 import { isKruid } from './kruiden'
 import { naarEenheid, type Verpakking } from './eenheden'
-import { canoniek, TENEN } from './synoniemen'
+import { canoniek, lijstSleutel, TENEN } from './synoniemen'
 import { LOOPROUTE, schapVoor, type Schap } from './winkelindeling'
 
 /**
@@ -31,7 +31,8 @@ export interface LijstGroep {
 export function voegSamen(items: BoodschapItem[]): LijstRegel[] {
   const perKey = new Map<string, BoodschapItem[]>()
   for (const item of items) {
-    const key = canoniek(item.ingredient_key)
+    // Vers en gedroogd apart: gemalen koriander hoort niet bij het bosje.
+    const key = lijstSleutel(item)
     const rij = perKey.get(key) ?? []
     rij.push(item)
     perKey.set(key, rij)
