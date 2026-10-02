@@ -14,6 +14,7 @@ import { Recept } from './screens/Recept'
 import { Boodschappen } from './screens/Boodschappen'
 import { Instellingen } from './screens/Instellingen'
 import { Inloggen } from './screens/Inloggen'
+import { Account } from './screens/Account'
 import { Fout, Laden } from './components/Staten'
 import { huidigeSessie } from './lib/auth'
 import { zorgVoorGebruiker } from './lib/gebruiker'
@@ -89,6 +90,7 @@ export default function App() {
         <Route path="/toevoegen" element={<ReceptToevoegen />} />
         <Route path="/beoordelen" element={<Beoordelen />} />
         <Route path="/instellingen" element={<Instellingen />} />
+        <Route path="/account" element={<Account />} />
         <Route path="*" element={<Navigate to="/deze-week" replace />} />
       </Routes>
     </Router>

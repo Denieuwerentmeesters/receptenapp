@@ -1,0 +1,37 @@
+/*
+ * Opmaak voor de losse, openbare pagina's: privacy.html, voorwaarden.html en
+ * support.html. Die staan buiten de app-bundle, dus zonder het design system.
+ *
+ * Twee talen op één pagina: elk blok heeft class "taal" en lang="nl" of
+ * lang="en"; paginas.js zet data-taal op <html> en deze regels verbergen de
+ * andere taal. Zonder JavaScript zie je Nederlands.
+ */
+:root { color-scheme: light; }
+body {
+  margin: 0; background: #FFF6E8; color: #141414;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 16px; line-height: 1.6;
+}
+header { background: #AB2328; color: #FFF6E8; padding: 32px 24px; }
+header > div, main { max-width: 640px; margin: 0 auto; }
+main { padding: 24px 24px 56px; }
+h1 { font-size: 26px; margin: 0; text-transform: uppercase; letter-spacing: .02em; }
+header p { margin: 8px 0 0; opacity: .9; font-size: 14px; }
+h2 { font-size: 18px; margin: 32px 0 8px; color: #AB2328; }
+p, ul { margin: 0 0 12px; }
+ul { padding-left: 20px; }
+a { color: #AB2328; }
+footer { max-width: 640px; margin: 0 auto; padding: 0 24px 40px; font-size: 14px; }
+footer a { margin-right: 16px; }
+
+.talen { display: flex; gap: 8px; margin-top: 16px; }
+.talen button {
+  font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+  padding: 6px 14px; border-radius: 999px;
+  border: 1.5px solid #FFF6E8; background: transparent; color: #FFF6E8;
+}
+html[data-taal="nl"] .talen button[data-kies="nl"],
+html[data-taal="en"] .talen button[data-kies="en"] { background: #FFF6E8; color: #AB2328; }
+
+html[data-taal="nl"] .taal[lang="en"],
+html[data-taal="en"] .taal[lang="nl"] { display: none; }
