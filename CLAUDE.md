@@ -143,6 +143,32 @@ zíjn al huismerk. `kiesVariant` in `src/lib/ah.ts` kiest: bio gaat voor
 huismerk, en ontbreekt de gewenste variant dan de standaard. Bij Jumbo staan
 de handmatige keuzes in `HUISMERK` in `scripts/jumbo_mapping.py`.
 
+## Namen op de lijst: één product, één regel
+
+Recepten schrijven hetzelfde product op tien manieren: "ui", "uien", "ui,
+gesnipperd", "rodewijnazijn", "rode wijnazijn", "kipdijfilet",
+"kippendijfilets". `lijstSleutel` in `src/lib/synoniemen.ts` trekt dat gelijk,
+als laag bovenop `ingredient_key` (die blijft op de drie plekken identiek en
+verandert niet in opgeslagen rijen). De lijst voegt erop samen en de
+voorraadkast vergelijkt ermee; het product zoeken blijft op de naam
+(`zoekProduct`).
+
+- **Achter de komma telt niet**, en een bereiding of portie eromheen ook niet
+  (`BEREIDING`, `VOORAAN`). "Uit blik" blijft wél staan: dat is een ander product.
+- **Enkel- en meervoud** staan in een vaste lijst (`EEN_VORM`), geen regel:
+  zonder woordenboek valt niet te zeggen wat meervoud is. Andere spellingen in
+  `ANDERS_GESPELD`. Zie je twee regels voor hetzelfde product, vul dan een van
+  die twee aan.
+- **Vers en gedroogd blijven apart** (`droogKruid`): gemalen koriander is geen
+  bosje koriander en krijgt nooit het verse product.
+- **Boter is roomboter, ongezouten**, tenzij het recept iets anders zegt.
+- **Voorraadkast** (`inVoorraad`): "Azijn" dekt wijn- en appelazijn, niet
+  rijstazijn of balsamico. Lente-ui is geen ui.
+
+**Wat niet in het mandje komt moet je zien.** Een regel zonder productnummer
+heeft op de lijst een rode regel, staat bij naam boven de mandjeknop en in de
+bevestiging erna; de knop telt alleen wat echt meegaat. Verstop dat niet.
+
 ## Jumbo-koppeling
 
 Kies je in Instellingen voor Jumbo (`gebruiker_voorkeuren.voorkeurswinkel`),

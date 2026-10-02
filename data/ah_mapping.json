@@ -571,8 +571,8 @@
  },
  {
   "key": "boter",
-  "naam": "ah roomboter gezouten",
-  "standaard": 2456,
+  "naam": "ah roomboter ongezouten",
+  "standaard": 127487,
   "bio": 58082
  },
  {
@@ -1521,9 +1521,21 @@
   "bio": null
  },
  {
+  "key": "gezouten boter",
+  "naam": "ah roomboter gezouten",
+  "standaard": 2456,
+  "bio": null
+ },
+ {
   "key": "gezouten pinda",
   "naam": "ah gezouten pinda s",
   "standaard": 467592,
+  "bio": null
+ },
+ {
+  "key": "gezouten roomboter",
+  "naam": "ah roomboter gezouten",
+  "standaard": 2456,
   "bio": null
  },
  {
