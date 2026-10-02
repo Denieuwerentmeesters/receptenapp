@@ -2,7 +2,7 @@ import { enkelvoudVormen } from './ah'
 import type { BoodschapItem } from './database.types'
 import { isKruid } from './kruiden'
 import { naarEenheid, type Verpakking } from './eenheden'
-import { canoniek, lijstSleutel, TENEN } from './synoniemen'
+import { canoniek, droogKruid, lijstSleutel, TENEN } from './synoniemen'
 import { LOOPROUTE, schapVoor, type Schap } from './winkelindeling'
 
 /**
@@ -39,8 +39,14 @@ export function voegSamen(items: BoodschapItem[]): LijstRegel[] {
   }
 
   return [...perKey].map(([key, rij]) => {
-    // Bij een synoniem de gewone naam: "knoflook", niet "knoflooktenen".
-    const naam = rij.find((i) => i.ingredient_key === key)?.naam ?? key
+    // Een rij die zelf zo heet geeft de naam. Anders: bij een synoniem de
+    // gewone naam ("knoflook", niet "knoflooktenen"), en bij alleen een andere
+    // vorm de naam uit het recept ("uien" blijft "uien"), zonder de bereiding.
+    const eerste = rij[0]
+    const naam = rij.find((i) => i.ingredient_key === key)?.naam
+      ?? (canoniek(eerste.ingredient_key) !== eerste.ingredient_key || droogKruid(canoniek(eerste.ingredient_key), eerste.naam)
+        ? key
+        : eerste.naam.replace(/\([^)]*\)/g, ' ').split(',')[0].replace(/\s+/g, ' ').trim() || key)
     return {
       key,
       naam,

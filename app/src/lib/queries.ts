@@ -4,6 +4,7 @@ import { effectieveUserId, gedeeld, useDeeltLijst } from './huishouden'
 import { altijdInHuis } from './altijdInHuis'
 import { DROGE_KRUIDEN_KEY } from './kruiden'
 import { ingredientKey, schaalIngredienten } from './schaal'
+import { lijstSleutel } from './synoniemen'
 import { inVoorraad } from './voorraad'
 import { weekStart } from './week'
 import type { AhProduct, BoodschapItem, JumboProduct, Recept, Voorkeuren } from './database.types'
@@ -211,7 +212,8 @@ export function useLijstActies(week = weekStart()) {
 
       const rijen = schaalIngredienten(r.ingredienten, r.personen, personen)
         .map((ing) => ({ ing, key: ingredientKey(ing.naam) }))
-        .filter(({ key }) => key && !inVoorraad(key, inHuis) && !altijdInHuis(key))
+        .filter(({ ing, key }) => key && !altijdInHuis(key)
+          && !inVoorraad(lijstSleutel({ ingredient_key: key, naam: ing.naam }), inHuis))
         .map(({ ing, key }) => ({
           user_id: id,
           week_start_datum: week,

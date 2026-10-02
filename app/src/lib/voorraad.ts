@@ -1,5 +1,5 @@
 import { enkelvoudVormen } from './ah'
-import { canoniek } from './synoniemen'
+import { BEREIDING, canoniek } from './synoniemen'
 
 /**
  * Soorten die in je voorraadkast onder één naam staan. "Azijn" is de gewone
@@ -13,12 +13,6 @@ function algemeen(key: string): string {
   if (/balsamico azijn$/.test(key)) return key.replace(/balsamico azijn$/, 'balsamicoazijn')
   return key.replace(/\broomboter$/, 'boter')
 }
-
-/**
- * Hoe het recept het wil hebben, achter de naam: "ui, gesnipperd",
- * "boter op kamertemperatuur". Dat blijft hetzelfde product.
- */
-const BEREIDING = / (?:(?:fijn|grof)?(?:gesnipperd|gehakt|gesneden)|gehalveerd|gepeld|geperst|gesmolten|afgekoeld|schoongemaakt|middelgroot|koud|(?:op )?kamertemperatuur|(?:in|om|voor|plus) .+)$/
 
 /** Lente-ui en ingelegde ui zijn geen uien, ook al eindigen ze erop. */
 const ANDER_PRODUCT = /(?:^| )(?:lente|bos|ingelegde|zoetzure) /
@@ -39,6 +33,8 @@ const ANDER_PRODUCT = /(?:^| )(?:lente|bos|ingelegde|zoetzure) /
  */
 export function inVoorraad(key: string, voorraad: ReadonlySet<string>): boolean {
   if (voorraad.size === 0) return false
+  // Het potje is niet het bosje: gemalen koriander staat alleen in de kast als het er zelf staat.
+  if (/^(gemalen|gedroogde) /.test(key)) return voorraad.has(key)
   // De kast in alle vormen: "uien" telt ook als "ui".
   const kast = new Set<string>()
   for (const v of voorraad) {

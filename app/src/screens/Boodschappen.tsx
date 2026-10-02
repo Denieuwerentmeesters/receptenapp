@@ -135,6 +135,10 @@ export function Boodschappen() {
     allergieKeuze(regel.key), allergieRegels, allergieen,
   )
 
+  // Wat wel naar de winkel moet maar geen productnummer heeft, komt niet in
+  // het mandje. Dat moet je vóór en na het doorsturen in één oogopslag zien.
+  const nietGevonden = naarWinkel.filter((r) => !winkel.heeftProduct(voorWinkel(r)))
+
   /**
    * `zonder`: bijzondere kruiden die je volgens de vraag hieronder al in huis
    * hebt. `gevraagd`: die vraag is al gesteld.
@@ -288,6 +292,12 @@ export function Boodschappen() {
                       >
                         {regel.label}
                       </Checkbox>
+                      {nietGevonden.includes(regel) && (
+                        <span style={{
+                          display: 'block', marginLeft: 36, marginTop: 3,
+                          fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
+                        }}>Komt niet in je mandje · koop zelf</span>
+                      )}
                       {!regel.afgevinkt && !blijftThuis(regel.key) && (() => {
                         // "Bonus: 3 voor 4.99 t/m zondag": alleen als tip, het mandje verandert niet.
                         const acties = bonusVoor(regel.naam, bonus.data, regel.key)
@@ -466,10 +476,22 @@ export function Boodschappen() {
                   ))}
                 </div>
               )}
+              {nietGevonden.length > 0 && (
+                <div role="alert" style={{
+                  background: 'var(--c-warm-300)', border: '1.5px solid var(--c-red)',
+                  borderRadius: 'var(--radius-sm)', padding: '10px 12px', margin: '0 0 10px',
+                  fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4,
+                }}>
+                  <strong style={{ color: 'var(--c-red)' }}>
+                    {nietGevonden.length === 1 ? '1 product komt' : `${nietGevonden.length} producten komen`} niet in je mandje:
+                  </strong>{' '}
+                  {nietGevonden.map((r) => r.naam.toLowerCase()).join(', ')}. Koop {nietGevonden.length === 1 ? 'dit' : 'deze'} zelf.
+                </div>
+              )}
               <Button
                 onClick={() => { void naarMandje() }}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-              >{`Naar ${winkel.kort}-mandje (${naarWinkel.length})`}</Button>
+              >{`Naar ${winkel.kort}-mandje (${naarWinkel.length - nietGevonden.length})`}</Button>
               </>
             )}
             <p style={{
@@ -523,8 +545,8 @@ export function Boodschappen() {
           ? `${doorgestuurd.gemapt} product${doorgestuurd.gemapt === 1 ? '' : 'en'} doorgestuurd naar ${winkel.naam}. ` +
             'Zie je ze in je mandje, dan halen we ze van je lijst.' +
             (winkel.id === 'ah' ? ' Is je mandje leeg? Log dan één keer in op ah.nl in Safari en probeer het opnieuw.' : '') +
-            (doorgestuurd.ongemapt > 0
-              ? ` ${doorgestuurd.ongemapt} product${doorgestuurd.ongemapt === 1 ? '' : 'en'} konden we niet bij ${winkel.kort} vinden — die blijven staan.`
+            (doorgestuurd.nietMee.length > 0
+              ? ` LET OP, níét doorgestuurd: ${doorgestuurd.nietMee.join(', ')}. Die blijven op je lijst; koop ze zelf.`
               : '')
           : undefined}
         onSluit={() => setDoorgestuurd(null)}

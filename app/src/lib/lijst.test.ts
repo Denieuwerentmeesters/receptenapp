@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { aantalVerpakkingen, groepeerOpSchap, voegSamen } from './lijst'
+import { ingredientKey } from './schaal'
 import type { BoodschapItem } from './database.types'
 
 let n = 0
@@ -138,5 +139,38 @@ describe('vers en gedroogd', () => {
   test('gedroogde tijm is een potje, tijm een takje', () => {
     expect(regel(met('gedroogde tijm', 'tijm', 1.3, 'tl')).label).toBe('gedroogde tijm')
     expect(regel(met('tijm', 'tijm', 2, 'takjes')).label).toBe('2 takjes tijm')
+  })
+})
+
+describe('één product, één regel', () => {
+  const met = (naam: string, hoeveelheid: number | null = 1, eenheid: string | null = null) =>
+    ({ ...rij(ingredientKey(naam), hoeveelheid, eenheid), naam })
+  const labels = (...namen: string[]) => voegSamen(namen.map((n) => met(n))).map((r) => r.label)
+
+  test('enkel- en meervoud en de bereiding tellen samen', () => {
+    expect(labels('ui', 'uien', 'ui, gesnipperd', 'ui (fijngesneden)')).toEqual(['4 ui'])
+    expect(labels('rode ui', 'rode uien, in ringen')).toEqual(['2 rode ui'])
+    expect(labels('tomaten', 'tomaat')).toEqual(['2 tomaten'])
+    expect(labels('kipfilets', 'kipfilet')).toEqual(['2 kipfilet'])
+  })
+
+  test('alleen het meervoud op de lijst blijft meervoud', () => {
+    expect(labels('uien, gesnipperd')).toEqual(['1 uien'])
+    expect(labels('citroenen')).toEqual(['1 citroenen'])
+  })
+
+  test('andere spelling is hetzelfde product', () => {
+    expect(labels('rodewijnazijn', 'rode wijnazijn')).toHaveLength(1)
+    expect(labels('kipdijfilet', 'kippendijfilets')).toHaveLength(1)
+    expect(labels('lente-ui', 'bosuitjes', 'bosui')).toHaveLength(1)
+    expect(labels('boter', 'roomboter', 'ongezouten roomboter', 'boter, gesmolten', 'koude boter')).toHaveLength(1)
+    expect(labels('kerstomaatjes', 'cherrytomaten')).toHaveLength(1)
+  })
+
+  test('wat echt iets anders is blijft apart', () => {
+    expect(labels('ui', 'rode ui', 'bosui')).toHaveLength(3)
+    expect(labels('tomaten', 'tomaten uit blik', 'zongedroogde tomaten')).toHaveLength(3)
+    expect(labels('roomboter', 'gezouten roomboter', 'kruidenboter')).toHaveLength(3)
+    expect(labels('melk', 'kokosmelk')).toHaveLength(2)
   })
 })
