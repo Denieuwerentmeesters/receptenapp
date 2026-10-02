@@ -24,6 +24,28 @@ const MAAT_VOORAAN = /^(?:gram|kilo|theelepels?|eetlepels?|tl|el|snufje|mespuntj
 /** Kruiden die ook als "…poeder" in recepten staan maar hetzelfde potje zijn. */
 const POEDER_IS_KRUID = /^(kurkuma|komijn|kaneel)poeder$/
 
+/**
+ * Kruiden die vers én gedroogd bestaan. ingredientKey haalt "gemalen" en
+ * "gedroogde" weg, dus de sleutel is voor allebei "koriander" — maar een bosje
+ * verse koriander en een potje gemalen koriander zijn twee producten.
+ */
+const VERS_KRUID = /^(basilicum|peterselie|bieslook|dille|koriander|munt|tijm|rozemarijn|salie|kervel|dragon|marjolein)$/
+const DROOG = /\b(gemalen|gedroogde?)\b/
+
+/**
+ * De sleutel van een regel op de lijst: canoniek, plus het verschil tussen
+ * vers en gedroogd dat ingredientKey kwijtraakt. "gemalen koriander" en
+ * "korianderpoeder" zijn hetzelfde potje; "gedroogde tijm" is geen takje tijm.
+ * De naam beslist, want alleen daar staat het nog in.
+ */
+export function lijstSleutel(item: { ingredient_key: string; naam: string }): string {
+  const key = canoniek(item.ingredient_key)
+  if (key === 'korianderpoeder') return 'gemalen koriander'
+  const droog = item.naam.toLowerCase().match(DROOG)
+  if (!droog || !VERS_KRUID.test(key)) return key
+  return `${droog[1] === 'gemalen' ? 'gemalen' : 'gedroogde'} ${key}`
+}
+
 export function canoniek(ruw: string): string {
   const key = ruw.replace(MAAT_VOORAAN, '').replace(POEDER_IS_KRUID, '$1')
   if (KNOFLOOK.test(key)) return 'knoflook'

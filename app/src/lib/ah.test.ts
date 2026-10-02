@@ -37,3 +37,14 @@ describe('keuze in het recept: de eerste telt', () => {
     ['winterwortel, in blokjes of plakjes', 'Winterwortel'],
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
 })
+
+describe('gedroogd kruid krijgt niet het verse product', () => {
+  const KRUID: Record<string, string> = { koriander: 'Bosje koriander', korianderpoeder: 'Potje koriander', tijm: 'Takjes tijm' }
+  const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, KRUID)
+
+  test.each([
+    ['verse koriander', 'Bosje koriander'], ['koriander', 'Bosje koriander'],
+    ['gemalen koriander', 'Potje koriander'], ['korianderpoeder', 'Potje koriander'],
+    ['tijm', 'Takjes tijm'], ['gedroogde tijm', undefined],
+  ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
+})

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { aantalVerpakkingen, voegSamen } from './lijst'
+import { aantalVerpakkingen, groepeerOpSchap, voegSamen } from './lijst'
 import type { BoodschapItem } from './database.types'
 
 let n = 0
@@ -117,5 +117,26 @@ describe('kruiden op de lijst', () => {
 
   test('gewone producten houden hun hoeveelheid', () => {
     expect(regel(rij('spinazie', 100, 'g'), rij('spinazie', 100, 'g')).label).toBe('200 g spinazie')
+  })
+})
+
+describe('vers en gedroogd', () => {
+  const met = (naam: string, ingredient_key: string, hoeveelheid: number, eenheid: string) =>
+    ({ ...rij(ingredient_key, hoeveelheid, eenheid), naam })
+
+  test('gemalen koriander staat er zonder hoeveelheid, los van het bosje', () => {
+    const regels = voegSamen([
+      met('gemalen koriander', 'koriander', 1.3, 'tl'),
+      met('gemalen koriander', 'koriander', 27, 'g'),
+      met('korianderpoeder', 'korianderpoeder', 1, 'tl'),
+      met('verse koriander', 'koriander', 15, 'g'),
+    ])
+    expect(regels.map((r) => r.label).sort()).toEqual(['15 g verse koriander', 'gemalen koriander'])
+    expect(groepeerOpSchap(regels).map((g) => g.schap)).toEqual(['Verse kruiden', 'Kruiden & specerijen'])
+  })
+
+  test('gedroogde tijm is een potje, tijm een takje', () => {
+    expect(regel(met('gedroogde tijm', 'tijm', 1.3, 'tl')).label).toBe('gedroogde tijm')
+    expect(regel(met('tijm', 'tijm', 2, 'takjes')).label).toBe('2 takjes tijm')
   })
 })
