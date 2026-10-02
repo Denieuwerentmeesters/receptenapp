@@ -38,7 +38,7 @@ export function Bespaard() {
         </div>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
           {lijst.length > 0
-            ? `Minder uitgegeven dan bij ${MAALTIJDBOX.naam}, over ${lijst.length} ` +
+            ? `Minder uitgegeven dan bij bijv. ${MAALTIJDBOX.naam} of Marley Spoon, over ${lijst.length} ` +
               `${lijst.length === 1 ? 'bestelling' : 'bestellingen'}.`
             : `Wat je bespaart ten opzichte van een maaltijdbox als ${MAALTIJDBOX.naam}.`}
         </p>
