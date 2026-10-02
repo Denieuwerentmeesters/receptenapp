@@ -1,7 +1,8 @@
 [
   {
-    "titel": "Chicken katsu curry",
-    "titel_nl": "Kip katsu curry",
+    "titel": "Katsu-curry met krokante kip",
+    "titel_nl": "Katsu-curry met krokante kip",
+    "titel_bron": "Chicken katsu curry",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/chicken/chicken-katsu-curry/",
     "personen": 4,
@@ -126,8 +127,9 @@
     ]
   },
   {
-    "titel": "Veggie pasta bake",
-    "titel_nl": "Vegetarische pasta-ovenschotel",
+    "titel": "Pastaschotel met groenten uit de oven",
+    "titel_nl": "Pastaschotel met groenten uit de oven",
+    "titel_bron": "Veggie pasta bake",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/pasta/veggie-pasta-bake/",
     "personen": 8,
@@ -201,8 +203,9 @@
     ]
   },
   {
-    "titel": "Garlic chicken",
-    "titel_nl": "Knoflookkip",
+    "titel": "Kip met knoflook, kikkererwten en spinazie",
+    "titel_nl": "Kip met knoflook, kikkererwten en spinazie",
+    "titel_bron": "Garlic chicken",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/chicken/garlic-chicken/",
     "personen": 2,
@@ -265,8 +268,9 @@
     ]
   },
   {
-    "titel": "Cajun chicken traybake",
-    "titel_nl": "Cajun-kip uit de oven",
+    "titel": "Cajunkip van de bakplaat",
+    "titel_nl": "Cajunkip van de bakplaat",
+    "titel_bron": "Cajun chicken traybake",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/chicken/cajun-chicken-traybake/",
     "personen": 4,
@@ -334,8 +338,9 @@
     ]
   },
   {
-    "titel": "Loaded beefburger",
-    "titel_nl": "Gevulde runderburger",
+    "titel": "Runderburger met linzen en cheddar",
+    "titel_nl": "Runderburger met linzen en cheddar",
+    "titel_bron": "Loaded beefburger",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/beef/loaded-beefburger/",
     "personen": 4,
@@ -404,8 +409,9 @@
     ]
   },
   {
-    "titel": "Lovely lamb balti",
-    "titel_nl": "Heerlijke lamsbalti",
+    "titel": "Lamsbalti",
+    "titel_nl": "Lamsbalti",
+    "titel_bron": "Lovely lamb balti",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/lamb/lovely-lamb-balti/",
     "personen": 4,
@@ -493,8 +499,9 @@
     ]
   },
   {
-    "titel": "One-pan veggie lasagne",
-    "titel_nl": "Vegetarische lasagne uit één pan",
+    "titel": "Groentelasagne uit één pan",
+    "titel_nl": "Groentelasagne uit één pan",
+    "titel_bron": "One-pan veggie lasagne",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/pasta/one-pan-veggie-lasagne/",
     "personen": 6,
@@ -598,8 +605,9 @@
     ]
   },
   {
-    "titel": "Air-fryer salmon with crispy potatoes",
-    "titel_nl": "Zalm uit de airfryer met krokante aardappeltjes",
+    "titel": "Airfryer-zalm met knapperige aardappeltjes",
+    "titel_nl": "Airfryer-zalm met knapperige aardappeltjes",
+    "titel_bron": "Air-fryer salmon with crispy potatoes",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/fish/air-fryer-salmon-with-crispy-potatoes/",
     "personen": 2,
@@ -658,8 +666,9 @@
     ]
   },
   {
-    "titel": "Sweet pea orecchiette",
-    "titel_nl": "Orecchiette met zoete doperwten",
+    "titel": "Orecchiette met doperwten",
+    "titel_nl": "Orecchiette met doperwten",
+    "titel_bron": "Sweet pea orecchiette",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/pasta/sweet-pea-orecchiette/",
     "personen": 4,
@@ -723,8 +732,9 @@
     ]
   },
   {
-    "titel": "Magic baked chicken fried rice",
-    "titel_nl": "Magische gebakken rijst met kip uit de oven",
+    "titel": "Gebakken rijst met kip uit de oven",
+    "titel_nl": "Gebakken rijst met kip uit de oven",
+    "titel_bron": "Magic baked chicken fried rice",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/rice/magic-baked-chicken-fried-rice/",
     "personen": 4,
@@ -813,8 +823,9 @@
     ]
   },
   {
-    "titel": "Spinach, feta & lemon filo pie",
-    "titel_nl": "Filotaart met spinazie, feta en citroen",
+    "titel": "Filodeegtaart met spinazie, feta en citroen",
+    "titel_nl": "Filodeegtaart met spinazie, feta en citroen",
+    "titel_bron": "Spinach, feta & lemon filo pie",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/vegetables/spinach-feta-and-lemon-filo-pie/",
     "personen": 8,
@@ -902,8 +913,9 @@
     ]
   },
   {
-    "titel": "Fantastic fish skewers",
-    "titel_nl": "Fantastische visspiesen",
+    "titel": "Visspiesen",
+    "titel_nl": "Visspiesen",
+    "titel_bron": "Fantastic fish skewers",
     "bron": "Jamie Oliver",
     "url": "https://www.jamieoliver.com/recipes/fish/fantastic-fish-skewers/",
     "personen": 4,
@@ -981,8 +993,9 @@
     ]
   },
   {
-    "titel": "Pasta recept in 15 minuten: Pasta met citroen",
-    "titel_nl": "Pasta met citroen",
+    "titel": "Citroenpasta in 15 minuten",
+    "titel_nl": "Citroenpasta in 15 minuten",
+    "titel_bron": "Pasta recept in 15 minuten: Pasta met citroen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-recept-in-15-minuten-pasta-met-citroen/",
     "personen": 4,
@@ -1035,8 +1048,9 @@
     ]
   },
   {
-    "titel": "Ajam smoor - Indische ketjap kip",
-    "titel_nl": "Ajam smoor - Indische ketjap kip",
+    "titel": "Indische smoorkip in ketjapsaus",
+    "titel_nl": "Indische smoorkip in ketjapsaus",
+    "titel_bron": "Ajam smoor - Indische ketjap kip",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ajam-smoor-indische-ketjap-kip/",
     "personen": 4,
@@ -1144,8 +1158,9 @@
     ]
   },
   {
-    "titel": "Pasta met spinazie en bacon - eenpansgerecht",
-    "titel_nl": "Pasta met spinazie en bacon - eenpansgerecht",
+    "titel": "Eenpanspasta met spinazie en bacon",
+    "titel_nl": "Eenpanspasta met spinazie en bacon",
+    "titel_bron": "Pasta met spinazie en bacon - eenpansgerecht",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-met-spinazie-en-bacon-eenpansgerecht/",
     "personen": 4,
@@ -1198,8 +1213,9 @@
     ]
   },
   {
-    "titel": "Kipstoof: een winterse maaltijd",
-    "titel_nl": "Kipstoof: een winterse maaltijd",
+    "titel": "Winterse stoofpot met kip",
+    "titel_nl": "Winterse stoofpot met kip",
+    "titel_bron": "Kipstoof: een winterse maaltijd",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kipstoof-een-winterse-maaltijd/",
     "personen": 4,
@@ -1292,8 +1308,9 @@
     ]
   },
   {
-    "titel": "Zalmburgers in een krokant jasje, met pittige saus",
-    "titel_nl": "Zalmburgers in een krokant jasje, met pittige saus",
+    "titel": "Krokante zalmburgers met pittige saus",
+    "titel_nl": "Krokante zalmburgers met pittige saus",
+    "titel_bron": "Zalmburgers in een krokant jasje, met pittige saus",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/zalmburgers-recept/",
     "personen": 2,
@@ -1366,8 +1383,9 @@
     ]
   },
   {
-    "titel": "Gezonde traybake met zalm",
-    "titel_nl": "Gezonde traybake met zalm",
+    "titel": "Zalm met aardappel, courgette en broccoli van de bakplaat",
+    "titel_nl": "Zalm met aardappel, courgette en broccoli van de bakplaat",
+    "titel_bron": "Gezonde traybake met zalm",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gezonde-traybake-met-zalm/",
     "personen": 4,
@@ -1441,8 +1459,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht: Thaise curry met kikkererwten (vega)",
-    "titel_nl": "Vegetarische Thaise curry met kikkererwten",
+    "titel": "Thaise kikkererwtencurry uit één pan (vega)",
+    "titel_nl": "Thaise kikkererwtencurry uit één pan (vega)",
+    "titel_bron": "Eenpansgerecht: Thaise curry met kikkererwten (vega)",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/vegetarische-thaise-curry-met-kikkererwten/",
     "personen": 2,
@@ -1526,8 +1545,9 @@
     ]
   },
   {
-    "titel": "Thaise groene curry met garnalen - Makkelijk recept",
-    "titel_nl": "Thaise groene curry met garnalen",
+    "titel": "Groene Thaise garnalencurry",
+    "titel_nl": "Groene Thaise garnalencurry",
+    "titel_bron": "Thaise groene curry met garnalen - Makkelijk recept",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/thaise-groene-curry-met-garnalen-makkelijk-recept/",
     "personen": 4,
@@ -1591,8 +1611,9 @@
     ]
   },
   {
-    "titel": "Kip met rijst: een Aziatische twist",
-    "titel_nl": "Kip met rijst: een Aziatische twist",
+    "titel": "Aziatische kip met rijst",
+    "titel_nl": "Aziatische kip met rijst",
+    "titel_bron": "Kip met rijst: een Aziatische twist",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kip-met-rijst-een-aziatische-twist/",
     "personen": 4,
@@ -1695,8 +1716,9 @@
     ]
   },
   {
-    "titel": "Curry met zoete aardappel en kikkererwten",
-    "titel_nl": "Curry met zoete aardappel en kikkererwten",
+    "titel": "Kikkererwtencurry met zoete aardappel",
+    "titel_nl": "Kikkererwtencurry met zoete aardappel",
+    "titel_bron": "Curry met zoete aardappel en kikkererwten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/budget-koken-curry-van-zoete-aardappel-en-kikkererwten/",
     "personen": 8,
@@ -1825,8 +1847,9 @@
     ]
   },
   {
-    "titel": "De ultieme lasagne",
-    "titel_nl": "De ultieme lasagne",
+    "titel": "Lasagne bolognese met ricotta en mozzarella",
+    "titel_nl": "Lasagne bolognese met ricotta en mozzarella",
+    "titel_bron": "De ultieme lasagne",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/de-ultieme-lasagne/",
     "personen": 6,
@@ -1905,8 +1928,9 @@
     ]
   },
   {
-    "titel": "Koffie stoofvlees met pasta en gremolata",
-    "titel_nl": "Koffie stoofvlees met pasta en gremolata",
+    "titel": "Stoofvlees met koffie, pasta en gremolata",
+    "titel_nl": "Stoofvlees met koffie, pasta en gremolata",
+    "titel_bron": "Koffie stoofvlees met pasta en gremolata",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/koffie-stoofvlees-met-pasta-en-gremolata/",
     "personen": 4,
@@ -2088,8 +2112,9 @@
     ]
   },
   {
-    "titel": "Aardbei burrata salade",
-    "titel_nl": "Aardbei-burratasalade",
+    "titel": "Salade met aardbei en burrata",
+    "titel_nl": "Salade met aardbei en burrata",
+    "titel_bron": "Aardbei burrata salade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/aardbei-burrata-salade/",
     "personen": 4,
@@ -2377,8 +2402,9 @@
     ]
   },
   {
-    "titel": "Airfryer Quesadilla's met kruidensla",
-    "titel_nl": "Airfryer-quesadilla's met kruidensla",
+    "titel": "Quesadilla's uit de airfryer met kruidensla",
+    "titel_nl": "Quesadilla's uit de airfryer met kruidensla",
+    "titel_bron": "Airfryer Quesadilla's met kruidensla",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/airfryer-quesadillas-met-kruidensla/",
     "personen": 2,
@@ -2518,8 +2544,9 @@
     ]
   },
   {
-    "titel": "Aubergine Schnitzels",
-    "titel_nl": "Auberginschnitzels",
+    "titel": "Schnitzels van aubergine",
+    "titel_nl": "Schnitzels van aubergine",
+    "titel_bron": "Aubergine Schnitzels",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/aubergine-schnitzel/",
     "personen": 4,
@@ -2618,8 +2645,9 @@
     ]
   },
   {
-    "titel": "Auberginestoof met geroosterde kip uit de Airfryer",
-    "titel_nl": "Auberginestoof met geroosterde kip uit de airfryer",
+    "titel": "Auberginestoof met kip uit de airfryer",
+    "titel_nl": "Auberginestoof met kip uit de airfryer",
+    "titel_bron": "Auberginestoof met geroosterde kip uit de Airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/auberginestoof-met-geroosterde-kip-uit-de-airfryer/",
     "personen": 2,
@@ -2805,8 +2833,9 @@
     ]
   },
   {
-    "titel": "Babi Pangang",
-    "titel_nl": "Babi pangang",
+    "titel": "Babi pangang met zoete ananassaus",
+    "titel_nl": "Babi pangang met zoete ananassaus",
+    "titel_bron": "Babi Pangang",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/babi-pangang/",
     "personen": 6,
@@ -2925,8 +2954,9 @@
     ]
   },
   {
-    "titel": "Balinese saté babi met sambal mbe",
-    "titel_nl": "Balinese saté babi met sambal mbe",
+    "titel": "Saté babi op Balinese wijze met sambal mbe",
+    "titel_nl": "Saté babi op Balinese wijze met sambal mbe",
+    "titel_bron": "Balinese saté babi met sambal mbe",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/balinese-sate-babi-met-sambal-mbe/",
     "personen": null,
@@ -3035,8 +3065,9 @@
     ]
   },
   {
-    "titel": "Basis aspergesoep",
-    "titel_nl": "Basis aspergesoep",
+    "titel": "Eenvoudige soep van witte asperges",
+    "titel_nl": "Eenvoudige soep van witte asperges",
+    "titel_bron": "Basis aspergesoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/basis-aspergesoep/",
     "personen": 4,
@@ -3080,8 +3111,9 @@
     ]
   },
   {
-    "titel": "BBQ spiesjes met coquilles & garnalen en een limoendressing",
-    "titel_nl": "BBQ-spiesen met coquilles, reuzegarnalen en limoendressing",
+    "titel": "Bbq-spiesen met coquilles en garnalen in limoendressing",
+    "titel_nl": "Bbq-spiesen met coquilles en garnalen in limoendressing",
+    "titel_bron": "BBQ spiesjes met coquilles & garnalen en een limoendressing",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/bbq-spiesen-met-coquilles-reuzegarnalen-dressing-van-limoen/",
     "personen": 4,
@@ -3145,8 +3177,9 @@
     ]
   },
   {
-    "titel": "Beef Wellington met ossenhaas recept",
-    "titel_nl": "Beef Wellington met ossenhaas",
+    "titel": "Beef Wellington van ossenhaas",
+    "titel_nl": "Beef Wellington van ossenhaas",
+    "titel_bron": "Beef Wellington met ossenhaas recept",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/beef-wellington-met-ossenhaas-recept/",
     "personen": 8,
@@ -3246,8 +3279,9 @@
     ]
   },
   {
-    "titel": "Beenham uit de oven met kruidnagel & cranberry-portglazuur",
-    "titel_nl": "Beenham uit de oven met kruidnagel en cranberry-portglazuur",
+    "titel": "Ovenbeenham met kruidnagel en glazuur van cranberry en port",
+    "titel_nl": "Ovenbeenham met kruidnagel en glazuur van cranberry en port",
+    "titel_bron": "Beenham uit de oven met kruidnagel & cranberry-portglazuur",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/beenham-uit-de-oven-met-kruidnagel-cranberry-portglazuur/",
     "personen": 8,
@@ -3312,8 +3346,9 @@
     ]
   },
   {
-    "titel": "Beet Wellington: een vegetarische variant op Beef Wellington",
-    "titel_nl": "Beet Wellington (vegetarische variant)",
+    "titel": "Beet Wellington: Wellington met biet",
+    "titel_nl": "Beet Wellington: Wellington met biet",
+    "titel_bron": "Beet Wellington: een vegetarische variant op Beef Wellington",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/beet-wellington-een-vegetarische-variant-op-beef-wellington/",
     "personen": 4,
@@ -3393,8 +3428,9 @@
     ]
   },
   {
-    "titel": "Biersoep met venkel",
-    "titel_nl": "Biersoep met venkel",
+    "titel": "Venkelsoep met donker bier",
+    "titel_nl": "Venkelsoep met donker bier",
+    "titel_bron": "Biersoep met venkel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/biersoep-met-venkel/",
     "personen": 6,
@@ -3477,8 +3513,9 @@
     ]
   },
   {
-    "titel": "Birria taco's",
-    "titel_nl": "Birria-taco's",
+    "titel": "Taco's met birria",
+    "titel_nl": "Taco's met birria",
+    "titel_bron": "Birria taco's",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/birria-tacos/",
     "personen": null,
@@ -3577,8 +3614,9 @@
     ]
   },
   {
-    "titel": "Boerenkoolrisotto",
-    "titel_nl": "Boerenkoolrisotto",
+    "titel": "Risotto met boerenkool en blauwe kaas",
+    "titel_nl": "Risotto met boerenkool en blauwe kaas",
+    "titel_bron": "Boerenkoolrisotto",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/boerenkoolrisotto/",
     "personen": null,
@@ -3806,8 +3844,9 @@
     ]
   },
   {
-    "titel": "Broccoli pasta met mozzarella en citroen",
-    "titel_nl": "Broccolipasta met mozzarella en citroen",
+    "titel": "Pasta met broccoli, mozzarella en citroen",
+    "titel_nl": "Pasta met broccoli, mozzarella en citroen",
+    "titel_bron": "Broccoli pasta met mozzarella en citroen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/broccoli-pasta-met-mozzarella-en-citroen/",
     "personen": 4,
@@ -3881,8 +3920,9 @@
     ]
   },
   {
-    "titel": "Burrito met kip, zwarte bonen en tomatensalsa",
-    "titel_nl": "Burrito met kip, zwarte bonen en tomatensalsa",
+    "titel": "Kipburrito met zwarte bonen en tomatensalsa",
+    "titel_nl": "Kipburrito met zwarte bonen en tomatensalsa",
+    "titel_bron": "Burrito met kip, zwarte bonen en tomatensalsa",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/burrito-met-kip-zwarte-bonen-en-tomatensla/",
     "personen": 4,
@@ -3986,8 +4026,9 @@
     ]
   },
   {
-    "titel": "Burrito's",
-    "titel_nl": "Burrito's met rundergehakt",
+    "titel": "Burrito's met gehakt",
+    "titel_nl": "Burrito's met gehakt",
+    "titel_bron": "Burrito's",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/burrito-recept/",
     "personen": 4,
@@ -4101,8 +4142,9 @@
     ]
   },
   {
-    "titel": "Caesar pasta salade",
-    "titel_nl": "Caesar pastasalade",
+    "titel": "Pastasalade in caesarstijl",
+    "titel_nl": "Pastasalade in caesarstijl",
+    "titel_bron": "Caesar pasta salade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/caesar-pasta-salade/",
     "personen": 4,
@@ -4237,8 +4279,9 @@
     ]
   },
   {
-    "titel": "Caesar salade met een twist: geroosterde little gem & crispy kipschnitzel",
-    "titel_nl": "Caesarsalade met geroosterde little gem en crispy kipschnitzel",
+    "titel": "Caesarsalade met krokante kipschnitzel en geroosterde little gem",
+    "titel_nl": "Caesarsalade met krokante kipschnitzel en geroosterde little gem",
+    "titel_bron": "Caesar salade met een twist: geroosterde little gem & crispy kipschnitzel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/caesar-salade-met-een-twist-geroosterde-little-gem-crispy-kipschnitzel/",
     "personen": 2,
@@ -4503,8 +4546,9 @@
     ]
   },
   {
-    "titel": "Cheezy Eenpans Lasagne",
-    "titel_nl": "Cheezy eenpans lasagne",
+    "titel": "Lasagne met veel kaas uit één pan",
+    "titel_nl": "Lasagne met veel kaas uit één pan",
+    "titel_bron": "Cheezy Eenpans Lasagne",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/cheezy-eenpans-lasagne/",
     "personen": 4,
@@ -4657,8 +4701,9 @@
     ]
   },
   {
-    "titel": "Chili con carne met koffie",
-    "titel_nl": "Chili con carne met koffie",
+    "titel": "Chili con carne met een scheut koffie",
+    "titel_nl": "Chili con carne met een scheut koffie",
+    "titel_bron": "Chili con carne met koffie",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/chili-con-carne/",
     "personen": 4,
@@ -5429,8 +5474,9 @@
     ]
   },
   {
-    "titel": "Courgette lasagne",
-    "titel_nl": "Courgette lasagne",
+    "titel": "Lasagne van courgette met ricotta en spinazie",
+    "titel_nl": "Lasagne van courgette met ricotta en spinazie",
+    "titel_bron": "Courgette lasagne",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/courgette-lasagne-recept/",
     "personen": 2,
@@ -5660,8 +5706,9 @@
     ]
   },
   {
-    "titel": "Courgettesoep met Hollandse garnalen",
-    "titel_nl": "Courgettesoep met Hollandse garnalen",
+    "titel": "Soep van courgette met Hollandse garnalen",
+    "titel_nl": "Soep van courgette met Hollandse garnalen",
+    "titel_bron": "Courgettesoep met Hollandse garnalen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/courgettesoep-met-hollandse-garnalen-recept/",
     "personen": 4,
@@ -5799,8 +5846,9 @@
     ]
   },
   {
-    "titel": "Crispy zalm bowl",
-    "titel_nl": "Crispy zalm bowl",
+    "titel": "Rijstbowl met krokante zalm en avocado",
+    "titel_nl": "Rijstbowl met krokante zalm en avocado",
+    "titel_bron": "Crispy zalm bowl",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/crispy-zalm-bowl/",
     "personen": 4,
@@ -5885,8 +5933,9 @@
     ]
   },
   {
-    "titel": "Croque Monsieur",
-    "titel_nl": "Croque monsieur",
+    "titel": "Croque monsieur met bechamel",
+    "titel_nl": "Croque monsieur met bechamel",
+    "titel_bron": "Croque Monsieur",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/croque-monsieur/",
     "personen": 2,
@@ -5955,8 +6004,9 @@
     ]
   },
   {
-    "titel": "Crunchy wrap met kipgehakt",
-    "titel_nl": "Crunchy wrap met kipgehakt",
+    "titel": "Krokante wrap met kipgehakt",
+    "titel_nl": "Krokante wrap met kipgehakt",
+    "titel_bron": "Crunchy wrap met kipgehakt",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/crunchy-wrap-met-kipgehakt/",
     "personen": 4,
@@ -6035,8 +6085,9 @@
     ]
   },
   {
-    "titel": "Curry met kipballetjes en volop proteïne",
-    "titel_nl": "Curry met kipballetjes en volop proteïne",
+    "titel": "Eiwitrijke curry met kipballetjes",
+    "titel_nl": "Eiwitrijke curry met kipballetjes",
+    "titel_bron": "Curry met kipballetjes en volop proteïne",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/curry-met-kipballetjes-en-volop-proteine/",
     "personen": 4,
@@ -6228,8 +6279,9 @@
     ]
   },
   {
-    "titel": "De makkelijkste romige groene pasta ooit",
-    "titel_nl": "De makkelijkste romige groene pasta ooit",
+    "titel": "Snelle romige groene pasta",
+    "titel_nl": "Snelle romige groene pasta",
+    "titel_bron": "De makkelijkste romige groene pasta ooit",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/de-makkelijkste-pasta-ooit-in-een-pan/",
     "personen": null,
@@ -6359,8 +6411,9 @@
     ]
   },
   {
-    "titel": "Eenvoudig nasi goreng recept",
-    "titel_nl": "Eenvoudig nasi goreng recept",
+    "titel": "Simpele nasi goreng",
+    "titel_nl": "Simpele nasi goreng",
+    "titel_bron": "Eenvoudig nasi goreng recept",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/de-perfecte-nasi-goreng-om-thuis-te-maken/",
     "personen": 4,
@@ -6610,8 +6663,9 @@
     ]
   },
   {
-    "titel": "Eenpans curry noedels binnen 15 minuten",
-    "titel_nl": "Eenpans curry noedels binnen 15 minuten",
+    "titel": "Currynoedels uit één pan in 15 minuten",
+    "titel_nl": "Currynoedels uit één pan in 15 minuten",
+    "titel_bron": "Eenpans curry noedels binnen 15 minuten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpans-curry-noedels-binnen-15-minuten/",
     "personen": 4,
@@ -6685,8 +6739,9 @@
     ]
   },
   {
-    "titel": "Eenpans-doperwtenstoof met lam",
-    "titel_nl": "Eenpans-doperwtenstoof met lam",
+    "titel": "Lamsstoof met doperwten uit één pan",
+    "titel_nl": "Lamsstoof met doperwten uit één pan",
+    "titel_bron": "Eenpans-doperwtenstoof met lam",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpans-doperwtenstoof-met-lam/",
     "personen": 4,
@@ -6786,8 +6841,9 @@
     ]
   },
   {
-    "titel": "Eenpans pasta pesto",
-    "titel_nl": "Eenpans pasta pesto",
+    "titel": "Farfalle met pesto, kip en broccoli uit één pan",
+    "titel_nl": "Farfalle met pesto, kip en broccoli uit één pan",
+    "titel_bron": "Eenpans pasta pesto",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpans-pasta-pesto/",
     "personen": 4,
@@ -6931,8 +6987,9 @@
     ]
   },
   {
-    "titel": "Eenpans romige groentesoep",
-    "titel_nl": "Eenpans romige groentesoep",
+    "titel": "Romige groentesoep uit één pan",
+    "titel_nl": "Romige groentesoep uit één pan",
+    "titel_bron": "Eenpans romige groentesoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpans-romige-groentesoep/",
     "personen": 6,
@@ -7032,8 +7089,9 @@
     ]
   },
   {
-    "titel": "Eenpans tandoori",
-    "titel_nl": "Eenpans tandoori",
+    "titel": "Tandoori-kip uit één pan",
+    "titel_nl": "Tandoori-kip uit één pan",
+    "titel_bron": "Eenpans tandoori",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpans-tandoori/",
     "personen": 4,
@@ -7139,8 +7197,9 @@
     ]
   },
   {
-    "titel": "Eenpans udon noedels met garnalen",
-    "titel_nl": "Eenpans udon noedels met garnalen",
+    "titel": "Udonnoedels met garnalen uit één pan",
+    "titel_nl": "Udonnoedels met garnalen uit één pan",
+    "titel_bron": "Eenpans udon noedels met garnalen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpans-udon-noedels-met-garnalen/",
     "personen": 4,
@@ -7215,8 +7274,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht creamy orzo",
-    "titel_nl": "Eenpansgerecht creamy orzo",
+    "titel": "Romige orzo met kikkererwten uit één pan",
+    "titel_nl": "Romige orzo met kikkererwten uit één pan",
+    "titel_bron": "Eenpansgerecht creamy orzo",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansgerecht-creamy-orzo/",
     "personen": 4,
@@ -7304,8 +7364,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht enchiladas",
-    "titel_nl": "Eenpansgerecht enchiladas",
+    "titel": "Kip-enchiladas uit één pan",
+    "titel_nl": "Kip-enchiladas uit één pan",
+    "titel_bron": "Eenpansgerecht enchiladas",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansgerecht-enchiladas/",
     "personen": 4,
@@ -7393,8 +7454,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht met orzo en zalm",
-    "titel_nl": "Eenpansgerecht met orzo en zalm",
+    "titel": "Orzo met zalm uit één pan",
+    "titel_nl": "Orzo met zalm uit één pan",
+    "titel_bron": "Eenpansgerecht met orzo en zalm",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansgerecht-met-orzo-en-zalm/",
     "personen": 4,
@@ -7473,8 +7535,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht met rigatoni, chorizo en mozzarella",
-    "titel_nl": "Eenpansgerecht met rigatoni, chorizo en mozzarella",
+    "titel": "Rigatoni met chorizo en mozzarella uit één pan",
+    "titel_nl": "Rigatoni met chorizo en mozzarella uit één pan",
+    "titel_bron": "Eenpansgerecht met rigatoni, chorizo en mozzarella",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansgerecht-met-rigatoni-chorizo-en-mozzarella/",
     "personen": 4,
@@ -7552,8 +7615,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht pompoen pasta",
-    "titel_nl": "Eenpansgerecht pompoen pasta",
+    "titel": "Pompoenpasta met 'nduja uit één pan",
+    "titel_nl": "Pompoenpasta met 'nduja uit één pan",
+    "titel_bron": "Eenpansgerecht pompoen pasta",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansgerecht-pompoen-pasta/",
     "personen": 4,
@@ -7642,8 +7706,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht romige kip cajun",
-    "titel_nl": "Eenpansgerecht romige kip cajun",
+    "titel": "Romige cajunkip uit één pan",
+    "titel_nl": "Romige cajunkip uit één pan",
+    "titel_bron": "Eenpansgerecht romige kip cajun",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansgerecht-romige-kip-cajun/",
     "personen": 4,
@@ -7738,8 +7803,9 @@
     ]
   },
   {
-    "titel": "Eenpansgerecht romige pasta met prei en burrata",
-    "titel_nl": "Eenpansgerecht romige pasta met prei en burrata",
+    "titel": "Romige pasta met prei en burrata uit één pan",
+    "titel_nl": "Romige pasta met prei en burrata uit één pan",
+    "titel_bron": "Eenpansgerecht romige pasta met prei en burrata",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansgerecht-romige-pasta-met-prei-en-burrata/",
     "personen": 4,
@@ -7832,8 +7898,9 @@
     ]
   },
   {
-    "titel": "Eenpanslasagne met kip, broccoli en kaas",
-    "titel_nl": "Eenpanslasagne met kip, broccoli en kaas",
+    "titel": "Lasagne met kip, broccoli en kaas uit één pan",
+    "titel_nl": "Lasagne met kip, broccoli en kaas uit één pan",
+    "titel_bron": "Eenpanslasagne met kip, broccoli en kaas",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpanslasagne-met-kip-broccoli-en-kaas/",
     "personen": 4,
@@ -7928,8 +7995,9 @@
     ]
   },
   {
-    "titel": "Eenpanspasta bolognese uit de airfryer",
-    "titel_nl": "Eenpanspasta bolognese uit de airfryer",
+    "titel": "Airfryer-pasta bolognese uit één bak",
+    "titel_nl": "Airfryer-pasta bolognese uit één bak",
+    "titel_bron": "Eenpanspasta bolognese uit de airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpanspasta-bolognese-uit-de-airfryer/",
     "personen": 4,
@@ -8028,8 +8096,9 @@
     ]
   },
   {
-    "titel": "Eenpanspasta: orecchiette met feta en olijven",
-    "titel_nl": "Eenpanspasta: orecchiette met feta en olijven",
+    "titel": "Orecchiette met feta en olijven uit één pan",
+    "titel_nl": "Orecchiette met feta en olijven uit één pan",
+    "titel_bron": "Eenpanspasta: orecchiette met feta en olijven",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpanspasta-orechiette-met-feta-en-olijven/",
     "personen": 4,
@@ -8119,8 +8188,9 @@
     ]
   },
   {
-    "titel": "Eenpansrijst met kipsate",
-    "titel_nl": "Eenpansrijst met kipsaté",
+    "titel": "Rijst met kipsaté uit één pan",
+    "titel_nl": "Rijst met kipsaté uit één pan",
+    "titel_bron": "Eenpansrijst met kipsate",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eenpansrijst-met-kipsate/",
     "personen": 4,
@@ -8241,8 +8311,9 @@
     ]
   },
   {
-    "titel": "Eikhaassteak met polenta en regenboog snijbiet",
-    "titel_nl": "Eikhaassteak met polenta en regenboog snijbiet",
+    "titel": "Steak van eikhaas met polenta en regenboogsnijbiet",
+    "titel_nl": "Steak van eikhaas met polenta en regenboogsnijbiet",
+    "titel_bron": "Eikhaassteak met polenta en regenboog snijbiet",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eikhaassteak-met-polenta-en-regenboog-snijbiet/",
     "personen": 4,
@@ -8310,8 +8381,9 @@
     ]
   },
   {
-    "titel": "Eiwitrijke romige tomatensoep",
-    "titel_nl": "Eiwitrijke romige tomatensoep",
+    "titel": "Romige tomatensoep met extra eiwit",
+    "titel_nl": "Romige tomatensoep met extra eiwit",
+    "titel_bron": "Eiwitrijke romige tomatensoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eiwitrijke-romige-tomatensoep/",
     "personen": 4,
@@ -8611,8 +8683,9 @@
     ]
   },
   {
-    "titel": "Rijstnoedels met koolsalade en bouillon",
-    "titel_nl": "Rijstnoedels met koolsalade en bouillon",
+    "titel": "Rijstnoedels in bouillon met koolsalade",
+    "titel_nl": "Rijstnoedels in bouillon met koolsalade",
+    "titel_bron": "Rijstnoedels met koolsalade en bouillon",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/exclusief-voor-jou-rijstnoedels-met-bouillon/",
     "personen": 4,
@@ -8696,8 +8769,9 @@
     ]
   },
   {
-    "titel": "Fajitas met bavette",
-    "titel_nl": "Fajitas met bavette",
+    "titel": "Bavette-fajitas met paprika",
+    "titel_nl": "Bavette-fajitas met paprika",
+    "titel_bron": "Fajitas met bavette",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/fajitas-met-bavette/",
     "personen": 4,
@@ -8812,8 +8886,9 @@
     ]
   },
   {
-    "titel": "Fajitas met kip uit de airfryer",
-    "titel_nl": "Fajitas met kip uit de airfryer",
+    "titel": "Airfryer-fajitas met kip",
+    "titel_nl": "Airfryer-fajitas met kip",
+    "titel_bron": "Fajitas met kip uit de airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/fajitas-met-kip-uit-de-airfryer/",
     "personen": 2,
@@ -9231,8 +9306,9 @@
     ]
   },
   {
-    "titel": "Foe yong hai",
-    "titel_nl": "Foe yong hai",
+    "titel": "Foe yong hai met kip en groenten",
+    "titel_nl": "Foe yong hai met kip en groenten",
+    "titel_bron": "Foe yong hai",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/foe-yong-hai/",
     "personen": 4,
@@ -9362,8 +9438,9 @@
     ]
   },
   {
-    "titel": "French onion pasta",
-    "titel_nl": "French onion pasta",
+    "titel": "Pasta in de stijl van Franse uiensoep",
+    "titel_nl": "Pasta in de stijl van Franse uiensoep",
+    "titel_bron": "French onion pasta",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/french-onion-pasta/",
     "personen": 4,
@@ -9454,8 +9531,9 @@
     ]
   },
   {
-    "titel": "Frisse Aziatische omelet met garnalen",
-    "titel_nl": "Frisse Aziatische omelet met garnalen",
+    "titel": "Aziatische garnalenomelet, lekker fris",
+    "titel_nl": "Aziatische garnalenomelet, lekker fris",
+    "titel_bron": "Frisse Aziatische omelet met garnalen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/frisse-aziatische-omelet-met-garnalen/",
     "personen": 2,
@@ -9520,8 +9598,9 @@
     ]
   },
   {
-    "titel": "Frisse Thaise noedelsalade",
-    "titel_nl": "Frisse Thaise noedelsalade",
+    "titel": "Thaise noedelsalade met kip en verse kruiden",
+    "titel_nl": "Thaise noedelsalade met kip en verse kruiden",
+    "titel_bron": "Frisse Thaise noedelsalade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/frisse-thaise-noedelsalade/",
     "personen": 4,
@@ -9631,8 +9710,9 @@
     ]
   },
   {
-    "titel": "Gado gado look-a-like met edamame",
-    "titel_nl": "Gado gado look-a-like met edamame",
+    "titel": "Salade in gado-gadostijl met edamame",
+    "titel_nl": "Salade in gado-gadostijl met edamame",
+    "titel_bron": "Gado gado look-a-like met edamame",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gado-gado-look-a-like-met-edamame/",
     "personen": 4,
@@ -9747,8 +9827,9 @@
     ]
   },
   {
-    "titel": "Gamba spiesjes met frisse mais-avocadosalade van de bbq",
-    "titel_nl": "Gamba spiesjes met frisse mais-avocadosalade van de bbq",
+    "titel": "Gambaspiesjes van de bbq met mais-avocadosalade",
+    "titel_nl": "Gambaspiesjes van de bbq met mais-avocadosalade",
+    "titel_bron": "Gamba spiesjes met frisse mais-avocadosalade van de bbq",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gamba-spiesjes-met-frisse-mais-avocadosalade-van-de-bbq/",
     "personen": null,
@@ -9838,8 +9919,9 @@
     ]
   },
   {
-    "titel": "Gambas van de barbecue",
-    "titel_nl": "Gambas van de barbecue",
+    "titel": "Gegrilde gamba's van de bbq",
+    "titel_nl": "Gegrilde gamba's van de bbq",
+    "titel_bron": "Gambas van de barbecue",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gambas-van-de-barbecue/",
     "personen": 4,
@@ -10331,8 +10413,9 @@
     ]
   },
   {
-    "titel": "Gele curry met vis, zoete aardappel en wortel",
-    "titel_nl": "Gele curry met vis, zoete aardappel en wortel",
+    "titel": "Gele viscurry met zoete aardappel en wortel",
+    "titel_nl": "Gele viscurry met zoete aardappel en wortel",
+    "titel_bron": "Gele curry met vis, zoete aardappel en wortel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gele-curry-met-vis-zoete-aardappel-en-wortel/",
     "personen": 4,
@@ -10423,8 +10506,9 @@
     ]
   },
   {
-    "titel": "Geroosterde kip met kaneel en sinaasappel",
-    "titel_nl": "Geroosterde kip met kaneel en sinaasappel",
+    "titel": "Kip uit de oven met kaneel en sinaasappel",
+    "titel_nl": "Kip uit de oven met kaneel en sinaasappel",
+    "titel_bron": "Geroosterde kip met kaneel en sinaasappel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/geroosterde-kip-met-kaneel-en-sinaasappel/",
     "personen": 4,
@@ -10529,8 +10613,9 @@
     ]
   },
   {
-    "titel": "Geroosterde wortelsalade",
-    "titel_nl": "Geroosterde wortelsalade",
+    "titel": "Salade van geroosterde wortel met yoghurt",
+    "titel_nl": "Salade van geroosterde wortel met yoghurt",
+    "titel_bron": "Geroosterde wortelsalade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/geroosterde-wortelsalade/",
     "personen": 4,
@@ -10609,8 +10694,9 @@
     ]
   },
   {
-    "titel": "Gestoofde kip in pindasaus met pompoen en paprika",
-    "titel_nl": "Gestoofde kip in pindasaus met pompoen en paprika",
+    "titel": "Kipstoof in pindasaus met pompoen en paprika",
+    "titel_nl": "Kipstoof in pindasaus met pompoen en paprika",
+    "titel_bron": "Gestoofde kip in pindasaus met pompoen en paprika",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gestoofde-kip-in-pindasaus-met-pompoen-en-paprika/",
     "personen": 4,
@@ -10709,8 +10795,9 @@
     ]
   },
   {
-    "titel": "Gestoofde kip met druiven en sinaasappel",
-    "titel_nl": "Gestoofde kip met druiven en sinaasappel",
+    "titel": "Kipstoof met druiven en sinaasappel",
+    "titel_nl": "Kipstoof met druiven en sinaasappel",
+    "titel_bron": "Gestoofde kip met druiven en sinaasappel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gestoofde-kip-met-druiven-en-sinaasappel/",
     "personen": 4,
@@ -10851,8 +10938,9 @@
     ]
   },
   {
-    "titel": "Gevulde paprika",
-    "titel_nl": "Gevulde paprika",
+    "titel": "Gevulde paprika met rijst en kipgehakt",
+    "titel_nl": "Gevulde paprika met rijst en kipgehakt",
+    "titel_bron": "Gevulde paprika",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gevulde-paprika/",
     "personen": 4,
@@ -10933,8 +11021,9 @@
     ]
   },
   {
-    "titel": "Gevulde pompoen met gemengde rijst en paddenstoelen",
-    "titel_nl": "Gevulde pompoen met gemengde rijst en paddenstoelen",
+    "titel": "Pompoen gevuld met gemengde rijst en paddenstoelen",
+    "titel_nl": "Pompoen gevuld met gemengde rijst en paddenstoelen",
+    "titel_bron": "Gevulde pompoen met gemengde rijst en paddenstoelen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gevulde-pompoen-met-gemengde-rijst-en-paddenstoelen/",
     "personen": 4,
@@ -11303,8 +11392,9 @@
     ]
   },
   {
-    "titel": "Gezonde proteïne bowl uit de Airfryer",
-    "titel_nl": "Gezonde proteïne bowl uit de Airfryer",
+    "titel": "Eiwitrijke bowl met zoete aardappel en kipgehakt uit de airfryer",
+    "titel_nl": "Eiwitrijke bowl met zoete aardappel en kipgehakt uit de airfryer",
+    "titel_bron": "Gezonde proteïne bowl uit de Airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gezonde-proteine-bowl-uit-de-airfryer/",
     "personen": 2,
@@ -11390,8 +11480,9 @@
     ]
   },
   {
-    "titel": "Gezonde quinoa bowl",
-    "titel_nl": "Gezonde quinoa bowl",
+    "titel": "Quinoabowl met komkommer en tomaat",
+    "titel_nl": "Quinoabowl met komkommer en tomaat",
+    "titel_bron": "Gezonde quinoa bowl",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gezonde-quinoa-bowl/",
     "personen": 4,
@@ -11487,8 +11578,9 @@
     ]
   },
   {
-    "titel": "Gezonde tonijnsalade met zelfgemaakte bagels",
-    "titel_nl": "Gezonde tonijnsalade met zelfgemaakte bagels",
+    "titel": "Tonijnsalade met zelfgebakken bagels",
+    "titel_nl": "Tonijnsalade met zelfgebakken bagels",
+    "titel_bron": "Gezonde tonijnsalade met zelfgemaakte bagels",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gezonde-tonijnsalade-bagel/",
     "personen": 4,
@@ -11625,8 +11717,9 @@
     ]
   },
   {
-    "titel": "Gezonde winterse groentestoof",
-    "titel_nl": "Gezonde winterse groentestoof",
+    "titel": "Winterse groentestoof met kikkererwten en harissa",
+    "titel_nl": "Winterse groentestoof met kikkererwten en harissa",
+    "titel_bron": "Gezonde winterse groentestoof",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gezonde-winterse-groentestoof/",
     "personen": 4,
@@ -11808,8 +11901,9 @@
     ]
   },
   {
-    "titel": "Gnocchi Carbonara met knoflookbrood uit de Airfryer",
-    "titel_nl": "Gnocchi Carbonara met knoflookbrood uit de Airfryer",
+    "titel": "Airfryer-gnocchi carbonara met knoflookbrood",
+    "titel_nl": "Airfryer-gnocchi carbonara met knoflookbrood",
+    "titel_bron": "Gnocchi Carbonara met knoflookbrood uit de Airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gnocchi-carbonara-met-knoflookbrood-uit-de-airfryer/",
     "personen": 2,
@@ -11885,8 +11979,9 @@
     ]
   },
   {
-    "titel": "Goulashsoep met gnocchi",
-    "titel_nl": "Goulashsoep met gnocchi",
+    "titel": "Stevige goulashsoep met gnocchi",
+    "titel_nl": "Stevige goulashsoep met gnocchi",
+    "titel_bron": "Goulashsoep met gnocchi",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/goulashsoep-met-gnocchi/",
     "personen": 4,
@@ -12006,8 +12101,9 @@
     ]
   },
   {
-    "titel": "Groene currysoep met garnalen en noedels",
-    "titel_nl": "Groene currysoep met garnalen en noedels",
+    "titel": "Groene currysoep met noedels en garnalen",
+    "titel_nl": "Groene currysoep met noedels en garnalen",
+    "titel_bron": "Groene currysoep met garnalen en noedels",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/groene-currysoep-met-garnalen-en-noedels/",
     "personen": 4,
@@ -12087,8 +12183,9 @@
     ]
   },
   {
-    "titel": "Groene pasta met miso-citroensaus uit de Airfryer",
-    "titel_nl": "Groene pasta met miso-citroensaus uit de Airfryer",
+    "titel": "Airfryer-pasta in groene miso-citroensaus",
+    "titel_nl": "Airfryer-pasta in groene miso-citroensaus",
+    "titel_bron": "Groene pasta met miso-citroensaus uit de Airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/groene-pasta-met-miso-citroensaus-uit-de-airfryer/",
     "personen": 4,
@@ -12252,8 +12349,9 @@
     ]
   },
   {
-    "titel": "Gyoza noedelsoep uit de Airfryer",
-    "titel_nl": "Gyoza noedelsoep uit de Airfryer",
+    "titel": "Noedelsoep met gyoza uit de airfryer",
+    "titel_nl": "Noedelsoep met gyoza uit de airfryer",
+    "titel_bron": "Gyoza noedelsoep uit de Airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gyoza-noedelsoep-uit-de-aifryer/",
     "personen": 4,
@@ -12328,8 +12426,9 @@
     ]
   },
   {
-    "titel": "Gyoza soep",
-    "titel_nl": "Gyoza soep",
+    "titel": "Kokos-currysoep met gyoza",
+    "titel_nl": "Kokos-currysoep met gyoza",
+    "titel_bron": "Gyoza soep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gyoza-soep/",
     "personen": 4,
@@ -12769,8 +12868,9 @@
     ]
   },
   {
-    "titel": "Heerlijk frisse lente minestrone",
-    "titel_nl": "Heerlijk frisse lente minestrone",
+    "titel": "Frisse minestrone met lentegroenten",
+    "titel_nl": "Frisse minestrone met lentegroenten",
+    "titel_bron": "Heerlijk frisse lente minestrone",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/heerlijk-frisse-lente-minestrone/",
     "personen": 4,
@@ -13051,8 +13151,9 @@
     ]
   },
   {
-    "titel": "Huzarensalade",
-    "titel_nl": "Huzarensalade",
+    "titel": "Huzarensalade met rookvlees en appel",
+    "titel_nl": "Huzarensalade met rookvlees en appel",
+    "titel_bron": "Huzarensalade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/huzarensalade/",
     "personen": 8,
@@ -13213,8 +13314,9 @@
     ]
   },
   {
-    "titel": "Indiase butter chicken",
-    "titel_nl": "Indiase butter chicken",
+    "titel": "Butter chicken op Indiase wijze",
+    "titel_nl": "Butter chicken op Indiase wijze",
+    "titel_bron": "Indiase butter chicken",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/indiase-butter-chicken/",
     "personen": 4,
@@ -13338,8 +13440,9 @@
     ]
   },
   {
-    "titel": "Indiase keema curry met komkommerraita",
-    "titel_nl": "Indiase keema curry met komkommerraita",
+    "titel": "Keema-curry met komkommerraita",
+    "titel_nl": "Keema-curry met komkommerraita",
+    "titel_bron": "Indiase keema curry met komkommerraita",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/indiase-keema-curry-met-komkommerraita/",
     "personen": 4,
@@ -13434,8 +13537,9 @@
     ]
   },
   {
-    "titel": "Indiase vegan curry",
-    "titel_nl": "Indiase vegan curry",
+    "titel": "Vegan Indiase linzencurry",
+    "titel_nl": "Vegan Indiase linzencurry",
+    "titel_bron": "Indiase vegan curry",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/indiase-vegan-curry-recept/",
     "personen": 6,
@@ -13555,8 +13659,9 @@
     ]
   },
   {
-    "titel": "Italiaans stoofpotje met kip, venkel en kalamataolijven",
-    "titel_nl": "Italiaans stoofpotje met kip, venkel en kalamataolijven",
+    "titel": "Italiaanse kipstoof met venkel en kalamata-olijven",
+    "titel_nl": "Italiaanse kipstoof met venkel en kalamata-olijven",
+    "titel_bron": "Italiaans stoofpotje met kip, venkel en kalamataolijven",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/italiaans-stoofpotje-met-kip-venkel-en-kalamataolijven/",
     "personen": 4,
@@ -13659,8 +13764,9 @@
     ]
   },
   {
-    "titel": "Italiaanse andijvie-stamppot",
-    "titel_nl": "Italiaanse andijviestamppot",
+    "titel": "Andijviestamppot op z'n Italiaans",
+    "titel_nl": "Andijviestamppot op z'n Italiaans",
+    "titel_bron": "Italiaanse andijvie-stamppot",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/italiaanse-andijviestamppot/",
     "personen": 4,
@@ -13733,8 +13839,9 @@
     ]
   },
   {
-    "titel": "Japanse nasi met edamameboontjes, minimais en shiitakes",
-    "titel_nl": "Japanse nasi met edamame",
+    "titel": "Japanse nasi met edamame, minimais en shiitake",
+    "titel_nl": "Japanse nasi met edamame, minimais en shiitake",
+    "titel_bron": "Japanse nasi met edamameboontjes, minimais en shiitakes",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/japanse-nasi-met-edamame/",
     "personen": 4,
@@ -14150,8 +14257,9 @@
     ]
   },
   {
-    "titel": "Katsu curry met kipschnitzel",
-    "titel_nl": "Katsu curry met kipschnitzel",
+    "titel": "Kipschnitzel met katsu-curry",
+    "titel_nl": "Kipschnitzel met katsu-curry",
+    "titel_bron": "Katsu curry met kipschnitzel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/katsu-curry-met-kipschnitzel/",
     "personen": 4,
@@ -14334,8 +14442,9 @@
     ]
   },
   {
-    "titel": "Kip champignonsoep: een heerlijke maaltijdsoep",
-    "titel_nl": "Kip champignonsoep",
+    "titel": "Maaltijdsoep met kip en champignons",
+    "titel_nl": "Maaltijdsoep met kip en champignons",
+    "titel_bron": "Kip champignonsoep: een heerlijke maaltijdsoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kip-champignonsoep-een-heerlijke-maaltijdsoep/",
     "personen": 4,
@@ -14430,8 +14539,9 @@
     ]
   },
   {
-    "titel": "Kip-harissa-pasta uit de Airfryer",
-    "titel_nl": "Kip-harissa-pasta uit de airfryer",
+    "titel": "Airfryer-pasta met kip en harissa",
+    "titel_nl": "Airfryer-pasta met kip en harissa",
+    "titel_bron": "Kip-harissa-pasta uit de Airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kip-harissa-pasta-uit-de-airfryer/",
     "personen": 4,
@@ -14510,8 +14620,9 @@
     ]
   },
   {
-    "titel": "Kip shoarma rol",
-    "titel_nl": "Kip shoarma rol",
+    "titel": "Rol met kipshoarma",
+    "titel_nl": "Rol met kipshoarma",
+    "titel_bron": "Kip shoarma rol",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kip-shoarma-rol/",
     "personen": 4,
@@ -14600,8 +14711,9 @@
     ]
   },
   {
-    "titel": "Kiprollade met krieltjes en bospeentjes",
-    "titel_nl": "Kiprollade",
+    "titel": "Kiprollade met krieltjes en bospeen",
+    "titel_nl": "Kiprollade met krieltjes en bospeen",
+    "titel_bron": "Kiprollade met krieltjes en bospeentjes",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kiprollade/",
     "personen": 4,
@@ -14786,8 +14898,9 @@
     ]
   },
   {
-    "titel": "Klassieke foe yong hai – de allerlekkerste!",
-    "titel_nl": "Klassieke foe yong hai",
+    "titel": "Foe yong hai, de klassieker",
+    "titel_nl": "Foe yong hai, de klassieker",
+    "titel_bron": "Klassieke foe yong hai – de allerlekkerste!",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/klassieke-foe-yong-hai-de-allerlekkerste/",
     "personen": 2,
@@ -14865,8 +14978,9 @@
     ]
   },
   {
-    "titel": "Klassieke quiche Lorraine",
-    "titel_nl": "Klassieke quiche Lorraine",
+    "titel": "Quiche Lorraine met gerookt spek",
+    "titel_nl": "Quiche Lorraine met gerookt spek",
+    "titel_bron": "Klassieke quiche Lorraine",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/klassieke-quiche-lorraine/",
     "personen": 4,
@@ -14951,8 +15065,9 @@
     ]
   },
   {
-    "titel": "Klassieke spaghetti puttanesca",
-    "titel_nl": "Klassieke spaghetti puttanesca",
+    "titel": "Spaghetti alla puttanesca",
+    "titel_nl": "Spaghetti alla puttanesca",
+    "titel_bron": "Klassieke spaghetti puttanesca",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/klassieke-spaghetti-puttanesca/",
     "personen": 2,
@@ -15258,8 +15373,9 @@
     ]
   },
   {
-    "titel": "Koken uit de voorraadkast: risotto met paddenstoelen",
-    "titel_nl": "Risotto met paddenstoelen",
+    "titel": "Paddenstoelenrisotto uit de voorraadkast",
+    "titel_nl": "Paddenstoelenrisotto uit de voorraadkast",
+    "titel_bron": "Koken uit de voorraadkast: risotto met paddenstoelen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/koken-uit-de-voorraadkast-risotto-met-paddenstoelen/",
     "personen": 4,
@@ -15338,8 +15454,9 @@
     ]
   },
   {
-    "titel": "Koreaanse fried chicken bowl",
-    "titel_nl": "Koreaanse fried chicken bowl",
+    "titel": "Bowl met Koreaanse krokante kip",
+    "titel_nl": "Bowl met Koreaanse krokante kip",
+    "titel_bron": "Koreaanse fried chicken bowl",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/koreaanse-fried-chicken-bowl/",
     "personen": 4,
@@ -15655,8 +15772,9 @@
     ]
   },
   {
-    "titel": "Leftover kerst pho van kalkoen",
-    "titel_nl": "Leftover kerst pho van kalkoen",
+    "titel": "Pho van kalkoenrestjes na kerst",
+    "titel_nl": "Pho van kalkoenrestjes na kerst",
+    "titel_bron": "Leftover kerst pho van kalkoen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/leftover-kerst-pho-van-kalkoen/",
     "personen": 4,
@@ -15782,8 +15900,9 @@
     ]
   },
   {
-    "titel": "Lekker frisse citrussalade met burrata",
-    "titel_nl": "Lekker frisse citrussalade met burrata",
+    "titel": "Frisse salade van citrus en burrata",
+    "titel_nl": "Frisse salade van citrus en burrata",
+    "titel_bron": "Lekker frisse citrussalade met burrata",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/lekker-frisse-citrussalade-met-burrata/",
     "personen": 2,
@@ -15848,8 +15967,9 @@
     ]
   },
   {
-    "titel": "Lekker verfrissende gazpacho",
-    "titel_nl": "Lekker verfrissende gazpacho",
+    "titel": "Verfrissende gazpacho met geroosterde paprika",
+    "titel_nl": "Verfrissende gazpacho met geroosterde paprika",
+    "titel_bron": "Lekker verfrissende gazpacho",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/lekker-verfrissend-gazpacho/",
     "personen": 4,
@@ -16028,8 +16148,9 @@
     ]
   },
   {
-    "titel": "Lente pizza met bonenspread",
-    "titel_nl": "Lente pizza met bonenspread",
+    "titel": "Lentepizza met bonenspread",
+    "titel_nl": "Lentepizza met bonenspread",
+    "titel_bron": "Lente pizza met bonenspread",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/lente-pizza-met-bonenspread/",
     "personen": 4,
@@ -16389,8 +16510,9 @@
     ]
   },
   {
-    "titel": "Linzen-spinaziecurry met champignons en ei",
-    "titel_nl": "Linzen-spinaziecurry met champignons en ei",
+    "titel": "Curry van linzen en spinazie met champignons en ei",
+    "titel_nl": "Curry van linzen en spinazie met champignons en ei",
+    "titel_bron": "Linzen-spinaziecurry met champignons en ei",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/linzen-spinaziecurry-met-champignons-en-ei/",
     "personen": 4,
@@ -16486,8 +16608,9 @@
     ]
   },
   {
-    "titel": "Linzencurry met garnalen",
-    "titel_nl": "Linzencurry met garnalen",
+    "titel": "Garnalen in linzencurry",
+    "titel_nl": "Garnalen in linzencurry",
+    "titel_bron": "Linzencurry met garnalen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/linzencurry-met-garnalen/",
     "personen": 4,
@@ -16732,8 +16855,9 @@
     ]
   },
   {
-    "titel": "Makkelijke eenpanspasta met worst",
-    "titel_nl": "Makkelijke eenpanspasta met worst",
+    "titel": "Simpele worstpasta uit één pan",
+    "titel_nl": "Simpele worstpasta uit één pan",
+    "titel_bron": "Makkelijke eenpanspasta met worst",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/makkelijke-eenpanspasta-met-worst/",
     "personen": 4,
@@ -16953,8 +17077,9 @@
     ]
   },
   {
-    "titel": "Massaman curry met sperziebonen",
-    "titel_nl": "Massaman curry met sperziebonen",
+    "titel": "Massamancurry met sperzieboontjes",
+    "titel_nl": "Massamancurry met sperzieboontjes",
+    "titel_bron": "Massaman curry met sperziebonen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/massaman-curry-met-sperziebonen/",
     "personen": 4,
@@ -17068,8 +17193,9 @@
     ]
   },
   {
-    "titel": "Mexicaanse burrito bowl meal prep",
-    "titel_nl": "Mexicaanse burrito bowl meal prep",
+    "titel": "Mexicaanse burritobowl om te mealpreppen",
+    "titel_nl": "Mexicaanse burritobowl om te mealpreppen",
+    "titel_bron": "Mexicaanse burrito bowl meal prep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/mexicaanse-burrito-bowl-meal-prep/",
     "personen": 4,
@@ -17236,8 +17362,9 @@
     ]
   },
   {
-    "titel": "Mexicaanse eenpanstopper met zoete aardappel en nacho's",
-    "titel_nl": "Mexicaanse eenpanstopper met zoete aardappel",
+    "titel": "Mexicaanse eenpansschotel met zoete aardappel en nacho's",
+    "titel_nl": "Mexicaanse eenpansschotel met zoete aardappel en nacho's",
+    "titel_bron": "Mexicaanse eenpanstopper met zoete aardappel en nacho's",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/mexicaanse-eenpanstopper-met-zoete-aardappel/",
     "personen": 4,
@@ -17342,8 +17469,9 @@
     ]
   },
   {
-    "titel": "Mexicaanse taco bowl",
-    "titel_nl": "Mexicaanse taco bowl",
+    "titel": "Mexicaanse tacobowl met rundergehakt",
+    "titel_nl": "Mexicaanse tacobowl met rundergehakt",
+    "titel_bron": "Mexicaanse taco bowl",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/mexicaanse-taco-bowl/",
     "personen": 4,
@@ -17468,8 +17596,9 @@
     ]
   },
   {
-    "titel": "Miljuschka's Nasi goreng",
-    "titel_nl": "Miljuschka's nasi goreng",
+    "titel": "Nasi goreng van het huis",
+    "titel_nl": "Nasi goreng van het huis",
+    "titel_bron": "Miljuschka's Nasi goreng",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/miljuschkas-nasi-goreng/",
     "personen": 4,
@@ -17554,8 +17683,9 @@
     ]
   },
   {
-    "titel": "Miljuschka's snelle ramen",
-    "titel_nl": "Miljuschka's snelle ramen",
+    "titel": "Snelle ramen met paksoi en oesterzwammen",
+    "titel_nl": "Snelle ramen met paksoi en oesterzwammen",
+    "titel_bron": "Miljuschka's snelle ramen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/miljuschkas-snelle-ramen/",
     "personen": 4,
@@ -17989,8 +18119,9 @@
     ]
   },
   {
-    "titel": "Mosterdsoep",
-    "titel_nl": "Mosterdsoep",
+    "titel": "Romige mosterdsoep met een scheutje sherry",
+    "titel_nl": "Romige mosterdsoep met een scheutje sherry",
+    "titel_bron": "Mosterdsoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/mosterdsoep/",
     "personen": 4,
@@ -18064,8 +18195,9 @@
     ]
   },
   {
-    "titel": "Nacho's met kaas",
-    "titel_nl": "Nacho's met kaas",
+    "titel": "Nacho's met gehakt en gesmolten kaas",
+    "titel_nl": "Nacho's met gehakt en gesmolten kaas",
+    "titel_bron": "Nacho's met kaas",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/nachos-met-kaas/",
     "personen": 6,
@@ -18170,8 +18302,9 @@
     ]
   },
   {
-    "titel": "Nasi goreng met spitskool en serundeng-eitjes",
-    "titel_nl": "Nasi goreng met spitskool en serundeng-eitjes",
+    "titel": "Nasi goreng met spitskool en eitjes met serundeng",
+    "titel_nl": "Nasi goreng met spitskool en eitjes met serundeng",
+    "titel_bron": "Nasi goreng met spitskool en serundeng-eitjes",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/nasi-goreng-met-spitskool-serundeng-eitjes/",
     "personen": 4,
@@ -18269,8 +18402,9 @@
     ]
   },
   {
-    "titel": "Nasi goreng van bloemkoolrijst en garnalen",
-    "titel_nl": "Nasi goreng van bloemkoolrijst en garnalen",
+    "titel": "Bloemkoolrijst-nasi met garnalen",
+    "titel_nl": "Bloemkoolrijst-nasi met garnalen",
+    "titel_bron": "Nasi goreng van bloemkoolrijst en garnalen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/nasi-goreng-van-bloemkoolrijst-en-garnalen/",
     "personen": 2,
@@ -18349,8 +18483,9 @@
     ]
   },
   {
-    "titel": "Nasi met tempeh, champignons en bladgroente",
-    "titel_nl": "Nasi met tempeh, champignons en bladgroente",
+    "titel": "Nasi met tempeh, champignons en bladgroenten",
+    "titel_nl": "Nasi met tempeh, champignons en bladgroenten",
+    "titel_bron": "Nasi met tempeh, champignons en bladgroente",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/nasi-met-tempeh-champignons-en-bladgroente/",
     "personen": 4,
@@ -18621,8 +18756,9 @@
     ]
   },
   {
-    "titel": "Okonomiyaki recept (Japanse hartige pannenkoek)",
-    "titel_nl": "Okonomiyaki (Japanse hartige pannenkoek)",
+    "titel": "Okonomiyaki, hartige Japanse pannenkoek",
+    "titel_nl": "Okonomiyaki, hartige Japanse pannenkoek",
+    "titel_bron": "Okonomiyaki recept (Japanse hartige pannenkoek)",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/okonomiyaki-recept-japanse-hartige-pannenkoek/",
     "personen": 1,
@@ -18796,8 +18932,9 @@
     ]
   },
   {
-    "titel": "Open lasagne met boontjes, burrata en salieboter",
-    "titel_nl": "Open lasagne met boontjes, burrata en salieboter",
+    "titel": "Open lasagne met burrata, boontjes en salieboter",
+    "titel_nl": "Open lasagne met burrata, boontjes en salieboter",
+    "titel_bron": "Open lasagne met boontjes, burrata en salieboter",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/open-lasagne-met-boontjes-burrata-en-salieboter/",
     "personen": 4,
@@ -18876,8 +19013,9 @@
     ]
   },
   {
-    "titel": "Ossenstaartsoep",
-    "titel_nl": "Ossenstaartsoep",
+    "titel": "Ossenstaartsoep met rode wijn",
+    "titel_nl": "Ossenstaartsoep met rode wijn",
+    "titel_bron": "Ossenstaartsoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ossenstaartsoep/",
     "personen": 6,
@@ -18982,8 +19120,9 @@
     ]
   },
   {
-    "titel": "Ossobuco alla Milanese",
-    "titel_nl": "Ossobuco alla Milanese",
+    "titel": "Ossobuco op Milanese wijze",
+    "titel_nl": "Ossobuco op Milanese wijze",
+    "titel_bron": "Ossobuco alla Milanese",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ossobuco-alla-milanese/",
     "personen": 4,
@@ -19066,8 +19205,9 @@
     ]
   },
   {
-    "titel": "Oud-Hollandse gehaktballen",
-    "titel_nl": "Oud-Hollandse gehaktballen",
+    "titel": "Gehaktballen op oud-Hollandse wijze",
+    "titel_nl": "Gehaktballen op oud-Hollandse wijze",
+    "titel_bron": "Oud-Hollandse gehaktballen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/oud-hollandse-gehaktballen/",
     "personen": null,
@@ -19221,8 +19361,9 @@
     ]
   },
   {
-    "titel": "Paella met kip en vis",
-    "titel_nl": "Paella met kip en vis",
+    "titel": "Paella met vis en kip",
+    "titel_nl": "Paella met vis en kip",
+    "titel_bron": "Paella met kip en vis",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/paella-met-kip-en-vis/",
     "personen": 4,
@@ -19403,8 +19544,9 @@
     ]
   },
   {
-    "titel": "Panzanella: een heerlijke Italiaanse broodsalade",
-    "titel_nl": "Panzanella: een heerlijke Italiaanse broodsalade",
+    "titel": "Panzanella, de Italiaanse broodsalade",
+    "titel_nl": "Panzanella, de Italiaanse broodsalade",
+    "titel_bron": "Panzanella: een heerlijke Italiaanse broodsalade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/panzanella-een-heerlijke-italiaanse-broodsalade/",
     "personen": 4,
@@ -19479,8 +19621,9 @@
     ]
   },
   {
-    "titel": "Pappardelle met langzaam gegaarde Italiaanse runderragù",
-    "titel_nl": "Pappardelle met langzaam gegaarde Italiaanse runderragù",
+    "titel": "Pappardelle met langzaam gestoofde runderragù",
+    "titel_nl": "Pappardelle met langzaam gestoofde runderragù",
+    "titel_bron": "Pappardelle met langzaam gegaarde Italiaanse runderragù",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/papardelle-met-runderragu-marije-knevel/",
     "personen": 4,
@@ -19569,8 +19712,9 @@
     ]
   },
   {
-    "titel": "Paprikasoep",
-    "titel_nl": "Paprikasoep",
+    "titel": "Paprikasoep met feta en gerookt paprikapoeder",
+    "titel_nl": "Paprikasoep met feta en gerookt paprikapoeder",
+    "titel_bron": "Paprikasoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/paprikasoep-recept/",
     "personen": null,
@@ -19649,8 +19793,9 @@
     ]
   },
   {
-    "titel": "Paratha met frisse salade en spiegelei",
-    "titel_nl": "Paratha met frisse salade en spiegelei",
+    "titel": "Paratha met spiegelei en frisse salade",
+    "titel_nl": "Paratha met spiegelei en frisse salade",
+    "titel_bron": "Paratha met frisse salade en spiegelei",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/paratha-met-frisse-salade-en-spiegelei/",
     "personen": 4,
@@ -19734,8 +19879,9 @@
     ]
   },
   {
-    "titel": "Pasta al forno met kip en paddenstoelen",
-    "titel_nl": "Pasta al forno met kip en paddenstoelen",
+    "titel": "Pasta al forno met paddenstoelen en kip",
+    "titel_nl": "Pasta al forno met paddenstoelen en kip",
+    "titel_bron": "Pasta al forno met kip en paddenstoelen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-al-forno/",
     "personen": 4,
@@ -19815,8 +19961,9 @@
     ]
   },
   {
-    "titel": "Pasta Alfredo",
-    "titel_nl": "Pasta Alfredo",
+    "titel": "Fettuccine Alfredo met gepaneerde kip",
+    "titel_nl": "Fettuccine Alfredo met gepaneerde kip",
+    "titel_bron": "Pasta Alfredo",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-alfredo/",
     "personen": 4,
@@ -19901,8 +20048,9 @@
     ]
   },
   {
-    "titel": "Pasta arrabbiata",
-    "titel_nl": "Pasta arrabbiata",
+    "titel": "Spaghetti all'arrabbiata",
+    "titel_nl": "Spaghetti all'arrabbiata",
+    "titel_bron": "Pasta arrabbiata",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-arrabbiata/",
     "personen": 4,
@@ -19977,8 +20125,9 @@
     ]
   },
   {
-    "titel": "Pasta carbonara taart",
-    "titel_nl": "Pasta carbonara taart",
+    "titel": "Carbonarataart van spaghetti",
+    "titel_nl": "Carbonarataart van spaghetti",
+    "titel_bron": "Pasta carbonara taart",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-carbonara-taart/",
     "personen": 4,
@@ -20050,8 +20199,9 @@
     ]
   },
   {
-    "titel": "Pasta met prei, ui en ansjovis uit de airfryer",
-    "titel_nl": "Pasta met prei, ui en ansjovis uit de airfryer",
+    "titel": "Airfryer-pasta met prei, ui en ansjovis",
+    "titel_nl": "Airfryer-pasta met prei, ui en ansjovis",
+    "titel_bron": "Pasta met prei, ui en ansjovis uit de airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-met-prei-ui-en-ansjovis-uit-de-airfryer/",
     "personen": 4,
@@ -20137,8 +20287,9 @@
     ]
   },
   {
-    "titel": "Pasta met zalm",
-    "titel_nl": "Pasta met zalm",
+    "titel": "Tagliatelle met zalm in tomaten-roomsaus",
+    "titel_nl": "Tagliatelle met zalm in tomaten-roomsaus",
+    "titel_bron": "Pasta met zalm",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-met-zalm/",
     "personen": 2,
@@ -20229,8 +20380,9 @@
     ]
   },
   {
-    "titel": "Pasta pesto met tomaatjes en Parmezaanse kaas",
-    "titel_nl": "Pasta pesto met tomaatjes en Parmezaanse kaas",
+    "titel": "Pasta pesto met Parmezaan en tomaatjes",
+    "titel_nl": "Pasta pesto met Parmezaan en tomaatjes",
+    "titel_bron": "Pasta pesto met tomaatjes en Parmezaanse kaas",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-pesto-met-tomaatjes-en-parmezaanse-kaas/",
     "personen": 4,
@@ -20285,8 +20437,9 @@
     ]
   },
   {
-    "titel": "Pasta recept in 15 minuten: pasta met tomaat en burrata",
-    "titel_nl": "Pasta in 15 minuten met tomaat en burrata",
+    "titel": "Pasta met tomaat en burrata in 15 minuten",
+    "titel_nl": "Pasta met tomaat en burrata in 15 minuten",
+    "titel_bron": "Pasta recept in 15 minuten: pasta met tomaat en burrata",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pasta-recept-in-15-minuten-pasta-met-tomaat-en-burrata/",
     "personen": 4,
@@ -20345,8 +20498,9 @@
     ]
   },
   {
-    "titel": "Pastasalade met artisjok en ansjovis dressing",
-    "titel_nl": "Pastasalade met artisjok en ansjovisdressing",
+    "titel": "Pastasalade met artisjok en dressing van ansjovis",
+    "titel_nl": "Pastasalade met artisjok en dressing van ansjovis",
+    "titel_bron": "Pastasalade met artisjok en ansjovis dressing",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pastasalade-met-artisjok-en-ansjovis-dressing/",
     "personen": 4,
@@ -20436,8 +20590,9 @@
     ]
   },
   {
-    "titel": "Pastasalade met garnalen, avocado en cocktailsaus",
-    "titel_nl": "Pastasalade met garnalen, avocado en cocktailsaus",
+    "titel": "Pastasalade met avocado, garnalen en cocktailsaus",
+    "titel_nl": "Pastasalade met avocado, garnalen en cocktailsaus",
+    "titel_bron": "Pastasalade met garnalen, avocado en cocktailsaus",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pastasalade-met-garnalen-avocado-en-cocktailsaus/",
     "personen": 4,
@@ -20914,8 +21069,9 @@
     ]
   },
   {
-    "titel": "Pittige 10-minuten-noedels",
-    "titel_nl": "Pittige 10-minuten-noedels",
+    "titel": "Pittige noedels in 10 minuten",
+    "titel_nl": "Pittige noedels in 10 minuten",
+    "titel_bron": "Pittige 10-minuten-noedels",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pittige-10-minuten-noedels/",
     "personen": 4,
@@ -21041,8 +21197,9 @@
     ]
   },
   {
-    "titel": "Plantaardige bastilla",
-    "titel_nl": "Plantaardige bastilla",
+    "titel": "Vegan bastilla met linzen",
+    "titel_nl": "Vegan bastilla met linzen",
+    "titel_bron": "Plantaardige bastilla",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/plantaardige-bastilla-recept/",
     "personen": 6,
@@ -21153,8 +21310,9 @@
     ]
   },
   {
-    "titel": "Poké bowl met spicy tuna",
-    "titel_nl": "Poke bowl met spicy tuna",
+    "titel": "Pokébowl met pittige tonijn",
+    "titel_nl": "Pokébowl met pittige tonijn",
+    "titel_bron": "Poké bowl met spicy tuna",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/poke-bowl-met-spicy-tuna/",
     "personen": 4,
@@ -21244,8 +21402,9 @@
     ]
   },
   {
-    "titel": "Pompoensalade met linzen en boerenkool",
-    "titel_nl": "Pompoensalade met linzen en boerenkool",
+    "titel": "Salade van pompoen, linzen en boerenkool",
+    "titel_nl": "Salade van pompoen, linzen en boerenkool",
+    "titel_bron": "Pompoensalade met linzen en boerenkool",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pompoensalade-met-linzen-en-boerenkool/",
     "personen": 4,
@@ -21346,8 +21505,9 @@
     ]
   },
   {
-    "titel": "Pompoensoep Franse stijl",
-    "titel_nl": "Pompoensoep Franse stijl",
+    "titel": "Pompoensoep op z'n Frans",
+    "titel_nl": "Pompoensoep op z'n Frans",
+    "titel_bron": "Pompoensoep Franse stijl",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pompoensoep-franse-stijl/",
     "personen": 6,
@@ -21497,8 +21657,9 @@
     ]
   },
   {
-    "titel": "Pulled chicken taco's",
-    "titel_nl": "Pulled chicken taco's",
+    "titel": "Taco's met pulled chicken",
+    "titel_nl": "Taco's met pulled chicken",
+    "titel_bron": "Pulled chicken taco's",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pulled-chicken-tacos/",
     "personen": 4,
@@ -21583,8 +21744,9 @@
     ]
   },
   {
-    "titel": "Pulled chicken wraps",
-    "titel_nl": "Pulled chicken wraps",
+    "titel": "Wraps met pulled chicken",
+    "titel_nl": "Wraps met pulled chicken",
+    "titel_bron": "Pulled chicken wraps",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pulled-chicken-wraps/",
     "personen": 4,
@@ -21664,8 +21826,9 @@
     ]
   },
   {
-    "titel": "Quesedilla met pulled chicken en tomatenrelish",
-    "titel_nl": "Quesadilla met pulled chicken en tomatenrelish",
+    "titel": "Quesadilla met tomatenrelish en pulled chicken",
+    "titel_nl": "Quesadilla met tomatenrelish en pulled chicken",
+    "titel_bron": "Quesedilla met pulled chicken en tomatenrelish",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/quesedilla-pulled-chicken-tomatenrelish/",
     "personen": 4,
@@ -21784,8 +21947,9 @@
     ]
   },
   {
-    "titel": "Quiche met spinazie en spek",
-    "titel_nl": "Quiche met spinazie en spek",
+    "titel": "Quiche met spek en spinazie",
+    "titel_nl": "Quiche met spek en spinazie",
+    "titel_bron": "Quiche met spinazie en spek",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/quiche-met-spinazie-en-spek/",
     "personen": 6,
@@ -21874,8 +22038,9 @@
     ]
   },
   {
-    "titel": "Ramen noedel bowl",
-    "titel_nl": "Ramen noedel bowl",
+    "titel": "Ramenbowl met kip en shiitake",
+    "titel_nl": "Ramenbowl met kip en shiitake",
+    "titel_bron": "Ramen noedel bowl",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ramen-noodle-bowl/",
     "personen": 4,
@@ -21990,8 +22155,9 @@
     ]
   },
   {
-    "titel": "Ratatouille – op mijn manier",
-    "titel_nl": "Ratatouille op mijn manier",
+    "titel": "Ratatouille uit de oven",
+    "titel_nl": "Ratatouille uit de oven",
+    "titel_bron": "Ratatouille – op mijn manier",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ratatouille-op-mijn-manier/",
     "personen": 4,
@@ -22102,8 +22268,9 @@
     ]
   },
   {
-    "titel": "Radicchiosalade met ingelegde nectarine (Donna Hay)",
-    "titel_nl": "Radicchiosalade met ingelegde nectarine",
+    "titel": "Salade van radicchio met ingelegde nectarine",
+    "titel_nl": "Salade van radicchio met ingelegde nectarine",
+    "titel_bron": "Radicchiosalade met ingelegde nectarine (Donna Hay)",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/recept-van-donna-hay-radicchiosalade-met-ingelegde-nectarine/",
     "personen": 6,
@@ -22179,8 +22346,9 @@
     ]
   },
   {
-    "titel": "Chicken karaage: krokante Japanse kip",
-    "titel_nl": "Chicken karaage: krokante Japanse kip",
+    "titel": "Karaage: Japanse krokante kip",
+    "titel_nl": "Karaage: Japanse krokante kip",
+    "titel_bron": "Chicken karaage: krokante Japanse kip",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/recept-voor-chicken-karaage/",
     "personen": 2,
@@ -22285,8 +22453,9 @@
     ]
   },
   {
-    "titel": "Rendang van pulled kippendij",
-    "titel_nl": "Rendang van pulled kippendij",
+    "titel": "Rendang van uitgeplozen kippendij",
+    "titel_nl": "Rendang van uitgeplozen kippendij",
+    "titel_bron": "Rendang van pulled kippendij",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/rendang-van-pulled-kippendij/",
     "personen": 4,
@@ -22412,8 +22581,9 @@
     ]
   },
   {
-    "titel": "Ribeye taco's met koffie rub en zelfgemaakte koffie bbq-saus",
-    "titel_nl": "Ribeye taco's met koffie rub en zelfgemaakte koffie bbq-saus",
+    "titel": "Taco's met ribeye, koffierub en huisgemaakte koffie-bbq-saus",
+    "titel_nl": "Taco's met ribeye, koffierub en huisgemaakte koffie-bbq-saus",
+    "titel_bron": "Ribeye taco's met koffie rub en zelfgemaakte koffie bbq-saus",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ribeye-tacos-met-koffie-rub-en-zelfgemaakte-koffie-bbq-saus/",
     "personen": 4,
@@ -22518,8 +22688,9 @@
     ]
   },
   {
-    "titel": "Rode curry met gehaktballen uit de airfryer",
-    "titel_nl": "Rode curry met gehaktballen uit de airfryer",
+    "titel": "Rode curry met gehaktballetjes uit de airfryer",
+    "titel_nl": "Rode curry met gehaktballetjes uit de airfryer",
+    "titel_bron": "Rode curry met gehaktballen uit de airfryer",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/rode-curry-met-gehaktballen-uit-de-airfryer/",
     "personen": 4,
@@ -22611,8 +22782,9 @@
     ]
   },
   {
-    "titel": "Rode curry met sinaasappel en geroosterde kwartel",
-    "titel_nl": "Rode curry met sinaasappel en geroosterde kwartel",
+    "titel": "Geroosterde kwartel met rode curry en sinaasappel",
+    "titel_nl": "Geroosterde kwartel met rode curry en sinaasappel",
+    "titel_bron": "Rode curry met sinaasappel en geroosterde kwartel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/rode-curry-met-sinaasappel-en-geroosterde-kwartel/",
     "personen": 4,
@@ -22713,8 +22885,9 @@
     ]
   },
   {
-    "titel": "Romig eenpansgerecht met pasta en groene asperges",
-    "titel_nl": "Romig eenpansgerecht met pasta en groene asperges",
+    "titel": "Romige eenpanspasta met groene asperges",
+    "titel_nl": "Romige eenpanspasta met groene asperges",
+    "titel_bron": "Romig eenpansgerecht met pasta en groene asperges",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/romig-eenpansgerecht-met-pasta-en-groene-asperges/",
     "personen": null,
@@ -22798,8 +22971,9 @@
     ]
   },
   {
-    "titel": "Romige champignonsoep",
-    "titel_nl": "Romige champignonsoep",
+    "titel": "Romige paddenstoelensoep met tijm",
+    "titel_nl": "Romige paddenstoelensoep met tijm",
+    "titel_bron": "Romige champignonsoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/romige-champignonsoep/",
     "personen": 4,
@@ -22884,8 +23058,9 @@
     ]
   },
   {
-    "titel": "Romige kip enchilada's",
-    "titel_nl": "Romige kip enchilada's",
+    "titel": "Romige enchilada's met kip",
+    "titel_nl": "Romige enchilada's met kip",
+    "titel_bron": "Romige kip enchilada's",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/romige-kip-enchiladas/",
     "personen": 4,
@@ -22995,8 +23170,9 @@
     ]
   },
   {
-    "titel": "Romige oosterse pompoensoep",
-    "titel_nl": "Romige oosterse pompoensoep",
+    "titel": "Romige pompoensoep met oosterse smaken",
+    "titel_nl": "Romige pompoensoep met oosterse smaken",
+    "titel_bron": "Romige oosterse pompoensoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/romige-oosterse-pompoensoep-recept/",
     "personen": 4,
@@ -23137,8 +23313,9 @@
     ]
   },
   {
-    "titel": "Romige pasta met paprika en tomaat - pasta voor kinderen",
-    "titel_nl": "Romige pasta met paprika en tomaat - pasta voor kinderen",
+    "titel": "Kindvriendelijke romige pasta met paprika en tomaat",
+    "titel_nl": "Kindvriendelijke romige pasta met paprika en tomaat",
+    "titel_bron": "Romige pasta met paprika en tomaat - pasta voor kinderen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/romige-pasta-met-paprika-en-tomaat-pasta-voor-kinderen/",
     "personen": 4,
@@ -23207,8 +23384,9 @@
     ]
   },
   {
-    "titel": "Romige pasta pesto salade (vega)",
-    "titel_nl": "Romige pasta pesto salade (vega)",
+    "titel": "Vegetarische pastasalade met romige pesto",
+    "titel_nl": "Vegetarische pastasalade met romige pesto",
+    "titel_bron": "Romige pasta pesto salade (vega)",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/romige-pasta-pesto-salade-vega/",
     "personen": 4,
@@ -23297,8 +23475,9 @@
     ]
   },
   {
-    "titel": "Romige venkelsoep met prei",
-    "titel_nl": "Romige venkelsoep met prei",
+    "titel": "Romige soep van venkel en prei",
+    "titel_nl": "Romige soep van venkel en prei",
+    "titel_bron": "Romige venkelsoep met prei",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/romige-venkelsoep-recept/",
     "personen": 4,
@@ -23356,8 +23535,9 @@
     ]
   },
   {
-    "titel": "Roti bowl met crispy kip",
-    "titel_nl": "Roti bowl met crispy kip",
+    "titel": "Rotibowl met krokante kip",
+    "titel_nl": "Rotibowl met krokante kip",
+    "titel_bron": "Roti bowl met crispy kip",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/roti-bowl-met-crispy-kip/",
     "personen": 4,
@@ -23508,8 +23688,9 @@
     ]
   },
   {
-    "titel": "Salade caprese",
-    "titel_nl": "Salade caprese",
+    "titel": "Caprese met buffelmozzarella en balsamico",
+    "titel_nl": "Caprese met buffelmozzarella en balsamico",
+    "titel_bron": "Salade caprese",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/salade-caprese/",
     "personen": 4,
@@ -23568,8 +23749,9 @@
     ]
   },
   {
-    "titel": "Salade Niçoise met citroenkrieltjes",
-    "titel_nl": "Salade Niçoise met citroenkrieltjes",
+    "titel": "Niçoise-salade met citroenkrieltjes",
+    "titel_nl": "Niçoise-salade met citroenkrieltjes",
+    "titel_bron": "Salade Niçoise met citroenkrieltjes",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/salade-nicoise-met-citroenkrieltjes/",
     "personen": 4,
@@ -23648,8 +23830,9 @@
     ]
   },
   {
-    "titel": "Salade van courgette- en komkommerlinten met granaatappelpitten, feta en munt-walnootpesto",
-    "titel_nl": "Salade van courgette- en komkommerlinten met granaatappelpitten, feta en munt-walnootpesto",
+    "titel": "Linten van courgette en komkommer met feta, granaatappel en munt-walnootpesto",
+    "titel_nl": "Linten van courgette en komkommer met feta, granaatappel en munt-walnootpesto",
+    "titel_bron": "Salade van courgette- en komkommerlinten met granaatappelpitten, feta en munt-walnootpesto",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/salade-van-courgette-en-komkommerlinten-met-granaatappelpitten-feta-en-munt-walnootpesto/",
     "personen": 4,
@@ -23728,8 +23911,9 @@
     ]
   },
   {
-    "titel": "Saté ayam met pittige pindasaus en atjar ketimoen",
-    "titel_nl": "Saté ayam met pittige pindasaus en atjar ketimoen",
+    "titel": "Saté ajam met atjar ketimoen en pittige pindasaus",
+    "titel_nl": "Saté ajam met atjar ketimoen en pittige pindasaus",
+    "titel_bron": "Saté ayam met pittige pindasaus en atjar ketimoen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/sate-ayam-met-pittige-pindasaus-en-atjar-ketimoen/",
     "personen": null,
@@ -23833,8 +24017,9 @@
     ]
   },
   {
-    "titel": "Satécurry",
-    "titel_nl": "Satécurry",
+    "titel": "Satécurry met kip",
+    "titel_nl": "Satécurry met kip",
+    "titel_bron": "Satécurry",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/satecurry/",
     "personen": 4,
@@ -24062,8 +24247,9 @@
     ]
   },
   {
-    "titel": "Sinterklaas stoofvlees met kruidnoten",
-    "titel_nl": "Sinterklaas stoofvlees met kruidnoten",
+    "titel": "Stoofvlees met kruidnoten voor Sinterklaas",
+    "titel_nl": "Stoofvlees met kruidnoten voor Sinterklaas",
+    "titel_bron": "Sinterklaas stoofvlees met kruidnoten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/sinterklaas-stoofvlees/",
     "personen": 4,
@@ -24178,8 +24364,9 @@
     ]
   },
   {
-    "titel": "De ultieme slowcooker runderstoof",
-    "titel_nl": "De ultieme slowcooker runderstoof",
+    "titel": "Runderstoof uit de slowcooker",
+    "titel_nl": "Runderstoof uit de slowcooker",
+    "titel_bron": "De ultieme slowcooker runderstoof",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/slowcooker-runderstoof/",
     "personen": 4,
@@ -24323,8 +24510,9 @@
     ]
   },
   {
-    "titel": "Snelle nasi met prei en cavolo nero",
-    "titel_nl": "Snelle nasi met prei en cavolo nero",
+    "titel": "Vlotte nasi met prei en cavolo nero",
+    "titel_nl": "Vlotte nasi met prei en cavolo nero",
+    "titel_bron": "Snelle nasi met prei en cavolo nero",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/snelle-nasi-met-prei-en-cavolo-nero/",
     "personen": 4,
@@ -24409,8 +24597,9 @@
     ]
   },
   {
-    "titel": "Snelle taco's met cajun garnalen, mango en avocado",
-    "titel_nl": "Snelle taco's met cajun garnalen, mango en avocado",
+    "titel": "Snelle taco's met cajungarnalen, avocado en mango",
+    "titel_nl": "Snelle taco's met cajungarnalen, avocado en mango",
+    "titel_bron": "Snelle taco's met cajun garnalen, mango en avocado",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/snelle-tacos-met-cajun-garnalen-mango-en-avocado/",
     "personen": 4,
@@ -24484,8 +24673,9 @@
     ]
   },
   {
-    "titel": "Snert: zo maak je Hollandse erwtensoep",
-    "titel_nl": "Snert: zo maak je Hollandse erwtensoep",
+    "titel": "Snert, echte Hollandse erwtensoep",
+    "titel_nl": "Snert, echte Hollandse erwtensoep",
+    "titel_bron": "Snert: zo maak je Hollandse erwtensoep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/snert-zo-maak-je-hollandse-erwtensoep/",
     "personen": 6,
@@ -24580,8 +24770,9 @@
     ]
   },
   {
-    "titel": "Courgettesoep met doperwten, aardappel en cheddar",
-    "titel_nl": "Courgettesoep met doperwten, aardappel en cheddar",
+    "titel": "Courgettesoep met aardappel, doperwten en cheddar",
+    "titel_nl": "Courgettesoep met aardappel, doperwten en cheddar",
+    "titel_bron": "Courgettesoep met doperwten, aardappel en cheddar",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/soep-met-courgette-cheddar-en-aardappel/",
     "personen": 4,
@@ -24650,8 +24841,9 @@
     ]
   },
   {
-    "titel": "Spinazie wrap met kipfilet",
-    "titel_nl": "Spinazie wrap met kipfilet",
+    "titel": "Spinaziewrap met kipfilet",
+    "titel_nl": "Spinaziewrap met kipfilet",
+    "titel_bron": "Spinazie wrap met kipfilet",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/spinazie-wrap-met-kipfilet/",
     "personen": 4,
@@ -24725,8 +24917,9 @@
     ]
   },
   {
-    "titel": "Stamppot savooiekool met crispy Indische speklapjes",
-    "titel_nl": "Stamppot savooiekool met crispy Indische speklapjes",
+    "titel": "Savooiekoolstamppot met krokante Indische speklapjes",
+    "titel_nl": "Savooiekoolstamppot met krokante Indische speklapjes",
+    "titel_bron": "Stamppot savooiekool met crispy Indische speklapjes",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/stamppot-savooiekool-met-crispy-indische-speklapjes/",
     "personen": 4,
@@ -24816,8 +25009,9 @@
     ]
   },
   {
-    "titel": "Stoofschotel met bokbier: een bourgondisch stoofpotje",
-    "titel_nl": "Stoofschotel met bokbier",
+    "titel": "Stoofpot met bokbier",
+    "titel_nl": "Stoofpot met bokbier",
+    "titel_bron": "Stoofschotel met bokbier: een bourgondisch stoofpotje",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/stoofschotel-met-bokbier/",
     "personen": 4,
@@ -25287,8 +25481,9 @@
     ]
   },
   {
-    "titel": "Taco met zelfgemaakte schnitzel",
-    "titel_nl": "Taco met zelfgemaakte schnitzel",
+    "titel": "Taco met huisgemaakte schnitzel",
+    "titel_nl": "Taco met huisgemaakte schnitzel",
+    "titel_bron": "Taco met zelfgemaakte schnitzel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/taco-met-zelfgemaakte-schnitzel/",
     "personen": 4,
@@ -25381,8 +25576,9 @@
     ]
   },
   {
-    "titel": "Pasta al tartufo (pasta met truffel) – Chantal Janzen",
-    "titel_nl": "Pasta al tartufo met truffel",
+    "titel": "Pasta met truffel (al tartufo)",
+    "titel_nl": "Pasta met truffel (al tartufo)",
+    "titel_bron": "Pasta al tartufo (pasta met truffel) – Chantal Janzen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/tagliatelle-al-tartufo-chantal-janzen/",
     "personen": 4,
@@ -25447,8 +25643,9 @@
     ]
   },
   {
-    "titel": "Tagliatelle met garnalen",
-    "titel_nl": "Tagliatelle met garnalen",
+    "titel": "Tagliatelle met garnalen in cognac-roomsaus",
+    "titel_nl": "Tagliatelle met garnalen in cognac-roomsaus",
+    "titel_bron": "Tagliatelle met garnalen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/tagliatelle-met-garnalen/",
     "personen": 4,
@@ -25718,8 +25915,9 @@
     ]
   },
   {
-    "titel": "Thaise curry met zalm en kokos",
-    "titel_nl": "Thaise curry met zalm en kokos",
+    "titel": "Thaise zalmcurry met kokos",
+    "titel_nl": "Thaise zalmcurry met kokos",
+    "titel_bron": "Thaise curry met zalm en kokos",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/thaise-curry-met-zalm-recept/",
     "personen": 2,
@@ -25792,8 +25990,9 @@
     ]
   },
   {
-    "titel": "Thaise gestoofde kip",
-    "titel_nl": "Thaise gestoofde kip",
+    "titel": "Thaise kipstoof met gele curry",
+    "titel_nl": "Thaise kipstoof met gele curry",
+    "titel_bron": "Thaise gestoofde kip",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/thaise-gestoofde-kip/",
     "personen": 4,
@@ -25891,8 +26090,9 @@
     ]
   },
   {
-    "titel": "Thaise groene curry met kalkoen",
-    "titel_nl": "Thaise groene curry met kalkoen",
+    "titel": "Groene Thaise kalkoencurry",
+    "titel_nl": "Groene Thaise kalkoencurry",
+    "titel_bron": "Thaise groene curry met kalkoen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/thaise-groene-curry-met-kalkoen/",
     "personen": 4,
@@ -26017,8 +26217,9 @@
     ]
   },
   {
-    "titel": "Thaise rode curry met kip",
-    "titel_nl": "Thaise rode curry met kip",
+    "titel": "Rode Thaise kipcurry",
+    "titel_nl": "Rode Thaise kipcurry",
+    "titel_bron": "Thaise rode curry met kip",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/thaise-rode-curry-nina-pierson/",
     "personen": 4,
@@ -26098,8 +26299,9 @@
     ]
   },
   {
-    "titel": "Thaise slawrap met gemarineerde kip en pindadressing",
-    "titel_nl": "Thaise slawrap met gemarineerde kip en pindadressing",
+    "titel": "Thaise slawrap met pindadressing en gemarineerde kip",
+    "titel_nl": "Thaise slawrap met pindadressing en gemarineerde kip",
+    "titel_bron": "Thaise slawrap met gemarineerde kip en pindadressing",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/thaise-slawrap-met-gemarineerde-kip-en-pindadressing/",
     "personen": 4,
@@ -26348,8 +26550,9 @@
     ]
   },
   {
-    "titel": "Tom kha kai soep",
-    "titel_nl": "Tom kha kai soep",
+    "titel": "Tom kha kai",
+    "titel_nl": "Tom kha kai",
+    "titel_bron": "Tom kha kai soep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/tom-kha-kai-soep/",
     "personen": 4,
@@ -26462,8 +26665,9 @@
     ]
   },
   {
-    "titel": "Heerlijke rundergoulash",
-    "titel_nl": "Traditionele rundergoulash",
+    "titel": "Rundergoulash",
+    "titel_nl": "Rundergoulash",
+    "titel_bron": "Heerlijke rundergoulash",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/traditionele-rundergoulash/",
     "personen": 4,
@@ -26557,8 +26761,9 @@
     ]
   },
   {
-    "titel": "Traybake met zoete aardappel en feta",
-    "titel_nl": "Traybake met zoete aardappel en feta",
+    "titel": "Traybake met feta en zoete aardappel",
+    "titel_nl": "Traybake met feta en zoete aardappel",
+    "titel_bron": "Traybake met zoete aardappel en feta",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/traybake-met-zoete-aardappel-en-feta/",
     "personen": 4,
@@ -26740,8 +26945,9 @@
     ]
   },
   {
-    "titel": "Traybake wraps",
-    "titel_nl": "Traybake wraps",
+    "titel": "Wraps met kipgehakt van de bakplaat",
+    "titel_nl": "Wraps met kipgehakt van de bakplaat",
+    "titel_bron": "Traybake wraps",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/traybake-wraps/",
     "personen": 6,
@@ -26896,8 +27102,9 @@
     ]
   },
   {
-    "titel": "Uiensoep met een twist",
-    "titel_nl": "Uiensoep met een twist",
+    "titel": "Uiensoep, net even anders",
+    "titel_nl": "Uiensoep, net even anders",
+    "titel_bron": "Uiensoep met een twist",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/uiensoep-met-een-twist/",
     "personen": 4,
@@ -26979,8 +27186,9 @@
     ]
   },
   {
-    "titel": "Franse uiensoep recept: zo maak je deze klassieke soep",
-    "titel_nl": "Franse uiensoep recept: zo maak je deze klassieke soep",
+    "titel": "Klassieke Franse uiensoep",
+    "titel_nl": "Klassieke Franse uiensoep",
+    "titel_bron": "Franse uiensoep recept: zo maak je deze klassieke soep",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/uiensoep-recept/",
     "personen": null,
@@ -27066,8 +27274,9 @@
     ]
   },
   {
-    "titel": "Ultieme Boeuf Bourguignon",
-    "titel_nl": "Ultieme Boeuf Bourguignon",
+    "titel": "Boeuf bourguignon",
+    "titel_nl": "Boeuf bourguignon",
+    "titel_bron": "Ultieme Boeuf Bourguignon",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ultieme-boeuf-bourguignon/",
     "personen": 4,
@@ -27173,8 +27382,9 @@
     ]
   },
   {
-    "titel": "Ultieme New Yorkse hot dog",
-    "titel_nl": "Ultieme New Yorkse hot dog",
+    "titel": "New Yorkse hotdog",
+    "titel_nl": "New Yorkse hotdog",
+    "titel_bron": "Ultieme New Yorkse hot dog",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/ultieme-new-yorkse-hot-dog-recept/",
     "personen": 4,
@@ -27243,8 +27453,9 @@
     ]
   },
   {
-    "titel": "Vega ramensoep met miso-pompoen, shiitake en een eitje",
-    "titel_nl": "Vega ramensoep met miso-pompoen, shiitake en een eitje",
+    "titel": "Vegetarische ramen met miso-pompoen, shiitake en ei",
+    "titel_nl": "Vegetarische ramen met miso-pompoen, shiitake en ei",
+    "titel_bron": "Vega ramensoep met miso-pompoen, shiitake en een eitje",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/vega-ramensoep-vegetarische-ramen-noedelsoep/",
     "personen": 4,
@@ -27335,8 +27546,9 @@
     ]
   },
   {
-    "titel": "Vega Thaise curry – Linda Hakeboom",
-    "titel_nl": "Vega Thaise curry – Linda Hakeboom",
+    "titel": "Vegetarische Thaise curry",
+    "titel_nl": "Vegetarische Thaise curry",
+    "titel_bron": "Vega Thaise curry – Linda Hakeboom",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/vega-thaise-curry-linda-hakeboom/",
     "personen": 4,
@@ -27432,8 +27644,9 @@
     ]
   },
   {
-    "titel": "Vegetarisch BBQ gerecht: geroosterde groenten met kikkererwten",
-    "titel_nl": "Vegetarisch BBQ gerecht: geroosterde groenten met kikkererwten",
+    "titel": "Geroosterde groenten met kikkererwten van de bbq",
+    "titel_nl": "Geroosterde groenten met kikkererwten van de bbq",
+    "titel_bron": "Vegetarisch BBQ gerecht: geroosterde groenten met kikkererwten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/vegetarisch-bbq-gerecht-geroosterde-groenten-barbecue/",
     "personen": 4,
@@ -27599,8 +27812,9 @@
     ]
   },
   {
-    "titel": "Volkoren pastasalade met erwtjes en kip",
-    "titel_nl": "Volkoren pastasalade met erwtjes en kip",
+    "titel": "Volkoren pastasalade met kip en erwtjes",
+    "titel_nl": "Volkoren pastasalade met kip en erwtjes",
+    "titel_bron": "Volkoren pastasalade met erwtjes en kip",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/volkoren-pastasalade-met-erwtjes-en-kip/",
     "personen": 2,
@@ -27665,8 +27879,9 @@
     ]
   },
   {
-    "titel": "Volkorenwraps met honing-mosterdkip en spinazie",
-    "titel_nl": "Volkorenwraps met honing-mosterdkip en spinazie",
+    "titel": "Volkorenwraps met spinazie en honing-mosterdkip",
+    "titel_nl": "Volkorenwraps met spinazie en honing-mosterdkip",
+    "titel_bron": "Volkorenwraps met honing-mosterdkip en spinazie",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/volkorenwraps-met-honing-mosterdkip-en-spinazie/",
     "personen": 4,
@@ -27795,8 +28010,9 @@
     ]
   },
   {
-    "titel": "Winterse lasagne met groene groenten",
-    "titel_nl": "Winterse lasagne met groene groenten",
+    "titel": "Winterlasagne met groene groenten",
+    "titel_nl": "Winterlasagne met groene groenten",
+    "titel_bron": "Winterse lasagne met groene groenten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/winterse-lasagne-met-groene-groenten/",
     "personen": 4,
@@ -27887,8 +28103,9 @@
     ]
   },
   {
-    "titel": "Witlof met ham en kaassaus",
-    "titel_nl": "Witlof met ham en kaassaus",
+    "titel": "Witlof in kaassaus met ham",
+    "titel_nl": "Witlof in kaassaus met ham",
+    "titel_bron": "Witlof met ham en kaassaus",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/witlof-met-ham-en-kaassaus/",
     "personen": 4,
@@ -27954,8 +28171,9 @@
     ]
   },
   {
-    "titel": "Aspergesoep recept",
-    "titel_nl": "Witte aspergesoep",
+    "titel": "Soep van witte asperges met ei en ham",
+    "titel_nl": "Soep van witte asperges met ei en ham",
+    "titel_bron": "Aspergesoep recept",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/witte-aspergesoep/",
     "personen": 6,
@@ -28035,8 +28253,9 @@
     ]
   },
   {
-    "titel": "Wraps met gehakt",
-    "titel_nl": "Wraps met gehakt",
+    "titel": "Wraps met rundergehakt en bonen",
+    "titel_nl": "Wraps met rundergehakt en bonen",
+    "titel_bron": "Wraps met gehakt",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/wraps-met-gehakt/",
     "personen": 4,
@@ -28341,8 +28560,9 @@
     ]
   },
   {
-    "titel": "Zelf Turkse pizza maken – Lahmacun",
-    "titel_nl": "Zelf Turkse pizza maken – Lahmacun",
+    "titel": "Lahmacun: zelfgemaakte Turkse pizza",
+    "titel_nl": "Lahmacun: zelfgemaakte Turkse pizza",
+    "titel_bron": "Zelf Turkse pizza maken – Lahmacun",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/zelf-turkse-pizza-maken-lahmacun/",
     "personen": 4,
@@ -28448,8 +28668,9 @@
     ]
   },
   {
-    "titel": "Zoete aardappelsoep met chilivlokken",
-    "titel_nl": "Zoete aardappelsoep met chilivlokken",
+    "titel": "Soep van zoete aardappel met chilivlokken",
+    "titel_nl": "Soep van zoete aardappel met chilivlokken",
+    "titel_bron": "Zoete aardappelsoep met chilivlokken",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/zoete-aardappelsoep-met-chilivlokken/",
     "personen": 4,
@@ -28523,8 +28744,9 @@
     ]
   },
   {
-    "titel": "Zoete aubergine met fried rice uit de Airfryer met komkommersalade",
-    "titel_nl": "Zoete aubergine met fried rice uit de airfryer met komkommersalade",
+    "titel": "Zoete aubergine met gebakken rijst en komkommersalade uit de airfryer",
+    "titel_nl": "Zoete aubergine met gebakken rijst en komkommersalade uit de airfryer",
+    "titel_bron": "Zoete aubergine met fried rice uit de Airfryer met komkommersalade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/zoete-aubergine-met-fried-rice-uit-de-airfryer-met-komkommersalade/",
     "personen": 2,
@@ -28618,8 +28840,9 @@
     ]
   },
   {
-    "titel": "Zoetzure noedels met ananas",
-    "titel_nl": "Zoetzure noedels met ananas",
+    "titel": "Noedels in zoetzuur met ananas",
+    "titel_nl": "Noedels in zoetzuur met ananas",
+    "titel_bron": "Zoetzure noedels met ananas",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/zoetzure-noedels-met-ananas/",
     "personen": 4,
@@ -28805,8 +29028,9 @@
     ]
   },
   {
-    "titel": "Zomerse slowcooker recept: tostada met pulled pork",
-    "titel_nl": "Zomerse slowcooker recept: tostada met pulled pork",
+    "titel": "Tostada met pulled pork uit de slowcooker",
+    "titel_nl": "Tostada met pulled pork uit de slowcooker",
+    "titel_bron": "Zomerse slowcooker recept: tostada met pulled pork",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/zomerse-slowcooker-recept-tostada-met-pulled-pork/",
     "personen": null,
@@ -28992,8 +29216,9 @@
     ]
   },
   {
-    "titel": "Aubergine schnitzel",
-    "titel_nl": "Aubergine schnitzel",
+    "titel": "Schnitzel van aubergine met koolsalade",
+    "titel_nl": "Schnitzel van aubergine met koolsalade",
+    "titel_bron": "Aubergine schnitzel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/aubergine-schnitzel",
     "personen": 4,
@@ -29094,8 +29319,9 @@
     ]
   },
   {
-    "titel": "Bastilla met pompoen en gekarameliseerde ui",
-    "titel_nl": "Bastilla met pompoen en gekarameliseerde ui",
+    "titel": "Pompoenbastilla met gekarameliseerde ui",
+    "titel_nl": "Pompoenbastilla met gekarameliseerde ui",
+    "titel_bron": "Bastilla met pompoen en gekarameliseerde ui",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/bastilla",
     "personen": 4,
@@ -29171,8 +29397,9 @@
     ]
   },
   {
-    "titel": "Confit de canard",
-    "titel_nl": "Confit de canard",
+    "titel": "Confit de canard met rode kool",
+    "titel_nl": "Confit de canard met rode kool",
+    "titel_bron": "Confit de canard",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/confit-de-canard",
     "personen": 4,
@@ -29288,8 +29515,9 @@
     ]
   },
   {
-    "titel": "Courgette ovenschotel",
-    "titel_nl": "Courgette ovenschotel",
+    "titel": "Courgetteschotel uit de oven met ricotta en mozzarella",
+    "titel_nl": "Courgetteschotel uit de oven met ricotta en mozzarella",
+    "titel_bron": "Courgette ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/courgette-ovenschotel",
     "personen": 4,
@@ -29363,8 +29591,9 @@
     ]
   },
   {
-    "titel": "Gyoza salade",
-    "titel_nl": "Gyoza salade",
+    "titel": "Salade met gyoza en edamame",
+    "titel_nl": "Salade met gyoza en edamame",
+    "titel_bron": "Gyoza salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gyoza-salade",
     "personen": 4,
@@ -29453,8 +29682,9 @@
     ]
   },
   {
-    "titel": "Zelf falafel maken",
-    "titel_nl": "Zelf falafel maken",
+    "titel": "Zelfgemaakte falafel",
+    "titel_nl": "Zelfgemaakte falafel",
+    "titel_bron": "Zelf falafel maken",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/homemade-falafel",
     "personen": 16,
@@ -29522,8 +29752,9 @@
     ]
   },
   {
-    "titel": "Indonesische aubergine",
-    "titel_nl": "Indonesische aubergine",
+    "titel": "Aubergine op Indonesische wijze met rijst",
+    "titel_nl": "Aubergine op Indonesische wijze met rijst",
+    "titel_bron": "Indonesische aubergine",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/indonesische-aubergine",
     "personen": 4,
@@ -29620,8 +29851,9 @@
     ]
   },
   {
-    "titel": "Jian bing",
-    "titel_nl": "Jian bing",
+    "titel": "Jian bing, Chinese gevulde pannenkoek",
+    "titel_nl": "Jian bing, Chinese gevulde pannenkoek",
+    "titel_bron": "Jian bing",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/jian-bing",
     "personen": 4,
@@ -29694,8 +29926,9 @@
     ]
   },
   {
-    "titel": "Kip pesto lasagne",
-    "titel_nl": "Kip pesto lasagne",
+    "titel": "Lasagne met kip en pesto",
+    "titel_nl": "Lasagne met kip en pesto",
+    "titel_bron": "Kip pesto lasagne",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kip-pesto-lasagne",
     "personen": 4,
@@ -29794,8 +30027,9 @@
     ]
   },
   {
-    "titel": "Koolhydraatarme ovenschotel met gehakt",
-    "titel_nl": "Koolhydraatarme ovenschotel met gehakt",
+    "titel": "Koolhydraatarme gehaktschotel uit de oven",
+    "titel_nl": "Koolhydraatarme gehaktschotel uit de oven",
+    "titel_bron": "Koolhydraatarme ovenschotel met gehakt",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/koolhydraatarme-ovenschotel-met-gehakt",
     "personen": 4,
@@ -29904,8 +30138,9 @@
     ]
   },
   {
-    "titel": "Koreaanse pannenkoek",
-    "titel_nl": "Koreaanse pannenkoek",
+    "titel": "Koreaanse pannenkoek met kimchi",
+    "titel_nl": "Koreaanse pannenkoek met kimchi",
+    "titel_bron": "Koreaanse pannenkoek",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/koreaanse-pannenkoek",
     "personen": 4,
@@ -29994,8 +30229,9 @@
     ]
   },
   {
-    "titel": "Lasagne met pompoen",
-    "titel_nl": "Lasagne met pompoen",
+    "titel": "Pompoenlasagne met spinazie",
+    "titel_nl": "Pompoenlasagne met spinazie",
+    "titel_bron": "Lasagne met pompoen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/lasagne-met-pompoen",
     "personen": 4,
@@ -30093,8 +30329,9 @@
     ]
   },
   {
-    "titel": "Eenpans pasta",
-    "titel_nl": "Eenpans pasta",
+    "titel": "Pasta met paprika en mascarpone uit één pan",
+    "titel_nl": "Pasta met paprika en mascarpone uit één pan",
+    "titel_bron": "Eenpans pasta",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/makkelijke-maaltijd-eenpans-pasta",
     "personen": 4,
@@ -30181,8 +30418,9 @@
     ]
   },
   {
-    "titel": "Gewokte garnalen met noedels",
-    "titel_nl": "Gewokte garnalen met noedels",
+    "titel": "Noedels met gewokte garnalen",
+    "titel_nl": "Noedels met gewokte garnalen",
+    "titel_bron": "Gewokte garnalen met noedels",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/noedels-met-garnalen",
     "personen": 4,
@@ -30251,8 +30489,9 @@
     ]
   },
   {
-    "titel": "Orzo ovenschotel",
-    "titel_nl": "Orzo ovenschotel",
+    "titel": "Orzoschotel uit de oven met verse worst",
+    "titel_nl": "Orzoschotel uit de oven met verse worst",
+    "titel_bron": "Orzo ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/orzo-ovenschotel",
     "personen": 4,
@@ -30341,8 +30580,9 @@
     ]
   },
   {
-    "titel": "Plaattaart met groene asperges",
-    "titel_nl": "Plaattaart met groene asperges",
+    "titel": "Groene-aspergeplaattaart",
+    "titel_nl": "Groene-aspergeplaattaart",
+    "titel_bron": "Plaattaart met groene asperges",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/plaattaart-groene-asperges",
     "personen": 2,
@@ -30413,8 +30653,9 @@
     ]
   },
   {
-    "titel": "Ravioli lasagne",
-    "titel_nl": "Ravioli lasagne",
+    "titel": "Lasagne van ravioli",
+    "titel_nl": "Lasagne van ravioli",
+    "titel_bron": "Ravioli lasagne",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/ravioli-lasagne",
     "personen": 4,
@@ -30496,8 +30737,9 @@
     ]
   },
   {
-    "titel": "Rosti ovenschotel",
-    "titel_nl": "Rosti ovenschotel",
+    "titel": "Röstischotel uit de oven met spek en sperziebonen",
+    "titel_nl": "Röstischotel uit de oven met spek en sperziebonen",
+    "titel_bron": "Rosti ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/rosti-ovenschotel",
     "personen": 4,
@@ -30575,8 +30817,9 @@
     ]
   },
   {
-    "titel": "Soep met tortellini",
-    "titel_nl": "Soep met tortellini",
+    "titel": "Tomatensoep met tortellini",
+    "titel_nl": "Tomatensoep met tortellini",
+    "titel_bron": "Soep met tortellini",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/soep-met-tortellini",
     "personen": 4,
@@ -30656,8 +30899,9 @@
     ]
   },
   {
-    "titel": "Stamppot palmkool",
-    "titel_nl": "Stamppot palmkool",
+    "titel": "Palmkoolstamppot met oesterzwammen",
+    "titel_nl": "Palmkoolstamppot met oesterzwammen",
+    "titel_bron": "Stamppot palmkool",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/stamppot-palmkool",
     "personen": 4,
@@ -30732,8 +30976,9 @@
     ]
   },
   {
-    "titel": "Taco salade",
-    "titel_nl": "Taco salade",
+    "titel": "Tacosalade met gehakt en avocado",
+    "titel_nl": "Tacosalade met gehakt en avocado",
+    "titel_bron": "Taco salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/taco-salade",
     "personen": 4,
@@ -30839,8 +31084,9 @@
     ]
   },
   {
-    "titel": "Truffel kaasfondue",
-    "titel_nl": "Truffel kaasfondue",
+    "titel": "Kaasfondue met truffel",
+    "titel_nl": "Kaasfondue met truffel",
+    "titel_bron": "Truffel kaasfondue",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/truffel-kaasfondue",
     "personen": 2,
@@ -30900,8 +31146,9 @@
     ]
   },
   {
-    "titel": "Vegetarische gnocchi met pompoensaus",
-    "titel_nl": "Vegetarische gnocchi met pompoensaus",
+    "titel": "Vegetarische gnocchi in pompoensaus",
+    "titel_nl": "Vegetarische gnocchi in pompoensaus",
+    "titel_bron": "Vegetarische gnocchi met pompoensaus",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vegetarische-gnocchi",
     "personen": 4,
@@ -30982,8 +31229,9 @@
     ]
   },
   {
-    "titel": "Vis ovenschotel",
-    "titel_nl": "Vis ovenschotel",
+    "titel": "Ovenschotel met kabeljauw en spinazie",
+    "titel_nl": "Ovenschotel met kabeljauw en spinazie",
+    "titel_bron": "Vis ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vis-ovenschotel",
     "personen": 4,
@@ -31073,8 +31321,9 @@
     ]
   },
   {
-    "titel": "Zoete aardappel prei stamppot",
-    "titel_nl": "Zoete aardappel prei stamppot",
+    "titel": "Stamppot van zoete aardappel en prei",
+    "titel_nl": "Stamppot van zoete aardappel en prei",
+    "titel_bron": "Zoete aardappel prei stamppot",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/zoete-aardappel-prei-stamppot",
     "personen": 4,
@@ -31132,8 +31381,9 @@
     ]
   },
   {
-    "titel": "Zuurkoolschotel met gehakt",
-    "titel_nl": "Zuurkoolschotel met gehakt",
+    "titel": "Zuurkool-ovenschotel met gehakt en ananas",
+    "titel_nl": "Zuurkool-ovenschotel met gehakt en ananas",
+    "titel_bron": "Zuurkoolschotel met gehakt",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/zuurkoolschotel-met-gehakt",
     "personen": 4,
@@ -31215,8 +31465,9 @@
     ]
   },
   {
-    "titel": "Bieten quiche",
-    "titel_nl": "Bieten quiche",
+    "titel": "Quiche met rode biet en geitenkaas",
+    "titel_nl": "Quiche met rode biet en geitenkaas",
+    "titel_bron": "Bieten quiche",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/bieten-quiche",
     "personen": 4,
@@ -31281,8 +31532,9 @@
     ]
   },
   {
-    "titel": "Cacio e pepe",
-    "titel_nl": "Cacio e pepe",
+    "titel": "Spaghetti cacio e pepe",
+    "titel_nl": "Spaghetti cacio e pepe",
+    "titel_bron": "Cacio e pepe",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/cacio-e-pepe",
     "personen": 4,
@@ -31339,8 +31591,9 @@
     ]
   },
   {
-    "titel": "Filodeeg plaattaart met tomaten",
-    "titel_nl": "Filodeeg plaattaart met tomaten",
+    "titel": "Plaattaart van filodeeg met tomaat",
+    "titel_nl": "Plaattaart van filodeeg met tomaat",
+    "titel_bron": "Filodeeg plaattaart met tomaten",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/filodeeg-plaattaart-met-tomaten",
     "personen": 4,
@@ -31416,8 +31669,9 @@
     ]
   },
   {
-    "titel": "Gegrilde asperges met kruiden-roomsaus",
-    "titel_nl": "Gegrilde asperges met kruiden-roomsaus",
+    "titel": "Gegrilde asperges in kruiden-roomsaus",
+    "titel_nl": "Gegrilde asperges in kruiden-roomsaus",
+    "titel_bron": "Gegrilde asperges met kruiden-roomsaus",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gegrilde-asperges",
     "personen": 4,
@@ -31495,8 +31749,9 @@
     ]
   },
   {
-    "titel": "Gnocchi met pompoen",
-    "titel_nl": "Gnocchi met pompoen",
+    "titel": "Gnocchi met pompoen en ricotta",
+    "titel_nl": "Gnocchi met pompoen en ricotta",
+    "titel_bron": "Gnocchi met pompoen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gnocchi-met-pompoen",
     "personen": 4,
@@ -31568,8 +31823,9 @@
     ]
   },
   {
-    "titel": "Gnocchi uit de Airfryer",
-    "titel_nl": "Gnocchi uit de Airfryer",
+    "titel": "Krokante airfryer-gnocchi met tomaatjes",
+    "titel_nl": "Krokante airfryer-gnocchi met tomaatjes",
+    "titel_bron": "Gnocchi uit de Airfryer",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gnocchi-uit-de-airfryer",
     "personen": 4,
@@ -31627,8 +31883,9 @@
     ]
   },
   {
-    "titel": "Griekse pastasalade",
-    "titel_nl": "Griekse pastasalade",
+    "titel": "Pastasalade op z'n Grieks met feta",
+    "titel_nl": "Pastasalade op z'n Grieks met feta",
+    "titel_bron": "Griekse pastasalade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/griekse-pastasalade",
     "personen": 4,
@@ -31720,8 +31977,9 @@
     ]
   },
   {
-    "titel": "Kervelsoep",
-    "titel_nl": "Kervelsoep",
+    "titel": "Kervelsoep met doperwten en ham",
+    "titel_nl": "Kervelsoep met doperwten en ham",
+    "titel_bron": "Kervelsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kervelsoep",
     "personen": 4,
@@ -31818,8 +32076,9 @@
     ]
   },
   {
-    "titel": "Indiase kikkererwtensoep",
-    "titel_nl": "Indiase kikkererwtensoep",
+    "titel": "Indiase soep met kikkererwten en pompoen",
+    "titel_nl": "Indiase soep met kikkererwten en pompoen",
+    "titel_bron": "Indiase kikkererwtensoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kikkererwtensoep",
     "personen": 4,
@@ -31923,8 +32182,9 @@
     ]
   },
   {
-    "titel": "Knolselderij steak met Waldorf-salade",
-    "titel_nl": "Knolselderij steak met Waldorf-salade",
+    "titel": "Steak van knolselderij met waldorfsalade",
+    "titel_nl": "Steak van knolselderij met waldorfsalade",
+    "titel_bron": "Knolselderij steak met Waldorf-salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/knolselderij-steak",
     "personen": 4,
@@ -32027,8 +32287,9 @@
     ]
   },
   {
-    "titel": "Kumpir: Turkse gevulde aardappelen",
-    "titel_nl": "Kumpir: Turkse gevulde aardappelen",
+    "titel": "Kumpir: gevulde aardappel op z'n Turks",
+    "titel_nl": "Kumpir: gevulde aardappel op z'n Turks",
+    "titel_bron": "Kumpir: Turkse gevulde aardappelen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kumpir",
     "personen": 4,
@@ -32103,8 +32364,9 @@
     ]
   },
   {
-    "titel": "Lasagne met prei",
-    "titel_nl": "Lasagne met prei",
+    "titel": "Preilasagne met gorgonzola en walnoten",
+    "titel_nl": "Preilasagne met gorgonzola en walnoten",
+    "titel_bron": "Lasagne met prei",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/lasagne-met-prei",
     "personen": 4,
@@ -32185,8 +32447,9 @@
     ]
   },
   {
-    "titel": "Ottolenghi&#8217;s quiche met pompoen",
-    "titel_nl": "Ottolenghi&#8217;s quiche met pompoen",
+    "titel": "Pompoenquiche",
+    "titel_nl": "Pompoenquiche",
+    "titel_bron": "Ottolenghi&#8217;s quiche met pompoen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/ottolenghis-quiche-met-pompoen",
     "personen": 4,
@@ -32281,8 +32544,9 @@
     ]
   },
   {
-    "titel": "Pappardelle met rucola",
-    "titel_nl": "Pappardelle met rucola",
+    "titel": "Pappardelle met rucola, pesto en tomaatjes",
+    "titel_nl": "Pappardelle met rucola, pesto en tomaatjes",
+    "titel_bron": "Pappardelle met rucola",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pappardelle-met-rucola",
     "personen": 4,
@@ -32347,8 +32611,9 @@
     ]
   },
   {
-    "titel": "Pasta met palmkool",
-    "titel_nl": "Pasta met palmkool",
+    "titel": "Romige pasta met palmkool en bloemkool",
+    "titel_nl": "Romige pasta met palmkool en bloemkool",
+    "titel_bron": "Pasta met palmkool",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pasta-met-palmkool",
     "personen": 4,
@@ -32440,8 +32705,9 @@
     ]
   },
   {
-    "titel": "Pasta met ricotta en tomaat",
-    "titel_nl": "Pasta met ricotta en tomaat",
+    "titel": "Pasta met tomaat en ricotta",
+    "titel_nl": "Pasta met tomaat en ricotta",
+    "titel_bron": "Pasta met ricotta en tomaat",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pasta-met-ricotta",
     "personen": 4,
@@ -32517,8 +32783,9 @@
     ]
   },
   {
-    "titel": "Pasta pesto",
-    "titel_nl": "Pasta pesto",
+    "titel": "Spaghetti met verse pesto en tomaatjes",
+    "titel_nl": "Spaghetti met verse pesto en tomaatjes",
+    "titel_bron": "Pasta pesto",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pasta-pesto",
     "personen": 4,
@@ -32578,8 +32845,9 @@
     ]
   },
   {
-    "titel": "Pastasalade met rode pesto",
-    "titel_nl": "Pastasalade met rode pesto",
+    "titel": "Pastasalade met pesto rosso",
+    "titel_nl": "Pastasalade met pesto rosso",
+    "titel_bron": "Pastasalade met rode pesto",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pastasalade-met-rode-pesto",
     "personen": 4,
@@ -32654,8 +32922,9 @@
     ]
   },
   {
-    "titel": "Ravioli met ricotta",
-    "titel_nl": "Ravioli met ricotta",
+    "titel": "Zelfgemaakte ravioli met ricotta",
+    "titel_nl": "Zelfgemaakte ravioli met ricotta",
+    "titel_bron": "Ravioli met ricotta",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/ravioli-met-ricotta",
     "personen": 4,
@@ -32722,8 +32991,9 @@
     ]
   },
   {
-    "titel": "Rigatoni met tomaat-mascarponesaus",
-    "titel_nl": "Rigatoni met tomaat-mascarponesaus",
+    "titel": "Rigatoni in tomaten-mascarponesaus",
+    "titel_nl": "Rigatoni in tomaten-mascarponesaus",
+    "titel_bron": "Rigatoni met tomaat-mascarponesaus",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/rigatoni-met-tomaat-mascarponesaus",
     "personen": 4,
@@ -32800,8 +33070,9 @@
     ]
   },
   {
-    "titel": "Rode wijn risotto",
-    "titel_nl": "Rode wijn risotto",
+    "titel": "Risotto met rode wijn en paddenstoelen",
+    "titel_nl": "Risotto met rode wijn en paddenstoelen",
+    "titel_bron": "Rode wijn risotto",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/rode-wijn-risotto",
     "personen": 4,
@@ -32878,8 +33149,9 @@
     ]
   },
   {
-    "titel": "Roerbak spitskool",
-    "titel_nl": "Roerbak spitskool",
+    "titel": "Roergebakken spitskool met rijst en ei",
+    "titel_nl": "Roergebakken spitskool met rijst en ei",
+    "titel_bron": "Roerbak spitskool",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/roerbak-spitskool",
     "personen": 4,
@@ -32975,8 +33247,9 @@
     ]
   },
   {
-    "titel": "Spinazie curry",
-    "titel_nl": "Spinazie curry",
+    "titel": "Spinaziecurry met pompoen en kikkererwten",
+    "titel_nl": "Spinaziecurry met pompoen en kikkererwten",
+    "titel_bron": "Spinazie curry",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/spinazie-curry",
     "personen": 4,
@@ -33062,8 +33335,9 @@
     ]
   },
   {
-    "titel": "Stamppot boerenkool met zoete aardappel",
-    "titel_nl": "Stamppot boerenkool met zoete aardappel",
+    "titel": "Boerenkoolstamppot met zoete aardappel",
+    "titel_nl": "Boerenkoolstamppot met zoete aardappel",
+    "titel_bron": "Stamppot boerenkool met zoete aardappel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/stamppot-boerenkool",
     "personen": 4,
@@ -33128,8 +33402,9 @@
     ]
   },
   {
-    "titel": "Stamppot rucola",
-    "titel_nl": "Stamppot rucola",
+    "titel": "Rucolastamppot met feta",
+    "titel_nl": "Rucolastamppot met feta",
+    "titel_bron": "Stamppot rucola",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/stamppot-rucola",
     "personen": 4,
@@ -33204,8 +33479,9 @@
     ]
   },
   {
-    "titel": "Tahdig",
-    "titel_nl": "Tahdig",
+    "titel": "Tahdig: Perzische rijst met krokante bodem",
+    "titel_nl": "Tahdig: Perzische rijst met krokante bodem",
+    "titel_bron": "Tahdig",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/tahdig",
     "personen": 4,
@@ -33298,8 +33574,9 @@
     ]
   },
   {
-    "titel": "Tortellini ovenschotel",
-    "titel_nl": "Tortellini ovenschotel",
+    "titel": "Tortellini uit de oven met pesto en mozzarella",
+    "titel_nl": "Tortellini uit de oven met pesto en mozzarella",
+    "titel_bron": "Tortellini ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/tortellini-ovenschotel",
     "personen": 4,
@@ -33364,8 +33641,9 @@
     ]
   },
   {
-    "titel": "Vega butter chicken",
-    "titel_nl": "Vega butter chicken",
+    "titel": "Vega butter chicken met bloemkool en broccoli",
+    "titel_nl": "Vega butter chicken met bloemkool en broccoli",
+    "titel_bron": "Vega butter chicken",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vega-butter-chicken",
     "personen": 4,
@@ -33463,8 +33741,9 @@
     ]
   },
   {
-    "titel": "Vega shoarma van oesterzwammen",
-    "titel_nl": "Vega shoarma van oesterzwammen",
+    "titel": "Oesterzwamshoarma (vega)",
+    "titel_nl": "Oesterzwamshoarma (vega)",
+    "titel_bron": "Vega shoarma van oesterzwammen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vega-shoarma",
     "personen": 4,
@@ -33560,8 +33839,9 @@
     ]
   },
   {
-    "titel": "Vegetarische goulash",
-    "titel_nl": "Vegetarische goulash",
+    "titel": "Vegetarische goulash met krieltjes en champignons",
+    "titel_nl": "Vegetarische goulash met krieltjes en champignons",
+    "titel_bron": "Vegetarische goulash",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vegetarische-goulash",
     "personen": 4,
@@ -33676,8 +33956,9 @@
     ]
   },
   {
-    "titel": "Wonton soep",
-    "titel_nl": "Wonton soep",
+    "titel": "Wontonsoep met noedels en paksoi",
+    "titel_nl": "Wontonsoep met noedels en paksoi",
+    "titel_bron": "Wonton soep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/wonton-soep",
     "personen": 4,
@@ -33824,8 +34105,9 @@
     ]
   },
   {
-    "titel": "Artisjok salade",
-    "titel_nl": "Artisjok salade",
+    "titel": "Salade met artisjok, linzen en geitenkaas",
+    "titel_nl": "Salade met artisjok, linzen en geitenkaas",
+    "titel_bron": "Artisjok salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/artisjok-salade",
     "personen": 4,
@@ -33898,8 +34180,9 @@
     ]
   },
   {
-    "titel": "Aspergesoep",
-    "titel_nl": "Aspergesoep",
+    "titel": "Romige soep van witte asperges",
+    "titel_nl": "Romige soep van witte asperges",
+    "titel_bron": "Aspergesoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/aspergesoep",
     "personen": 4,
@@ -34115,8 +34398,9 @@
     ]
   },
   {
-    "titel": "Bladerdeeg met feta en spinazie",
-    "titel_nl": "Bladerdeeg met feta en spinazie",
+    "titel": "Bladerdeeg met spinazie en feta",
+    "titel_nl": "Bladerdeeg met spinazie en feta",
+    "titel_bron": "Bladerdeeg met feta en spinazie",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/bladerdeeg-met-feta-en-spinazie",
     "personen": 4,
@@ -34193,8 +34477,9 @@
     ]
   },
   {
-    "titel": "Boerenkoolsoep met mosterd en crème fraîche",
-    "titel_nl": "Boerenkoolsoep met mosterd en crème fraîche",
+    "titel": "Soep van boerenkool met mosterd en crème fraîche",
+    "titel_nl": "Soep van boerenkool met mosterd en crème fraîche",
+    "titel_bron": "Boerenkoolsoep met mosterd en crème fraîche",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/boerenkoolsoep",
     "personen": 4,
@@ -34334,8 +34619,9 @@
     ]
   },
   {
-    "titel": "Broccoli-bloemkoolsoep",
-    "titel_nl": "Broccoli-bloemkoolsoep",
+    "titel": "Soep van broccoli en bloemkool",
+    "titel_nl": "Soep van broccoli en bloemkool",
+    "titel_bron": "Broccoli-bloemkoolsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/broccoli-bloemkoolsoep",
     "personen": 4,
@@ -34425,8 +34711,9 @@
     ]
   },
   {
-    "titel": "Broccoli courgettesoep",
-    "titel_nl": "Broccoli courgettesoep",
+    "titel": "Soep van broccoli en courgette",
+    "titel_nl": "Soep van broccoli en courgette",
+    "titel_bron": "Broccoli courgettesoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/broccoli-courgettesoep",
     "personen": 4,
@@ -35225,8 +35512,9 @@
     ]
   },
   {
-    "titel": "Geroosterde tomatensoep",
-    "titel_nl": "Geroosterde tomatensoep",
+    "titel": "Soep van geroosterde tomaten en paprika",
+    "titel_nl": "Soep van geroosterde tomaten en paprika",
+    "titel_bron": "Geroosterde tomatensoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/geroosterde-tomatensoep",
     "personen": 4,
@@ -35311,8 +35599,9 @@
     ]
   },
   {
-    "titel": "Grote ravioli met paddenstoelen en truffel",
-    "titel_nl": "Grote ravioli met paddenstoelen en truffel",
+    "titel": "Grote ravioli met truffel en paddenstoelen",
+    "titel_nl": "Grote ravioli met truffel en paddenstoelen",
+    "titel_bron": "Grote ravioli met paddenstoelen en truffel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/grote-ravioli",
     "personen": 4,
@@ -35406,8 +35695,9 @@
     ]
   },
   {
-    "titel": "Gyoza met kip",
-    "titel_nl": "Gyoza met kip",
+    "titel": "Gyoza gevuld met kip",
+    "titel_nl": "Gyoza gevuld met kip",
+    "titel_bron": "Gyoza met kip",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gyoza-met-kip",
     "personen": 4,
@@ -35485,8 +35775,9 @@
     ]
   },
   {
-    "titel": "Heldere champignonsoep",
-    "titel_nl": "Heldere champignonsoep",
+    "titel": "Heldere paddenstoelensoep",
+    "titel_nl": "Heldere paddenstoelensoep",
+    "titel_bron": "Heldere champignonsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/heldere-champignonsoep",
     "personen": 4,
@@ -35575,8 +35866,9 @@
     ]
   },
   {
-    "titel": "Kastanjesoep",
-    "titel_nl": "Kastanjesoep",
+    "titel": "Kastanjesoep met knolselderij en salie",
+    "titel_nl": "Kastanjesoep met knolselderij en salie",
+    "titel_bron": "Kastanjesoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kastanjesoep",
     "personen": 4,
@@ -35890,8 +36182,9 @@
     ]
   },
   {
-    "titel": "Koninginnesoep",
-    "titel_nl": "Koninginnesoep",
+    "titel": "Koninginnesoep met kip",
+    "titel_nl": "Koninginnesoep met kip",
+    "titel_bron": "Koninginnesoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/koninginnesoep",
     "personen": 4,
@@ -35992,8 +36285,9 @@
     ]
   },
   {
-    "titel": "Pasteitje zalmragout",
-    "titel_nl": "Pasteitje zalmragout",
+    "titel": "Pasteitje met zalmragout",
+    "titel_nl": "Pasteitje met zalmragout",
+    "titel_bron": "Pasteitje zalmragout",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pasteitje-zalmragout",
     "personen": 4,
@@ -36074,8 +36368,9 @@
     ]
   },
   {
-    "titel": "Pastinaak knolselderijsoep",
-    "titel_nl": "Pastinaak knolselderijsoep",
+    "titel": "Soep van pastinaak en knolselderij",
+    "titel_nl": "Soep van pastinaak en knolselderij",
+    "titel_bron": "Pastinaak knolselderijsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pastinaak-knolselderijsoep",
     "personen": 4,
@@ -36162,8 +36457,9 @@
     ]
   },
   {
-    "titel": "Pastinaaksoep",
-    "titel_nl": "Pastinaaksoep",
+    "titel": "Pastinaaksoep met rozemarijn en amandelen",
+    "titel_nl": "Pastinaaksoep met rozemarijn en amandelen",
+    "titel_bron": "Pastinaaksoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pastinaaksoep-met-salieboter",
     "personen": 4,
@@ -36243,8 +36539,9 @@
     ]
   },
   {
-    "titel": "Quiche Lorraine",
-    "titel_nl": "Quiche Lorraine",
+    "titel": "Quiche Lorraine met spek en gruyère",
+    "titel_nl": "Quiche Lorraine met spek en gruyère",
+    "titel_bron": "Quiche Lorraine",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/quiche-lorraine",
     "personen": 4,
@@ -36328,8 +36625,9 @@
     ]
   },
   {
-    "titel": "Risotto met kip en spinazie",
-    "titel_nl": "Risotto met kip en spinazie",
+    "titel": "Risotto met spinazie en kip",
+    "titel_nl": "Risotto met spinazie en kip",
+    "titel_bron": "Risotto met kip en spinazie",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/risotto-met-kip",
     "personen": 4,
@@ -36490,8 +36788,9 @@
     ]
   },
   {
-    "titel": "Salade met gerookte zalm",
-    "titel_nl": "Salade met gerookte zalm",
+    "titel": "Gerookte-zalmsalade",
+    "titel_nl": "Gerookte-zalmsalade",
+    "titel_bron": "Salade met gerookte zalm",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salade-met-gerookte-zalm",
     "personen": 4,
@@ -36585,8 +36884,9 @@
     ]
   },
   {
-    "titel": "Salmorejo",
-    "titel_nl": "Salmorejo",
+    "titel": "Salmorejo met ei en chorizo",
+    "titel_nl": "Salmorejo met ei en chorizo",
+    "titel_bron": "Salmorejo",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salmorejo",
     "personen": 4,
@@ -36840,8 +37140,9 @@
     ]
   },
   {
-    "titel": "Spinazie quiche",
-    "titel_nl": "Spinazie quiche",
+    "titel": "Spinaziequiche met feta",
+    "titel_nl": "Spinaziequiche met feta",
+    "titel_bron": "Spinazie quiche",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/spinazie-quiche",
     "personen": 4,
@@ -36928,8 +37229,9 @@
     ]
   },
   {
-    "titel": "Steak tartare op 2 manieren: vlees én vega",
-    "titel_nl": "Steak tartare op 2 manieren: vlees én vega",
+    "titel": "Steak tartare, met vlees én vegetarisch",
+    "titel_nl": "Steak tartare, met vlees én vegetarisch",
+    "titel_bron": "Steak tartare op 2 manieren: vlees én vega",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/steak-tartare",
     "personen": 4,
@@ -37076,8 +37378,9 @@
     ]
   },
   {
-    "titel": "Thaise broccolisoep",
-    "titel_nl": "Thaise broccolisoep",
+    "titel": "Thaise soep van broccoli en kokos",
+    "titel_nl": "Thaise soep van broccoli en kokos",
+    "titel_bron": "Thaise broccolisoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/thaise-broccolisoep",
     "personen": 4,
@@ -37143,8 +37446,9 @@
     ]
   },
   {
-    "titel": "Tomaten quiche",
-    "titel_nl": "Tomaten quiche",
+    "titel": "Tomatenquiche met geitenkaas",
+    "titel_nl": "Tomatenquiche met geitenkaas",
+    "titel_bron": "Tomaten quiche",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/tomaten-quiche",
     "personen": 4,
@@ -37430,8 +37734,9 @@
     ]
   },
   {
-    "titel": "Bouillabaisse met garnalen",
-    "titel_nl": "Bouillabaisse met garnalen",
+    "titel": "Bouillabaisse met garnalen en mosselen",
+    "titel_nl": "Bouillabaisse met garnalen en mosselen",
+    "titel_bron": "Bouillabaisse met garnalen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/bouillabaisse",
     "personen": 4,
@@ -37505,8 +37810,9 @@
     ]
   },
   {
-    "titel": "Broccolisoep met kaascroutons",
-    "titel_nl": "Broccolisoep met kaascroutons",
+    "titel": "Broccolisoep met croutons van kaas",
+    "titel_nl": "Broccolisoep met croutons van kaas",
+    "titel_bron": "Broccolisoep met kaascroutons",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/broccolisoep",
     "personen": 4,
@@ -37591,8 +37897,9 @@
     ]
   },
   {
-    "titel": "Champignonsoep",
-    "titel_nl": "Champignonsoep",
+    "titel": "Champignonsoep met kaasstengels",
+    "titel_nl": "Champignonsoep met kaasstengels",
+    "titel_bron": "Champignonsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/champignonsoep",
     "personen": 4,
@@ -37672,8 +37979,9 @@
     ]
   },
   {
-    "titel": "Courgette paprikasoep",
-    "titel_nl": "Courgette paprikasoep",
+    "titel": "Soep van courgette en paprika",
+    "titel_nl": "Soep van courgette en paprika",
+    "titel_bron": "Courgette paprikasoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/courgette-paprikasoep",
     "personen": 4,
@@ -37754,8 +38062,9 @@
     ]
   },
   {
-    "titel": "Courgettesoep",
-    "titel_nl": "Courgettesoep",
+    "titel": "Courgettesoep met pesto",
+    "titel_nl": "Courgettesoep met pesto",
+    "titel_bron": "Courgettesoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/courgettesoep-met-pesto",
     "personen": 4,
@@ -37815,8 +38124,9 @@
     ]
   },
   {
-    "titel": "Curry noedelsoep",
-    "titel_nl": "Curry noedelsoep",
+    "titel": "Noedelsoep met curry en kip",
+    "titel_nl": "Noedelsoep met curry en kip",
+    "titel_bron": "Curry noedelsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/curry-noedelsoep",
     "personen": 4,
@@ -37897,8 +38207,9 @@
     ]
   },
   {
-    "titel": "Erwtensoep uit de slowcooker",
-    "titel_nl": "Erwtensoep uit de slowcooker",
+    "titel": "Slowcooker-erwtensoep",
+    "titel_nl": "Slowcooker-erwtensoep",
+    "titel_bron": "Erwtensoep uit de slowcooker",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/erwtensoep-uit-de-slowcooker",
     "personen": 4,
@@ -37972,8 +38283,9 @@
     ]
   },
   {
-    "titel": "Koude soep met tomaat en paprika",
-    "titel_nl": "Koude soep met tomaat en paprika",
+    "titel": "Koude tomaten-paprikasoep",
+    "titel_nl": "Koude tomaten-paprikasoep",
+    "titel_bron": "Koude soep met tomaat en paprika",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gazpacho-recept",
     "personen": 4,
@@ -38067,8 +38379,9 @@
     ]
   },
   {
-    "titel": "Gebonden kippensoep",
-    "titel_nl": "Gebonden kippensoep",
+    "titel": "Gebonden kippensoep met prei",
+    "titel_nl": "Gebonden kippensoep met prei",
+    "titel_bron": "Gebonden kippensoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gebonden-kippensoep",
     "personen": 4,
@@ -38144,8 +38457,9 @@
     ]
   },
   {
-    "titel": "Kerriesoep met prei",
-    "titel_nl": "Kerriesoep met prei",
+    "titel": "Preisoep met kerrie en kip",
+    "titel_nl": "Preisoep met kerrie en kip",
+    "titel_bron": "Kerriesoep met prei",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kerriesoep",
     "personen": 4,
@@ -38220,8 +38534,9 @@
     ]
   },
   {
-    "titel": "Komkommersoep met geitenkaas",
-    "titel_nl": "Komkommersoep met geitenkaas",
+    "titel": "Koude komkommersoep met geitenkaas",
+    "titel_nl": "Koude komkommersoep met geitenkaas",
+    "titel_bron": "Komkommersoep met geitenkaas",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/komkommersoep-met-geitenkaas",
     "personen": 4,
@@ -38294,8 +38609,9 @@
     ]
   },
   {
-    "titel": "Maaltijdsoep met linzen",
-    "titel_nl": "Maaltijdsoep met linzen",
+    "titel": "Linzenmaaltijdsoep met boerenkool",
+    "titel_nl": "Linzenmaaltijdsoep met boerenkool",
+    "titel_bron": "Maaltijdsoep met linzen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/maaltijdsoep-met-linzen",
     "personen": 4,
@@ -38365,8 +38681,9 @@
     ]
   },
   {
-    "titel": "Maissoep",
-    "titel_nl": "Maissoep",
+    "titel": "Maissoep met jalapeño en limoen",
+    "titel_nl": "Maissoep met jalapeño en limoen",
+    "titel_bron": "Maissoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/maissoep-recept",
     "personen": 4,
@@ -38451,8 +38768,9 @@
     ]
   },
   {
-    "titel": "Meeneem lunch: noedels to go",
-    "titel_nl": "Meeneem lunch: noedels to go",
+    "titel": "Noedels to go als meeneemlunch",
+    "titel_nl": "Noedels to go als meeneemlunch",
+    "titel_bron": "Meeneem lunch: noedels to go",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/meeneem-lunch-noedels-to-go",
     "personen": 1,
@@ -38521,8 +38839,9 @@
     ]
   },
   {
-    "titel": "Miso ramen",
-    "titel_nl": "Miso ramen",
+    "titel": "Miso-ramen met gehakt en paksoi",
+    "titel_nl": "Miso-ramen met gehakt en paksoi",
+    "titel_bron": "Miso ramen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/miso-ramen-met-gehaktballetjes",
     "personen": 4,
@@ -38595,8 +38914,9 @@
     ]
   },
   {
-    "titel": "Miso soep met shiitake",
-    "titel_nl": "Miso soep met shiitake",
+    "titel": "Misosoep met shiitake",
+    "titel_nl": "Misosoep met shiitake",
+    "titel_bron": "Miso soep met shiitake",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/miso-soep",
     "personen": 4,
@@ -38653,8 +38973,9 @@
     ]
   },
   {
-    "titel": "Noedelsoep met biefstuk en udon noodles",
-    "titel_nl": "Noedelsoep met biefstuk en udon noodles",
+    "titel": "Udon-noedelsoep met biefstuk",
+    "titel_nl": "Udon-noedelsoep met biefstuk",
+    "titel_bron": "Noedelsoep met biefstuk en udon noodles",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/noedelsoep-met-biefstuk",
     "personen": 4,
@@ -38724,8 +39045,9 @@
     ]
   },
   {
-    "titel": "Pindasoep met kokosmelk",
-    "titel_nl": "Pindasoep met kokosmelk",
+    "titel": "Kokos-pindasoep met noedels",
+    "titel_nl": "Kokos-pindasoep met noedels",
+    "titel_bron": "Pindasoep met kokosmelk",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pindasoep",
     "personen": 4,
@@ -38799,8 +39121,9 @@
     ]
   },
   {
-    "titel": "Pittige pompoensoep",
-    "titel_nl": "Pittige pompoensoep",
+    "titel": "Pittige pompoensoep met kokos en gele curry",
+    "titel_nl": "Pittige pompoensoep met kokos en gele curry",
+    "titel_bron": "Pittige pompoensoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pittige-pompoensoep",
     "personen": 4,
@@ -38875,8 +39198,9 @@
     ]
   },
   {
-    "titel": "Pompoen wortelsoep",
-    "titel_nl": "Pompoen wortelsoep",
+    "titel": "Soep van pompoen en wortel",
+    "titel_nl": "Soep van pompoen en wortel",
+    "titel_bron": "Pompoen wortelsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pompoen-wortelsoep",
     "personen": 4,
@@ -38955,8 +39279,9 @@
     ]
   },
   {
-    "titel": "Preisoep met pesto toast",
-    "titel_nl": "Preisoep met pesto toast",
+    "titel": "Preisoep met toast met pesto",
+    "titel_nl": "Preisoep met toast met pesto",
+    "titel_bron": "Preisoep met pesto toast",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/preisoep-met-pesto-toast",
     "personen": 4,
@@ -39025,8 +39350,9 @@
     ]
   },
   {
-    "titel": "Ribollita soep met bonen en brood",
-    "titel_nl": "Ribollita soep met bonen en brood",
+    "titel": "Ribollita met bonen en brood",
+    "titel_nl": "Ribollita met bonen en brood",
+    "titel_bron": "Ribollita soep met bonen en brood",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/ribollita-soep-met-bonen",
     "personen": 4,
@@ -39104,8 +39430,9 @@
     ]
   },
   {
-    "titel": "Rode currysoep",
-    "titel_nl": "Rode currysoep",
+    "titel": "Rode currysoep met zoete aardappel",
+    "titel_nl": "Rode currysoep met zoete aardappel",
+    "titel_bron": "Rode currysoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/rode-currysoep",
     "personen": 4,
@@ -39186,8 +39513,9 @@
     ]
   },
   {
-    "titel": "Rode linzensoep",
-    "titel_nl": "Rode linzensoep",
+    "titel": "Soep van rode linzen",
+    "titel_nl": "Soep van rode linzen",
+    "titel_bron": "Rode linzensoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/rode-linzensoep",
     "personen": 4,
@@ -39271,8 +39599,9 @@
     ]
   },
   {
-    "titel": "Tomaten-crèmesoep",
-    "titel_nl": "Tomaten-crèmesoep",
+    "titel": "Tomatencrèmesoep met mascarpone",
+    "titel_nl": "Tomatencrèmesoep met mascarpone",
+    "titel_bron": "Tomaten-crèmesoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/tomaten-cremesoep",
     "personen": 4,
@@ -39349,8 +39678,9 @@
     ]
   },
   {
-    "titel": "Tomatensoep met balletjes",
-    "titel_nl": "Tomatensoep met balletjes",
+    "titel": "Tomatensoep met gehaktballetjes",
+    "titel_nl": "Tomatensoep met gehaktballetjes",
+    "titel_bron": "Tomatensoep met balletjes",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/tomatensoep",
     "personen": 4,
@@ -39426,8 +39756,9 @@
     ]
   },
   {
-    "titel": "Turkse linzensoep",
-    "titel_nl": "Turkse linzensoep",
+    "titel": "Linzensoep op Turkse wijze",
+    "titel_nl": "Linzensoep op Turkse wijze",
+    "titel_bron": "Turkse linzensoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/turkse-linzensoep",
     "personen": 4,
@@ -39501,8 +39832,9 @@
     ]
   },
   {
-    "titel": "Vegetarische noedelsoep",
-    "titel_nl": "Vegetarische noedelsoep",
+    "titel": "Vegetarische ramen-noedelsoep",
+    "titel_nl": "Vegetarische ramen-noedelsoep",
+    "titel_bron": "Vegetarische noedelsoep",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vegetarische-noedelsoep",
     "personen": 4,
@@ -39612,8 +39944,9 @@
     ]
   },
   {
-    "titel": "Vegetarische soep met orzo",
-    "titel_nl": "Vegetarische soep met orzo",
+    "titel": "Vegetarische orzosoep",
+    "titel_nl": "Vegetarische orzosoep",
+    "titel_bron": "Vegetarische soep met orzo",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vegetarische-soep",
     "personen": 4,
@@ -39682,8 +40015,9 @@
     ]
   },
   {
-    "titel": "Venkelsoep met gerookte zalm",
-    "titel_nl": "Venkelsoep met gerookte zalm",
+    "titel": "Soep van venkel met gerookte zalm",
+    "titel_nl": "Soep van venkel met gerookte zalm",
+    "titel_bron": "Venkelsoep met gerookte zalm",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/venkelsoep",
     "personen": 4,
@@ -39768,8 +40102,9 @@
     ]
   },
   {
-    "titel": "Witlofsoep met ham en kaas",
-    "titel_nl": "Witlofsoep met ham en kaas",
+    "titel": "Witlofsoep met kaas en ham",
+    "titel_nl": "Witlofsoep met kaas en ham",
+    "titel_bron": "Witlofsoep met ham en kaas",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/witlofsoep",
     "personen": 4,
@@ -39852,8 +40187,9 @@
     ]
   },
   {
-    "titel": "Witte bonensoep met kaascroutons",
-    "titel_nl": "Witte bonensoep met kaascroutons",
+    "titel": "Wittebonensoep met kaascroutons",
+    "titel_nl": "Wittebonensoep met kaascroutons",
+    "titel_bron": "Witte bonensoep met kaascroutons",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/witte-bonensoep",
     "personen": 4,
@@ -39930,8 +40266,9 @@
     ]
   },
   {
-    "titel": "Aubergine salade",
-    "titel_nl": "Aubergine salade",
+    "titel": "Auberginesalade met feta en platbrood",
+    "titel_nl": "Auberginesalade met feta en platbrood",
+    "titel_bron": "Aubergine salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/aubergine-salade",
     "personen": 4,
@@ -40070,8 +40407,9 @@
     ]
   },
   {
-    "titel": "Boerenkool salade met appel en kaas",
-    "titel_nl": "Boerenkool salade met appel en kaas",
+    "titel": "Boerenkoolsalade met kaas en appel",
+    "titel_nl": "Boerenkoolsalade met kaas en appel",
+    "titel_bron": "Boerenkool salade met appel en kaas",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/boerenkool-salade",
     "personen": 4,
@@ -40166,8 +40504,9 @@
     ]
   },
   {
-    "titel": "Caesar pastasalade",
-    "titel_nl": "Caesar pastasalade",
+    "titel": "Pastasalade caesar met kip",
+    "titel_nl": "Pastasalade caesar met kip",
+    "titel_bron": "Caesar pastasalade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/caesar-pastasalade",
     "personen": 4,
@@ -40260,8 +40599,9 @@
     ]
   },
   {
-    "titel": "Carpaccio pastasalade",
-    "titel_nl": "Carpaccio pastasalade",
+    "titel": "Pastasalade met carpaccio",
+    "titel_nl": "Pastasalade met carpaccio",
+    "titel_bron": "Carpaccio pastasalade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/carpaccio-pastasalade",
     "personen": 4,
@@ -40353,8 +40693,9 @@
     ]
   },
   {
-    "titel": "Chopped salad",
-    "titel_nl": "Chopped salad",
+    "titel": "Fijngesneden salade met kip en mango",
+    "titel_nl": "Fijngesneden salade met kip en mango",
+    "titel_bron": "Chopped salad",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/chopped-salad",
     "personen": 4,
@@ -40455,8 +40796,9 @@
     ]
   },
   {
-    "titel": "Couscoussalade met tonijn",
-    "titel_nl": "Couscoussalade met tonijn",
+    "titel": "Tonijn-couscoussalade",
+    "titel_nl": "Tonijn-couscoussalade",
+    "titel_bron": "Couscoussalade met tonijn",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/couscoussalade-met-tonijn",
     "personen": 4,
@@ -40613,8 +40955,9 @@
     ]
   },
   {
-    "titel": "Crispy rice salad",
-    "titel_nl": "Crispy rice salad",
+    "titel": "Salade met krokante rijst",
+    "titel_nl": "Salade met krokante rijst",
+    "titel_bron": "Crispy rice salad",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/crispy-rice-salad",
     "personen": 4,
@@ -40831,8 +41174,9 @@
     ]
   },
   {
-    "titel": "Green goddess salade",
-    "titel_nl": "Green goddess salade",
+    "titel": "Green goddess-salade met groene groenten",
+    "titel_nl": "Green goddess-salade met groene groenten",
+    "titel_bron": "Green goddess salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/green-goddess-salade",
     "personen": 4,
@@ -40939,8 +41283,9 @@
     ]
   },
   {
-    "titel": "Griekse rijstsalade met feta en rozijnen",
-    "titel_nl": "Griekse rijstsalade met feta en rozijnen",
+    "titel": "Griekse rijstsalade met rozijnen en feta",
+    "titel_nl": "Griekse rijstsalade met rozijnen en feta",
+    "titel_bron": "Griekse rijstsalade met feta en rozijnen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/griekse-rijstsalade",
     "personen": 4,
@@ -41020,8 +41365,9 @@
     ]
   },
   {
-    "titel": "Griekse salade",
-    "titel_nl": "Griekse salade",
+    "titel": "Griekse salade met feta en olijven",
+    "titel_nl": "Griekse salade met feta en olijven",
+    "titel_bron": "Griekse salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/griekse-salade",
     "personen": 4,
@@ -41094,8 +41440,9 @@
     ]
   },
   {
-    "titel": "Griekse tortellini salade",
-    "titel_nl": "Griekse tortellini salade",
+    "titel": "Tortellinisalade op z'n Grieks",
+    "titel_nl": "Tortellinisalade op z'n Grieks",
+    "titel_bron": "Griekse tortellini salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/griekse-tortellini-salade",
     "personen": 4,
@@ -41165,8 +41512,9 @@
     ]
   },
   {
-    "titel": "Ham-prei salade",
-    "titel_nl": "Ham-prei salade",
+    "titel": "Salade met ham en prei",
+    "titel_nl": "Salade met ham en prei",
+    "titel_bron": "Ham-prei salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/ham-prei-salade",
     "personen": 4,
@@ -41333,8 +41681,9 @@
     ]
   },
   {
-    "titel": "Kisir: Turkse bulgursalade",
-    "titel_nl": "Kisir: Turkse bulgursalade",
+    "titel": "Kisir, bulgursalade uit Turkije",
+    "titel_nl": "Kisir, bulgursalade uit Turkije",
+    "titel_bron": "Kisir: Turkse bulgursalade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kisir",
     "personen": 4,
@@ -41448,8 +41797,9 @@
     ]
   },
   {
-    "titel": "Macaronisalade met feta",
-    "titel_nl": "Macaronisalade met feta",
+    "titel": "Macaronisalade met feta en olijven",
+    "titel_nl": "Macaronisalade met feta en olijven",
+    "titel_bron": "Macaronisalade met feta",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/macaronisalade-met-feta",
     "personen": 4,
@@ -41523,8 +41873,9 @@
     ]
   },
   {
-    "titel": "Mango kip salade",
-    "titel_nl": "Mango kip salade",
+    "titel": "Salade met gerookte kip en mango",
+    "titel_nl": "Salade met gerookte kip en mango",
+    "titel_bron": "Mango kip salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/mango-kip-salade",
     "personen": 4,
@@ -41610,8 +41961,9 @@
     ]
   },
   {
-    "titel": "Mexicaanse bonensalade",
-    "titel_nl": "Mexicaanse bonensalade",
+    "titel": "Mexicaanse salade met drie soorten bonen",
+    "titel_nl": "Mexicaanse salade met drie soorten bonen",
+    "titel_bron": "Mexicaanse bonensalade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/mexicaanse-bonensalade",
     "personen": 4,
@@ -41711,8 +42063,9 @@
     ]
   },
   {
-    "titel": "Pastasalade met zalm",
-    "titel_nl": "Pastasalade met zalm",
+    "titel": "Pastasalade met gerookte zalm en avocado",
+    "titel_nl": "Pastasalade met gerookte zalm en avocado",
+    "titel_bron": "Pastasalade met zalm",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pastasalade-met-zalm",
     "personen": 4,
@@ -41798,8 +42151,9 @@
     ]
   },
   {
-    "titel": "Perzik burrata salade",
-    "titel_nl": "Perzik burrata salade",
+    "titel": "Salade met perzik en burrata",
+    "titel_nl": "Salade met perzik en burrata",
+    "titel_bron": "Perzik burrata salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/perzik-burrata-salade",
     "personen": 4,
@@ -41884,8 +42238,9 @@
     ]
   },
   {
-    "titel": "Quinoa salade met halloumi",
-    "titel_nl": "Quinoa salade met halloumi",
+    "titel": "Quinoasalade met halloumi",
+    "titel_nl": "Quinoasalade met halloumi",
+    "titel_bron": "Quinoa salade met halloumi",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/quinoa-salade",
     "personen": 4,
@@ -42101,8 +42456,9 @@
     ]
   },
   {
-    "titel": "Roodlof salade",
-    "titel_nl": "Roodlof salade",
+    "titel": "Salade van roodlof met peer en brie",
+    "titel_nl": "Salade van roodlof met peer en brie",
+    "titel_bron": "Roodlof salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/roodlof-salade",
     "personen": 4,
@@ -42181,8 +42537,9 @@
     ]
   },
   {
-    "titel": "Rundvleessalade",
-    "titel_nl": "Rundvleessalade",
+    "titel": "Salade met rundvlees en aardappel",
+    "titel_nl": "Salade met rundvlees en aardappel",
+    "titel_bron": "Rundvleessalade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/rundvleessalade",
     "personen": 6,
@@ -42279,8 +42636,9 @@
     ]
   },
   {
-    "titel": "Salade Lyonnaise",
-    "titel_nl": "Salade Lyonnaise",
+    "titel": "Salade Lyonnaise met ei en spek",
+    "titel_nl": "Salade Lyonnaise met ei en spek",
+    "titel_bron": "Salade Lyonnaise",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salade-lyonnaise",
     "personen": 4,
@@ -42371,8 +42729,9 @@
     ]
   },
   {
-    "titel": "Salade met aardbeien en geitenkaas",
-    "titel_nl": "Salade met aardbeien en geitenkaas",
+    "titel": "Salade met geitenkaas en aardbeien",
+    "titel_nl": "Salade met geitenkaas en aardbeien",
+    "titel_bron": "Salade met aardbeien en geitenkaas",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salade-met-aardbeien",
     "personen": 4,
@@ -42439,8 +42798,9 @@
     ]
   },
   {
-    "titel": "Salade met kip",
-    "titel_nl": "Salade met kip",
+    "titel": "Salade met kip, spekjes en snijbonen",
+    "titel_nl": "Salade met kip, spekjes en snijbonen",
+    "titel_bron": "Salade met kip",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salade-met-kip",
     "personen": 4,
@@ -42521,8 +42881,9 @@
     ]
   },
   {
-    "titel": "Salade met misodressing",
-    "titel_nl": "Salade met misodressing",
+    "titel": "Kipsalade met misodressing",
+    "titel_nl": "Kipsalade met misodressing",
+    "titel_bron": "Salade met misodressing",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salade-met-misodressing",
     "personen": 4,
@@ -42617,8 +42978,9 @@
     ]
   },
   {
-    "titel": "Salade met stracciatella",
-    "titel_nl": "Salade met stracciatella",
+    "titel": "Salade met stracciatella en prosciutto",
+    "titel_nl": "Salade met stracciatella en prosciutto",
+    "titel_bron": "Salade met stracciatella",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salade-met-stracciatella",
     "personen": 4,
@@ -42705,8 +43067,9 @@
     ]
   },
   {
-    "titel": "Salade met venkel en sinaasappel",
-    "titel_nl": "Salade met venkel en sinaasappel",
+    "titel": "Venkel-sinaasappelsalade",
+    "titel_nl": "Venkel-sinaasappelsalade",
+    "titel_bron": "Salade met venkel en sinaasappel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/salade-met-venkel-en-sinaasappel",
     "personen": 4,
@@ -42781,8 +43144,9 @@
     ]
   },
   {
-    "titel": "Shoarma salade",
-    "titel_nl": "Shoarma salade",
+    "titel": "Salade met kipshoarma",
+    "titel_nl": "Salade met kipshoarma",
+    "titel_bron": "Shoarma salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/shoarma-salade",
     "personen": 4,
@@ -42884,8 +43248,9 @@
     ]
   },
   {
-    "titel": "Simpele couscous salade met geitenkaas",
-    "titel_nl": "Simpele couscous salade met geitenkaas",
+    "titel": "Eenvoudige couscoussalade met geitenkaas",
+    "titel_nl": "Eenvoudige couscoussalade met geitenkaas",
+    "titel_bron": "Simpele couscous salade met geitenkaas",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/simpele-couscous-salade",
     "personen": 4,
@@ -42983,8 +43348,9 @@
     ]
   },
   {
-    "titel": "Spaanse salade",
-    "titel_nl": "Spaanse salade",
+    "titel": "Spaanse salade met chorizo en reuzenbonen",
+    "titel_nl": "Spaanse salade met chorizo en reuzenbonen",
+    "titel_bron": "Spaanse salade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/spaanse-salade",
     "personen": 4,
@@ -43067,8 +43433,9 @@
     ]
   },
   {
-    "titel": "Vegetarische pastasalade met Halloumi",
-    "titel_nl": "Vegetarische pastasalade met Halloumi",
+    "titel": "Halloumi-pastasalade (vegetarisch)",
+    "titel_nl": "Halloumi-pastasalade (vegetarisch)",
+    "titel_bron": "Vegetarische pastasalade met Halloumi",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vegetarische-pastasalade",
     "personen": 4,
@@ -43153,8 +43520,9 @@
     ]
   },
   {
-    "titel": "Zomersalade met aardbeien en burrata",
-    "titel_nl": "Zomersalade met aardbeien en burrata",
+    "titel": "Zomerse salade met burrata en aardbeien",
+    "titel_nl": "Zomerse salade met burrata en aardbeien",
+    "titel_bron": "Zomersalade met aardbeien en burrata",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/zomersalade-met-aardbeien-en-burrata",
     "personen": 4,
@@ -43233,8 +43601,9 @@
     ]
   },
   {
-    "titel": "Zomerse pastasalade",
-    "titel_nl": "Zomerse pastasalade",
+    "titel": "Zomerse pastasalade met groene asperges",
+    "titel_nl": "Zomerse pastasalade met groene asperges",
+    "titel_bron": "Zomerse pastasalade",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/zomerse-pastasalade",
     "personen": 4,
@@ -43320,8 +43689,9 @@
     ]
   },
   {
-    "titel": "Aardappel anders met chorizo",
-    "titel_nl": "Aardappel anders met chorizo",
+    "titel": "Aardappelschotel met chorizo uit de oven",
+    "titel_nl": "Aardappelschotel met chorizo uit de oven",
+    "titel_bron": "Aardappel anders met chorizo",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/aardappel-anders",
     "personen": 4,
@@ -43394,8 +43764,9 @@
     ]
   },
   {
-    "titel": "Aardappel preischotel met romige kaassaus",
-    "titel_nl": "Aardappel preischotel met romige kaassaus",
+    "titel": "Aardappel-preischotel in romige kaassaus",
+    "titel_nl": "Aardappel-preischotel in romige kaassaus",
+    "titel_bron": "Aardappel preischotel met romige kaassaus",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/aardappel-preischotel",
     "personen": 4,
@@ -43553,8 +43924,9 @@
     ]
   },
   {
-    "titel": "Andijvie ovenschotel",
-    "titel_nl": "Andijvie ovenschotel",
+    "titel": "Andijvieschotel uit de oven met rookworst",
+    "titel_nl": "Andijvieschotel uit de oven met rookworst",
+    "titel_bron": "Andijvie ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/andijvie-ovenschotel",
     "personen": 4,
@@ -43614,8 +43986,9 @@
     ]
   },
   {
-    "titel": "Bobotie met gehakt en sperzieboontjes",
-    "titel_nl": "Bobotie met gehakt en sperzieboontjes",
+    "titel": "Bobotie met sperziebonen en gehakt",
+    "titel_nl": "Bobotie met sperziebonen en gehakt",
+    "titel_bron": "Bobotie met gehakt en sperzieboontjes",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/bobotie",
     "personen": 4,
@@ -43719,8 +44092,9 @@
     ]
   },
   {
-    "titel": "Broccoli uit de oven met zalm",
-    "titel_nl": "Broccoli uit de oven met zalm",
+    "titel": "Zalm met broccoli uit de oven",
+    "titel_nl": "Zalm met broccoli uit de oven",
+    "titel_bron": "Broccoli uit de oven met zalm",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/broccoli-uit-de-oven",
     "personen": 4,
@@ -43804,8 +44178,9 @@
     ]
   },
   {
-    "titel": "Enchilada's met gehakt",
-    "titel_nl": "Enchilada's met gehakt",
+    "titel": "Enchilada's met gehakt en bonen",
+    "titel_nl": "Enchilada's met gehakt en bonen",
+    "titel_bron": "Enchilada's met gehakt",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/enchiladas-met-gehakt",
     "personen": 4,
@@ -43900,8 +44275,9 @@
     ]
   },
   {
-    "titel": "Italiaanse gehaktschotel",
-    "titel_nl": "Italiaanse gehaktschotel",
+    "titel": "Italiaanse ovenschotel met gehakt en courgette",
+    "titel_nl": "Italiaanse ovenschotel met gehakt en courgette",
+    "titel_bron": "Italiaanse gehaktschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gehaktschotel",
     "personen": 4,
@@ -43981,8 +44357,9 @@
     ]
   },
   {
-    "titel": "Gevulde aardappelen uit de oven",
-    "titel_nl": "Gevulde aardappelen uit de oven",
+    "titel": "Gevulde ovenaardappelen met broccoli en spek",
+    "titel_nl": "Gevulde ovenaardappelen met broccoli en spek",
+    "titel_bron": "Gevulde aardappelen uit de oven",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gevulde-aardappelen-uit-de-oven",
     "personen": 4,
@@ -44059,8 +44436,9 @@
     ]
   },
   {
-    "titel": "Gevulde pompoen met orzo en kaas",
-    "titel_nl": "Gevulde pompoen met orzo en kaas",
+    "titel": "Pompoen gevuld met orzo en kaas",
+    "titel_nl": "Pompoen gevuld met orzo en kaas",
+    "titel_bron": "Gevulde pompoen met orzo en kaas",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gevulde-pompoen",
     "personen": 4,
@@ -44132,8 +44510,9 @@
     ]
   },
   {
-    "titel": "Gnocchi uit de oven met paddenstoelen",
-    "titel_nl": "Gnocchi uit de oven met paddenstoelen",
+    "titel": "Ovengnocchi met paddenstoelen",
+    "titel_nl": "Ovengnocchi met paddenstoelen",
+    "titel_bron": "Gnocchi uit de oven met paddenstoelen",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/gnocchi-uit-de-oven",
     "personen": 4,
@@ -44220,8 +44599,9 @@
     ]
   },
   {
-    "titel": "Griekse traybake met kipgyros",
-    "titel_nl": "Griekse traybake met kipgyros",
+    "titel": "Kipgyros van de bakplaat op z'n Grieks",
+    "titel_nl": "Kipgyros van de bakplaat op z'n Grieks",
+    "titel_bron": "Griekse traybake met kipgyros",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/griekse-traybake",
     "personen": 4,
@@ -44312,8 +44692,9 @@
     ]
   },
   {
-    "titel": "Groene lasagne met pesto",
-    "titel_nl": "Groene lasagne met pesto",
+    "titel": "Groene pestolasagne",
+    "titel_nl": "Groene pestolasagne",
+    "titel_bron": "Groene lasagne met pesto",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/groene-lasagne",
     "personen": 4,
@@ -44383,8 +44764,9 @@
     ]
   },
   {
-    "titel": "Italiaanse ovenschotel met pasta",
-    "titel_nl": "Italiaanse ovenschotel met pasta",
+    "titel": "Italiaanse pastaschotel uit de oven",
+    "titel_nl": "Italiaanse pastaschotel uit de oven",
+    "titel_bron": "Italiaanse ovenschotel met pasta",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/italiaanse-ovenschotel",
     "personen": 4,
@@ -44465,8 +44847,9 @@
     ]
   },
   {
-    "titel": "Kabeljauw uit de oven",
-    "titel_nl": "Kabeljauw uit de oven",
+    "titel": "Ovengebakken kabeljauw",
+    "titel_nl": "Ovengebakken kabeljauw",
+    "titel_bron": "Kabeljauw uit de oven",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kabeljauw-uit-de-oven",
     "personen": 4,
@@ -44532,8 +44915,9 @@
     ]
   },
   {
-    "titel": "Kip in de hoed",
-    "titel_nl": "Kip in de hoed",
+    "titel": "Kiptaart met een hoed van bladerdeeg",
+    "titel_nl": "Kiptaart met een hoed van bladerdeeg",
+    "titel_bron": "Kip in de hoed",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kip-in-de-hoed",
     "personen": 4,
@@ -44628,8 +45012,9 @@
     ]
   },
   {
-    "titel": "Kipfilet uit de oven met krieltjes",
-    "titel_nl": "Kipfilet uit de oven met krieltjes",
+    "titel": "Kipfilet met krieltjes uit de oven",
+    "titel_nl": "Kipfilet met krieltjes uit de oven",
+    "titel_bron": "Kipfilet uit de oven met krieltjes",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kipfilet-uit-de-oven",
     "personen": 4,
@@ -44701,8 +45086,9 @@
     ]
   },
   {
-    "titel": "Kippendijen uit de oven",
-    "titel_nl": "Kippendijen uit de oven",
+    "titel": "Ovengebakken kippendijen",
+    "titel_nl": "Ovengebakken kippendijen",
+    "titel_bron": "Kippendijen uit de oven",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/kippendijen-uit-de-oven",
     "personen": 4,
@@ -44779,8 +45165,9 @@
     ]
   },
   {
-    "titel": "Lasagne puttanesca",
-    "titel_nl": "Lasagne puttanesca",
+    "titel": "Lasagne alla puttanesca met tonijn",
+    "titel_nl": "Lasagne alla puttanesca met tonijn",
+    "titel_bron": "Lasagne puttanesca",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/lasagne-puttanesca",
     "personen": 4,
@@ -44892,8 +45279,9 @@
     ]
   },
   {
-    "titel": "Mexicaanse traybake met spicy gehaktballetjes",
-    "titel_nl": "Mexicaanse traybake met spicy gehaktballetjes",
+    "titel": "Mexicaanse traybake met pittige gehaktballetjes",
+    "titel_nl": "Mexicaanse traybake met pittige gehaktballetjes",
+    "titel_bron": "Mexicaanse traybake met spicy gehaktballetjes",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/mexicaanse-traybake",
     "personen": 4,
@@ -44979,8 +45367,9 @@
     ]
   },
   {
-    "titel": "Moussaka met zoete aardappel",
-    "titel_nl": "Moussaka met zoete aardappel",
+    "titel": "Moussaka van zoete aardappel",
+    "titel_nl": "Moussaka van zoete aardappel",
+    "titel_bron": "Moussaka met zoete aardappel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/moussaka-met-zoete-aardappel",
     "personen": 4,
@@ -45082,8 +45471,9 @@
     ]
   },
   {
-    "titel": "Ovenschotel met broccoli en gehakt",
-    "titel_nl": "Ovenschotel met broccoli en gehakt",
+    "titel": "Ovenschotel met gehakt en broccoli",
+    "titel_nl": "Ovenschotel met gehakt en broccoli",
+    "titel_bron": "Ovenschotel met broccoli en gehakt",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/ovenschotel-met-broccoli-en-gehakt",
     "personen": 4,
@@ -45160,8 +45550,9 @@
     ]
   },
   {
-    "titel": "Ovenschotel met tonijn en pasta",
-    "titel_nl": "Ovenschotel met tonijn en pasta",
+    "titel": "Tonijn-pastaschotel uit de oven",
+    "titel_nl": "Tonijn-pastaschotel uit de oven",
+    "titel_bron": "Ovenschotel met tonijn en pasta",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/ovenschotel-met-tonijn",
     "personen": 4,
@@ -45264,8 +45655,9 @@
     ]
   },
   {
-    "titel": "Pasta pesto uit de oven",
-    "titel_nl": "Pasta pesto uit de oven",
+    "titel": "Ovenpasta met pesto",
+    "titel_nl": "Ovenpasta met pesto",
+    "titel_bron": "Pasta pesto uit de oven",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pasta-pesto-uit-de-oven",
     "personen": 4,
@@ -45332,8 +45724,9 @@
     ]
   },
   {
-    "titel": "Pompoen ovenschotel met aardappelpuree",
-    "titel_nl": "Pompoen ovenschotel met aardappelpuree",
+    "titel": "Pompoenschotel uit de oven met aardappelpuree",
+    "titel_nl": "Pompoenschotel uit de oven met aardappelpuree",
+    "titel_bron": "Pompoen ovenschotel met aardappelpuree",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/pompoen-ovenschotel",
     "personen": 4,
@@ -45409,8 +45802,9 @@
     ]
   },
   {
-    "titel": "Prei uit de oven met kaassaus",
-    "titel_nl": "Prei uit de oven met kaassaus",
+    "titel": "Prei in kaassaus uit de oven",
+    "titel_nl": "Prei in kaassaus uit de oven",
+    "titel_bron": "Prei uit de oven met kaassaus",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/prei-uit-de-oven",
     "personen": 4,
@@ -45488,8 +45882,9 @@
     ]
   },
   {
-    "titel": "Risotto met gehakt uit de oven",
-    "titel_nl": "Risotto met gehakt uit de oven",
+    "titel": "Ovenrisotto met gehakt",
+    "titel_nl": "Ovenrisotto met gehakt",
+    "titel_bron": "Risotto met gehakt uit de oven",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/risotto-met-gehakt",
     "personen": 4,
@@ -45577,8 +45972,9 @@
     ]
   },
   {
-    "titel": "Rode kool ovenschotel",
-    "titel_nl": "Rode kool ovenschotel",
+    "titel": "Rodekoolschotel uit de oven met appel",
+    "titel_nl": "Rodekoolschotel uit de oven met appel",
+    "titel_bron": "Rode kool ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/rode-kool-ovenschotel",
     "personen": 4,
@@ -45650,8 +46046,9 @@
     ]
   },
   {
-    "titel": "Spaanse traybake",
-    "titel_nl": "Spaanse traybake",
+    "titel": "Spaanse traybake met kip, chorizo en garnalen",
+    "titel_nl": "Spaanse traybake met kip, chorizo en garnalen",
+    "titel_bron": "Spaanse traybake",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/spaanse-traybake",
     "personen": 4,
@@ -45738,8 +46135,9 @@
     ]
   },
   {
-    "titel": "Spinazie ovenschotel",
-    "titel_nl": "Spinazie ovenschotel",
+    "titel": "Spinazieschotel uit de oven met spekjes",
+    "titel_nl": "Spinazieschotel uit de oven met spekjes",
+    "titel_bron": "Spinazie ovenschotel",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/spinazie-ovenschotel",
     "personen": 4,
@@ -45817,8 +46215,9 @@
     ]
   },
   {
-    "titel": "Tartiflette met spek en kaas",
-    "titel_nl": "Tartiflette met spek en kaas",
+    "titel": "Tartiflette met kaas en spek",
+    "titel_nl": "Tartiflette met kaas en spek",
+    "titel_bron": "Tartiflette met spek en kaas",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/tartiflette-spek-kaas",
     "personen": 4,
@@ -45888,8 +46287,9 @@
     ]
   },
   {
-    "titel": "Thaise traybake met groene curry kip",
-    "titel_nl": "Thaise traybake met groene curry kip",
+    "titel": "Thaise traybake met kip in groene curry",
+    "titel_nl": "Thaise traybake met kip in groene curry",
+    "titel_bron": "Thaise traybake met groene curry kip",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/thaise-traybake",
     "personen": 4,
@@ -45972,8 +46372,9 @@
     ]
   },
   {
-    "titel": "Vegetarische traybake met aubergine",
-    "titel_nl": "Vegetarische traybake met aubergine",
+    "titel": "Aubergine-traybake (vegetarisch)",
+    "titel_nl": "Aubergine-traybake (vegetarisch)",
+    "titel_bron": "Vegetarische traybake met aubergine",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vegetarische-traybake",
     "personen": 4,
@@ -46043,8 +46444,9 @@
     ]
   },
   {
-    "titel": "Vispastei",
-    "titel_nl": "Vispastei",
+    "titel": "Vispastei met zalm, kabeljauw en garnalen",
+    "titel_nl": "Vispastei met zalm, kabeljauw en garnalen",
+    "titel_bron": "Vispastei",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/vispastei",
     "personen": 4,
@@ -46141,8 +46543,9 @@
     ]
   },
   {
-    "titel": "Witlof ovenschotel met gehakt",
-    "titel_nl": "Witlof ovenschotel met gehakt",
+    "titel": "Witlofschotel uit de oven met gehakt",
+    "titel_nl": "Witlofschotel uit de oven met gehakt",
+    "titel_bron": "Witlof ovenschotel met gehakt",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/witlof-ovenschotel",
     "personen": 4,
@@ -46229,8 +46632,9 @@
     ]
   },
   {
-    "titel": "Witte asperge lasagne",
-    "titel_nl": "Witte asperge lasagne",
+    "titel": "Lasagne met witte asperges",
+    "titel_nl": "Lasagne met witte asperges",
+    "titel_bron": "Witte asperge lasagne",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/witte-asperge-lasagne",
     "personen": 4,
@@ -46319,8 +46723,9 @@
     ]
   },
   {
-    "titel": "Wraps uit de oven met kip",
-    "titel_nl": "Wraps uit de oven met kip",
+    "titel": "Kipwraps uit de oven",
+    "titel_nl": "Kipwraps uit de oven",
+    "titel_bron": "Wraps uit de oven met kip",
     "bron": "Uit Paulines Keuken",
     "url": "https://uitpaulineskeuken.nl/recept/wraps-uit-de-oven-met-kip",
     "personen": 4,
@@ -46432,8 +46837,9 @@
     ]
   },
   {
-    "titel": "Barbecue spiesjes van gemarineerde biefstuk en lente-ui, met yoghurtdip",
-    "titel_nl": "Barbecue spiesjes van gemarineerde biefstuk en lente-ui, met yoghurtdip",
+    "titel": "Bbq-spiesjes met gemarineerde biefstuk, lente-ui en yoghurtdip",
+    "titel_nl": "Bbq-spiesjes met gemarineerde biefstuk, lente-ui en yoghurtdip",
+    "titel_bron": "Barbecue spiesjes van gemarineerde biefstuk en lente-ui, met yoghurtdip",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/barbecue-spiesjes-van-gemarineerde-biefstuk-en-lente-ui-met-yoghurtdip/",
     "personen": 8,
@@ -46519,8 +46925,9 @@
     ]
   },
   {
-    "titel": "BBQ-salade met entrecote en chimichurri dressing",
-    "titel_nl": "BBQ-salade met entrecote en chimichurri dressing",
+    "titel": "Bbq-salade met entrecote en chimichurri",
+    "titel_nl": "Bbq-salade met entrecote en chimichurri",
+    "titel_bron": "BBQ-salade met entrecote en chimichurri dressing",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/bbq-salade-met-entrecote-en-chimichurri-dressing/",
     "personen": 4,
@@ -46613,8 +47020,9 @@
     ]
   },
   {
-    "titel": "BBQ Chili Cheeseburger",
-    "titel_nl": "BBQ Chili Cheeseburger",
+    "titel": "Chili-cheeseburger van de bbq",
+    "titel_nl": "Chili-cheeseburger van de bbq",
+    "titel_bron": "BBQ Chili Cheeseburger",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/chili-cheeseburger-voor-op-de-bbq/",
     "personen": 2,
@@ -46680,8 +47088,9 @@
     ]
   },
   {
-    "titel": "Coq au vin: stoofpot van kip in rode wijn",
-    "titel_nl": "Coq au vin: stoofpot van kip in rode wijn",
+    "titel": "Coq au vin, kip gestoofd in rode wijn",
+    "titel_nl": "Coq au vin, kip gestoofd in rode wijn",
+    "titel_bron": "Coq au vin: stoofpot van kip in rode wijn",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/coq-au-vin-stoofpot-van-kip-in-rode-wijn/",
     "personen": 6,
@@ -46810,8 +47219,9 @@
     ]
   },
   {
-    "titel": "Eend met gebakken zuurkool",
-    "titel_nl": "Eend met gebakken zuurkool",
+    "titel": "Gebakken zuurkool met eend",
+    "titel_nl": "Gebakken zuurkool met eend",
+    "titel_bron": "Eend met gebakken zuurkool",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/eend-met-gebakken-zuurkool-eva-jinek/",
     "personen": 4,
@@ -46872,8 +47282,9 @@
     ]
   },
   {
-    "titel": "Gebakken kabeljauw met tomatensalsa",
-    "titel_nl": "Gebakken kabeljauw met tomatensalsa",
+    "titel": "Kabeljauw uit de pan met tomatensalsa",
+    "titel_nl": "Kabeljauw uit de pan met tomatensalsa",
+    "titel_bron": "Gebakken kabeljauw met tomatensalsa",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gebakken-kabeljauw-met-tomatensalsa/",
     "personen": 4,
@@ -46937,8 +47348,9 @@
     ]
   },
   {
-    "titel": "Gebakken rijst met garnalen",
-    "titel_nl": "Gebakken rijst met garnalen",
+    "titel": "Garnalen met gebakken rijst",
+    "titel_nl": "Garnalen met gebakken rijst",
+    "titel_bron": "Gebakken rijst met garnalen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gebakken-rijst-met-garnalen/",
     "personen": 4,
@@ -47017,8 +47429,9 @@
     ]
   },
   {
-    "titel": "Gebakken zalm met bloemkool-knolselderijpuree en peterselie-pesto",
-    "titel_nl": "Gebakken zalm met bloemkool-knolselderijpuree en peterselie-pesto",
+    "titel": "Gebakken zalm met puree van bloemkool en knolselderij en peterseliepesto",
+    "titel_nl": "Gebakken zalm met puree van bloemkool en knolselderij en peterseliepesto",
+    "titel_bron": "Gebakken zalm met bloemkool-knolselderijpuree en peterselie-pesto",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gebakken-zalm-met-bloemkool-knolselderijpuree-en-peterselie-pesto/",
     "personen": 4,
@@ -47109,8 +47522,9 @@
     ]
   },
   {
-    "titel": "Gegrilde dorade in bananenblad",
-    "titel_nl": "Gegrilde dorade in bananenblad",
+    "titel": "Dorade van de grill in bananenblad",
+    "titel_nl": "Dorade van de grill in bananenblad",
+    "titel_bron": "Gegrilde dorade in bananenblad",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gegrilde-dorade-in-bananenblad/",
     "personen": 4,
@@ -47218,8 +47632,9 @@
     ]
   },
   {
-    "titel": "Geroosterde rode kool met dukkah",
-    "titel_nl": "Geroosterde rode kool met dukkah",
+    "titel": "Rode kool uit de oven met dukkah",
+    "titel_nl": "Rode kool uit de oven met dukkah",
+    "titel_bron": "Geroosterde rode kool met dukkah",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/geroosterde-rode-kool-met-dukkah/",
     "personen": 4,
@@ -47299,8 +47714,9 @@
     ]
   },
   {
-    "titel": "Geroosterde tofu met noedelsalade",
-    "titel_nl": "Geroosterde tofu met noedelsalade",
+    "titel": "Noedelsalade met geroosterde tofu",
+    "titel_nl": "Noedelsalade met geroosterde tofu",
+    "titel_bron": "Geroosterde tofu met noedelsalade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/geroosterde-tofu-met-noedelsalade/",
     "personen": 4,
@@ -47413,8 +47829,9 @@
     ]
   },
   {
-    "titel": "Gestoomde broodjes met geroosterd buikspek",
-    "titel_nl": "Gestoomde broodjes met geroosterd buikspek",
+    "titel": "Gestoomde broodjes gevuld met geroosterd buikspek",
+    "titel_nl": "Gestoomde broodjes gevuld met geroosterd buikspek",
+    "titel_bron": "Gestoomde broodjes met geroosterd buikspek",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gestoomde-broodjes-met-geroosterd-buikspek/",
     "personen": 10,
@@ -47470,8 +47887,9 @@
     ]
   },
   {
-    "titel": "Mie met spitskool, broccoli en cashewnoten",
-    "titel_nl": "Mie met spitskool, broccoli en cashewnoten",
+    "titel": "Mie met broccoli, spitskool en cashewnoten",
+    "titel_nl": "Mie met broccoli, spitskool en cashewnoten",
+    "titel_bron": "Mie met spitskool, broccoli en cashewnoten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/gezond-en-snel-mie-met-spitskool-broccoli-en-cashewnoten/",
     "personen": 4,
@@ -47547,8 +47965,9 @@
     ]
   },
   {
-    "titel": "Griekse EEnpans orzo met kip en tomatensalade",
-    "titel_nl": "Griekse EEnpans orzo met kip en tomatensalade",
+    "titel": "Griekse orzo met kip uit één pan en tomatensalade",
+    "titel_nl": "Griekse orzo met kip uit één pan en tomatensalade",
+    "titel_bron": "Griekse EEnpans orzo met kip en tomatensalade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/griekse-eenpans-orzo-met-kip-en-tomatensalade/",
     "personen": 2,
@@ -47639,8 +48058,9 @@
     ]
   },
   {
-    "titel": "Griekse gehaktballetjes met fetakaascrème en salade",
-    "titel_nl": "Griekse gehaktballetjes met fetakaascrème en salade",
+    "titel": "Griekse gehaktballetjes met salade en fetacrème",
+    "titel_nl": "Griekse gehaktballetjes met salade en fetacrème",
+    "titel_bron": "Griekse gehaktballetjes met fetakaascrème en salade",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/griekse-gehaktballetjes-met-fetakaascreme-en-orzosalade/",
     "personen": 4,
@@ -47813,8 +48233,9 @@
     ]
   },
   {
-    "titel": "Hele geroosterde knolselderij uit de oven",
-    "titel_nl": "Hele geroosterde knolselderij uit de oven",
+    "titel": "Hele knolselderij, geroosterd in de oven",
+    "titel_nl": "Hele knolselderij, geroosterd in de oven",
+    "titel_bron": "Hele geroosterde knolselderij uit de oven",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/hele-geroosterde-knolselderij-uit-de-oven/",
     "personen": 6,
@@ -47872,8 +48293,9 @@
     ]
   },
   {
-    "titel": "Indiase BBQ spies",
-    "titel_nl": "Indiase BBQ spies",
+    "titel": "Indiase kipspies van de bbq",
+    "titel_nl": "Indiase kipspies van de bbq",
+    "titel_bron": "Indiase BBQ spies",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/indiase-bbq-spies/",
     "personen": 4,
@@ -47953,8 +48375,9 @@
     ]
   },
   {
-    "titel": "Karni stobá",
-    "titel_nl": "Karni stobá",
+    "titel": "Karni stobá, Antilliaans stoofvlees",
+    "titel_nl": "Karni stobá, Antilliaans stoofvlees",
+    "titel_bron": "Karni stobá",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/karni-stoba-antilliaanse-stoofschotel-curacao/",
     "personen": 4,
@@ -48047,8 +48470,9 @@
     ]
   },
   {
-    "titel": "Kipstoof met meiknol en orzo",
-    "titel_nl": "Kipstoof met meiknol en orzo",
+    "titel": "Kipstoof met orzo en meiknol",
+    "titel_nl": "Kipstoof met orzo en meiknol",
+    "titel_bron": "Kipstoof met meiknol en orzo",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kipstoof-met-meiknol-en-orzo/",
     "personen": 4,
@@ -48132,8 +48556,9 @@
     ]
   },
   {
-    "titel": "Kruiden-tofuspiesjes met zomergroenten",
-    "titel_nl": "Kruiden-tofuspiesjes met zomergroenten",
+    "titel": "Tofuspiesjes met kruiden en zomergroenten",
+    "titel_nl": "Tofuspiesjes met kruiden en zomergroenten",
+    "titel_bron": "Kruiden-tofuspiesjes met zomergroenten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/kruiden-tofuspiesjes-met-zomergroenten/",
     "personen": 4,
@@ -48214,8 +48639,9 @@
     ]
   },
   {
-    "titel": "Lamsrack met asperges en aardappels",
-    "titel_nl": "Lamsrack met asperges en aardappels",
+    "titel": "Lamsrack met aardappels en asperges",
+    "titel_nl": "Lamsrack met aardappels en asperges",
+    "titel_bron": "Lamsrack met asperges en aardappels",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/lamsrack-met-asperges-en-aardappels/",
     "personen": 4,
@@ -48262,8 +48688,9 @@
     ]
   },
   {
-    "titel": "Linzenstoof met aubergine",
-    "titel_nl": "Linzenstoof met aubergine",
+    "titel": "Stoof van linzen en aubergine",
+    "titel_nl": "Stoof van linzen en aubergine",
+    "titel_bron": "Linzenstoof met aubergine",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/linzenstoof-met-aubergine/",
     "personen": 4,
@@ -48343,8 +48770,9 @@
     ]
   },
   {
-    "titel": "Loetje style biefstuk - John van den Heuvel",
-    "titel_nl": "Loetje style biefstuk - John van den Heuvel",
+    "titel": "Biefstuk van de ossenhaas met gebakken uien",
+    "titel_nl": "Biefstuk van de ossenhaas met gebakken uien",
+    "titel_bron": "Loetje style biefstuk - John van den Heuvel",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/loetje-biefstuk-met-gebakken-uien-salade-john-van-den-heuvel/",
     "personen": 4,
@@ -48422,8 +48850,9 @@
     ]
   },
   {
-    "titel": "Makkelijke vega roerbak",
-    "titel_nl": "Makkelijke vega roerbak",
+    "titel": "Eenvoudige vegetarische roerbak met pompoen en krieltjes",
+    "titel_nl": "Eenvoudige vegetarische roerbak met pompoen en krieltjes",
+    "titel_bron": "Makkelijke vega roerbak",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/makkelijke-vega-roerbak/",
     "personen": 4,
@@ -48494,8 +48923,9 @@
     ]
   },
   {
-    "titel": "Pad Thai met kip recept",
-    "titel_nl": "Pad Thai met kip recept",
+    "titel": "Pad thai met kip",
+    "titel_nl": "Pad thai met kip",
+    "titel_bron": "Pad Thai met kip recept",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pad-thai-met-kip-recept/",
     "personen": 4,
@@ -48611,8 +49041,9 @@
     ]
   },
   {
-    "titel": "Papaja-mangosalade met geroosterde zalm",
-    "titel_nl": "Papaja-mangosalade met geroosterde zalm",
+    "titel": "Salade van papaja en mango met geroosterde zalm",
+    "titel_nl": "Salade van papaja en mango met geroosterde zalm",
+    "titel_bron": "Papaja-mangosalade met geroosterde zalm",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/papaja-mangosalade-met-geroosterde-zalm/",
     "personen": 4,
@@ -48697,8 +49128,9 @@
     ]
   },
   {
-    "titel": "Pittige pompoenstoof met kaasknoedels",
-    "titel_nl": "Pittige pompoenstoof met kaasknoedels",
+    "titel": "Pompoenstoof met pit en kaasknoedels",
+    "titel_nl": "Pompoenstoof met pit en kaasknoedels",
+    "titel_bron": "Pittige pompoenstoof met kaasknoedels",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pittige-pompoenstoof-met-kaasknoedels/",
     "personen": 4,
@@ -48789,8 +49221,9 @@
     ]
   },
   {
-    "titel": "Pittige roerbak met (vega) gehakt en zwarte bonen",
-    "titel_nl": "Pittige roerbak met (vega) gehakt en zwarte bonen",
+    "titel": "Pittige roerbak met zwarte bonen en (vega) gehakt",
+    "titel_nl": "Pittige roerbak met zwarte bonen en (vega) gehakt",
+    "titel_bron": "Pittige roerbak met (vega) gehakt en zwarte bonen",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/pittige-roerbak-met-vega-gehakt-en-zwarte-bonen/",
     "personen": 4,
@@ -48875,8 +49308,9 @@
     ]
   },
   {
-    "titel": "Runderspiesjes in betelblad",
-    "titel_nl": "Runderspiesjes in betelblad",
+    "titel": "Spiesjes van rundergehakt in betelblad",
+    "titel_nl": "Spiesjes van rundergehakt in betelblad",
+    "titel_bron": "Runderspiesjes in betelblad",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/runderspiesjes-in-betelblad/",
     "personen": 4,
@@ -49001,8 +49435,9 @@
     ]
   },
   {
-    "titel": "Snelle roerbak met gehakt, peultjes, prei en champignons",
-    "titel_nl": "Snelle roerbak met gehakt, peultjes, prei en champignons",
+    "titel": "Snelle roerbak met gehakt, prei, peultjes en champignons",
+    "titel_nl": "Snelle roerbak met gehakt, prei, peultjes en champignons",
+    "titel_bron": "Snelle roerbak met gehakt, peultjes, prei en champignons",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/snelle-roerbak-met-gehakt-peultjes-prei-en-champignons/",
     "personen": 4,
@@ -49083,8 +49518,9 @@
     ]
   },
   {
-    "titel": "Groene kool roerbak met biefstukpuntjes",
-    "titel_nl": "Groene kool roerbak met biefstukpuntjes",
+    "titel": "Roerbak van groene kool met biefstukpuntjes",
+    "titel_nl": "Roerbak van groene kool met biefstukpuntjes",
+    "titel_bron": "Groene kool roerbak met biefstukpuntjes",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/snelle-roerbak-met-groene-kool-en-biefstukpuntjes/",
     "personen": 4,
@@ -49159,8 +49595,9 @@
     ]
   },
   {
-    "titel": "Surf ‘n’ turf stoofpotje",
-    "titel_nl": "Surf ‘n’ turf stoofpotje",
+    "titel": "Stoofpotje surf-and-turf",
+    "titel_nl": "Stoofpotje surf-and-turf",
+    "titel_bron": "Surf ‘n’ turf stoofpotje",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/surf-n-turf-stoofpotje/",
     "personen": 4,
@@ -49248,8 +49685,9 @@
     ]
   },
   {
-    "titel": "Vegetarische stoofschotel van parelgort met venkel, bonen en trostomaten",
-    "titel_nl": "Vegetarische stoofschotel van parelgort met venkel, bonen en trostomaten",
+    "titel": "Vegetarische stoof van parelgort, venkel, bonen en trostomaten",
+    "titel_nl": "Vegetarische stoof van parelgort, venkel, bonen en trostomaten",
+    "titel_bron": "Vegetarische stoofschotel van parelgort met venkel, bonen en trostomaten",
     "bron": "Miljuschka",
     "url": "https://miljuschka.nl/vegetarische-stoofschotel-met-parelgort-en-venkel/",
     "personen": 4,

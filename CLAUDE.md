@@ -22,7 +22,8 @@ db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
 scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
                      jumbo_mapping, jumbo_prijzen, jumbo_verpakkingen,
                      genereer_afbeeldingen (TypeScript, via `npm run afbeeldingen`)
-data/recepten.json   581 gescrapete recepten (archief na import)
+data/recepten.json   581 gescrapete recepten (archief na import; `titel_bron` is de
+                     oorspronkelijke titel, `titel`/`titel_nl` onze eigen naam)
 data/ah_mapping.json ingrediënt → AH-productnummer
 docs/                app-plan, tech-stack, setup, foodfotografie-prompt
 ```
@@ -187,6 +188,12 @@ dwingt dat af voor iedereen.
 Wil je een gerecht dat je uit een boek kent tóch delen: voeg het toe als
 `eigen_input` met een bereiding in je eigen woorden. Een ingrediëntenlijst is
 niet auteursrechtelijk beschermd, de geschreven bereidingstekst wel.
+
+**Gescrapete recepten krijgen een eigen naam en een eigen bereidingstekst.** De
+titel van de bron komt niet in de database: `titel` en `titel_nl` zijn onze
+eigen omschrijving van het gerecht, zonder namen van makers of merken
+(migratie `20261002100000_eigen_receptnamen.sql`). Komt er een nieuwe lading
+bij, geef die dan meteen een eigen titel.
 
 De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
