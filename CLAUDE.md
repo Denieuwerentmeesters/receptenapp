@@ -289,8 +289,10 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
   als de lijst. Claude krijgt de sleutels met een productnummer mee en hoort
   die namen te gebruiken; wat er niet in staat telt het menuscherm als
   zoeklink. Zo is er geen vierde plek met `ingredient_key`.
-- **Opslaan pas bij "Zet op mijn lijst" of "Bewaar alleen de recepten"**
-  (dan ook bij je favorieten). `bron_type = 'samengesteld'`, altijd privé
+- **Opslaan pas bij "Zet op mijn lijst" of "Bewaar alleen de recepten".**
+  Ze staan daarna onder "Mijn recepten" op het vragenscherm (zoeken op
+  gerecht, ingrediënt of datum), niet bij je favorieten. Ze krijgen **geen
+  foto**: de nachtelijke ronde slaat ze over, dat kost te veel. `bron_type = 'samengesteld'`, altijd privé
   (check-constraint), met `samenstelling_id`. Ze staan niet in Ontdekken en
   niet in de weekmenu-generator, en tellen niet mee voor Bespaard!.
 - **Porties:** een samengesteld recept gaat op de lijst en opent voor het
@@ -303,8 +305,8 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
 - **Mislukte aanvraag uitzoeken:** de melding noemt wat er terugkwam (plan,
   geschreven, waarom afgekeurd), en `samenstelling.antwoord` bewaart dan
   `{ fout, ruw }`.
-- **Nog niet gebouwd:** een eigen kopje op de boodschappenlijst, de foto
-  meteen maken (komt nu 's nachts) en kandidaten uit de eigen pool. Bij AH is het één verpakking per ingrediënt, ook voor tien
+- **Nog niet gebouwd:** een eigen kopje op de boodschappenlijst en
+  kandidaten uit de eigen pool. Bij AH is het één verpakking per ingrediënt, ook voor tien
   personen; de hoeveelheid staat wel op de lijst.
 
 ## Receptafbeeldingen

@@ -16,7 +16,7 @@ import {
   type Menu, type MenuGerecht, type SamenstelVerzoek,
 } from '../lib/menu'
 import {
-  receptenVanMenu, stelSamen, useMenuKosten, useEerdereMenus, useMenuOpslaan, type EerderMenu,
+  receptenVanMenu, stelSamen, useMenuKosten, useEerdereMenus, useMenuOpslaan, useSamengesteldeRecepten, type EerderMenu,
 } from '../lib/samenstellen'
 import type { Ingredient } from '../lib/database.types'
 
@@ -82,6 +82,7 @@ export function Samenstellen() {
   const mapping: Record<string, unknown> | undefined = winkelId === 'jumbo' ? jumbo.data : ah.data
   const opslaan = useMenuOpslaan()
   const eerdere = useEerdereMenus()
+  const mijnRecepten = useSamengesteldeRecepten()
   const dezeWeek = useDezeWeek()
   const qc = useQueryClient()
   const { zetOpLijst } = useLijstActies()
@@ -105,6 +106,8 @@ export function Samenstellen() {
   const [bewaren, setBewaren] = useState(false)
   const [eerdereOpen, setEerdereOpen] = useState(false)
   const [zoekEerder, setZoekEerder] = useState('')
+  const [receptenOpen, setReceptenOpen] = useState(false)
+  const [zoekRecept, setZoekRecept] = useState('')
 
   useEffect(() => {
     Object.assign(onthouden, { keuken, personen: personenKeuze, wensen, menu, samenstellingId, receptIds, opLijst })
@@ -161,7 +164,7 @@ export function Samenstellen() {
     if (!menu) return
     setFout(''); setBewaren(true)
     try {
-      const ids = receptIds ?? await opslaan.mutateAsync({ menu, samenstellingId, bewaar: !naarLijst })
+      const ids = receptIds ?? await opslaan.mutateAsync({ menu, samenstellingId })
       setReceptIds(ids)
       if (naarLijst) {
         for (const id of ids) await zetOpLijst.mutateAsync(id)
@@ -209,6 +212,17 @@ export function Samenstellen() {
     ].join(' ').toLowerCase().includes(term))
   }, [eerdere.data, zoekEerder])
 
+  // Zoeken in je opgeslagen recepten: op naam, keuken, ingrediënt of datum.
+  const gevondenRecepten = useMemo(() => {
+    const term = zoekRecept.trim().toLowerCase()
+    const alle = mijnRecepten.data ?? []
+    if (!term) return alle
+    return alle.filter((r) => [
+      r.titel, r.keuken ?? '', ...r.tags, datumTekst(r.aangemaakt_op), datumCijfers(r.aangemaakt_op),
+      ...r.ingredienten.map((i) => i.naam),
+    ].join(' ').toLowerCase().includes(term))
+  }, [mijnRecepten.data, zoekRecept])
+
   /** "Wis recepten": het menu en de drie antwoorden weg, terug naar een leeg vragenscherm. */
   function wis() {
     opnieuw()
@@ -236,18 +250,29 @@ export function Samenstellen() {
     return (
       <Scherm>
         <Kop kleur="var(--c-orange)" tekstKleur="var(--c-paper)" style={{ paddingBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <TerugKnop anders="/ontdekken" />
-            <Titel grootte={22}>Stel je eigen menu samen</Titel>
+          {/* Rechts wat je al hebt: je opgeslagen recepten en eerdere menu's. Op
+              een smal scherm schuiven de knoppen onder de titel. */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <TerugKnop anders="/ontdekken" />
+              <Titel grootte={22}>Stel je eigen menu samen</Titel>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {(mijnRecepten.data?.length ?? 0) > 0 && (
+                <button onClick={() => setReceptenOpen(true)} style={KOPKNOP}>
+                  Mijn recepten ({mijnRecepten.data!.length}) ▾
+                </button>
+              )}
+              {(eerdere.data?.length ?? 0) > 0 && (
+                <button onClick={() => setEerdereOpen(true)} style={KOPKNOP}>
+                  Eerdere menu's ({eerdere.data!.length}) ▾
+                </button>
+              )}
+            </div>
           </div>
         </Kop>
         <Inhoud style={{ gap: 10 }}>
           <p style={LEAD}>Drie vragen, daarna maakt Pinch de recepten en zet de boodschappen klaar.</p>
-          {(eerdere.data?.length ?? 0) > 0 && (
-            <div>
-              <Chip onClick={() => setEerdereOpen(true)}>Eerdere menu's ({eerdere.data!.length}) ▾</Chip>
-            </div>
-          )}
 
           <Vraag nummer={1} tekst="Welke keuken?" />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -316,24 +341,44 @@ export function Samenstellen() {
             onChange={(e) => setZoekEerder(e.target.value)}
             aria-label="Zoek in eerdere menu's"
             placeholder="Zoek op datum, keuken of gerecht"
-            style={{
-              border: '1.5px solid var(--c-ink)', borderRadius: 'var(--radius-full)', padding: '10px 14px',
-              fontFamily: 'var(--font-body)', fontSize: 16, background: 'var(--c-paper)', color: 'var(--color-ink)',
-            }}
+            style={ZOEKVELD}
           />
           <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
             {gevondenEerdere.length === 0 && <p style={{ ...KLEIN, padding: '12px 2px' }}>Niets gevonden.</p>}
             {gevondenEerdere.map((e) => (
-              <button key={e.id} onClick={() => void haalTerug(e)} style={{
-                display: 'flex', flexDirection: 'column', gap: 2, textAlign: 'left', cursor: 'pointer',
-                background: 'none', border: 'none', borderBottom: '1.5px solid rgba(20,20,20,0.12)',
-                padding: '11px 2px', fontFamily: 'var(--font-body)', color: 'var(--color-ink)',
-              }}>
+              <button key={e.id} onClick={() => void haalTerug(e)} style={LIJSTKNOP}>
                 <span style={{ fontSize: 16, fontWeight: 700 }}>
                   {menuNaam(e.menu)} <span style={{ fontWeight: 500, color: 'rgba(20,20,20,0.6)' }}>· {datumTekst(e.aangemaaktOp)}</span>
                 </span>
                 <span style={KLEIN}>{e.menu.gerechten.map((g) => g.titel).join(' · ')}</span>
                 {e.wensen && <span style={{ ...KLEIN, fontStyle: 'italic' }}>{e.aangepast ? 'Aangepast: ' : ''}“{e.wensen}”</span>}
+              </button>
+            ))}
+          </div>
+        </Dialoog>
+        <Dialoog
+          open={receptenOpen}
+          kop="Mijn recepten"
+          tekst="De recepten die je uit je menu's hebt opgeslagen."
+          acties={[{ label: 'Sluiten', onClick: () => setReceptenOpen(false) }]}
+          onSluit={() => setReceptenOpen(false)}
+        >
+          <input
+            value={zoekRecept}
+            onChange={(e) => setZoekRecept(e.target.value)}
+            aria-label="Zoek in je recepten"
+            placeholder="Zoek op gerecht, ingrediënt of datum"
+            style={ZOEKVELD}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
+            {gevondenRecepten.length === 0 && <p style={{ ...KLEIN, padding: '12px 2px' }}>Niets gevonden.</p>}
+            {gevondenRecepten.map((r) => (
+              <button key={r.id} onClick={() => navigeer(`/recept/${r.id}`)} style={LIJSTKNOP}>
+                <span style={{ fontSize: 16, fontWeight: 700 }}>{r.titel}</span>
+                <span style={KLEIN}>
+                  {[r.keuken, `voor ${r.personen}`, r.bereidingstijd_minuten ? `${r.bereidingstijd_minuten} min` : null,
+                    datumTekst(r.aangemaakt_op)].filter(Boolean).join(' · ')}
+                </span>
               </button>
             ))}
           </div>
@@ -369,7 +414,7 @@ export function Samenstellen() {
           }}>
             <Icon name="chevronLeft" size={16} />{vast ? 'Nieuw menu' : 'Vragen aanpassen'}
           </button>
-          {/* Weg ermee en opnieuw beginnen. Wat al op je lijst of bij je favorieten staat blijft daar. */}
+          {/* Weg ermee en opnieuw beginnen. Wat al is opgeslagen of op je lijst staat blijft. */}
           <button onClick={wis} style={{
             flex: 'none', border: '1.5px solid rgba(255,246,232,0.5)', borderRadius: 'var(--radius-full)',
             background: 'transparent', color: 'var(--c-cream)', cursor: 'pointer', padding: '6px 12px',
@@ -478,7 +523,7 @@ export function Samenstellen() {
 
         {vast && !opLijst && (
           <Melding toon="rustig">
-            De recepten staan bij je favorieten. De foto's volgen vannacht.
+            Opgeslagen. Je vindt ze terug onder Zelf samenstellen, bij "Mijn recepten".
           </Melding>
         )}
         {fout && <Melding>{fout}</Melding>}
@@ -538,6 +583,23 @@ function datumTekst(iso: string): string {
 function datumCijfers(iso: string): string {
   const d = new Date(iso)
   return `${d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`
+}
+
+/** Zelfde witte pil als "Zelf samenstellen" in de kop van Ontdekken. */
+const KOPKNOP: CSSProperties = {
+  flex: 'none', border: 'none', borderRadius: 'var(--radius-full)', padding: '8px 14px', cursor: 'pointer',
+  background: 'var(--c-paper)', color: 'var(--c-ink)',
+  fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 800, whiteSpace: 'nowrap',
+}
+
+const ZOEKVELD: CSSProperties = {
+  border: '1.5px solid var(--c-ink)', borderRadius: 'var(--radius-full)', padding: '10px 14px',
+  fontFamily: 'var(--font-body)', fontSize: 16, background: 'var(--c-paper)', color: 'var(--color-ink)',
+}
+const LIJSTKNOP: CSSProperties = {
+  display: 'flex', flexDirection: 'column', gap: 2, textAlign: 'left', cursor: 'pointer',
+  background: 'none', border: 'none', borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+  padding: '11px 2px', fontFamily: 'var(--font-body)', color: 'var(--color-ink)',
 }
 
 const LEAD: CSSProperties = {

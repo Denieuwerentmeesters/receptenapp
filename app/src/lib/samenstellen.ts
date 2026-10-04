@@ -16,7 +16,7 @@ import { inVoorraad } from './voorraad'
 import { ingredientKey } from './schaal'
 import { productvoorkeur } from './winkel'
 import { leesMenu, type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek } from './menu'
-import type { BoodschapItem, SamenstellingRij } from './database.types'
+import type { BoodschapItem, Recept, SamenstellingRij } from './database.types'
 
 /**
  * De app-kant van "Zelf samenstellen": praat met api/samenstellen.ts en slaat
@@ -160,16 +160,14 @@ export function useMenuKosten(menu: Menu | null): { producten: number; kosten: n
  * menu. Altijd privé (check-constraint samengesteld_altijd_prive), en met de
  * porties van het menu: de hoeveelheden zijn al voor dat aantal uitgerekend.
  *
- * Pas hier komt er iets in `recepten`; wie alleen kijkt laat niets achter. De
- * foto volgt 's nachts (api/afbeeldingen.ts).
+ * Pas hier komt er iets in `recepten`; wie alleen kijkt laat niets achter. Ze
+ * staan daarna onder Zelf samenstellen (useSamengesteldeRecepten), niet in
+ * Ontdekken of bij je favorieten, en ze krijgen geen foto.
  */
 export function useMenuOpslaan() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async ({ menu, samenstellingId, bewaar }: Samengesteld & {
-      /** Ook bij je favorieten zetten: zo vind je ze terug als ze niet op je lijst gaan. */
-      bewaar: boolean
-    }): Promise<string[]> => {
+    mutationFn: async ({ menu, samenstellingId }: Samengesteld): Promise<string[]> => {
       const userId = await huidigeUserId()
       const ids: string[] = []
       // Eén voor één: zo is de volgorde zeker, en het zijn er hooguit zes.
@@ -194,16 +192,11 @@ export function useMenuOpslaan() {
         if (error) throw error
         ids.push((data as { id: string }).id)
       }
-      if (bewaar) {
-        const { error } = await db.from('favoriet').insert(ids.map((id) => ({ user_id: userId, recept_id: id })))
-        if (error) throw error
-      }
       return ids
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['mijn-recepten'] })
-      void qc.invalidateQueries({ queryKey: ['favorieten'] })
-      void qc.invalidateQueries({ queryKey: ['favoriet-ids'] })
+      void qc.invalidateQueries({ queryKey: ['samengestelde-recepten'] })
     },
   })
 }
@@ -250,4 +243,20 @@ export async function receptenVanMenu(samenstellingId: string): Promise<string[]
     .eq('samenstelling_id', samenstellingId).order('aangemaakt_op')
   if (error) throw error
   return (data as { id: string }[]).map((r) => r.id)
+}
+
+/**
+ * De recepten die je uit je menu's hebt opgeslagen, nieuwste eerst. Dit is hun
+ * vaste plek: ze staan niet in Ontdekken en hebben geen foto.
+ */
+export function useSamengesteldeRecepten() {
+  return useQuery({
+    queryKey: ['samengestelde-recepten'],
+    queryFn: async (): Promise<Recept[]> => {
+      const { data, error } = await db.from('recepten').select('*')
+        .eq('bron_type', 'samengesteld').order('aangemaakt_op', { ascending: false }).limit(200)
+      if (error) throw error
+      return data as Recept[]
+    },
+  })
 }

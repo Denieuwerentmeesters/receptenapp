@@ -18,6 +18,7 @@ import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
 import { useAllergieen, vastVoorJou } from '../lib/allergenen'
 import { DIETEN, pastBijDieet, type Dieet } from '../lib/dieet'
+import { standaardPersonen } from '../lib/menu'
 
 type Filter = 'alles' | 'lijst' | 'bonus' | 'budget' | 'snel' | Dieet
 
@@ -187,7 +188,7 @@ export function DezeWeek() {
                     recept={recept}
                     vlak={VLAKKEN[i % VLAKKEN.length]}
                     bonus={bonusPerRecept.get(recept.id) ?? []}
-                    personen={personen}
+                    personen={standaardPersonen(recept, personen)}
                     onOpen={() => navigeer(`/recept/${recept.id}`)}
                     onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
                     onWeg={() => (recept.opLijst ? setWegVraag(recept) : haalUitWeek.mutate(recept.id))}
@@ -278,7 +279,8 @@ function ReceptKaart({ recept, vlak, bonus, personen, onOpen, onLijst, onWeg, on
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'var(--font-body)', fontSize: 12, opacity: recept.afbeelding_url ? 1 : 0.5,
         }}>
-          {recept.afbeelding_url ? '' : 'foto'}
+          {/* Een samengesteld recept krijgt nooit een foto: dan ook geen belofte. */}
+          {recept.afbeelding_url || recept.bron_type === 'samengesteld' ? '' : 'foto'}
         </div>
         <div style={{ padding: '10px 12px 12px', width: '100%', boxSizing: 'border-box' }}>
           <h3 style={{
