@@ -16,7 +16,7 @@ import {
   type Menu, type MenuGerecht, type SamenstelVerzoek,
 } from '../lib/menu'
 import {
-  receptenVanMenu, stelSamen, useMenuKosten, useEerdereMenus, useMenuOpslaan, type EerderMenu,
+  maakFotos, receptenVanMenu, stelSamen, useMenuKosten, useEerdereMenus, useMenuOpslaan, type EerderMenu,
 } from '../lib/samenstellen'
 import type { Ingredient } from '../lib/database.types'
 
@@ -192,6 +192,12 @@ export function Samenstellen() {
       setWensen(eerder.aangepast ? '' : eerder.wensen)
       setMenu(eerder.menu); setSamenstellingId(eerder.id)
       setReceptIds(ids.length > 0 ? ids : null)
+      // Opgeslagen vóór de foto's meteen gemaakt werden, of toen mislukt: alsnog.
+      if (ids.length > 0) {
+        void maakFotos(eerder.id).then((gelukt) => {
+          if (gelukt > 0) for (const sleutel of ['deze-week', 'recept', 'favorieten']) void qc.invalidateQueries({ queryKey: [sleutel] })
+        })
+      }
       setOpLijst(ids.length > 0 && ids.every((id) => opDeLijst.has(id)))
       setOnderweg(null); setOpen(null); setFase('menu')
     } catch (e) {
@@ -478,7 +484,7 @@ export function Samenstellen() {
 
         {vast && !opLijst && (
           <Melding toon="rustig">
-            De recepten staan bij je favorieten. De foto's volgen vannacht.
+            De recepten staan bij je favorieten. De foto's komen er binnen een minuut bij.
           </Melding>
         )}
         {fout && <Melding>{fout}</Melding>}

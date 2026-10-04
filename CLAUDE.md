@@ -12,6 +12,7 @@ commentaar. Houd dat aan.
 ```
 api/extraheer.ts     Serverless functie (Vercel) die recepten uitleest met Claude
 api/samenstellen.ts  Stelt met Claude een menu samen (Zelf samenstellen)
+api/menu-afbeeldingen.ts  Maakt meteen de foto's bij een opgeslagen menu
 api/afbeeldingen.ts  Nachtelijke cron (Vercel) die nieuwe recepten een afbeelding geeft
 lib/afbeeldingen/    Prompt-opbouw en generatie van receptafbeeldingen (gedeeld door
                      api/afbeeldingen.ts en scripts/genereer_afbeeldingen.ts)
@@ -293,8 +294,12 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
 - **Mislukte aanvraag uitzoeken:** de melding noemt wat er terugkwam (plan,
   geschreven, waarom afgekeurd), en `samenstelling.antwoord` bewaart dan
   `{ fout, ruw }`.
-- **Nog niet gebouwd:** een eigen kopje op de boodschappenlijst, de foto
-  meteen maken (komt nu 's nachts) en kandidaten uit de eigen pool. Bij AH is het één verpakking per ingrediënt, ook voor tien
+- **Foto's meteen:** na het opslaan roept de app `api/menu-afbeeldingen.ts`
+  aan, die de foto's van dat menu maakt (alleen eigen samengestelde recepten
+  zonder foto, hooguit 40 per 24 uur). Mislukt het, dan pakt de nachtelijke
+  ronde ze op. Een eerder menu terughalen probeert het ook nog eens.
+- **Nog niet gebouwd:** een eigen kopje op de boodschappenlijst en
+  kandidaten uit de eigen pool. Bij AH is het één verpakking per ingrediënt, ook voor tien
   personen; de hoeveelheid staat wel op de lijst.
 
 ## Receptafbeeldingen

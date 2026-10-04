@@ -7,6 +7,9 @@
     "api/afbeeldingen.ts": {
       "maxDuration": 60
     },
+    "api/menu-afbeeldingen.ts": {
+      "maxDuration": 60
+    },
     "api/bonus.ts": {
       "maxDuration": 300
     }

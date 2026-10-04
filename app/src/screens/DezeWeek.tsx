@@ -18,6 +18,7 @@ import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
 import { useAllergieen, vastVoorJou } from '../lib/allergenen'
 import { DIETEN, pastBijDieet, type Dieet } from '../lib/dieet'
+import { standaardPersonen } from '../lib/menu'
 
 type Filter = 'alles' | 'lijst' | 'bonus' | 'budget' | 'snel' | Dieet
 
@@ -187,7 +188,7 @@ export function DezeWeek() {
                     recept={recept}
                     vlak={VLAKKEN[i % VLAKKEN.length]}
                     bonus={bonusPerRecept.get(recept.id) ?? []}
-                    personen={personen}
+                    personen={standaardPersonen(recept, personen)}
                     onOpen={() => navigeer(`/recept/${recept.id}`)}
                     onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
                     onWeg={() => (recept.opLijst ? setWegVraag(recept) : haalUitWeek.mutate(recept.id))}

@@ -156,12 +156,34 @@ export function useMenuKosten(menu: Menu | null): { producten: number; kosten: n
 }
 
 /**
+ * Vraagt api/menu-afbeeldingen.ts om de foto's bij een opgeslagen menu. Geeft
+ * terug hoeveel er gelukt zijn; nul bij elke fout, want dan maakt de
+ * nachtelijke ronde ze alsnog.
+ */
+export async function maakFotos(samenstellingId: string): Promise<number> {
+  try {
+    const respons = await fetch(
+      Capacitor.isNativePlatform() ? `${WEBSITE}/api/menu-afbeeldingen` : '/api/menu-afbeeldingen',
+      {
+        method: 'POST', credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ samenstellingId }),
+      },
+    )
+    if (!respons.ok) return 0
+    return ((await respons.json()) as { gelukt?: number }).gelukt ?? 0
+  } catch {
+    return 0
+  }
+}
+
+/**
  * Slaat de gerechten van een menu op als recepten, in de volgorde van het
  * menu. Altijd privé (check-constraint samengesteld_altijd_prive), en met de
  * porties van het menu: de hoeveelheden zijn al voor dat aantal uitgerekend.
  *
  * Pas hier komt er iets in `recepten`; wie alleen kijkt laat niets achter. De
- * foto volgt 's nachts (api/afbeeldingen.ts).
+ * foto's worden daarna meteen gemaakt (maakFotos).
  */
 export function useMenuOpslaan() {
   const qc = useQueryClient()
@@ -200,10 +222,20 @@ export function useMenuOpslaan() {
       }
       return ids
     },
-    onSuccess: () => {
+    onSuccess: (_ids, { samenstellingId }) => {
       void qc.invalidateQueries({ queryKey: ['mijn-recepten'] })
       void qc.invalidateQueries({ queryKey: ['favorieten'] })
       void qc.invalidateQueries({ queryKey: ['favoriet-ids'] })
+      // De foto's meteen laten maken; daar wachten we niet op. Zodra ze er
+      // zijn verversen de schermen die het recept tonen.
+      if (samenstellingId) {
+        void maakFotos(samenstellingId).then((gelukt) => {
+          if (gelukt === 0) return
+          for (const sleutel of ['deze-week', 'recept', 'favorieten', 'geschiedenis']) {
+            void qc.invalidateQueries({ queryKey: [sleutel] })
+          }
+        })
+      }
     },
   })
 }
