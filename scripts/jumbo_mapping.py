@@ -93,6 +93,8 @@ CORRECTIES = {
     "kipfilet": ("515106KGR", "Jumbo Kipfilet ca. 600g"),
     # Jumbo verkoopt verse gember alleen biologisch; gehakt uit een potje is iets anders.
     "gember": ("485371BAK", "Jumbo Biologische Verse Gember"),
+    # Yoghurt is volle yoghurt; de zoekopdracht gaf magere.
+    "yoghurt": ("751915PAK", "Jumbo Romige Volle Yoghurt 1 L"),
 }
 
 # Huismerk-alternatief voor wie in Instellingen "Huismerk als het kan" aanzet.
