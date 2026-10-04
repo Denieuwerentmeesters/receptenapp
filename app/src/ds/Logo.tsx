@@ -5,7 +5,8 @@ import type { CSSProperties } from 'react'
  * De letters nemen de tekstkleur over (currentColor); de korrel staat schuin
  * zodat hij als zoutkristal leest en niet als gewone punt.
  *
- * Dezelfde tekening staat in public/favicon.svg en ios/ontwerp/maak.mjs.
+ * Dezelfde tekening staat in public/favicon.svg, ios/ontwerp/maak.mjs en
+ * lib/deelpagina.ts (de openbare receptpagina).
  */
 export function Woordmerk({ hoogte = 36, korrel = 'var(--c-yellow)', style }: {
   hoogte?: number
