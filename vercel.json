@@ -30,6 +30,10 @@
       "destination": "/api/auth?pad=:pad*"
     },
     {
+      "source": "/r/:id",
+      "destination": "/api/recept?id=:id"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
