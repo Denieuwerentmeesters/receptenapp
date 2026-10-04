@@ -16,7 +16,7 @@ import {
   type Menu, type MenuGerecht, type SamenstelVerzoek,
 } from '../lib/menu'
 import {
-  receptenVanMenu, schatMenu, stelSamen, useEerdereMenus, useMenuOpslaan, type EerderMenu,
+  alsLijst, receptenVanMenu, stelSamen, useMenuKosten, useEerdereMenus, useMenuOpslaan, type EerderMenu,
 } from '../lib/samenstellen'
 import type { Ingredient } from '../lib/database.types'
 
@@ -229,17 +229,9 @@ export function Samenstellen() {
     }
     return namen
   }, [menu, mapping])
-  const producten = useMemo(() => {
-    const keys = new Set<string>()
-    for (const g of menu?.gerechten ?? []) {
-      for (const ing of g.ingredienten) {
-        const key = ingredientKey(ing.naam)
-        if (key && !altijdInHuis(key)) keys.add(key)
-      }
-    }
-    return keys.size
-  }, [menu])
-  const kosten = useMemo(() => (menu ? schatMenu(menu) : null), [menu])
+  // Samengevoegd zoals op de lijst: citroen uit drie gerechten is één product.
+  const producten = useMemo(() => (menu ? alsLijst(menu).length : 0), [menu])
+  const kosten = useMenuKosten(menu)
 
   if (fase === 'vragen' || !menu) {
     return (

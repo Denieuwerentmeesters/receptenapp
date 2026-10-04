@@ -5,8 +5,16 @@ import { db } from './db'
 import { huidigeUserId } from './auth'
 import type { Concept } from './extractie'
 import { schatPrijsPerPersoon } from './prijsschatting'
+import { useMemo } from 'react'
+import { altijdInHuis } from './altijdInHuis'
+import { mandjeKosten } from './besparing'
+import { voegSamen, type LijstRegel } from './lijst'
+import { useJumboMapping, useVoorkeuren } from './queries'
+import { useJumboPrijzen, useJumboVerpakkingen } from './queries2'
+import { ingredientKey } from './schaal'
+import { productvoorkeur } from './winkel'
 import { leesMenu, type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek } from './menu'
-import type { SamenstellingRij } from './database.types'
+import type { BoodschapItem, SamenstellingRij } from './database.types'
 
 /**
  * De app-kant van "Zelf samenstellen": praat met api/samenstellen.ts en slaat
@@ -91,17 +99,48 @@ export function alsConcept(gerecht: MenuGerecht, menu: Pick<Menu, 'keuken' | 'pe
   }
 }
 
-/** Geschatte kosten van het hele menu in euro's (klassenschatting); null als er niets te schatten viel. */
-export function schatMenu(menu: Menu): number | null {
-  let totaal = 0
-  let geteld = false
-  for (const gerecht of menu.gerechten) {
-    const pp = schatPrijsPerPersoon(alsConcept(gerecht, menu))
-    if (pp === null) continue
-    totaal += pp * menu.personen
-    geteld = true
-  }
-  return geteld ? totaal : null
+/**
+ * Het menu als regels op een boodschappenlijst: samengevoegd over de gerechten
+ * en zonder basisvoorraad, zoals het straks op de lijst komt. Voor de kosten
+ * en het aantal producten onderaan het menuscherm.
+ */
+export function alsLijst(menu: Menu): LijstRegel[] {
+  const items: BoodschapItem[] = []
+  menu.gerechten.forEach((gerecht, g) => {
+    gerecht.ingredienten.forEach((ing, i) => {
+      const key = ingredientKey(ing.naam)
+      if (!key || altijdInHuis(key)) return
+      const getal = Number.parseFloat(String(ing.hoeveelheid ?? '').replace(',', '.'))
+      items.push({
+        id: `${g}-${i}`, user_id: '', week_start_datum: '', naam: ing.naam, ingredient_key: key,
+        hoeveelheid: Number.isFinite(getal) ? getal : null, eenheid: ing.eenheid, categorie: null,
+        bron_type: 'recept', bron_recept_id: String(g), is_afgevinkt: false, aangemaakt_op: '',
+      })
+    })
+  })
+  return voegSamen(items)
+}
+
+/**
+ * Wat het menu ongeveer kost aan de kassa: hele verpakkingen tegen de gewone
+ * Jumbo-prijs (ook voor AH; die liggen dicht bij elkaar), en zonder prijs de
+ * klassenschatting. Dezelfde som als Bespaard! (mandjeKosten).
+ *
+ * Niet schatPrijsPerPersoon: die telt alleen wat het recept verbruikt (150 g
+ * uit een pak van 500 g) en kwam daardoor een derde te laag uit.
+ */
+export function useMenuKosten(menu: Menu | null): number | null {
+  const voorkeuren = useVoorkeuren()
+  const mapping = useJumboMapping(true)
+  const prijzen = useJumboPrijzen()
+  const verpakkingen = useJumboVerpakkingen()
+  return useMemo(() => {
+    if (!menu || !mapping.data || !prijzen.data) return null
+    const { totaal } = mandjeKosten(
+      alsLijst(menu), mapping.data, prijzen.data, productvoorkeur(voorkeuren.data), verpakkingen.data ?? {},
+    )
+    return totaal > 0 ? totaal : null
+  }, [menu, mapping.data, prijzen.data, verpakkingen.data, voorkeuren.data])
 }
 
 /**
