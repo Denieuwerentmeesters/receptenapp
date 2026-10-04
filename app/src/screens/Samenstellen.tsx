@@ -250,23 +250,29 @@ export function Samenstellen() {
     return (
       <Scherm>
         <Kop kleur="var(--c-orange)" tekstKleur="var(--c-paper)" style={{ paddingBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <TerugKnop anders="/ontdekken" />
-            <Titel grootte={22}>Stel je eigen menu samen</Titel>
+          {/* Rechts wat je al hebt: je opgeslagen recepten en eerdere menu's. Op
+              een smal scherm schuiven de knoppen onder de titel. */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <TerugKnop anders="/ontdekken" />
+              <Titel grootte={22}>Stel je eigen menu samen</Titel>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {(mijnRecepten.data?.length ?? 0) > 0 && (
+                <button onClick={() => setReceptenOpen(true)} style={KOPKNOP}>
+                  Mijn recepten ({mijnRecepten.data!.length}) ▾
+                </button>
+              )}
+              {(eerdere.data?.length ?? 0) > 0 && (
+                <button onClick={() => setEerdereOpen(true)} style={KOPKNOP}>
+                  Eerdere menu's ({eerdere.data!.length}) ▾
+                </button>
+              )}
+            </div>
           </div>
         </Kop>
         <Inhoud style={{ gap: 10 }}>
           <p style={LEAD}>Drie vragen, daarna maakt Pinch de recepten en zet de boodschappen klaar.</p>
-          {((eerdere.data?.length ?? 0) > 0 || (mijnRecepten.data?.length ?? 0) > 0) && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {(mijnRecepten.data?.length ?? 0) > 0 && (
-                <Chip onClick={() => setReceptenOpen(true)}>Mijn recepten ({mijnRecepten.data!.length}) ▾</Chip>
-              )}
-              {(eerdere.data?.length ?? 0) > 0 && (
-                <Chip onClick={() => setEerdereOpen(true)}>Eerdere menu's ({eerdere.data!.length}) ▾</Chip>
-              )}
-            </div>
-          )}
 
           <Vraag nummer={1} tekst="Welke keuken?" />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -577,6 +583,13 @@ function datumTekst(iso: string): string {
 function datumCijfers(iso: string): string {
   const d = new Date(iso)
   return `${d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`
+}
+
+/** Zelfde witte pil als "Zelf samenstellen" in de kop van Ontdekken. */
+const KOPKNOP: CSSProperties = {
+  flex: 'none', border: 'none', borderRadius: 'var(--radius-full)', padding: '8px 14px', cursor: 'pointer',
+  background: 'var(--c-paper)', color: 'var(--c-ink)',
+  fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 800, whiteSpace: 'nowrap',
 }
 
 const ZOEKVELD: CSSProperties = {
