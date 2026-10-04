@@ -234,7 +234,7 @@ ziet `/beoordelen` met de aangemelde recepten van anderen.
 ## Een recept delen met een link
 
 De deelknop op het receptscherm geeft een link naar de website,
-`receptenapp.vercel.app/r/<naam>`, die iedereen kan lezen, ook zonder account.
+`justapinch.nl/r/<naam>` (`DEELSITE` in `src/lib/config.ts`), die iedereen kan lezen, ook zonder account.
 
 - **De naam van het gerecht staat in de link** (`src/lib/slug.ts`). Een recept
   uit de pool heeft een `slug` in de database (`/r/romige-kip-met-spinazie`),

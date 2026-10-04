@@ -1,5 +1,5 @@
 /**
- * De openbare pagina van één recept: receptenapp.vercel.app/r/<naam>. Voor wie
+ * De openbare pagina van één recept: justapinch.nl/r/<naam>. Voor wie
  * een link kreeg en geen account heeft (of niet in je huishouden zit).
  *
  * Het adres (app/src/lib/slug.ts):
