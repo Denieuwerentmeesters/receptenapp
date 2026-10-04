@@ -2809,6 +2809,12 @@
   "bio": 114817
  },
  {
+  "key": "magere yoghurt",
+  "naam": "ah magere yoghurt",
+  "standaard": 96643,
+  "bio": null
+ },
+ {
   "key": "mais",
   "naam": "ah mais",
   "standaard": 66113,
@@ -5342,9 +5348,10 @@
  },
  {
   "key": "yoghurt",
-  "naam": "ah magere yoghurt",
-  "standaard": 96643,
-  "bio": 429772
+  "naam": "de zaanse hoeve volle yoghurt",
+  "standaard": 118132,
+  "bio": 60746,
+  "huismerk": 33712
  },
  {
   "key": "za atar",

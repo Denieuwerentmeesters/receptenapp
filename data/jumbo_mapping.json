@@ -4086,6 +4086,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "magere yoghurt",
+  "naam": "Jumbo Magere Yoghurt 0,1% Vet 1,5 L",
+  "standaard": "751914PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "mais",
   "naam": "Jumbo Maïskorrels 330 g",
   "standaard": "580552BLK",
@@ -7840,10 +7849,10 @@
  },
  {
   "key": "yoghurt",
-  "naam": "Jumbo Magere Yoghurt 0,1% Vet 1,5 L",
-  "standaard": "751914PAK",
-  "bio": "420600PAK",
-  "bio_naam": "Jumbo Biologische Halfvolle Yoghurt 1 L",
+  "naam": "Jumbo Romige Volle Yoghurt 1 L",
+  "standaard": "751915PAK",
+  "bio": "421677PAK",
+  "bio_naam": "Jumbo Biologisch Volle Yoghurt 1 L",
   "huismerk": null,
   "huismerk_naam": null
  },
