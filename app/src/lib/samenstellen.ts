@@ -10,7 +10,9 @@ import { altijdInHuis } from './altijdInHuis'
 import { mandjeKosten } from './besparing'
 import { voegSamen, type LijstRegel } from './lijst'
 import { useJumboMapping, useVoorkeuren } from './queries'
-import { useJumboPrijzen, useJumboVerpakkingen } from './queries2'
+import { useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from './queries2'
+import { DROGE_KRUIDEN_KEY, isDroogKruid } from './kruiden'
+import { inVoorraad } from './voorraad'
 import { ingredientKey } from './schaal'
 import { productvoorkeur } from './winkel'
 import { leesMenu, type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek } from './menu'
@@ -124,23 +126,33 @@ export function alsLijst(menu: Menu): LijstRegel[] {
 /**
  * Wat het menu ongeveer kost aan de kassa: hele verpakkingen tegen de gewone
  * Jumbo-prijs (ook voor AH; die liggen dicht bij elkaar), en zonder prijs de
- * klassenschatting. Dezelfde som als Bespaard! (mandjeKosten).
+ * klassenschatting. Dezelfde som als Bespaard! (mandjeKosten). Wat je in je
+ * voorraadkast hebt telt niet mee; `inHuis` zegt hoeveel producten dat zijn.
  *
  * Niet schatPrijsPerPersoon: die telt alleen wat het recept verbruikt (150 g
  * uit een pak van 500 g) en kwam daardoor een derde te laag uit.
  */
-export function useMenuKosten(menu: Menu | null): number | null {
+export function useMenuKosten(menu: Menu | null): { producten: number; kosten: number | null; inHuis: number } {
   const voorkeuren = useVoorkeuren()
   const mapping = useJumboMapping(true)
   const prijzen = useJumboPrijzen()
   const verpakkingen = useJumboVerpakkingen()
+  const voorraad = useVoorraad()
   return useMemo(() => {
-    if (!menu || !mapping.data || !prijzen.data) return null
+    const alle = menu ? alsLijst(menu) : []
+    // Wat in je voorraadkast staat hoef je niet te kopen; zelfde regels als
+    // het boodschappenscherm (ook: droge kruiden als die in huis zijn).
+    const kruidenThuis = (voorraad.data ?? []).some((v) => v.ingredient_key === DROGE_KRUIDEN_KEY && v.in_huis)
+    const thuis = new Set((voorraad.data ?? [])
+      .filter((v) => v.in_huis && v.ingredient_key !== DROGE_KRUIDEN_KEY).map((v) => v.ingredient_key))
+    const kopen = alle.filter((r) => !(kruidenThuis && isDroogKruid(r.key)) && !inVoorraad(r.key, thuis))
+    const basis = { producten: kopen.length, inHuis: alle.length - kopen.length }
+    if (!mapping.data || !prijzen.data) return { ...basis, kosten: null }
     const { totaal } = mandjeKosten(
-      alsLijst(menu), mapping.data, prijzen.data, productvoorkeur(voorkeuren.data), verpakkingen.data ?? {},
+      kopen, mapping.data, prijzen.data, productvoorkeur(voorkeuren.data), verpakkingen.data ?? {},
     )
-    return totaal > 0 ? totaal : null
-  }, [menu, mapping.data, prijzen.data, verpakkingen.data, voorkeuren.data])
+    return { ...basis, kosten: totaal > 0 ? totaal : null }
+  }, [menu, mapping.data, prijzen.data, verpakkingen.data, voorkeuren.data, voorraad.data])
 }
 
 /**
