@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import type { ReceptAllergie } from '../lib/allergenen'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button, Icon, IconButton } from '../ds'
@@ -6,7 +7,9 @@ import { Inhoud, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
-import { useDezeWeek, useLijstActies, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { sleutels, useDezeWeek, useLijstActies, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { deel, deelLink, heeftLink, maakDeellink, magDelen } from '../lib/delen'
+import { foutTekst } from '../lib/fouten'
 import { isBudget } from '../lib/prijsschatting'
 import { ingredientKey, schaalIngredienten } from '../lib/schaal'
 import { weekStart } from '../lib/week'
@@ -33,6 +36,25 @@ export function Recept() {
   const allergieen = useAllergieen()
   const regels = useAllergeenRegels(allergieen.length > 0)
   const bonus = useBonus()
+  const client = useQueryClient()
+  // Delen: 'vraag' bij een eigen recept dat nog geen link heeft, daarna wat er gebeurde.
+  const [deelStap, setDeelStap] = useState<null | 'vraag' | 'kookboek' | 'gekopieerd' | { fout: string }>(null)
+
+  // Meteen vanuit de tik het deelvenster openen (Safari staat geen wachten toe);
+  // de link van een eigen recept gaat intussen aan.
+  const deelRecept = (r: NonNullable<typeof recept.data>) => {
+    const url = deelLink(r.id)
+    if (!heeftLink(r)) {
+      maakDeellink(r.id)
+        .then(() => client.invalidateQueries({ queryKey: sleutels.recept(r.id) }))
+        .catch((e) => setDeelStap({ fout: `De link werkt nog niet: ${foutTekst(e)}` }))
+    }
+    void deel(r.titel_nl ?? r.titel, url).then((uitkomst) => {
+      if (uitkomst === 'gekopieerd') setDeelStap('gekopieerd')
+      else if (uitkomst === 'mislukt') setDeelStap({ fout: `Delen lukte niet. De link is ${url}` })
+      else setDeelStap((stap) => (stap === 'vraag' ? null : stap))
+    })
+  }
 
   // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
   // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
@@ -95,6 +117,15 @@ export function Recept() {
                           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                         }}>{opLijst ? 'Op je lijst' : "In 'Deze week'"}</span>
                       )}
+                      <IconButton
+                        icon="share" label="Deel dit recept" size={42}
+                        onClick={() => {
+                          if (!magDelen(r)) setDeelStap('kookboek')
+                          else if (!heeftLink(r)) setDeelStap('vraag')
+                          else deelRecept(r)
+                        }}
+                        style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
+                      />
                       <IconButton
                         icon="heart" size={42}
                         label={inWeek ? 'Uit deze week halen' : 'In deze week zetten'}
@@ -288,6 +319,37 @@ export function Recept() {
                 )}
               </Voet>
               {dialoog}
+              <Dialoog
+                open={deelStap === 'vraag'}
+                kop="Delen met een link?"
+                tekst="Dit is je eigen recept. Iedereen die de link heeft kan het lezen, ook zonder account. Je naam staat er niet bij."
+                onSluit={() => setDeelStap(null)}
+                acties={[
+                  { label: 'Deel de link', hoofd: true, onClick: () => deelRecept(r) },
+                  { label: 'Laat maar', onClick: () => setDeelStap(null) },
+                ]}
+              />
+              <Dialoog
+                open={deelStap === 'kookboek'}
+                kop="Dit recept kun je niet delen"
+                tekst="Het komt uit een kookboek en blijft daarom alleen voor jou. Wil je het gerecht toch delen, voeg het dan toe als eigen recept met de bereiding in je eigen woorden."
+                onSluit={() => setDeelStap(null)}
+                acties={[{ label: 'Oké', hoofd: true, onClick: () => setDeelStap(null) }]}
+              />
+              <Dialoog
+                open={deelStap === 'gekopieerd'}
+                kop="Link gekopieerd"
+                tekst="Plak de link in een bericht. Wie hem opent ziet het recept op de website, zonder in te loggen."
+                onSluit={() => setDeelStap(null)}
+                acties={[{ label: 'Oké', hoofd: true, onClick: () => setDeelStap(null) }]}
+              />
+              <Dialoog
+                open={typeof deelStap === 'object' && deelStap !== null}
+                kop="Delen lukte niet"
+                tekst={typeof deelStap === 'object' && deelStap !== null ? deelStap.fout : ''}
+                onSluit={() => setDeelStap(null)}
+                acties={[{ label: 'Oké', hoofd: true, onClick: () => setDeelStap(null) }]}
+              />
               <Dialoog
                 open={wegVraag}
                 kop="Uit je week halen?"

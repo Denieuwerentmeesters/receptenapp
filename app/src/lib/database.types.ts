@@ -39,6 +39,8 @@ export interface Recept {
   deel_status: DeelStatus
   /** Het menu waar dit gerecht bij hoort (Zelf samenstellen); anders null. */
   samenstelling_id?: string | null
+  /** Sinds wanneer /r/<id> voor dit eigen recept werkt (lib/delen.ts); null = geen link. */
+  deellink_sinds?: string | null
   aangemaakt_op: string
   /** Ruwe schatting in euro's (lib/prijsschatting.ts); null als er niets te schatten viel. */
   prijs_pp_schatting: number | null

@@ -231,6 +231,27 @@ De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
 ziet `/beoordelen` met de aangemelde recepten van anderen.
 
+## Een recept delen met een link
+
+De deelknop op het receptscherm geeft een link naar de website,
+`receptenapp.vercel.app/r/<id>`, die iedereen kan lezen, ook zonder account.
+
+- **De pagina maakt de server** (`api/recept.ts`, opmaak in
+  `lib/deelpagina.ts`): geen app, geen JavaScript, wel een titel en foto in de
+  voorvertoning van WhatsApp. `vercel.json` stuurt `/r/<id>` erheen; die regel
+  moet vóór de vangnetregel naar `index.html` blijven staan.
+- **Wat openbaar is bepaalt de query in `api/recept.ts`** (draait zonder RLS):
+  de pool en goedgekeurde recepten altijd; een eigen recept (`eigen_input`,
+  `samengesteld`) pas als de eigenaar een link maakte (`deellink_sinds`, na
+  een vraag in de app). Dat staat los van `deel_status`.
+- **Kookboekrecepten nooit**, ook niet via een link: check-constraint
+  `kookboek_geen_deellink`, en de query sluit ze nog eens uit.
+- **Het deelvenster moet direct uit de tik komen** (`deel` in
+  `src/lib/delen.ts`); Safari weigert het na een `await`. De link van een
+  eigen recept gaat daarom tegelijk aan, niet ervoor.
+- **Nog niet gebouwd:** een link weer intrekken (nu: `deellink_sinds` op null
+  zetten of het recept verwijderen).
+
 ## Zelf samenstellen
 
 Rechtsboven op Ontdekken: je kiest een keuken en het aantal personen, typt
