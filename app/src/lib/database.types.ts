@@ -39,7 +39,9 @@ export interface Recept {
   deel_status: DeelStatus
   /** Het menu waar dit gerecht bij hoort (Zelf samenstellen); anders null. */
   samenstelling_id?: string | null
-  /** Sinds wanneer /r/<id> voor dit eigen recept werkt (lib/delen.ts); null = geen link. */
+  /** De naam in de deellink /r/<slug> (lib/slug.ts); alleen recepten uit de pool hebben er een. */
+  slug?: string | null
+  /** Sinds wanneer de deellink van dit eigen recept werkt (lib/delen.ts); null = geen link. */
   deellink_sinds?: string | null
   aangemaakt_op: string
   /** Ruwe schatting in euro's (lib/prijsschatting.ts); null als er niets te schatten viel. */
