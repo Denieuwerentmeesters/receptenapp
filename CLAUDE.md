@@ -234,11 +234,18 @@ ziet `/beoordelen` met de aangemelde recepten van anderen.
 ## Een recept delen met een link
 
 De deelknop op het receptscherm geeft een link naar de website,
-`receptenapp.vercel.app/r/<id>`, die iedereen kan lezen, ook zonder account.
+`receptenapp.vercel.app/r/<naam>`, die iedereen kan lezen, ook zonder account.
+
+- **De naam van het gerecht staat in de link** (`src/lib/slug.ts`). Een recept
+  uit de pool heeft een `slug` in de database (`/r/romige-kip-met-spinazie`),
+  gezet door een trigger en daarna vast, ook als de titel verandert. Een eigen
+  recept houdt het id erachter (`/r/<naam>-<id>`): dat id is wat de link
+  geheim houdt, dus geef een eigen recept geen kale slug. Een oude `/r/<id>`
+  blijft werken.
 
 - **De pagina maakt de server** (`api/recept.ts`, opmaak in
   `lib/deelpagina.ts`): geen app, geen JavaScript, wel een titel en foto in de
-  voorvertoning van WhatsApp. `vercel.json` stuurt `/r/<id>` erheen; die regel
+  voorvertoning van WhatsApp. `vercel.json` stuurt `/r/<naam>` erheen; die regel
   moet vóór de vangnetregel naar `index.html` blijven staan.
 - **Wat openbaar is bepaalt de query in `api/recept.ts`** (draait zonder RLS):
   de pool en goedgekeurde recepten altijd; een eigen recept (`eigen_input`,
