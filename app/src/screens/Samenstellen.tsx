@@ -72,6 +72,8 @@ export function Samenstellen() {
   // Wat er onderweg is: 'menu' = het hele menu, een getal = dat ene gerecht.
   const [onderweg, setOnderweg] = useState<'menu' | number | null>(null)
   const [open, setOpen] = useState<number | null>(null)
+  // Hoeveel gerechten er komen, zodra Claude dat weet: zoveel lege kaarten.
+  const [verwacht, setVerwacht] = useState(0)
   const [wijziging, setWijziging] = useState('')
   const [fout, setFout] = useState('')
   const [bewaren, setBewaren] = useState(false)
@@ -94,7 +96,7 @@ export function Samenstellen() {
     const nieuw = !extra.vorig
     if (nieuw) {
       setMenu({ keuken, personen, begrepen: [], gerechten: [], draaiboek: [], opmerking: null })
-      setReceptIds(null); setOpLijst(false); setOpen(null)
+      setReceptIds(null); setOpLijst(false); setOpen(null); setVerwacht(0)
       setFase('bezig')
     }
     try {
@@ -103,7 +105,10 @@ export function Samenstellen() {
         (g) => {
           // Bij bijsturen blijft het oude menu staan tot het nieuwe af is.
           if (!nieuw) return
-          if (g.soort === 'kop') setMenu((m) => m && { ...m, keuken: g.keuken, begrepen: g.begrepen })
+          if (g.soort === 'kop') {
+            setVerwacht(g.aantal)
+            setMenu((m) => m && { ...m, keuken: g.keuken, begrepen: g.begrepen })
+          }
           if (g.soort === 'gerecht') setMenu((m) => m && { ...m, gerechten: [...m.gerechten, g.gerecht] })
         },
         controller.signal,
@@ -144,6 +149,12 @@ export function Samenstellen() {
     lopend.current?.abort()
     setMenu(null); setSamenstellingId(null); setReceptIds(null); setOpLijst(false)
     setOnderweg(null); setFout(''); setFase('vragen')
+  }
+
+  /** "Wis recepten": het menu en de drie antwoorden weg, terug naar een leeg vragenscherm. */
+  function wis() {
+    opnieuw()
+    setKeuken(null); setPersonen(null); setWensen(''); setWijziging(''); setOpen(null)
   }
 
   // Wat straks als zoeklink gaat in plaats van als product in je mandje. Pas
@@ -254,7 +265,8 @@ export function Samenstellen() {
   const vast = receptIds !== null
   const labels = [
     `${menu.personen} ${menu.personen === 1 ? 'persoon' : 'personen'}`,
-    ...menu.begrepen,
+    // Het aantal personen en gerechten tellen we zelf; anders staat het er dubbel.
+    ...menu.begrepen.filter((b) => !/^\d+\s+(gerecht|gang|perso)/i.test(b)),
     ...(bezig ? [] : [`${menu.gerechten.length} ${menu.gerechten.length === 1 ? 'gerecht' : 'gerechten'}`]),
   ]
 
@@ -269,7 +281,15 @@ export function Samenstellen() {
           }}>
             <Icon name="chevronLeft" size={16} />{vast ? 'Nieuw menu' : 'Vragen aanpassen'}
           </button>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, opacity: 0.7 }}>Gemaakt met Claude</span>
+          {/* Weg ermee en opnieuw beginnen. Wat al op je lijst of bij je favorieten staat blijft daar. */}
+          <button onClick={wis} style={{
+            flex: 'none', border: '1.5px solid rgba(255,246,232,0.5)', borderRadius: 'var(--radius-full)',
+            background: 'transparent', color: 'var(--c-cream)', cursor: 'pointer', padding: '6px 12px',
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
+          }}>
+            <Icon name="trash" size={14} />Wis recepten
+          </button>
         </div>
         <Titel grootte={22}>{menuNaam(menu)}</Titel>
         {wensen.trim() && (
@@ -311,7 +331,7 @@ export function Samenstellen() {
 
         {bezig && (
           <>
-            <Skelet />
+            {Array.from({ length: Math.max(1, verwacht - menu.gerechten.length) }, (_, i) => <Skelet key={i} />)}
             <p style={KLEIN}>
               Pinch schrijft de recepten voor {menu.personen} {menu.personen === 1 ? 'persoon' : 'personen'}.
               Dat duurt ongeveer een halve minuut.
@@ -374,6 +394,7 @@ export function Samenstellen() {
           </Melding>
         )}
         {fout && <Melding>{fout}</Melding>}
+        {!bezig && <p style={{ ...KLEIN, textAlign: 'center' }}>Gemaakt met Claude</p>}
       </Inhoud>
 
       {!bezig && (

@@ -26,11 +26,11 @@ import Anthropic from '@anthropic-ai/sdk'
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import { isAppOrigin } from './auth'
 import { sessieUserId } from '../lib/sessie'
-import { MENU_SCHEMA, systeem, vraag } from '../lib/samenstellen/prompt'
-import { MenuStroom } from '../app/src/lib/menuStroom'
+import { MENU_SCHEMA, aanvulling, systeem, vraag } from '../lib/samenstellen/prompt'
+import { MenuStroom, type StroomDeel } from '../app/src/lib/menuStroom'
 import {
-  MAX_PERSONEN, MAX_WENSEN, leesDraaiboek, leesGerecht, leesMenu,
-  type Menu, type MenuGebeurtenis, type SamenstelVerzoek,
+  MAX_PERSONEN, MAX_WENSEN, inPlanVolgorde, leesDraaiboek, leesGerecht, leesMenu, leesPlan, ontbrekend,
+  type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek,
 } from '../app/src/lib/menu'
 
 export const config = { runtime: 'edge' }
@@ -144,24 +144,25 @@ function meldingVoor(e: unknown): string {
   return 'Het samenstellen is niet gelukt. Probeer het opnieuw.'
 }
 
+interface Gebruik { tokensIn: number; tokensUit: number }
+
 /**
- * Vraagt Claude om het menu en stuurt kop en gerechten door zodra ze af zijn.
- * Geeft het hele, nagelopen menu terug; gooit als er geen bruikbaar menu kwam.
+ * Eén aanroep naar Claude. Geeft de delen door zodra ze af zijn en het hele
+ * antwoord aan het eind; telt de tokens op in `gebruik`, ook als het misgaat.
  */
-async function schrijfMenu(
+async function vraagClaude(
   claude: Anthropic,
   sleutels: string[],
-  verzoek: SamenstelVerzoek,
-  vorig: Menu | null,
-  stuur: (g: MenuGebeurtenis) => void,
-  legGebruikVast: (gebruik: { tokensIn: number; tokensUit: number }) => Promise<unknown>,
-): Promise<Menu> {
-  const eenGerecht = vorig !== null && verzoek.vervang !== undefined
+  winkel: 'ah' | 'jumbo',
+  bericht: string,
+  gebruik: Gebruik,
+  opDeel: (deel: StroomDeel) => void,
+): Promise<Record<string, unknown>> {
   const lopend = claude.messages.stream({
     model: MODEL,
     max_tokens: 16000,
-    system: systeem(sleutels, verzoek.winkel),
-    messages: [{ role: 'user', content: vraag(verzoek, vorig) }],
+    system: systeem(sleutels, winkel),
+    messages: [{ role: 'user', content: bericht }],
     output_config: {
       format: { type: 'json_schema', schema: MENU_SCHEMA },
       // Laag: het nadenken vooraf is wachttijd voor de gebruiker. Haiku 4.5
@@ -171,65 +172,109 @@ async function schrijfMenu(
   })
 
   const lezer = new MenuStroom()
-  let gerechten = 0
   for await (const gebeurtenis of lopend) {
     if (gebeurtenis.type !== 'content_block_delta' || gebeurtenis.delta.type !== 'text_delta') continue
-    for (const deel of lezer.voeg(gebeurtenis.delta.text)) {
-      if (deel.soort === 'kop') {
-        // Bij één ander voorstel staat de kop er al.
-        if (eenGerecht) continue
-        const keuken = typeof deel.waarde.keuken === 'string' && deel.waarde.keuken.trim()
-        const begrepen = Array.isArray(deel.waarde.begrepen)
-          ? deel.waarde.begrepen.filter((b): b is string => typeof b === 'string') : []
-        stuur({ soort: 'kop', keuken: keuken || verzoek.keuken, begrepen })
-      } else {
-        const gerecht = leesGerecht(deel.waarde)
-        if (!gerecht) continue
-        if (eenGerecht) {
-          if (gerechten === 0) stuur({ soort: 'gerecht', index: verzoek.vervang!, gerecht })
-        } else {
-          stuur({ soort: 'gerecht', index: gerechten, gerecht })
-        }
-        gerechten++
-      }
-    }
+    for (const deel of lezer.voeg(gebeurtenis.delta.text)) opDeel(deel)
   }
 
-  const bericht = await lopend.finalMessage()
-  const u = bericht.usage
-  await legGebruikVast({
-    tokensIn: u.input_tokens + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0),
-    tokensUit: u.output_tokens,
-  }).catch((e) => console.error('samenstellen: gebruik vastleggen', e))
+  const antwoord = await lopend.finalMessage()
+  const u = antwoord.usage
+  gebruik.tokensIn += u.input_tokens + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0)
+  gebruik.tokensUit += u.output_tokens
 
-  if (bericht.stop_reason === 'refusal') {
+  if (antwoord.stop_reason === 'refusal') {
     throw new Melding('Hier kan Pinch geen menu van maken. Probeer het met andere wensen.')
   }
-  if (bericht.stop_reason === 'max_tokens') {
+  if (antwoord.stop_reason === 'max_tokens') {
     throw new Melding('Het menu werd te lang. Probeer het met minder gerechten.')
   }
-
-  let ruw: unknown
   try {
-    ruw = JSON.parse(lezer.alles)
-  } catch {
-    throw new Melding('Het menu kwam niet goed door. Probeer het opnieuw.')
-  }
+    const ruw = JSON.parse(lezer.alles) as unknown
+    if (ruw && typeof ruw === 'object') return ruw as Record<string, unknown>
+  } catch { /* valt door naar de melding */ }
+  throw new Melding('Het menu kwam niet goed door. Probeer het opnieuw.')
+}
 
-  if (eenGerecht) {
-    const nieuw = leesGerecht(((ruw as { gerechten?: unknown[] }).gerechten ?? [])[0])
-    if (!nieuw) throw new Melding('Er kwam geen bruikbaar voorstel terug. Probeer het opnieuw.')
-    const draaiboek = leesDraaiboek((ruw as { draaiboek?: unknown }).draaiboek)
-    return {
-      ...vorig,
-      gerechten: vorig.gerechten.map((g, i) => (i === verzoek.vervang ? nieuw : g)),
-      draaiboek: draaiboek.length > 0 ? draaiboek : vorig.draaiboek,
+/**
+ * Vraagt Claude om het menu en stuurt kop en gerechten door zodra ze af zijn.
+ * Geeft het hele, nagelopen menu terug; gooit als er geen bruikbaar menu kwam.
+ *
+ * Claude schrijft eerst een plan (welke gerechten) en dan de recepten. Staat
+ * er in het plan een gerecht dat niet is uitgeschreven, dan vragen we dat ene
+ * gerecht er nog bij: het is voorgekomen dat het draaiboek over een lasagne
+ * ging die niet in het menu stond.
+ */
+async function schrijfMenu(
+  claude: Anthropic,
+  sleutels: string[],
+  verzoek: SamenstelVerzoek,
+  vorig: Menu | null,
+  stuur: (g: MenuGebeurtenis) => void,
+  legGebruikVast: (gebruik: Gebruik) => Promise<unknown>,
+): Promise<Menu> {
+  const gebruik: Gebruik = { tokensIn: 0, tokensUit: 0 }
+  try {
+    if (vorig !== null && verzoek.vervang !== undefined) {
+      const plek = verzoek.vervang
+      let gestuurd = false
+      const ruw = await vraagClaude(claude, sleutels, verzoek.winkel, vraag(verzoek, vorig), gebruik, (deel) => {
+        const gerecht = deel.soort === 'gerecht' && !gestuurd ? leesGerecht(deel.waarde) : null
+        if (!gerecht) return
+        gestuurd = true
+        stuur({ soort: 'gerecht', index: plek, gerecht })
+      })
+      const nieuw = leesGerechten(ruw)[0]
+      if (!nieuw) throw new Melding('Er kwam geen bruikbaar voorstel terug. Probeer het opnieuw.')
+      const draaiboek = leesDraaiboek(ruw.draaiboek)
+      return {
+        ...vorig,
+        gerechten: vorig.gerechten.map((g, i) => (i === plek ? nieuw : g)),
+        draaiboek: draaiboek.length > 0 ? draaiboek : vorig.draaiboek,
+      }
     }
-  }
 
-  const menu = leesMenu(ruw, verzoek.personen, vorig?.keuken ?? verzoek.keuken)
-  if (!menu) throw new Melding('Er kwam geen bruikbaar menu terug. Probeer het opnieuw.')
-  return menu
+    let gerechten = 0
+    const stuurGerecht = (deel: StroomDeel) => {
+      const gerecht = deel.soort === 'gerecht' ? leesGerecht(deel.waarde) : null
+      if (gerecht) stuur({ soort: 'gerecht', index: gerechten++, gerecht })
+      else if (deel.soort === 'gerecht') console.error('samenstellen: onbruikbaar gerecht', JSON.stringify(deel.waarde).slice(0, 300))
+    }
+    const ruw = await vraagClaude(claude, sleutels, verzoek.winkel, vraag(verzoek, vorig), gebruik, (deel) => {
+      if (deel.soort !== 'kop') return stuurGerecht(deel)
+      const keuken = typeof deel.waarde.keuken === 'string' && deel.waarde.keuken.trim()
+      const begrepen = Array.isArray(deel.waarde.begrepen)
+        ? deel.waarde.begrepen.filter((b): b is string => typeof b === 'string') : []
+      stuur({ soort: 'kop', keuken: keuken || verzoek.keuken, begrepen, aantal: leesPlan(deel.waarde.plan).length })
+    })
+
+    const menu = leesMenu(ruw, verzoek.personen, vorig?.keuken ?? verzoek.keuken)
+    if (!menu) throw new Melding('Er kwam geen bruikbaar menu terug. Probeer het opnieuw.')
+
+    const plan = leesPlan(ruw.plan)
+    const ontbreekt = ontbrekend(plan, menu.gerechten)
+    if (ontbreekt.length === 0) return menu
+
+    console.error(`samenstellen: ${ontbreekt.length} van ${plan.length} gerechten niet uitgeschreven`, ontbreekt)
+    try {
+      const extra = await vraagClaude(
+        claude, sleutels, verzoek.winkel, aanvulling(verzoek, menu, ontbreekt), gebruik,
+        (deel) => { if (deel.soort === 'gerecht') stuurGerecht(deel) },
+      )
+      return { ...menu, gerechten: inPlanVolgorde(plan, menu.gerechten, leesGerechten(extra)) }
+    } catch (e) {
+      // Liever een menu met een eerlijke melding dan niets.
+      console.error('samenstellen: aanvullen mislukt', e)
+      const titels = ontbreekt.map((o) => o.titel).join(' en ')
+      return { ...menu, opmerking: `Let op: ${titels} ontbreekt nog. Vraag het erbij onder "Pas het menu aan".` }
+    }
+  } finally {
+    await legGebruikVast(gebruik).catch((e) => console.error('samenstellen: gebruik vastleggen', e))
+  }
+}
+
+function leesGerechten(ruw: Record<string, unknown>): MenuGerecht[] {
+  return (Array.isArray(ruw.gerechten) ? ruw.gerechten : [])
+    .map(leesGerecht).filter((g): g is MenuGerecht => g !== null)
 }
 
 /**
