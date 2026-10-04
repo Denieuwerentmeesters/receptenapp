@@ -1,5 +1,5 @@
 import { db } from './db'
-import { WEBSITE } from './config'
+import { DEELSITE } from './config'
 import type { Recept } from './database.types'
 import { receptPad } from './slug'
 
@@ -8,9 +8,9 @@ import { receptPad } from './slug'
  * ook iemand zonder account het kan lezen.
  */
 
-/** De openbare link. Altijd op de website: de iOS-app heeft zelf geen https-adres. */
+/** De openbare link. Altijd op de eigen domeinnaam: de iOS-app heeft zelf geen https-adres. */
 export function deelLink(recept: Pick<Recept, 'id' | 'slug' | 'titel' | 'titel_nl'>): string {
-  return `${WEBSITE}/r/${receptPad(recept)}`
+  return `${DEELSITE}/r/${receptPad(recept)}`
 }
 
 /** Kookboekrecepten gaan nooit de deur uit, ook niet via een link (auteursrecht, plan §7.3). */
