@@ -59,6 +59,9 @@ export async function haalReceptenZonderAfbeelding(sql: Sql, limiet: number, ids
     from recepten
     where afbeelding_url is null
       and (afbeelding_bron is null or afbeelding_bron = 'gegenereerd')
+      -- Zelf samengestelde menu's krijgen geen foto: ze zijn voor één
+      -- gebruiker, en een beeld per gerecht kost meer dan het oplevert.
+      and bron_type <> 'samengesteld'
     order by aangemaakt_op
     limit ${limiet}
   `) as ReceptRij[]
