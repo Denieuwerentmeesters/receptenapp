@@ -24,6 +24,7 @@
 
 import { neon } from '@neondatabase/serverless'
 import { isAppOrigin } from './auth'
+import { sessieUserId } from '../lib/sessie'
 
 export const config = { runtime: 'edge' }
 
@@ -59,15 +60,6 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   return antwoord({ ok: true }, 200)
-}
-
-/** Vraagt Neon Auth wie er bij deze cookie hoort. Null als er geen geldige sessie is. */
-async function sessieUserId(basis: string, cookie: string | null, origin: string): Promise<string | null> {
-  if (!cookie) return null
-  const respons = await fetch(`${basis.replace(/\/$/, '')}/get-session`, { headers: { cookie, origin } })
-  if (!respons.ok) return null
-  const sessie = (await respons.json().catch(() => null)) as { user?: { id?: string } } | null
-  return sessie?.user?.id ?? null
 }
 
 function antwoord(body: unknown, status: number): Response {

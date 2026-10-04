@@ -5,7 +5,7 @@
  *   npx supabase gen types typescript --project-id <ref> > src/lib/database.types.ts
  */
 
-export type BronType = 'scraper' | 'kookboek_foto' | 'eigen_input'
+export type BronType = 'scraper' | 'kookboek_foto' | 'eigen_input' | 'samengesteld'
 export type DeelStatus = 'prive' | 'aangevraagd' | 'goedgekeurd' | 'afgewezen'
 export type AfbeeldingBron = 'gegenereerd' | 'origineel_bron' | 'kookboek_foto' | 'eigen_foto'
 
@@ -37,6 +37,8 @@ export interface Recept {
   afbeelding_bron: AfbeeldingBron | null
   bron_type: BronType
   deel_status: DeelStatus
+  /** Het menu waar dit gerecht bij hoort (Zelf samenstellen); anders null. */
+  samenstelling_id?: string | null
   aangemaakt_op: string
   /** Ruwe schatting in euro's (lib/prijsschatting.ts); null als er niets te schatten viel. */
   prijs_pp_schatting: number | null

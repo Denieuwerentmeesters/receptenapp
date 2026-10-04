@@ -16,6 +16,7 @@ import { dieetLabels } from '../lib/dieet'
 import { allergeenNaam, opsomming, receptAllergie, useAllergeenRegels, useAllergieen } from '../lib/allergenen'
 import { BonusBron } from '../components/Bonus'
 import { receptBonusProducten, totTekst, useBonus } from '../lib/bonus'
+import { standaardPersonen } from '../lib/menu'
 
 export function Recept() {
   const { id } = useParams<{ id: string }>()
@@ -42,7 +43,7 @@ export function Recept() {
   // Lokale overschrijving: je kunt per recept even schuiven met het aantal
   // personen zonder je vaste voorkeur te veranderen.
   const [lokaalPersonen, setLokaalPersonen] = useState<number | null>(null)
-  const personen = lokaalPersonen ?? voorkeuren.data?.aantal_personen ?? 4
+  const personen = lokaalPersonen ?? standaardPersonen(recept.data, voorkeuren.data?.aantal_personen ?? 4)
 
   return (
     <Scherm>
@@ -252,7 +253,8 @@ export function Recept() {
                       onClick={() => {
                         // Het aantal personen dat je hier koos wordt je voorkeur, zodat
                         // de boodschappenlijst met dezelfde hoeveelheden werkt.
-                        if (lokaalPersonen && lokaalPersonen !== voorkeuren.data?.aantal_personen) {
+                        // Niet bij een samengesteld menu: dat is voor je gasten, niet je huishouden.
+                        if (lokaalPersonen && r.bron_type !== 'samengesteld' && lokaalPersonen !== voorkeuren.data?.aantal_personen) {
                           opslaan.mutate({ aantal_personen: lokaalPersonen })
                         }
                         voegToe({

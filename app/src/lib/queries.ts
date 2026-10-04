@@ -7,6 +7,7 @@ import { ingredientKey, schaalIngredienten } from './schaal'
 import { lijstSleutel } from './synoniemen'
 import { inVoorraad } from './voorraad'
 import { weekStart } from './week'
+import { standaardPersonen } from './menu'
 import type { AhProduct, BoodschapItem, JumboProduct, Recept, Voorkeuren } from './database.types'
 
 export const sleutels = {
@@ -201,7 +202,8 @@ export function useLijstActies(week = weekStart()) {
       if (error) throw error
 
       const r = recept.data as Recept
-      const personen = voorkeuren.data?.aantal_personen ?? 4
+      // Een samengesteld menu gaat op de lijst voor het aantal dat je erbij opgaf.
+      const personen = standaardPersonen(r, voorkeuren.data?.aantal_personen ?? 4)
       // Wat in je voorraadkast staat hoeft niet op de lijst (design "Voorraadkast").
       // Droge kruiden wel: die blijven staan, ze gaan alleen niet naar het mandje.
       const inHuis = new Set(

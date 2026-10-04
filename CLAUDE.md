@@ -11,6 +11,7 @@ commentaar. Houd dat aan.
 
 ```
 api/extraheer.ts     Serverless functie (Vercel) die recepten uitleest met Claude
+api/samenstellen.ts  Stelt met Claude een menu samen (Zelf samenstellen)
 api/afbeeldingen.ts  Nachtelijke cron (Vercel) die nieuwe recepten een afbeelding geeft
 lib/afbeeldingen/    Prompt-opbouw en generatie van receptafbeeldingen (gedeeld door
                      api/afbeeldingen.ts en scripts/genereer_afbeeldingen.ts)
@@ -224,6 +225,40 @@ bij, geef die dan meteen een eigen titel.
 De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
 ziet `/beoordelen` met de aangemelde recepten van anderen.
+
+## Zelf samenstellen
+
+Rechtsboven op Ontdekken: je kiest een keuken en het aantal personen, typt
+eventueel wensen, en Claude maakt een menu (`/samenstellen`,
+`api/samenstellen.ts`).
+
+- **De functie stuurt regels JSON terug terwijl Claude schrijft**
+  (`MenuGebeurtenis` in `src/lib/menu.ts`): kop, elk gerecht zodra het af is,
+  en aan het eind het hele menu. `MenuStroom` haalt de gerechten uit het
+  halve antwoord. In de iOS-app komt alles in één keer (CapacitorHttp).
+- **Kost geld per aanvraag,** dus alleen voor wie ingelogd is, met een
+  limiet per 24 uur (10 nieuwe menu's, 30 aanpassingen), geteld in
+  `samenstelling`. Het model staat in `ANTHROPIC_MODEL_SAMENSTELLEN`
+  (standaard `claude-sonnet-5-5`).
+- **Geen gedwongen tool-aanroep:** Sonnet 5.5 weigert `tool_choice` met
+  `tool`/`any`. Het schema gaat mee als `output_config.format`.
+- **De prompt begint met de huisregels en de productlijst van de winkel**
+  (`lib/samenstellen/prompt.ts`); die komen uit de cache. Zet daar niets in
+  wat per aanvraag verschilt.
+- **Koppelen aan producten gebeurt in de app,** met dezelfde `zoekProduct`
+  als de lijst. Claude krijgt de sleutels met een productnummer mee en hoort
+  die namen te gebruiken; wat er niet in staat telt het menuscherm als
+  zoeklink. Zo is er geen vierde plek met `ingredient_key`.
+- **Opslaan pas bij "Zet op mijn lijst" of "Bewaar alleen de recepten"**
+  (dan ook bij je favorieten). `bron_type = 'samengesteld'`, altijd privé
+  (check-constraint), met `samenstelling_id`. Ze staan niet in Ontdekken en
+  niet in de weekmenu-generator, en tellen niet mee voor Bespaard!.
+- **Porties:** een samengesteld recept gaat op de lijst en opent voor het
+  aantal van het menu, niet voor je huishouden (`standaardPersonen`).
+- **Nog niet gebouwd:** een eigen kopje op de boodschappenlijst, de foto
+  meteen maken (komt nu 's nachts), kandidaten uit de eigen pool, en
+  "Mijn menu's". Bij AH is het één verpakking per ingrediënt, ook voor tien
+  personen; de hoeveelheid staat wel op de lijst.
 
 ## Receptafbeeldingen
 

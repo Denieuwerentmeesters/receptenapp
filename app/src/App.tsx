@@ -3,6 +3,7 @@ import { Navigate, Route, HashRouter as Router, Routes } from 'react-router-dom'
 import { DezeWeek } from './screens/DezeWeek'
 import { Kookmodus } from './screens/Kookmodus'
 import { Ontdekken } from './screens/Ontdekken'
+import { Samenstellen } from './screens/Samenstellen'
 import { Favorieten } from './screens/Favorieten'
 import { Bespaard } from './screens/Bespaard'
 import { Voorraadkast } from './screens/Voorraadkast'
@@ -79,6 +80,7 @@ export default function App() {
         <Route path="/vandaag" element={<Navigate to="/deze-week" replace />} />
         <Route path="/weekmenu" element={<Navigate to="/deze-week" replace />} />
         <Route path="/ontdekken" element={<Ontdekken />} />
+        <Route path="/samenstellen" element={<Samenstellen />} />
         <Route path="/recept/:id" element={<Recept />} />
         <Route path="/koken/:id" element={<Kookmodus />} />
         <Route path="/boodschappen" element={<Boodschappen />} />

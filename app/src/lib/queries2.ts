@@ -44,7 +44,10 @@ interface Filterbaar {
  * postgrest-js TypeScript in een oneindige lus laten lopen.
  */
 function metFilters<T>(vraag: T, filters: OntdekFilters): T {
-  let v = vraag as unknown as Filterbaar
+  // Zelf samengestelde menu's staan bij Mijn recepten, niet tussen de
+  // hoofdgerechten. Als lijst van wat wél mag: zo werkt het ook tegen een
+  // database die de waarde 'samengesteld' nog niet kent.
+  let v = (vraag as unknown as Filterbaar).in('bron_type', ['scraper', 'kookboek_foto', 'eigen_input'])
   const zoek = filters.zoek.trim()
   if (zoek) {
     // Zoek op titel én op de Nederlandse titel; PostgREST's `or` wil
