@@ -11,6 +11,13 @@ import { Capacitor } from '@capacitor/core'
 /** Waar de website draait; de iOS-app heeft zelf geen https-adres. */
 export const WEBSITE = 'https://receptenapp.vercel.app'
 
+/**
+ * Het adres in een deellink (/r/<naam>). Zelfde Vercel-project als WEBSITE,
+ * onder de eigen domeinnaam. Inloggen in de iOS-app blijft op WEBSITE: Neon
+ * Auth moet een domein eerst als origin kennen.
+ */
+export const DEELSITE = 'https://justapinch.nl'
+
 /** Openbare pagina's in app/public; App Store Connect verwijst naar dezelfde adressen. */
 export const PRIVACY_URL = `${WEBSITE}/privacy.html`
 export const VOORWAARDEN_URL = `${WEBSITE}/voorwaarden.html`
