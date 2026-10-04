@@ -85,6 +85,8 @@ const ANDERS_GESPELD: Record<string, string> = {
   'parmezaan': 'parmezaanse kaas', 'parmigiano reggiano': 'parmezaanse kaas',
   // Boter is roomboter, ongezouten, tenzij het recept iets anders zegt.
   'boter': 'roomboter', 'ongezouten boter': 'roomboter', 'ongezouten roomboter': 'roomboter',
+  // Yoghurt is volle yoghurt, tenzij het recept iets anders zegt.
+  'yoghurt': 'volle yoghurt', 'naturel yoghurt': 'volle yoghurt',
 }
 
 /**

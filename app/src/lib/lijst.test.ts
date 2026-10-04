@@ -172,6 +172,7 @@ describe('één product, één regel', () => {
     expect(labels('lente-ui', 'bosuitjes', 'bosui')).toHaveLength(1)
     expect(labels('boter', 'roomboter', 'ongezouten roomboter', 'boter, gesmolten', 'koude boter')).toHaveLength(1)
     expect(labels('kerstomaatjes', 'cherrytomaten')).toHaveLength(1)
+    expect(labels('yoghurt', 'volle yoghurt', 'naturel yoghurt')).toHaveLength(1)
   })
 
   test('wat echt iets anders is blijft apart', () => {
@@ -179,5 +180,6 @@ describe('één product, één regel', () => {
     expect(labels('tomaten', 'tomaten uit blik', 'zongedroogde tomaten')).toHaveLength(3)
     expect(labels('roomboter', 'gezouten roomboter', 'kruidenboter')).toHaveLength(3)
     expect(labels('melk', 'kokosmelk')).toHaveLength(2)
+    expect(labels('yoghurt', 'magere yoghurt', 'griekse yoghurt', 'kokosyoghurt')).toHaveLength(4)
   })
 })

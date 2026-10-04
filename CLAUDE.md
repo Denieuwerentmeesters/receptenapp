@@ -163,6 +163,9 @@ voorraadkast vergelijkt ermee; het product zoeken blijft op de naam
 - **Vers en gedroogd blijven apart** (`droogKruid`): gemalen koriander is geen
   bosje koriander en krijgt nooit het verse product.
 - **Boter is roomboter, ongezouten**, tenzij het recept iets anders zegt.
+- **Yoghurt is volle yoghurt**, tenzij het recept iets anders zegt. "Magere
+  yoghurt" heeft een eigen mapping-regel; zonder zou die via het woord yoghurt
+  alsnog volle worden.
 - **Voorraadkast** (`inVoorraad`): "Azijn" dekt wijn- en appelazijn, niet
   rijstazijn of balsamico. Lente-ui is geen ui.
 
