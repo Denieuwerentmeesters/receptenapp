@@ -1,6 +1,12 @@
 /**
- * De openbare pagina van één recept: receptenapp.vercel.app/r/<id>. Voor wie
+ * De openbare pagina van één recept: receptenapp.vercel.app/r/<naam>. Voor wie
  * een link kreeg en geen account heeft (of niet in je huishouden zit).
+ *
+ * Het adres (app/src/lib/slug.ts):
+ *   - /r/<slug> voor een recept uit de pool; de slug staat in de database;
+ *   - /r/<naam>-<id> voor een eigen recept: de naam is voor het oog, het id
+ *     is wat telt en wat de link geheim houdt;
+ *   - /r/<id> zoals het was blijft werken, en gaat door naar de slug als die er is.
  *
  * Waarom een functie en geen scherm in de app: de app begint met inloggen, en
  * een pagina die de server maakt heeft een titel en foto in de voorvertoning
@@ -13,22 +19,22 @@
  *   - nooit een kookboekrecept.
  * Er gaat niets over de eigenaar mee: geen user_id, geen naam.
  *
- * vercel.json stuurt /r/<id> hierheen als ?id=<id>; ?p=<n> is het aantal personen.
+ * vercel.json stuurt /r/<pad> hierheen als ?id=<pad>; ?p=<n> is het aantal personen.
  */
 
 import { neon } from '@neondatabase/serverless'
 import { MAX_PERSONEN, meldingPagina, receptPagina, type DeelRecept } from '../lib/deelpagina'
+import { leesReceptPad, receptPad } from '../app/src/lib/slug'
 
 export const config = { runtime: 'edge' }
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export default async function handler(request: Request): Promise<Response> {
   if (request.method !== 'GET' && request.method !== 'HEAD') return html(meldingPagina('Niet gevonden', 'Deze pagina bestaat niet.'), 405)
 
   const binnen = new URL(request.url)
-  const id = binnen.searchParams.get('id') ?? ''
-  if (!UUID.test(id)) return nietGevonden()
+  const pad = (binnen.searchParams.get('id') ?? '').toLowerCase()
+  const gezocht = leesReceptPad(pad)
+  if (!gezocht) return nietGevonden()
 
   const databaseUrl = process.env.DATABASE_URL
   if (!databaseUrl) return storing()
@@ -36,15 +42,25 @@ export default async function handler(request: Request): Promise<Response> {
   let recept: DeelRecept | undefined
   try {
     const sql = neon(databaseUrl)
-    const rijen = await sql`
-      select id, titel, titel_nl, personen, bereidingstijd_minuten, keuken,
-             ingredienten, bereiding_nl, afbeelding_url,
-             (user_id is null or deel_status = 'goedgekeurd') as "inPool"
-      from recepten
-      where id = ${id}
-        and bron_type <> 'kookboek_foto'
-        and (user_id is null or deel_status = 'goedgekeurd' or deellink_sinds is not null)
-    ` as DeelRecept[]
+    // Op slug vind je alleen de pool: een eigen recept heeft er geen.
+    const rijen = ('id' in gezocht
+      ? await sql`
+          select id, slug, titel, titel_nl, personen, bereidingstijd_minuten, keuken,
+                 ingredienten, bereiding_nl, afbeelding_url,
+                 (user_id is null or deel_status = 'goedgekeurd') as "inPool"
+          from recepten
+          where id = ${gezocht.id}
+            and bron_type <> 'kookboek_foto'
+            and (user_id is null or deel_status = 'goedgekeurd' or deellink_sinds is not null)
+        `
+      : await sql`
+          select id, slug, titel, titel_nl, personen, bereidingstijd_minuten, keuken,
+                 ingredienten, bereiding_nl, afbeelding_url, true as "inPool"
+          from recepten
+          where slug = ${gezocht.slug}
+            and bron_type <> 'kookboek_foto'
+            and (user_id is null or deel_status = 'goedgekeurd')
+        `) as DeelRecept[]
     recept = rijen[0]
   } catch (e) {
     console.error('receptpagina mislukt', e)
@@ -52,11 +68,18 @@ export default async function handler(request: Request): Promise<Response> {
   }
   if (!recept) return nietGevonden()
 
-  const gevraagd = Number.parseInt(binnen.searchParams.get('p') ?? '', 10)
+  // Een oude link naar een recept uit de pool gaat door naar het adres met de naam.
+  const adres = `${binnen.origin}/r/${receptPad(recept)}`
+  const p = binnen.searchParams.get('p')
+  if (recept.slug && pad !== recept.slug) {
+    return new Response(null, { status: 308, headers: { location: p ? `${adres}?p=${encodeURIComponent(p)}` : adres } })
+  }
+
+  const gevraagd = Number.parseInt(p ?? '', 10)
   const personen = Number.isFinite(gevraagd) ? Math.min(MAX_PERSONEN, Math.max(1, gevraagd)) : recept.personen
 
   // Kort in de cache: een link wordt in een groepsapp in één klap vaak geopend.
-  return html(receptPagina(recept, personen, `${binnen.origin}/r/${recept.id}`), 200, 'public, max-age=0, s-maxage=300')
+  return html(receptPagina(recept, personen, adres), 200, 'public, max-age=0, s-maxage=300')
 }
 
 function nietGevonden(): Response {

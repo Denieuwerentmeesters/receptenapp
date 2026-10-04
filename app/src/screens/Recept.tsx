@@ -43,7 +43,7 @@ export function Recept() {
   // Meteen vanuit de tik het deelvenster openen (Safari staat geen wachten toe);
   // de link van een eigen recept gaat intussen aan.
   const deelRecept = (r: NonNullable<typeof recept.data>) => {
-    const url = deelLink(r.id)
+    const url = deelLink(r)
     if (!heeftLink(r)) {
       maakDeellink(r.id)
         .then(() => client.invalidateQueries({ queryKey: sleutels.recept(r.id) }))

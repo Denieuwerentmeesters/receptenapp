@@ -1,5 +1,5 @@
 /**
- * De openbare receptpagina (/r/<id>) als HTML. Buiten de app-bundle, dus
+ * De openbare receptpagina (/r/<naam>) als HTML. Buiten de app-bundle, dus
  * zonder het design system: dezelfde kleuren, systeemlettertype, geen
  * JavaScript. Het aantal personen wissel je met gewone links (?p=…).
  */
@@ -9,6 +9,8 @@ import type { Ingredient } from '../app/src/lib/database.types'
 
 export interface DeelRecept {
   id: string
+  /** De naam in het adres; alleen recepten uit de pool hebben er een. */
+  slug: string | null
   titel: string
   titel_nl: string | null
   personen: number

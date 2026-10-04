@@ -1,15 +1,16 @@
 import { db } from './db'
 import { WEBSITE } from './config'
 import type { Recept } from './database.types'
+import { receptPad } from './slug'
 
 /**
- * Een recept delen via een link naar de website (/r/<id>, api/recept.ts), zodat
+ * Een recept delen via een link naar de website (/r/<naam>, api/recept.ts), zodat
  * ook iemand zonder account het kan lezen.
  */
 
 /** De openbare link. Altijd op de website: de iOS-app heeft zelf geen https-adres. */
-export function deelLink(id: string): string {
-  return `${WEBSITE}/r/${id}`
+export function deelLink(recept: Pick<Recept, 'id' | 'slug' | 'titel' | 'titel_nl'>): string {
+  return `${WEBSITE}/r/${receptPad(recept)}`
 }
 
 /** Kookboekrecepten gaan nooit de deur uit, ook niet via een link (auteursrecht, plan §7.3). */
