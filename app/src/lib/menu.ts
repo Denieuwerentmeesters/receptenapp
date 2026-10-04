@@ -171,13 +171,32 @@ export function inPlanVolgorde(plan: PlanRegel[], gerechten: MenuGerecht[], nage
   return [...uit, ...over, ...later].slice(0, MAX_GERECHTEN)
 }
 
-/** Een heel menu nalopen; null als er geen enkel bruikbaar gerecht in zit. */
-export function leesMenu(ruw: unknown, personen: number, keuken: string): Menu | null {
+/**
+ * Waarom leesGerecht iets afkeurt, in een paar woorden. Voor de foutmelding en
+ * de log: zonder dit valt niet te zien wat er misging met een antwoord.
+ */
+export function waaromNiet(ruw: unknown): string {
+  if (!ruw || typeof ruw !== 'object') return 'geen object'
+  const o = ruw as Record<string, unknown>
+  const mist = [
+    tekst(o.titel) ? null : 'titel',
+    Array.isArray(o.ingredienten) && o.ingredienten.some((i) => ingredient(i)) ? null : 'ingrediënten',
+    teksten(o.bereiding_nl).length > 0 ? null : 'bereiding',
+  ].filter(Boolean)
+  return mist.length > 0 ? `zonder ${mist.join(', ')}` : 'onbekend'
+}
+
+/**
+ * Een heel menu nalopen; null als er geen enkel bruikbaar gerecht in zit.
+ * Met `leegMag` komt er ook dan een menu terug (kop en draaiboek), voor als
+ * de gerechten nog worden nagevraagd.
+ */
+export function leesMenu(ruw: unknown, personen: number, keuken: string, leegMag = false): Menu | null {
   if (!ruw || typeof ruw !== 'object') return null
   const o = ruw as Record<string, unknown>
   const gerechten = (Array.isArray(o.gerechten) ? o.gerechten : [])
     .map(leesGerecht).filter((g): g is MenuGerecht => g !== null).slice(0, MAX_GERECHTEN)
-  if (gerechten.length === 0) return null
+  if (gerechten.length === 0 && !leegMag) return null
   return {
     keuken: tekst(o.keuken) || keuken,
     personen,

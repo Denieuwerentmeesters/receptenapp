@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNod
 import { useNavigate } from 'react-router-dom'
 import { Button, Chip, Icon, IconButton } from '../ds'
 import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel, Voet } from '../components/Layout'
-import { useAhMapping, useJumboMapping, useLijstActies, useVoorkeuren } from '../lib/queries'
+import { useQueryClient } from '@tanstack/react-query'
+import { Dialoog } from '../components/Dialoog'
+import { useAhMapping, useDezeWeek, useJumboMapping, useLijstActies, useVoorkeuren } from '../lib/queries'
 import { allergeenNaam, opsomming, receptAllergie, useAllergeenRegels, useAllergieen } from '../lib/allergenen'
 import { altijdInHuis } from '../lib/altijdInHuis'
 import { euro } from '../lib/besparing'
@@ -13,7 +15,9 @@ import {
   KEUKEN_KEUZES, MAX_PERSONEN, MAX_WENSEN, menuNaam,
   type Menu, type MenuGerecht, type SamenstelVerzoek,
 } from '../lib/menu'
-import { schatMenu, stelSamen, useMenuOpslaan } from '../lib/samenstellen'
+import {
+  receptenVanMenu, schatMenu, stelSamen, useEerdereMenus, useMenuOpslaan, type EerderMenu,
+} from '../lib/samenstellen'
 import type { Ingredient } from '../lib/database.types'
 
 /** Zelfde perzik als Ontdekken: daar kom je vandaan. */
@@ -24,21 +28,40 @@ const BIJSTUREN = ['Goedkoper', 'Iets vegetarisch erbij', 'Minder pittig']
 
 type Fase = 'vragen' | 'bezig' | 'menu'
 
-/**
- * Wat je aan het samenstellen was. In het geheugen van de app, net als de
- * filters van Ontdekken: open je een recept of de lijst en kom je terug, dan
- * staat je menu er nog. Na een herstart begin je opnieuw.
- */
-const onthouden = {
-  keuken: null as string | null,
-  personen: null as number | null,
-  wensen: '',
-  menu: null as Menu | null,
-  samenstellingId: null as string | null,
+const OPSLAG = 'pinch-samenstellen'
+
+interface Onthouden {
+  keuken: string | null
+  personen: number | null
+  wensen: string
+  menu: Menu | null
+  samenstellingId: string | null
   /** De recept-id's zodra het menu is opgeslagen, in de volgorde van het menu. */
-  receptIds: null as string[] | null,
-  opLijst: false,
+  receptIds: string[] | null
+  opLijst: boolean
 }
+
+/**
+ * Wat je aan het samenstellen was. Bewaard op het toestel: open je een recept
+ * of de lijst, of herlaad je de pagina, dan staat je menu er nog. Is het toch
+ * weg, dan staat het bij "Eerdere menu's".
+ */
+function leesOnthouden(): Onthouden {
+  const leeg: Onthouden = {
+    keuken: null, personen: null, wensen: '', menu: null, samenstellingId: null, receptIds: null, opLijst: false,
+  }
+  try {
+    const ruw = JSON.parse(localStorage.getItem(OPSLAG) ?? 'null') as Partial<Onthouden> | null
+    // Een menu dat halverwege het schrijven bleef steken is niets om naar terug te keren.
+    return ruw && typeof ruw === 'object'
+      ? { ...leeg, ...ruw, menu: ruw.menu && ruw.menu.gerechten?.length > 0 && ruw.samenstellingId ? ruw.menu : null }
+      : leeg
+  } catch {
+    return leeg
+  }
+}
+
+const onthouden = leesOnthouden()
 
 /**
  * Stel je eigen menu samen: drie vragen, daarna maakt Claude de recepten.
@@ -58,6 +81,9 @@ export function Samenstellen() {
   // Alleen óf er een product is doet er hier toe, niet welk.
   const mapping: Record<string, unknown> | undefined = winkelId === 'jumbo' ? jumbo.data : ah.data
   const opslaan = useMenuOpslaan()
+  const eerdere = useEerdereMenus()
+  const dezeWeek = useDezeWeek()
+  const qc = useQueryClient()
   const { zetOpLijst } = useLijstActies()
 
   const [fase, setFase] = useState<Fase>(onthouden.menu ? 'menu' : 'vragen')
@@ -77,9 +103,12 @@ export function Samenstellen() {
   const [wijziging, setWijziging] = useState('')
   const [fout, setFout] = useState('')
   const [bewaren, setBewaren] = useState(false)
+  const [eerdereOpen, setEerdereOpen] = useState(false)
+  const [zoekEerder, setZoekEerder] = useState('')
 
   useEffect(() => {
     Object.assign(onthouden, { keuken, personen: personenKeuze, wensen, menu, samenstellingId, receptIds, opLijst })
+    try { localStorage.setItem(OPSLAG, JSON.stringify(onthouden)) } catch { /* geen opslag: dan alleen in het geheugen */ }
   }, [keuken, personenKeuze, wensen, menu, samenstellingId, receptIds, opLijst])
 
   // Ga je weg terwijl Claude nog schrijft, dan hoeft het antwoord niet meer.
@@ -115,6 +144,7 @@ export function Samenstellen() {
       )
       setMenu(uitkomst.menu)
       setSamenstellingId(uitkomst.samenstellingId)
+      void qc.invalidateQueries({ queryKey: ['eerdere-menus'] })
       setWijziging('')
       setFase('menu')
     } catch (e) {
@@ -150,6 +180,34 @@ export function Samenstellen() {
     setMenu(null); setSamenstellingId(null); setReceptIds(null); setOpLijst(false)
     setOnderweg(null); setFout(''); setFase('vragen')
   }
+
+  /** Haalt een eerder menu terug, met de recepten die er toen bij zijn opgeslagen. */
+  async function haalTerug(eerder: EerderMenu) {
+    lopend.current?.abort()
+    setEerdereOpen(false); setFout('')
+    try {
+      const ids = await receptenVanMenu(eerder.id)
+      const opDeLijst = new Set((dezeWeek.data ?? []).filter((r) => r.opLijst).map((r) => r.id))
+      setKeuken(eerder.menu.keuken); setPersonen(eerder.menu.personen)
+      setWensen(eerder.aangepast ? '' : eerder.wensen)
+      setMenu(eerder.menu); setSamenstellingId(eerder.id)
+      setReceptIds(ids.length > 0 ? ids : null)
+      setOpLijst(ids.length > 0 && ids.every((id) => opDeLijst.has(id)))
+      setOnderweg(null); setOpen(null); setFase('menu')
+    } catch (e) {
+      setFout(foutTekst(e))
+    }
+  }
+
+  const gevondenEerdere = useMemo(() => {
+    const term = zoekEerder.trim().toLowerCase()
+    const alle = eerdere.data ?? []
+    if (!term) return alle
+    return alle.filter((e) => [
+      menuNaam(e.menu), e.wensen, datumTekst(e.aangemaaktOp), datumCijfers(e.aangemaaktOp),
+      ...e.menu.gerechten.map((g) => g.titel),
+    ].join(' ').toLowerCase().includes(term))
+  }, [eerdere.data, zoekEerder])
 
   /** "Wis recepten": het menu en de drie antwoorden weg, terug naar een leeg vragenscherm. */
   function wis() {
@@ -194,6 +252,11 @@ export function Samenstellen() {
         </Kop>
         <Inhoud style={{ gap: 10 }}>
           <p style={LEAD}>Drie vragen, daarna maakt Pinch de recepten en zet de boodschappen klaar.</p>
+          {(eerdere.data?.length ?? 0) > 0 && (
+            <div>
+              <Chip onClick={() => setEerdereOpen(true)}>Eerdere menu's ({eerdere.data!.length}) ▾</Chip>
+            </div>
+          )}
 
           <Vraag nummer={1} tekst="Welke keuken?" />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -250,6 +313,40 @@ export function Samenstellen() {
           )}
           {fout && <Melding>{fout}</Melding>}
         </Inhoud>
+        <Dialoog
+          open={eerdereOpen}
+          kop="Eerdere menu's"
+          tekst="Alles wat je liet samenstellen, nieuwste eerst. Tik er een aan om 'm terug te halen."
+          acties={[{ label: 'Sluiten', onClick: () => setEerdereOpen(false) }]}
+          onSluit={() => setEerdereOpen(false)}
+        >
+          <input
+            value={zoekEerder}
+            onChange={(e) => setZoekEerder(e.target.value)}
+            aria-label="Zoek in eerdere menu's"
+            placeholder="Zoek op datum, keuken of gerecht"
+            style={{
+              border: '1.5px solid var(--c-ink)', borderRadius: 'var(--radius-full)', padding: '10px 14px',
+              fontFamily: 'var(--font-body)', fontSize: 16, background: 'var(--c-paper)', color: 'var(--color-ink)',
+            }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
+            {gevondenEerdere.length === 0 && <p style={{ ...KLEIN, padding: '12px 2px' }}>Niets gevonden.</p>}
+            {gevondenEerdere.map((e) => (
+              <button key={e.id} onClick={() => void haalTerug(e)} style={{
+                display: 'flex', flexDirection: 'column', gap: 2, textAlign: 'left', cursor: 'pointer',
+                background: 'none', border: 'none', borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+                padding: '11px 2px', fontFamily: 'var(--font-body)', color: 'var(--color-ink)',
+              }}>
+                <span style={{ fontSize: 16, fontWeight: 700 }}>
+                  {menuNaam(e.menu)} <span style={{ fontWeight: 500, color: 'rgba(20,20,20,0.6)' }}>· {datumTekst(e.aangemaaktOp)}</span>
+                </span>
+                <span style={KLEIN}>{e.menu.gerechten.map((g) => g.titel).join(' · ')}</span>
+                {e.wensen && <span style={{ ...KLEIN, fontStyle: 'italic' }}>{e.aangepast ? 'Aangepast: ' : ''}“{e.wensen}”</span>}
+              </button>
+            ))}
+          </div>
+        </Dialoog>
         <Voet>
           <Button
             disabled={!keuken}
@@ -438,6 +535,17 @@ export function Samenstellen() {
       )}
     </Scherm>
   )
+}
+
+/** "4 okt 14:05": wanneer je het menu liet maken. */
+function datumTekst(iso: string): string {
+  return new Date(iso).toLocaleString('nl-NL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+}
+
+/** "04-10-2026" en "4 oktober": zodat zoeken op een datum op elke schrijfwijze lukt. */
+function datumCijfers(iso: string): string {
+  const d = new Date(iso)
+  return `${d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`
 }
 
 const LEAD: CSSProperties = {

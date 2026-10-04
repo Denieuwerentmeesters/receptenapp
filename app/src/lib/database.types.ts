@@ -151,6 +151,20 @@ export interface JumboProduct {
   laatst_geverifieerd: string
 }
 
+/** Eén aanvraag bij Zelf samenstellen; de functie schrijft, de app leest alleen. */
+export interface SamenstellingRij {
+  id: string
+  user_id: string
+  soort: 'nieuw' | 'aanpassing'
+  keuken: string
+  personen: number
+  /** Bij een aanpassing: wat er anders moest. */
+  wensen: string
+  /** Het menu (lib/menu.ts), of bij een mislukte aanvraag wat er misging. */
+  antwoord: unknown
+  aangemaakt_op: string
+}
+
 /** Eén patroon uit allergeen_regel; zie migratie 20260930233000_allergieen.sql. */
 export interface AllergeenRegel {
   id: number
@@ -177,6 +191,7 @@ export interface Database {
       favoriet: Tabel<Favoriet>
       voorraad_item: Tabel<VoorraadRij>
       allergeen_regel: Tabel<AllergeenRegel>
+      samenstelling: Tabel<SamenstellingRij>
     }
     Views: Record<string, never>
     Functions: {

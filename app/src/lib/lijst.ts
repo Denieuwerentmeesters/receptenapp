@@ -1,7 +1,7 @@
 import { enkelvoudVormen } from './ah'
 import type { BoodschapItem } from './database.types'
 import { isKruid } from './kruiden'
-import { naarEenheid, type Verpakking } from './eenheden'
+import { naarEenheid, stukgewicht, type Verpakking } from './eenheden'
 import { canoniek, droogKruid, lijstSleutel, TENEN } from './synoniemen'
 import { LOOPROUTE, schapVoor, type Schap } from './winkelindeling'
 
@@ -114,6 +114,7 @@ const PER_STUK = new Set([
   'paprika', 'rode paprika', 'gele paprika', 'groene paprika',
   'courgette', 'aubergine', 'komkommer', 'prei', 'avocado', 'mango',
   'bloemkool', 'knolselderij', 'venkel', 'venkelknol', 'chinese kool', 'sla',
+  'pompoen', 'flespompoen',
 ])
 const PER_STUK_AH = new Set(['citroen', 'limoen'])
 const STUKS = new Set(['', 'st', 'stuk', 'stuks', 'krop', 'kroppen'])
@@ -138,7 +139,8 @@ const VERPAKKING = /^(blik|blikje|blikjes|blikken|pak|pakje|pakjes|pakken|zak|za
  *    tellen we die op;
  *  - kennen we de inhoud van de verpakking (`verpakking`, nu alleen bij
  *    Jumbo), dan: wat nodig is gedeeld door de inhoud, naar boven afgerond;
- *  - groente die per stuk verkocht wordt: het aantal stuks;
+ *  - groente die per stuk verkocht wordt: het aantal stuks, of het gewicht
+ *    gedeeld door wat één stuk weegt;
  *  - al het andere: één verpakking. Liever eens een ui te weinig dan twee
  *    netten te veel; de totale hoeveelheid staat op de lijst.
  */
@@ -154,12 +156,21 @@ export function aantalVerpakkingen(regel: LijstRegel, winkel: 'ah' | 'jumbo', ve
   }
   if (!perStuk(regel.key, winkel)) return 1
   let stuks = 0
+  // Vraagt het recept een gewicht ("2,5 kg pompoen"), dan rekenen we om met
+  // wat één stuk ongeveer weegt. Zonder bekend gewicht telt het niet mee.
+  let uitGewicht = 0
+  const gewicht = stukgewicht(regel.key)
   for (const item of regel.items) {
-    if (item.hoeveelheid === null || !STUKS.has((item.eenheid ?? '').trim().toLowerCase())) continue
-    stuks += item.hoeveelheid
+    if (item.hoeveelheid === null) continue
+    if (STUKS.has((item.eenheid ?? '').trim().toLowerCase())) stuks += item.hoeveelheid
+    else if (gewicht) uitGewicht += (naarEenheid(item.hoeveelheid, item.eenheid, regel.key, 'g') ?? 0) / gewicht
   }
-  return Math.max(1, Math.ceil(stuks))
+  // Dezelfde tien procent speling als bij verpakkingen: 1,05 pompoen is er één.
+  return Math.min(MAX_STUKS, Math.max(1, Math.ceil(stuks) + Math.ceil(uitGewicht - 0.1)))
 }
+
+/** Per stuk mag het er meer zijn dan zes pakken: tien paprika's voor een groep kan. */
+const MAX_STUKS = 12
 
 /** Nooit meer dan dit van één product: bij meer klopt er vast iets niet. */
 const MAX_VERPAKKINGEN = 6

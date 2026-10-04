@@ -29,7 +29,7 @@ import { sessieUserId } from '../lib/sessie'
 import { MENU_SCHEMA, aanvulling, systeem, vraag } from '../lib/samenstellen/prompt'
 import { MenuStroom, type StroomDeel } from '../app/src/lib/menuStroom'
 import {
-  MAX_PERSONEN, MAX_WENSEN, inPlanVolgorde, leesDraaiboek, leesGerecht, leesMenu, leesPlan, ontbrekend,
+  MAX_PERSONEN, MAX_WENSEN, inPlanVolgorde, leesDraaiboek, leesGerecht, leesMenu, leesPlan, ontbrekend, waaromNiet,
   type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek,
 } from '../app/src/lib/menu'
 
@@ -115,6 +115,12 @@ export default async function handler(request: Request): Promise<Response> {
         stuur({ soort: 'klaar', menu, samenstellingId })
       } catch (e) {
         console.error('samenstellen', e)
+        // Bewaar wat er misging: zonder het antwoord valt een mislukt menu niet uit te zoeken.
+        await sql`
+          update samenstelling
+          set antwoord = ${JSON.stringify({ fout: e instanceof Error ? e.message : String(e), ruw: e instanceof Melding ? e.ruw ?? null : null })}::jsonb
+          where id = ${samenstellingId}
+        `.catch(() => undefined)
         stuur({ soort: 'fout', fout: meldingVoor(e) })
       } finally {
         controller.close()
@@ -134,7 +140,10 @@ export default async function handler(request: Request): Promise<Response> {
 }
 
 /** Een fout die we de gebruiker letterlijk mogen laten zien. */
-class Melding extends Error {}
+class Melding extends Error {
+  /** Het antwoord waar het op misging, om later na te kijken (samenstelling.antwoord). */
+  constructor(bericht: string, readonly ruw?: unknown) { super(bericht) }
+}
 
 function meldingVoor(e: unknown): string {
   if (e instanceof Melding) return e.message
@@ -165,9 +174,10 @@ async function vraagClaude(
     messages: [{ role: 'user', content: bericht }],
     output_config: {
       format: { type: 'json_schema', schema: MENU_SCHEMA },
-      // Laag: het nadenken vooraf is wachttijd voor de gebruiker. Haiku 4.5
+      // Niet hoger: het nadenken vooraf is wachttijd voor de gebruiker. Op
+      // 'low' kwamen er menu's terug waar gerechten in ontbraken. Haiku 4.5
       // kent dit veld niet en weigert het verzoek als het erin staat.
-      ...(MODEL.includes('haiku') ? {} : { effort: 'low' as const }),
+      ...(MODEL.includes('haiku') ? {} : { effort: 'medium' as const }),
     },
   })
 
@@ -247,25 +257,40 @@ async function schrijfMenu(
       stuur({ soort: 'kop', keuken: keuken || verzoek.keuken, begrepen, aantal: leesPlan(deel.waarde.plan).length })
     })
 
-    const menu = leesMenu(ruw, verzoek.personen, vorig?.keuken ?? verzoek.keuken)
-    if (!menu) throw new Melding('Er kwam geen bruikbaar menu terug. Probeer het opnieuw.')
-
     const plan = leesPlan(ruw.plan)
+    const geschreven = Array.isArray(ruw.gerechten) ? ruw.gerechten : []
+    // Zo valt een mislukt menu uit de melding te lezen, ook zonder de serverlog.
+    const diagnose = () => {
+      const afgekeurd = geschreven.find((g) => !leesGerecht(g))
+      return `plan ${plan.length}, geschreven ${geschreven.length}${afgekeurd ? `, afgekeurd ${waaromNiet(afgekeurd)}` : ''}`
+    }
+    // Ook zonder één bruikbaar gerecht gaan we door als er een plan is: dan vragen we ze na.
+    const menu = leesMenu(ruw, verzoek.personen, vorig?.keuken ?? verzoek.keuken, plan.length > 0)
+    if (!menu) throw new Melding(`Er kwam geen bruikbaar menu terug (${diagnose()}). Probeer het opnieuw.`, ruw)
+
     const ontbreekt = ontbrekend(plan, menu.gerechten)
     if (ontbreekt.length === 0) return menu
 
-    console.error(`samenstellen: ${ontbreekt.length} van ${plan.length} gerechten niet uitgeschreven`, ontbreekt)
+    console.error(`samenstellen: ${ontbreekt.length} gerechten niet bruikbaar (${diagnose()})`, ontbreekt)
+    let aangevuld = menu.gerechten
     try {
       const extra = await vraagClaude(
         claude, sleutels, verzoek.winkel, aanvulling(verzoek, menu, ontbreekt), gebruik,
         (deel) => { if (deel.soort === 'gerecht') stuurGerecht(deel) },
       )
-      return { ...menu, gerechten: inPlanVolgorde(plan, menu.gerechten, leesGerechten(extra)) }
+      aangevuld = inPlanVolgorde(plan, menu.gerechten, leesGerechten(extra))
     } catch (e) {
-      // Liever een menu met een eerlijke melding dan niets.
       console.error('samenstellen: aanvullen mislukt', e)
-      const titels = ontbreekt.map((o) => o.titel).join(' en ')
-      return { ...menu, opmerking: `Let op: ${titels} ontbreekt nog. Vraag het erbij onder "Pas het menu aan".` }
+    }
+    if (aangevuld.length === 0) {
+      throw new Melding(`Er kwam geen bruikbaar menu terug (${diagnose()}, navragen hielp niet). Probeer het opnieuw.`, ruw)
+    }
+    if (aangevuld.length >= plan.length) return { ...menu, gerechten: aangevuld }
+    // Liever een menu met een eerlijke melding dan niets.
+    const titels = ontbrekend(plan, aangevuld).map((o) => o.titel).join(' en ')
+    return {
+      ...menu, gerechten: aangevuld,
+      opmerking: `Let op: ${titels || 'een gerecht'} ontbreekt nog. Vraag het erbij onder "Pas het menu aan".`,
     }
   } finally {
     await legGebruikVast(gebruik).catch((e) => console.error('samenstellen: gebruik vastleggen', e))

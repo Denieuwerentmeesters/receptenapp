@@ -1,11 +1,12 @@
 import { Capacitor } from '@capacitor/core'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { WEBSITE } from './config'
 import { db } from './db'
 import { huidigeUserId } from './auth'
 import type { Concept } from './extractie'
 import { schatPrijsPerPersoon } from './prijsschatting'
-import type { Menu, MenuGebeurtenis, MenuGerecht, SamenstelVerzoek } from './menu'
+import { leesMenu, type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek } from './menu'
+import type { SamenstellingRij } from './database.types'
 
 /**
  * De app-kant van "Zelf samenstellen": praat met api/samenstellen.ts en slaat
@@ -154,4 +155,48 @@ export function useMenuOpslaan() {
       void qc.invalidateQueries({ queryKey: ['favoriet-ids'] })
     },
   })
+}
+
+/** Een menu dat je eerder liet samenstellen, om terug te halen. */
+export interface EerderMenu {
+  id: string
+  /** Wat je toen vroeg: je wensen, of bij een aanpassing wat er anders moest. */
+  wensen: string
+  aangepast: boolean
+  aangemaaktOp: string
+  menu: Menu
+}
+
+/**
+ * Je eerdere menu's, nieuwste eerst. Elke aanvraag staat in `samenstelling`,
+ * ook als je daarna wegklikte zonder iets te bewaren; hiermee haal je zo'n
+ * menu terug. Mislukte aanvragen (geen bruikbaar menu) vallen af.
+ */
+export function useEerdereMenus() {
+  return useQuery({
+    queryKey: ['eerdere-menus'],
+    queryFn: async (): Promise<EerderMenu[]> => {
+      const { data, error } = await db.from('samenstelling')
+        .select('id, soort, keuken, personen, wensen, antwoord, aangemaakt_op')
+        .not('antwoord', 'is', null)
+        .order('aangemaakt_op', { ascending: false })
+        .limit(40)
+      if (error) throw error
+      return (data as SamenstellingRij[]).flatMap((rij) => {
+        const menu = leesMenu(rij.antwoord, rij.personen, rij.keuken)
+        return menu ? [{
+          id: rij.id, wensen: rij.wensen, aangepast: rij.soort === 'aanpassing',
+          aangemaaktOp: rij.aangemaakt_op, menu,
+        }] : []
+      })
+    },
+  })
+}
+
+/** De recepten die bij een eerder menu zijn opgeslagen, in de volgorde van het menu; leeg als dat nooit gebeurde. */
+export async function receptenVanMenu(samenstellingId: string): Promise<string[]> {
+  const { data, error } = await db.from('recepten').select('id')
+    .eq('samenstelling_id', samenstellingId).order('aangemaakt_op')
+  if (error) throw error
+  return (data as { id: string }[]).map((r) => r.id)
 }
