@@ -45,11 +45,8 @@ body {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(to bottom, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 24%, rgba(0,0,0,0) 42%, rgba(0,0,0,.78) 100%);
 }
-.merk {
-  position: absolute; z-index: 1; top: calc(16px + env(safe-area-inset-top)); left: 20px;
-  font-weight: 800; font-size: 15px; letter-spacing: .12em; text-transform: uppercase;
-  color: #FFF000; text-decoration: none;
-}
+.merk { position: absolute; z-index: 1; top: calc(16px + env(safe-area-inset-top)); left: 20px; color: #fff; }
+.merk svg { display: block; height: 30px; width: auto; }
 .titel { position: absolute; z-index: 1; left: 22px; right: 22px; bottom: 22px; }
 .label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 h1 { margin: 8px 0 0; font-size: 30px; line-height: 1.1; text-transform: uppercase; text-shadow: 0 2px 12px rgba(0,0,0,.35); overflow-wrap: anywhere; }
@@ -93,6 +90,12 @@ footer p { margin: 0 0 14px; font-size: 14px; color: rgba(20,20,20,.7); }
 }
 `
 
+/** Het woordmerk, dezelfde tekening als Woordmerk in app/src/ds/Logo.tsx: witte letters, gele korrel. */
+const WOORDMERK = `<svg role="img" aria-label="Pinch" viewBox="-4 -16 240 104" width="69" height="30">
+<g fill="none" stroke="currentColor" stroke-width="16"><path d="M8 16V84"/><circle cx="32" cy="40" r="16"/><path d="M70 16V64"/><path d="M92 64V38A16 16 0 0 1 124 38V64"/><path d="M173.3 28.7A16 16 0 1 0 173.3 51.3"/><path d="M192 -6V64"/><path d="M192 64V38A16 16 0 0 1 224 38V64"/></g>
+<rect x="62" y="-7" width="16" height="16" rx="3" transform="rotate(20 70 1)" fill="#FFF000"/>
+</svg>`
+
 function pagina(kop: string, inhoud: string): string {
   return `<!doctype html>
 <html lang="nl">
@@ -135,7 +138,7 @@ ${foto ? `<meta property="og:image" content="${esc(foto)}">\n<meta name="twitter
 
   const inhoud = `<div class="blad">
 <header class="kop"${foto ? ` style="background-image:url('${esc(encodeURI(foto))}')"` : ''}>
-  <a class="merk" href="/">Pinch</a>
+  <a class="merk" href="/">${WOORDMERK}</a>
   <div class="titel">
     <div class="label">${esc(recept.keuken ?? 'Recept')}</div>
     <h1>${esc(titel)}</h1>
