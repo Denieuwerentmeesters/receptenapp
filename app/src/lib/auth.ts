@@ -90,6 +90,8 @@ export async function logUit(): Promise<void> {
   await authClient().signOut()
   client = null
   tokenCache = null
+  // Het menu dat je aan het samenstellen was hoort bij jou, niet bij wie hierna inlogt.
+  try { localStorage.removeItem('pinch-samenstellen') } catch { /* geen opslag */ }
 }
 
 /**

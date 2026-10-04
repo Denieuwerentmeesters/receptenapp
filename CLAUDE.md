@@ -191,7 +191,9 @@ kiest; `src/lib/jumbo.ts` bouwt de link.
   `python3 scripts/jumbo_verpakkingen.py` en dan `--migratie`. Daarmee telt
   `aantalVerpakkingen` (`src/lib/lijst.ts`) hoeveel pakken er nodig zijn. Voor
   AH is er geen inhoud; daar blijft het één verpakking per ingrediënt, behalve
-  blikken/pakken uit het recept en groente per stuk.
+  blikken/pakken uit het recept en groente per stuk. Vraagt het recept bij
+  groente per stuk een gewicht (2,5 kg pompoen), dan rekent `STUKGEWICHT` in
+  `src/lib/eenheden.ts` dat om naar stuks.
 - **Niet getest op een iPhone:** of de Jumbo-app de link als Universal Link
   opvangt en de `add`-parameter dan ook verwerkt, is nog onbekend. In Safari
   werkt het.
@@ -259,9 +261,16 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
   niet in de weekmenu-generator, en tellen niet mee voor Bespaard!.
 - **Porties:** een samengesteld recept gaat op de lijst en opent voor het
   aantal van het menu, niet voor je huishouden (`standaardPersonen`).
+- **Eerdere menu's:** elke aanvraag staat met het antwoord in
+  `samenstelling`, ook als je niets bewaarde. Het vragenscherm heeft een
+  lijst "Eerdere menu's" (zoeken op datum, keuken of gerecht) om er een
+  terug te halen. Het menu waar je mee bezig bent staat ook in
+  `localStorage` (`pinch-samenstellen`), zodat herladen niets kost.
+- **Mislukte aanvraag uitzoeken:** de melding noemt wat er terugkwam (plan,
+  geschreven, waarom afgekeurd), en `samenstelling.antwoord` bewaart dan
+  `{ fout, ruw }`.
 - **Nog niet gebouwd:** een eigen kopje op de boodschappenlijst, de foto
-  meteen maken (komt nu 's nachts), kandidaten uit de eigen pool, en
-  "Mijn menu's". Bij AH is het één verpakking per ingrediënt, ook voor tien
+  meteen maken (komt nu 's nachts) en kandidaten uit de eigen pool. Bij AH is het één verpakking per ingrediënt, ook voor tien
   personen; de hoeveelheid staat wel op de lijst.
 
 ## Receptafbeeldingen

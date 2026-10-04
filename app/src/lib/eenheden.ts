@@ -34,9 +34,12 @@ const STUKGEWICHT: Record<string, number> = {
   ui: 150, 'rode ui': 150, sjalot: 30, paprika: 150, 'rode paprika': 150, tomaat: 100,
   aardappel: 150, wortel: 80, winterpeen: 250, citroen: 120, limoen: 70, appel: 180,
   courgette: 300, aubergine: 300, prei: 250, komkommer: 400,
+  pompoen: 1000, flespompoen: 1000, bloemkool: 800, knolselderij: 700, venkel: 250, venkelknol: 250,
+  'chinese kool': 800, avocado: 170, mango: 350,
 }
 
-function stukgewicht(key: string): number | undefined {
+/** Ook voor de andere kant op: 2,5 kg pompoen is drie pompoenen (aantalVerpakkingen). */
+export function stukgewicht(key: string): number | undefined {
   for (const vorm of [key, ...enkelvoudVormen(key)]) {
     if (STUKGEWICHT[vorm]) return STUKGEWICHT[vorm]
   }

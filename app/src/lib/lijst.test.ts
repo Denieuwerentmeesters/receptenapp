@@ -48,6 +48,13 @@ describe('aantalVerpakkingen', () => {
     expect(aantalVerpakkingen(regel(rij('paprika', 2, null), rij('paprika', 1, 'stuk')), 'ah')).toBe(3)
   })
 
+  test('gewicht wordt stuks bij groente per stuk', () => {
+    expect(aantalVerpakkingen(regel(rij('pompoen', 2.5, 'kg')), 'ah')).toBe(3)
+    expect(aantalVerpakkingen(regel(rij('pompoen', 1050, 'g')), 'ah')).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('courgette', 900, 'g'), rij('courgette', 1, null)), 'ah')).toBe(4)
+    expect(aantalVerpakkingen(regel(rij('paprika', 100, 'g')), 'ah')).toBe(1)
+  })
+
   test('citroen per stuk alleen bij AH', () => {
     const r = regel(rij('citroen', 2, null))
     expect(aantalVerpakkingen(r, 'ah')).toBe(2)
