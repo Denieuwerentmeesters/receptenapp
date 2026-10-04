@@ -7,7 +7,7 @@ import { Dialoog } from '../components/Dialoog'
 import { useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
 import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from '../lib/queries2'
 import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
-import type { Bestelling } from '../lib/database.types'
+import type { Bestelling, BoodschapItem } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isBijzonderKruid, isDroogKruid } from '../lib/kruiden'
 import { inVoorraad } from '../lib/voorraad'
 import {
@@ -177,8 +177,16 @@ export function Boodschappen() {
       // Alles wat naar de winkel gaat telt mee, ook wat je los koopt: een
       // maaltijdbox levert ook het hele recept.
       const aantalPerRecept = new Map((dezeWeek.data ?? []).map((r) => [r.id, r.aantal]))
+      // Een zelf samengesteld menu (tien gasten) is geen maaltijd uit een box
+      // voor je huishouden: het telt niet mee voor Bespaard!, niet als maaltijd
+      // en niet in de kosten van het mandje.
+      const menuRecepten = new Set((dezeWeek.data ?? []).filter((r) => r.bron_type === 'samengesteld').map((r) => r.id))
+      const uitMenu = (i: BoodschapItem) => Boolean(i.bron_recept_id && menuRecepten.has(i.bron_recept_id))
+      const meeZonderMenu = mee
+        .map((r) => ({ ...r, items: r.items.filter((i) => !uitMenu(i)) }))
+        .filter((r) => r.items.length > 0)
       const recepten: Record<string, number> = {}
-      for (const r of mee) {
+      for (const r of meeZonderMenu) {
         for (const i of r.items) {
           if (i.bron_recept_id) recepten[i.bron_recept_id] = aantalPerRecept.get(i.bron_recept_id) ?? 1
         }
@@ -200,7 +208,7 @@ export function Boodschappen() {
         nietMee: mee.filter((r) => !gemapteIds.has(r.voorbeeld.id)).map((r) => r.label),
         recepten,
         kosten: mandjeKosten(
-          mee, jumboMapping.data ?? {}, jumboPrijzen.data ?? {},
+          meeZonderMenu, jumboMapping.data ?? {}, jumboPrijzen.data ?? {},
           productvoorkeur(voorkeuren.data), jumboVerpakkingen.data ?? {},
         ).totaal,
       })

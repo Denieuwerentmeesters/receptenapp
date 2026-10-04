@@ -137,7 +137,19 @@ export function Ontdekken() {
   return (
     <Scherm achtergrond={ACHTERGROND}>
       <Kop kleur="var(--c-orange)" tekstKleur="var(--c-paper)" style={{ paddingBottom: 22 }}>
-        <Titel grootte={26}>Ontdekken</Titel>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+          <Titel grootte={26}>Ontdekken</Titel>
+          {/* Klein gehouden: de recepten blijven het belangrijkste op dit scherm. */}
+          <button
+            onClick={() => navigeer('/samenstellen')}
+            style={{
+              flex: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, border: 'none',
+              borderRadius: 'var(--radius-full)', padding: '7px 12px 7px 9px', cursor: 'pointer',
+              background: 'var(--c-paper)', color: 'var(--c-ink)',
+              fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 800,
+            }}
+          ><Icon name="chefHat" size={16} />Zelf samenstellen</button>
+        </div>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10, marginTop: 16,
           background: 'var(--c-paper)', borderRadius: 14, padding: '13px 16px',

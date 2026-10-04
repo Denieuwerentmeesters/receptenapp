@@ -8,6 +8,7 @@ import { useGekooktMarkeren } from '../lib/queries2'
 import { schaalIngredienten } from '../lib/schaal'
 import { formatteerDuur, tijdenUitStap } from '../lib/kookmodus'
 import { bereidGeluidVoor, houdSchermAan, planWekker, trekWekkerIn, wekkerAfgelopen } from '../lib/kookwekker'
+import { standaardPersonen } from '../lib/menu'
 
 /**
  * Eén timer tegelijk. Loopt hij, dan onthouden we het eindtijdstip in plaats
@@ -101,7 +102,7 @@ export function Kookmodus() {
           const r = recept.data
           const stappen = r.bereiding_nl.length > 0 ? r.bereiding_nl : ['Voor dit recept is nog geen bereiding vastgelegd.']
           const laatste = stap === stappen.length - 1
-          const personen = voorkeuren.data?.aantal_personen ?? 4
+          const personen = standaardPersonen(r, voorkeuren.data?.aantal_personen ?? 4)
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
 
           // Ingrediënten die in deze stap genoemd worden, tonen we als chips —

@@ -10,6 +10,7 @@
     "bonus-ophalen": "tsx scripts/bonus_ophalen.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "@neondatabase/serverless": "^1.0.1",
     "@vercel/blob": "^1.1.1",
     "sharp": "^0.34.3"
