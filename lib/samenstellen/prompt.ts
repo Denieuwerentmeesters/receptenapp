@@ -8,7 +8,7 @@
  * een datum of naam in SYSTEEM: dan mist elke aanvraag de cache.
  */
 
-import { MAX_GERECHTEN, VERRAS_ME, type Menu, type SamenstelVerzoek } from '../../app/src/lib/menu'
+import { MAX_GERECHTEN, VERRAS_ME, type Menu, type PlanRegel, type SamenstelVerzoek } from '../../app/src/lib/menu'
 
 const tekst = (description: string) => ({ type: 'string', description })
 
@@ -62,7 +62,23 @@ export const MENU_SCHEMA = {
       type: 'array', items: { type: 'string' },
       description: 'De wensen zoals je ze begreep, als korte labels: "vegetarisch", "keto", "niet te duur". Leeg zonder wensen.',
     },
-    gerechten: { type: 'array', items: GERECHT },
+    plan: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          rol: tekst('Hoofdgerecht, Salade, Bijgerecht, …'),
+          titel: tekst('De naam van het gerecht, precies zoals je hem straks bij het recept zet.'),
+        },
+        required: ['rol', 'titel'],
+      },
+      description: 'Alle gerechten van het menu, het hoofdgerecht eerst. Elk gerecht hier schrijf je daarna uit in gerechten.',
+    },
+    gerechten: {
+      type: 'array', items: GERECHT,
+      description: 'Het recept van elk gerecht uit het plan, in dezelfde volgorde en met dezelfde titel. Sla er geen over.',
+    },
     draaiboek: {
       type: 'array',
       items: {
@@ -81,13 +97,15 @@ export const MENU_SCHEMA = {
       description: 'Eén zin als er iets te melden is: een wens die niet kon, een product dat lastig te vinden is. Anders null.',
     },
   },
-  required: ['keuken', 'begrepen', 'gerechten', 'draaiboek', 'opmerking'],
+  required: ['keuken', 'begrepen', 'plan', 'gerechten', 'draaiboek', 'opmerking'],
 } as const
 
 const HUISREGELS = `Je stelt menu's samen voor Pinch, een Nederlandse receptenapp. De gebruiker kiest een keuken en een aantal personen en geeft soms wensen mee. Jij maakt een menu van gerechten die bij elkaar passen: in smaak, in werk en in wat tegelijk in de oven of op het vuur kan. De boodschappen gaan daarna in één keer naar het mandje van Albert Heijn of Jumbo.
 
 Het menu
 - Zonder wens over het aantal gerechten: één hoofdgerecht met één of twee bijgerechten. Vraagt de gebruiker om andere of meer gerechten, volg dat, tot hooguit ${MAX_GERECHTEN}.
+- Noemt de gebruiker een aantal gerechten ("3 gerechten"), dan zijn het er precies zoveel.
+- Zet eerst alle gerechten in het plan en schrijf ze daarna allemaal uit. Het draaiboek en de opmerking gaan alleen over gerechten waarvan het recept in het menu staat.
 - Elk gerecht is een volwaardig recept voor precies het gevraagde aantal personen. Reken de hoeveelheden voor dat aantal uit; de app schaalt niet meer.
 - Kook je voor een groep, kies dan gerechten die dat aankunnen: uit de oven, vooraf te maken of op een schaal. Niet tien biefstukken à la minute.
 - Bij "${VERRAS_ME}" kies je zelf een keuken die bij de wensen past, en noem je die in het veld keuken.
@@ -155,4 +173,21 @@ export function vraag(verzoek: SamenstelVerzoek, vorig: Menu | null): string {
     regels.push('Stel het menu samen.')
   }
   return regels.join('\n\n')
+}
+
+/**
+ * De vraag om gerechten die wel in het plan stonden maar niet zijn
+ * uitgeschreven. Alleen die recepten; de rest van het menu staat er al.
+ */
+export function aanvulling(verzoek: SamenstelVerzoek, menu: Menu, ontbreekt: PlanRegel[]): string {
+  return [
+    `Keuken: ${menu.keuken}`,
+    `Aantal personen: ${verzoek.personen}`,
+    `Allergieën van de gebruiker: ${verzoek.allergieen.length > 0 ? verzoek.allergieen.join(', ') : 'geen'}`,
+    verzoek.wensen
+      ? `Wensen van de gebruiker:\n<wensen>\n${verzoek.wensen}\n</wensen>`
+      : 'Wensen van de gebruiker: geen',
+    `Dit menu is al geschreven:\n${alsJson(menu)}`,
+    `Het recept van deze gerechten hoort erbij maar ontbreekt nog: ${ontbreekt.map((o) => `"${o.titel}" (${o.rol})`).join(', ')}. Schrijf alleen die recepten uit, met precies die titels, passend bij het draaiboek dat er al staat. Zet ze in plan en in gerechten; draaiboek mag leeg blijven en opmerking null.`,
+  ].join('\n\n')
 }

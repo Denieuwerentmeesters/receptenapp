@@ -64,7 +64,8 @@ export interface SamenstelVerzoek {
 
 /** Wat de functie regel voor regel terugstuurt terwijl Claude schrijft. */
 export type MenuGebeurtenis =
-  | { soort: 'kop'; keuken: string; begrepen: string[] }
+  /** `aantal`: hoeveel gerechten er komen, voor de lege kaarten tijdens het wachten. */
+  | { soort: 'kop'; keuken: string; begrepen: string[]; aantal: number }
   | { soort: 'gerecht'; index: number; gerecht: MenuGerecht }
   | { soort: 'klaar'; menu: Menu; samenstellingId: string | null }
   | { soort: 'fout'; fout: string }
@@ -116,6 +117,58 @@ export function leesDraaiboek(ruw: unknown): DraaiboekRegel[] {
     const wat = tekst(o.wat)
     return wanneer && wat ? [{ wanneer, wat }] : []
   })
+}
+
+/** Eén regel uit het plan dat Claude maakt voordat het de recepten schrijft. */
+export interface PlanRegel {
+  rol: string
+  titel: string
+}
+
+export function leesPlan(ruw: unknown): PlanRegel[] {
+  if (!Array.isArray(ruw)) return []
+  return ruw.flatMap((r) => {
+    const o = (r ?? {}) as Record<string, unknown>
+    const titel = tekst(o.titel)
+    return titel ? [{ rol: tekst(o.rol) || 'Gerecht', titel }] : []
+  }).slice(0, MAX_GERECHTEN)
+}
+
+const zelfde = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()
+
+/**
+ * Wat wel in het plan staat maar niet is uitgeschreven. Alleen als er ook
+ * echt te weinig gerechten zijn: een gerecht dat onderweg een iets andere
+ * naam kreeg ontbreekt niet.
+ */
+export function ontbrekend(plan: PlanRegel[], gerechten: MenuGerecht[]): PlanRegel[] {
+  const tekort = plan.length - gerechten.length
+  if (tekort <= 0) return []
+  return plan.filter((p) => !gerechten.some((g) => zelfde(g.titel, p.titel))).slice(0, tekort)
+}
+
+/**
+ * Zet nagekomen gerechten op hun plek uit het plan (het hoofdgerecht vooraan,
+ * niet achteraan omdat het later kwam). Wat nergens bij past sluit achteraan.
+ */
+export function inPlanVolgorde(plan: PlanRegel[], gerechten: MenuGerecht[], nagekomen: MenuGerecht[]): MenuGerecht[] {
+  const over = [...gerechten]
+  const later = [...nagekomen]
+  const uit: MenuGerecht[] = []
+  for (const p of plan) {
+    const i = over.findIndex((g) => zelfde(g.titel, p.titel))
+    if (i >= 0) uit.push(...over.splice(i, 1))
+    else {
+      const j = later.findIndex((g) => zelfde(g.titel, p.titel))
+      if (j >= 0) uit.push(...later.splice(j, 1))
+      else if (later.length > 0 && !gerechten.some((g) => zelfde(g.titel, p.titel))) {
+        // Het nagekomen gerecht heet net anders: neem het eerste met dezelfde rol, of gewoon het eerste.
+        const k = Math.max(0, later.findIndex((g) => zelfde(g.rol, p.rol)))
+        uit.push(...later.splice(k, 1))
+      }
+    }
+  }
+  return [...uit, ...over, ...later].slice(0, MAX_GERECHTEN)
 }
 
 /** Een heel menu nalopen; null als er geen enkel bruikbaar gerecht in zit. */

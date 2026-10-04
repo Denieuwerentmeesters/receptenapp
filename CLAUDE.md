@@ -240,6 +240,10 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
   limiet per 24 uur (10 nieuwe menu's, 30 aanpassingen), geteld in
   `samenstelling`. Het model staat in `ANTHROPIC_MODEL_SAMENSTELLEN`
   (standaard `claude-sonnet-5-5`).
+- **Eerst een plan, dan de recepten.** Claude noemt in `plan` alle gerechten
+  en schrijft ze daarna uit. Mist er een (het draaiboek ging over een lasagne
+  die niet in het menu stond), dan vraagt de functie dat gerecht er in een
+  tweede aanroep bij en zet het op zijn plek uit het plan.
 - **Geen gedwongen tool-aanroep:** Sonnet 5.5 weigert `tool_choice` met
   `tool`/`any`. Het schema gaat mee als `output_config.format`.
 - **De prompt begint met de huisregels en de productlijst van de winkel**

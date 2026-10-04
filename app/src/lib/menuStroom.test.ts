@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { MenuStroom, type StroomDeel } from './menuStroom'
-import { leesGerecht, leesMenu } from './menu'
+import { inPlanVolgorde, leesGerecht, leesMenu, ontbrekend, type MenuGerecht } from './menu'
 
 const ANTWOORD = JSON.stringify({
   keuken: 'Midden-Oosters',
   begrepen: ['vegetarisch', 'zonder noten'],
+  plan: [{ rol: 'Salade', titel: 'Fattoush' }, { rol: 'Bijgerecht', titel: 'Geroosterde bloemkool' }],
   gerechten: [
     {
       rol: 'Salade', titel: 'Fattoush met "sumak" {en} [pita]', bereidingstijd_minuten: 25, tags: ['vegetarisch'],
@@ -34,7 +35,8 @@ describe('MenuStroom', () => {
   it.each([1, 7, 64, 100000])('geeft kop en gerechten, in stukjes van %i', (grootte) => {
     const delen = inStukjes(grootte)
     expect(delen.map((d) => d.soort)).toEqual(['kop', 'gerecht', 'gerecht'])
-    expect(delen[0].waarde).toEqual({ keuken: 'Midden-Oosters', begrepen: ['vegetarisch', 'zonder noten'] })
+    expect(delen[0].waarde).toMatchObject({ keuken: 'Midden-Oosters', begrepen: ['vegetarisch', 'zonder noten'] })
+    expect((delen[0].waarde as { plan: unknown[] }).plan).toHaveLength(2)
     expect(leesGerecht(delen[1].waarde)?.titel).toBe('Fattoush met "sumak" {en} [pita]')
     expect(leesGerecht(delen[2].waarde)?.rol).toBe('Bijgerecht')
   })
@@ -45,7 +47,7 @@ describe('MenuStroom', () => {
 
   it('geeft een gerecht pas als het af is', () => {
     const stroom = new MenuStroom()
-    const half = ANTWOORD.indexOf('Geroosterde')
+    const half = ANTWOORD.lastIndexOf('Geroosterde')
     expect(stroom.voeg(ANTWOORD.slice(0, half)).map((d) => d.soort)).toEqual(['kop', 'gerecht'])
     expect(stroom.voeg(ANTWOORD.slice(half)).map((d) => d.soort)).toEqual(['gerecht'])
   })
@@ -64,5 +66,28 @@ describe('leesMenu', () => {
 
   it('geeft null zonder bruikbaar gerecht', () => {
     expect(leesMenu({ gerechten: [{ titel: 'x' }] }, 4, 'Italiaans')).toBeNull()
+  })
+})
+
+describe('plan en gerechten', () => {
+  const gerecht = (rol: string, titel: string): MenuGerecht => ({
+    rol, titel, bereidingstijd_minuten: 30, tags: [], vooraf: null,
+    ingredienten: [{ hoeveelheid: '1', eenheid: null, naam: 'ui' }], bereiding_nl: ['Doe iets.'],
+  })
+  const plan = [
+    { rol: 'Hoofdgerecht', titel: 'Lasagne met spinazie' },
+    { rol: 'Salade', titel: 'Rucolasalade' },
+    { rol: 'Bijgerecht', titel: 'Courgette uit de oven' },
+  ]
+  const geschreven = [gerecht('Salade', 'Rucolasalade'), gerecht('Bijgerecht', 'Courgette uit de oven')]
+
+  it('ziet het gerecht dat wel gepland maar niet geschreven is', () => {
+    expect(ontbrekend(plan, geschreven)).toEqual([plan[0]])
+    expect(ontbrekend(plan, [...geschreven, gerecht('Hoofdgerecht', 'Lasagne')])).toEqual([])
+  })
+
+  it('zet een nagekomen gerecht op zijn plek uit het plan', () => {
+    const uit = inPlanVolgorde(plan, geschreven, [gerecht('Hoofdgerecht', 'Spinazielasagne')])
+    expect(uit.map((g) => g.titel)).toEqual(['Spinazielasagne', 'Rucolasalade', 'Courgette uit de oven'])
   })
 })
