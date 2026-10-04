@@ -8,7 +8,7 @@ import { Grens } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
 import { sleutels, useDezeWeek, useLijstActies, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
-import { deel, deelLink, heeftLink, maakDeellink, magDelen } from '../lib/delen'
+import { deel, deelLink, heeftDeelvenster, heeftLink, maakDeellink, magDelen, whatsappLink } from '../lib/delen'
 import { foutTekst } from '../lib/fouten'
 import { isBudget } from '../lib/prijsschatting'
 import { ingredientKey, schaalIngredienten } from '../lib/schaal'
@@ -37,17 +37,22 @@ export function Recept() {
   const regels = useAllergeenRegels(allergieen.length > 0)
   const bonus = useBonus()
   const client = useQueryClient()
-  // Delen: 'vraag' bij een eigen recept dat nog geen link heeft, daarna wat er gebeurde.
+  // Delen: 'vraag' is de keuze hoe (WhatsApp of iets anders), daarna wat er gebeurde.
   const [deelStap, setDeelStap] = useState<null | 'vraag' | 'kookboek' | 'gekopieerd' | { fout: string }>(null)
 
-  // Meteen vanuit de tik het deelvenster openen (Safari staat geen wachten toe);
-  // de link van een eigen recept gaat intussen aan.
-  const deelRecept = (r: NonNullable<typeof recept.data>) => {
+  // Meteen vanuit de tik WhatsApp of het deelvenster openen (Safari staat geen
+  // wachten toe); de link van een eigen recept gaat intussen aan.
+  const deelRecept = (r: NonNullable<typeof recept.data>, via: 'whatsapp' | 'anders') => {
     const url = deelLink(r)
     if (!heeftLink(r)) {
       maakDeellink(r.id)
         .then(() => client.invalidateQueries({ queryKey: sleutels.recept(r.id) }))
         .catch((e) => setDeelStap({ fout: `De link werkt nog niet: ${foutTekst(e)}` }))
+    }
+    if (via === 'whatsapp') {
+      void openBijWinkel(whatsappLink(r.titel_nl ?? r.titel, url))
+      setDeelStap((stap) => (stap === 'vraag' ? null : stap))
+      return
     }
     void deel(r.titel_nl ?? r.titel, url).then((uitkomst) => {
       if (uitkomst === 'gekopieerd') setDeelStap('gekopieerd')
@@ -120,9 +125,7 @@ export function Recept() {
                       <IconButton
                         icon="share" label="Deel dit recept" size={42}
                         onClick={() => {
-                          if (!magDelen(r)) setDeelStap('kookboek')
-                          else if (!heeftLink(r)) setDeelStap('vraag')
-                          else deelRecept(r)
+                          setDeelStap(magDelen(r) ? 'vraag' : 'kookboek')
                         }}
                         style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
                       />
@@ -321,11 +324,14 @@ export function Recept() {
               {dialoog}
               <Dialoog
                 open={deelStap === 'vraag'}
-                kop="Delen met een link?"
-                tekst="Dit is je eigen recept. Iedereen die de link heeft kan het lezen, ook zonder account. Je naam staat er niet bij."
+                kop="Deel dit recept"
+                tekst={heeftLink(r)
+                  ? 'Je stuurt een link naar het recept op de website. Wie hem opent hoeft niet in te loggen.'
+                  : 'Dit is je eigen recept. Iedereen die de link heeft kan het lezen, ook zonder account. Je naam staat er niet bij.'}
                 onSluit={() => setDeelStap(null)}
                 acties={[
-                  { label: 'Deel de link', hoofd: true, onClick: () => deelRecept(r) },
+                  { label: 'Deel via WhatsApp', hoofd: true, onClick: () => deelRecept(r, 'whatsapp') },
+                  { label: heeftDeelvenster() ? 'Andere app' : 'Kopieer de link', onClick: () => deelRecept(r, 'anders') },
                   { label: 'Laat maar', onClick: () => setDeelStap(null) },
                 ]}
               />

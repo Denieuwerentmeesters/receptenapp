@@ -256,6 +256,9 @@ De deelknop op het receptscherm geeft een link naar de website,
 - **Het deelvenster moet direct uit de tik komen** (`deel` in
   `src/lib/delen.ts`); Safari weigert het na een `await`. De link van een
   eigen recept gaat daarom tegelijk aan, niet ervoor.
+- **WhatsApp heeft een eigen knop** (`whatsappLink`, `wa.me/?text=…`): het
+  deelmenu van Safari op een Mac heeft geen WhatsApp. In de iOS-app gaat die
+  link via `AppLauncher.openUrl`.
 - **Nog niet gebouwd:** een link weer intrekken (nu: `deellink_sinds` op null
   zetten of het recept verwijderen).
 

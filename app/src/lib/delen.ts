@@ -32,6 +32,19 @@ export async function maakDeellink(id: string): Promise<void> {
   if (error) throw error
 }
 
+/**
+ * Opent WhatsApp met het recept al in het bericht. Het deelvenster van een Mac
+ * heeft geen WhatsApp, en zo hangt het ook op de telefoon niet van dat venster af.
+ */
+export function whatsappLink(titel: string, url: string): string {
+  return `https://wa.me/?text=${encodeURIComponent(`${titel}\n${url}`)}`
+}
+
+/** Of dit apparaat een deelvenster heeft; anders bieden we kopiëren aan. */
+export function heeftDeelvenster(): boolean {
+  return typeof navigator.share === 'function'
+}
+
 export type DeelUitkomst = 'gedeeld' | 'gekopieerd' | 'afgebroken' | 'mislukt'
 
 /**
