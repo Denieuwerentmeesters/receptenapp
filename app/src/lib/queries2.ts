@@ -536,6 +536,21 @@ export function useJumboVerpakkingen(aan = true) {
   })
 }
 
+/** Inhoud per AH-productnummer (ah_verpakking, scripts/ah_verpakkingen.py). */
+export function useAhVerpakkingen(aan = true) {
+  return useQuery({
+    queryKey: ['ah-verpakkingen'],
+    enabled: aan,
+    staleTime: 60 * 60 * 1000,
+    queryFn: async (): Promise<Record<string, Verpakking>> => {
+      const { data, error } = await db.from('ah_verpakking').select('product_id, inhoud, eenheid')
+      if (error) throw error
+      return Object.fromEntries((data as { product_id: number; inhoud: number | string; eenheid: Verpakking['eenheid'] }[])
+        .map((v) => [String(v.product_id), { inhoud: Number(v.inhoud), eenheid: v.eenheid }]))
+    },
+  })
+}
+
 export function useJumboPrijzen() {
   return useQuery({
     queryKey: ['jumbo-prijzen'],
