@@ -262,7 +262,7 @@ export function Boodschappen() {
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
             {regels.length === 0
               ? 'Nog niets op je lijst.'
-              : `${open.length} van de ${regels.length} producten nog nodig · op volgorde van de winkel`}
+              : `${naarWinkel.length} van de ${regels.length} producten nog nodig · op volgorde van de winkel`}
           </p>
         </Kop>
 
