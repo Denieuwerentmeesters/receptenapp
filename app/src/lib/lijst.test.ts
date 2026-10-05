@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { aantalVerpakkingen, groepeerOpSchap, voegSamen } from './lijst'
+import { aantalVerpakkingen, groepeerOpSchap, verpakkingenPerRegel, voegSamen } from './lijst'
 import { ingredientKey } from './schaal'
 import type { BoodschapItem } from './database.types'
 
@@ -15,94 +15,150 @@ const regel = (...rijen: BoodschapItem[]) => voegSamen(rijen)[0]
 
 describe('aantalVerpakkingen', () => {
   test('blikken uit twee recepten tellen op', () => {
-    expect(aantalVerpakkingen(regel(rij('tomatenblokjes', 1, 'blik'), rij('tomatenblokjes', 1, 'blik')), 'ah')).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('tomatenblokjes', 1, 'blik'), rij('tomatenblokjes', 1, 'blik')))).toBe(2)
   })
 
   test('een geschaalde anderhalf blik wordt twee', () => {
-    expect(aantalVerpakkingen(regel(rij('kokosmelk', 1.5, 'blikjes')), 'jumbo')).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('kokosmelk', 1.5, 'blikjes')))).toBe(2)
   })
 
   test('"blik (400 ml)" is ook een blik', () => {
-    expect(aantalVerpakkingen(regel(rij('kikkererwten', 2, 'blik (400 ml)')), 'ah')).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('kikkererwten', 2, 'blik (400 ml)')))).toBe(2)
   })
 
   test('pak, zak, fles en pot tellen ook', () => {
-    expect(aantalVerpakkingen(regel(rij('passata', 1, 'pak'), rij('passata', 1, 'pak')), 'ah')).toBe(2)
-    expect(aantalVerpakkingen(regel(rij('spinazie', 1, 'zak'), rij('spinazie', 2, 'zakken')), 'ah')).toBe(3)
-    expect(aantalVerpakkingen(regel(rij('pesto', 1, 'potje')), 'ah')).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('passata', 1, 'pak'), rij('passata', 1, 'pak')))).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('spinazie', 1, 'zak'), rij('spinazie', 2, 'zakken')))).toBe(3)
+    expect(aantalVerpakkingen(regel(rij('pesto', 1, 'potje')))).toBe(1)
   })
 
   test('verpakking zonder hoeveelheid telt als één', () => {
-    expect(aantalVerpakkingen(regel(rij('mais', null, 'blik'), rij('mais', 1, 'blik')), 'ah')).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('mais', null, 'blik'), rij('mais', 1, 'blik')))).toBe(2)
   })
 
   test('grammen blijven één verpakking', () => {
-    expect(aantalVerpakkingen(regel(rij('spinazie', 100, 'g'), rij('spinazie', 100, 'g')), 'ah')).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('spinazie', 100, 'g'), rij('spinazie', 100, 'g')))).toBe(1)
   })
 
   test('uien zijn één net', () => {
-    expect(aantalVerpakkingen(regel(rij('ui', 2, null), rij('ui', 1, 'stuks')), 'jumbo')).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('ui', 2, null), rij('ui', 1, 'stuks')))).toBe(1)
   })
 
   test('paprika per stuk', () => {
-    expect(aantalVerpakkingen(regel(rij('paprika', 2, null), rij('paprika', 1, 'stuk')), 'ah')).toBe(3)
+    expect(aantalVerpakkingen(regel(rij('paprika', 2, null), rij('paprika', 1, 'stuk')))).toBe(3)
   })
 
   test('gewicht wordt stuks bij groente per stuk', () => {
-    expect(aantalVerpakkingen(regel(rij('pompoen', 2.5, 'kg')), 'ah')).toBe(3)
-    expect(aantalVerpakkingen(regel(rij('pompoen', 1050, 'g')), 'ah')).toBe(1)
-    expect(aantalVerpakkingen(regel(rij('courgette', 900, 'g'), rij('courgette', 1, null)), 'ah')).toBe(4)
-    expect(aantalVerpakkingen(regel(rij('paprika', 100, 'g')), 'ah')).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('pompoen', 2.5, 'kg')))).toBe(3)
+    expect(aantalVerpakkingen(regel(rij('pompoen', 1050, 'g')))).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('courgette', 900, 'g'), rij('courgette', 1, null)))).toBe(4)
+    expect(aantalVerpakkingen(regel(rij('paprika', 100, 'g')))).toBe(1)
   })
 
-  test('citroen per stuk alleen bij AH', () => {
-    const r = regel(rij('citroen', 2, null))
-    expect(aantalVerpakkingen(r, 'ah')).toBe(2)
-    expect(aantalVerpakkingen(r, 'jumbo')).toBe(1)
+  test('citroenen zonder bekende inhoud zijn één net', () => {
+    expect(aantalVerpakkingen(regel(rij('citroen', 2, null)))).toBe(1)
   })
 })
 
-describe('aantalVerpakkingen met inhoud (Jumbo)', () => {
+describe('aantalVerpakkingen met inhoud', () => {
   const pak500 = { inhoud: 500, eenheid: 'g' as const }
 
   test('twee keer 500 g gehakt is twee pakken', () => {
-    expect(aantalVerpakkingen(regel(rij('rundergehakt', 500, 'g'), rij('rundergehakt', 500, 'g')), 'jumbo', pak500)).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('rundergehakt', 500, 'g'), rij('rundergehakt', 500, 'g')), pak500)).toBe(2)
   })
 
   test('twee keer 100 g spinazie in een zak van 400 g is één zak', () => {
-    expect(aantalVerpakkingen(regel(rij('spinazie', 100, 'g'), rij('spinazie', 100, 'g')), 'jumbo',
+    expect(aantalVerpakkingen(regel(rij('spinazie', 100, 'g'), rij('spinazie', 100, 'g')),
       { inhoud: 400, eenheid: 'g' })).toBe(1)
   })
 
-  test('tien procent speling: 540 g is nog één pak', () => {
-    expect(aantalVerpakkingen(regel(rij('kipfilet', 540, 'g')), 'jumbo', pak500)).toBe(1)
-    expect(aantalVerpakkingen(regel(rij('kipfilet', 600, 'g')), 'jumbo', pak500)).toBe(2)
+  test('een kwart speling: 625 g is nog één pak van 500 g', () => {
+    expect(aantalVerpakkingen(regel(rij('kipfilet', 625, 'g')), pak500)).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('kipfilet', 650, 'g')), pak500)).toBe(2)
+  })
+
+  test('500 g broccoli is één stronk van 400 g', () => {
+    const stronk = { inhoud: 400, eenheid: 'g' as const }
+    expect(aantalVerpakkingen(regel(rij('broccoli', 500, 'g')), stronk)).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('broccoli', 520, 'g')), stronk)).toBe(2)
+  })
+
+  test('de speling geldt per laatste verpakking, niet per stuk', () => {
+    // 1000 g in pakken van 375 g: 2,67 pak, dus drie.
+    expect(aantalVerpakkingen(regel(rij('vegagehakt', 500, 'g'), rij('vegagehakt', 500, 'g')), { inhoud: 375, eenheid: 'g' })).toBe(3)
+    expect(aantalVerpakkingen(regel(rij('rijst', 1100, 'g')), pak500)).toBe(2)
   })
 
   test('kilo en liter rekenen om', () => {
-    expect(aantalVerpakkingen(regel(rij('aardappel', 1.5, 'kg')), 'jumbo', { inhoud: 1000, eenheid: 'g' })).toBe(2)
-    expect(aantalVerpakkingen(regel(rij('melk', 0.5, 'l'), rij('melk', 750, 'ml')), 'jumbo', { inhoud: 1000, eenheid: 'ml' })).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('aardappel', 1.5, 'kg')), { inhoud: 1000, eenheid: 'g' })).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('melk', 0.5, 'l'), rij('melk', 800, 'ml')), { inhoud: 1000, eenheid: 'ml' })).toBe(2)
   })
 
   test('uien per stuk tegen een net van 1 kg', () => {
-    expect(aantalVerpakkingen(regel(rij('ui', 3, null), rij('ui', 2, 'stuks')), 'jumbo', { inhoud: 1000, eenheid: 'g' })).toBe(1)
-    expect(aantalVerpakkingen(regel(rij('ui', 8, null)), 'jumbo', { inhoud: 1000, eenheid: 'g' })).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('ui', 3, null), rij('ui', 2, 'stuks')), { inhoud: 1000, eenheid: 'g' })).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('ui', 9, null)), { inhoud: 1000, eenheid: 'g' })).toBe(2)
   })
 
   test('eieren tegen een doos van 10', () => {
-    expect(aantalVerpakkingen(regel(rij('ei', 4, null), rij('ei', 8, null)), 'jumbo', { inhoud: 10, eenheid: 'stuks' })).toBe(2)
+    const doos = { inhoud: 10, eenheid: 'stuks' as const }
+    expect(aantalVerpakkingen(regel(rij('ei', 4, null), rij('ei', 8, null)), doos)).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('ei', 6, null), rij('ei', 8, null)), doos)).toBe(2)
+  })
+
+  test('citroenen tegen een net, rode pepers per stuk', () => {
+    expect(aantalVerpakkingen(regel(rij('citroen', 2, null)), { inhoud: 500, eenheid: 'g' })).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('rode peper', 1, null), rij('rode peper', 1, null)), { inhoud: 1, eenheid: 'stuks' })).toBe(2)
+  })
+
+  test('stengels in de naam zijn geen struiken', () => {
+    const r = regel({ ...rij('bleekselderij', 3, null), naam: 'stengels bleekselderij' })
+    expect(aantalVerpakkingen(r, { inhoud: 1, eenheid: 'stuks' })).toBe(1)
+  })
+
+  test('knoflooktenen zijn geen bollen', () => {
+    expect(aantalVerpakkingen(regel(rij('knoflooktenen', 3, null)), { inhoud: 1, eenheid: 'stuks' })).toBe(1)
   })
 
   test('een theelepel saffraan is één potje, niet honderd', () => {
-    expect(aantalVerpakkingen(regel(rij('saffraan', 1, 'tl')), 'jumbo', { inhoud: 0.05, eenheid: 'g' })).toBe(1)
+    expect(aantalVerpakkingen(regel(rij('saffraan', 1, 'tl')), { inhoud: 0.05, eenheid: 'g' })).toBe(1)
   })
 
   test('nooit meer dan zes', () => {
-    expect(aantalVerpakkingen(regel(rij('parmezaan', 2, 'kg')), 'jumbo', { inhoud: 50, eenheid: 'g' })).toBe(6)
+    expect(aantalVerpakkingen(regel(rij('parmezaan', 2, 'kg')), { inhoud: 50, eenheid: 'g' })).toBe(6)
   })
 
   test('blikken in het recept gaan voor de inhoud', () => {
-    expect(aantalVerpakkingen(regel(rij('kokosmelk', 2, 'blik')), 'jumbo', { inhoud: 400, eenheid: 'ml' })).toBe(2)
+    expect(aantalVerpakkingen(regel(rij('kokosmelk', 2, 'blik')), { inhoud: 400, eenheid: 'ml' })).toBe(2)
+  })
+})
+
+describe('verpakkingenPerRegel', () => {
+  const pot = { inhoud: 800, eenheid: 'g' as const }
+
+  test('twee regels uit dezelfde pot zijn samen één pot', () => {
+    const regels = voegSamen([rij('bruine bonen', 200, 'g'), rij('pintobonen', 400, 'g')])
+    const per = verpakkingenPerRegel(regels, () => '840', () => pot)
+    expect(per.get('bruine bonen')).toEqual({ aantal: 1, totaal: 1, samenMet: ['pintobonen'] })
+    expect(per.get('pintobonen')).toEqual({ aantal: 0, totaal: 1, samenMet: ['bruine bonen'] })
+  })
+
+  test('samen meer dan één pot telt samen op', () => {
+    const regels = voegSamen([rij('bruine bonen', 600, 'g'), rij('pintobonen', 600, 'g')])
+    const per = verpakkingenPerRegel(regels, () => '840', () => pot)
+    expect([...per.values()].reduce((som, r) => som + r.aantal, 0)).toBe(2)
+  })
+
+  test('twee regels kruiden met één potje zijn één potje', () => {
+    const regels = voegSamen([rij('paprikapoeder', 1, 'tl'), rij('pittige paprikapoeder', 2, 'tl')])
+    const per = verpakkingenPerRegel(regels, () => '216677', () => undefined)
+    expect([...per.values()].reduce((som, r) => som + r.aantal, 0)).toBe(1)
+  })
+
+  test('zonder productnummer telt elke regel op zichzelf', () => {
+    const regels = voegSamen([rij('paprika', 2, null), rij('courgette', 1, null)])
+    const per = verpakkingenPerRegel(regels, () => null, () => undefined)
+    expect(per.get('paprika')?.aantal).toBe(2)
+    expect(per.get('courgette')?.aantal).toBe(1)
   })
 })
 

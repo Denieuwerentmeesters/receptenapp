@@ -21,7 +21,7 @@ app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
   src/lib/           auth, db, queries, schaal, ah, week, config, fouten
 db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
 scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
-                     jumbo_mapping, jumbo_prijzen, jumbo_verpakkingen,
+                     jumbo_mapping, jumbo_prijzen, jumbo_verpakkingen, ah_verpakkingen,
                      genereer_afbeeldingen (TypeScript, via `npm run afbeeldingen`)
 data/recepten.json   581 gescrapete recepten (archief na import; `titel_bron` is de
                      oorspronkelijke titel, `titel`/`titel_nl` onze eigen naam)
@@ -93,7 +93,8 @@ meervouds-s (sojasaus blijft sojasaus, aardappels wordt aardappel) en apostrofs
 
 **ah.nl blokkeert kale HTTP-verzoeken met 403.** Scrapen lukt alleen vanuit een
 echte browser. Vandaar dat `scripts/ah_mapping.py` in de praktijk niet werkt en
-de mapping via de browser is opgebouwd.
+de mapping via de browser is opgebouwd. De API van de AH-app (`api.ah.nl`)
+antwoordt wel; zie `scripts/ah_verpakkingen.py`.
 
 ## iOS-app
 
@@ -191,15 +192,35 @@ kiest; `src/lib/jumbo.ts` bouwt de link.
   Zelfde regel als bij AH: bij twijfel geen mapping.
 - **Verpakkingen:** de inhoud per SKU (`jumbo_verpakking`) komt uit de
   productnaam ("… 500 g"). Na het bijwerken van de mapping:
-  `python3 scripts/jumbo_verpakkingen.py` en dan `--migratie`. Daarmee telt
-  `aantalVerpakkingen` (`src/lib/lijst.ts`) hoeveel pakken er nodig zijn. Voor
-  AH is er geen inhoud; daar blijft het één verpakking per ingrediënt, behalve
-  blikken/pakken uit het recept en groente per stuk. Vraagt het recept bij
-  groente per stuk een gewicht (2,5 kg pompoen), dan rekent `STUKGEWICHT` in
-  `src/lib/eenheden.ts` dat om naar stuks.
+  `python3 scripts/jumbo_verpakkingen.py` en dan `--migratie`. Hoe daarmee
+  geteld wordt staat hieronder bij "Verpakkingen tellen".
 - **Niet getest op een iPhone:** of de Jumbo-app de link als Universal Link
   opvangt en de `add`-parameter dan ook verwerkt, is nog onbekend. In Safari
   werkt het.
+
+## Verpakkingen tellen
+
+Hoeveel er van een product in het mandje gaat rekent `aantalVerpakkingen`
+(`src/lib/lijst.ts`) uit, voor AH en Jumbo gelijk: wat de recepten samen
+vragen, gedeeld door de inhoud van de verpakking.
+
+- **Een kwart speling** (`SPELING`): 500 g broccoli is één stronk van 400 g,
+  pas boven de 25% extra komt er een verpakking bij. Geldt voor alles.
+- **Per product, niet per regel** (`verpakkingenPerRegel`): bruine bonen en
+  pintobonen uit dezelfde pot vragen samen één pot. De eerste regel draagt
+  het aantal, de rest nul; de mandjelink telt per productnummer op.
+- **Inhoud bij AH:** `ah_verpakking`, per productnummer. De API van de
+  AH-app geeft, anders dan ah.nl, wel antwoord op kale HTTP:
+  `python3 scripts/ah_verpakkingen.py` haalt naam, inhoud, prijs en
+  leverbaarheid op naar `data/ah_producten.json`, daarna `--migratie`. Niet
+  officieel, dus alleen dit script en niets in de app zelf. Het script meldt
+  ook wat niet meer te koop is; zo'n product valt stilletjes uit het mandje.
+- **Zonder inhoud** (potjes kruiden, bouillon, een bos): één verpakking,
+  behalve blikken/pakken uit het recept en groente per stuk (`PER_STUK`).
+  Vraagt het recept bij groente per stuk een gewicht (2,5 kg pompoen), dan
+  rekent `STUKGEWICHT` in `src/lib/eenheden.ts` dat om naar stuks.
+- **El, tl, takjes en tenen tellen niet mee:** dat is nooit meer dan één
+  verpakking.
 
 ## Recepten toevoegen en de adminrol
 
@@ -306,8 +327,7 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
   geschreven, waarom afgekeurd), en `samenstelling.antwoord` bewaart dan
   `{ fout, ruw }`.
 - **Nog niet gebouwd:** een eigen kopje op de boodschappenlijst en
-  kandidaten uit de eigen pool. Bij AH is het één verpakking per ingrediënt, ook voor tien
-  personen; de hoeveelheid staat wel op de lijst.
+  kandidaten uit de eigen pool.
 
 ## Receptafbeeldingen
 

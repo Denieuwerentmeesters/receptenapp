@@ -16,7 +16,7 @@ import {
 import { openBijWinkel } from '../lib/ah'
 import { tokoProduct } from '../lib/toko'
 import { productvoorkeur, useWinkel } from '../lib/winkel'
-import { aantalVerpakkingen, groepeerOpSchap, voegSamen, type LijstRegel } from '../lib/lijst'
+import { groepeerOpSchap, verpakkingenPerRegel, voegSamen, type LijstRegel } from '../lib/lijst'
 import { inhoudTekst } from '../lib/eenheden'
 import { bonusVoor, bonusVoordeel, totTekst, useBonus } from '../lib/bonus'
 import { bezorgdagen, dagLabel, useBezorgkeuze } from '../lib/bezorgdag'
@@ -137,6 +137,12 @@ export function Boodschappen() {
 
   // Wat wel naar de winkel moet maar geen productnummer heeft, komt niet in
   // het mandje. Dat moet je vóór en na het doorsturen in één oogopslag zien.
+  /** Verpakkingen geteld per product: twee regels uit dezelfde pot vragen samen één pot. */
+  const tel = (lijst: LijstRegel[]) => verpakkingenPerRegel(
+    lijst, (r) => winkel.productVoor(voorWinkel(r)), (r) => winkel.verpakkingVoor(voorWinkel(r)),
+  )
+  const aantallen = tel(naarWinkel)
+
   const nietGevonden = naarWinkel.filter((r) => !winkel.heeftProduct(voorWinkel(r)))
 
   /**
@@ -154,9 +160,10 @@ export function Boodschappen() {
       return
     }
     const mee = naarWinkel.filter((r) => !zonder.has(r.key))
-    // Per stuk verkochte groente in het aantal uit het recept: vier paprika's, niet één.
+    // Zoveel verpakkingen als het recept vraagt: drie pakken gehakt, vier paprika's.
+    const meeAantallen = tel(mee)
     const { url, gemapt, ongemapt } = winkel.mandjeLink(mee.map((r) => ({
-      ...voorWinkel(r), aantal: aantalVerpakkingen(r, winkel.id, winkel.verpakkingVoor(voorWinkel(r))),
+      ...voorWinkel(r), aantal: meeAantallen.get(r.key)?.aantal ?? 1,
     })))
     if (gemapt.length === 0) {
       setMelding(
@@ -198,7 +205,7 @@ export function Boodschappen() {
         if (!gemapteIds.has(r.voorbeeld.id)) continue
         const item = voorWinkel(r)
         const product = winkel.productVoor(item)
-        const aantal = aantalVerpakkingen(r, winkel.id, winkel.verpakkingVoor(item))
+        const aantal = meeAantallen.get(r.key)?.aantal ?? 1
         const acties = (bonusVoor(r.naam, bonus.data, r.key) ?? []).filter((a) => a.extern_id === product)
         voordeel += Math.max(0, ...acties.map((a) => bonusVoordeel(a, aantal)))
       }
@@ -321,16 +328,19 @@ export function Boodschappen() {
                           </span>
                         )
                       })()}
-                      {!regel.afgevinkt && !blijftThuis(regel.key) && (() => {
+                      {!regel.afgevinkt && (() => {
                         // "2× 500 g": dan zie je waarom er twee in je mandje gaan.
                         const verpakking = winkel.verpakkingVoor(voorWinkel(regel))
-                        if (!verpakking) return null
-                        const aantal = aantalVerpakkingen(regel, winkel.id, verpakking)
+                        const aantal = aantallen.get(regel.key)
+                        if (!verpakking || !aantal) return null
                         return (
                           <span style={{
                             display: 'block', marginLeft: 36, marginTop: 2,
                             fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.55)',
-                          }}>{aantal}× {inhoudTekst(verpakking)}</span>
+                          }}>
+                            {aantal.totaal}× {inhoudTekst(verpakking)}
+                            {aantal.samenMet.length > 0 && ` · samen met ${aantal.samenMet.join(' en ')}`}
+                          </span>
                         )
                       })()}
                       {vegaVervanger(regel.key) && !regel.afgevinkt && (

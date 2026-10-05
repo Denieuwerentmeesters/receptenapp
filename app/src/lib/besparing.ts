@@ -2,7 +2,7 @@ import { zoekProduct, type Productvoorkeur } from './ah'
 import { jumboSku } from './jumbo'
 import { schatIngredient } from './prijsschatting'
 import type { JumboProduct } from './database.types'
-import { aantalVerpakkingen, type LijstRegel } from './lijst'
+import { verpakkingenPerRegel, type LijstRegel } from './lijst'
 import type { Verpakking } from './eenheden'
 
 /**
@@ -56,7 +56,7 @@ export interface MandjeKosten {
 /**
  * Wat de regels die naar de winkel gaan kosten, in Jumbo-prijzen — ook als je
  * bij AH bestelt; die liggen dicht genoeg bij elkaar. Zoveel verpakkingen
- * als de mandjelink (aantalVerpakkingen). Zonder Jumbo-prijs de klassenschatting uit
+ * als de mandjelink (verpakkingenPerRegel). Zonder Jumbo-prijs de klassenschatting uit
  * lib/prijsschatting.ts. Zelf toegevoegde producten (koffie, wc-papier) tellen
  * niet mee: die zitten ook niet in een maaltijdbox.
  */
@@ -71,15 +71,19 @@ export function mandjeKosten(
   let metPrijs = 0
   let geschat = 0
 
-  for (const regel of regels) {
-    const uitRecept = regel.items.filter((i) => i.bron_type === 'recept')
-    if (uitRecept.length === 0) continue
-
+  const skuVan = (regel: LijstRegel) => {
     const product = zoekProduct(regel.voorbeeld, mapping)
-    const sku = product && jumboSku(product, voorkeur)
+    return (product && jumboSku(product, voorkeur)) ?? null
+  }
+  const uitRecepten = regels.filter((r) => r.items.some((i) => i.bron_type === 'recept'))
+  const aantallen = verpakkingenPerRegel(uitRecepten, skuVan, (r) => verpakkingen[skuVan(r) ?? ''])
+
+  for (const regel of uitRecepten) {
+    const uitRecept = regel.items.filter((i) => i.bron_type === 'recept')
+    const sku = skuVan(regel)
     const prijs = sku ? prijzen[sku] : undefined
     if (prijs !== undefined) {
-      totaal += prijs * aantalVerpakkingen(regel, 'jumbo', verpakkingen[sku!])
+      totaal += prijs * (aantallen.get(regel.key)?.aantal ?? 1)
       metPrijs++
       continue
     }

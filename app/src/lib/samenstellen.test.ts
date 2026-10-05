@@ -16,7 +16,7 @@ const menu: Menu = {
   keuken: 'Italiaans', personen: 6, begrepen: [], draaiboek: [], opmerking: null,
   gerechten: [
     gerecht('Lasagne', [
-      { hoeveelheid: '600', eenheid: 'g', naam: 'rundergehakt' },
+      { hoeveelheid: '700', eenheid: 'g', naam: 'rundergehakt' },
       { hoeveelheid: '2', eenheid: null, naam: 'citroen' },
       { hoeveelheid: null, eenheid: null, naam: 'zout' },
     ]),
@@ -31,7 +31,7 @@ describe('alsLijst', () => {
     expect(regels.find((r) => r.key === 'citroen')?.items).toHaveLength(2)
   })
 
-  it('rekent in hele verpakkingen: 600 g gehakt is twee pakken van 500 g', () => {
+  it('rekent in hele verpakkingen: 700 g gehakt is twee pakken van 500 g', () => {
     const mapping = { rundergehakt: { ingredient_key: 'rundergehakt', standaard_sku: 'G' } } as unknown as Record<string, JumboProduct>
     const kosten = mandjeKosten(
       alsLijst(menu).filter((r) => r.key === 'rundergehakt'), mapping, { G: 5 },

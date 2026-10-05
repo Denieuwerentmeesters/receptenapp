@@ -1,6 +1,6 @@
 import { bouwMandjeLink, kiesVariant, zoekLink, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
 import { bouwJumboLink, jumboSku, jumboZoekLink } from './jumbo'
-import { useJumboVerpakkingen } from './queries2'
+import { useAhVerpakkingen, useJumboVerpakkingen } from './queries2'
 import type { Verpakking } from './eenheden'
 import { useAhMapping, useJumboMapping, useVoorkeuren } from './queries'
 import type { BoodschapItem, Voorkeuren } from './database.types'
@@ -21,7 +21,7 @@ export interface Winkel {
   mandjeLink: (items: MandjeItem[]) => MandjeResultaat
   /** Het productnummer dat voor dit item in het mandje gaat (AH-id of Jumbo-SKU), of null. */
   productVoor: (item: BoodschapItem) => string | null
-  /** Inhoud van het product dat voor dit item in het mandje gaat, als we die kennen (nu alleen Jumbo). */
+  /** Inhoud van het product dat voor dit item in het mandje gaat, als we die kennen. */
   verpakkingVoor: (item: BoodschapItem) => Verpakking | undefined
   zoekLink: (naam: string) => string
 }
@@ -34,6 +34,7 @@ export function useWinkel(): Winkel {
   const ah = useAhMapping(id === 'ah')
   const jumbo = useJumboMapping(id === 'jumbo')
   const verpakkingen = useJumboVerpakkingen(id === 'jumbo')
+  const ahVerpakkingen = useAhVerpakkingen(id === 'ah')
 
   if (id === 'jumbo') {
     const mapping = jumbo.data ?? {}
@@ -57,20 +58,24 @@ export function useWinkel(): Winkel {
   }
 
   const mapping = ah.data ?? {}
+  const productVoor = (item: BoodschapItem) => {
+    const product = zoekProduct(item, mapping)
+    const id = product && kiesVariant({
+      standaard: product.standaard_product_id, bio: product.bio_product_id, huismerk: product.huismerk_product_id,
+    }, voorkeur)
+    return id ? String(id) : null
+  }
   return {
     id,
     naam: 'Albert Heijn',
     kort: 'AH',
     heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
     mandjeLink: (items) => bouwMandjeLink(items, mapping, voorkeur),
-    productVoor: (item) => {
-      const product = zoekProduct(item, mapping)
-      const id = product && kiesVariant({
-        standaard: product.standaard_product_id, bio: product.bio_product_id, huismerk: product.huismerk_product_id,
-      }, voorkeur)
-      return id ? String(id) : null
+    productVoor,
+    verpakkingVoor: (item) => {
+      const id = productVoor(item)
+      return id ? ahVerpakkingen.data?.[id] : undefined
     },
-    verpakkingVoor: () => undefined,
     zoekLink,
   }
 }
