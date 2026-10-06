@@ -103,10 +103,12 @@ export function IconButton({
 
 /* ------------------------------------------------------------------ Chip */
 
-export function Chip({ children, selected, tone, onClick }: {
+export function Chip({ children, selected, tone, groot, onClick }: {
   children: ReactNode
   selected?: boolean
   tone?: string
+  /** Een tikvlak van 44 px hoog, voor schermen waar de chip de hoofdzaak is. */
+  groot?: boolean
   onClick?: () => void
 }) {
   const bg = tone ? `var(--cat-${tone})` : selected ? 'var(--color-action)' : 'transparent'
@@ -114,9 +116,11 @@ export function Chip({ children, selected, tone, onClick }: {
   return (
     <button
       onClick={onClick}
+      aria-pressed={selected}
       style={{
         fontFamily: 'var(--font-body)', fontWeight: 'var(--fw-medium)' as unknown as number,
-        fontSize: 'var(--text-label)', padding: '8px 16px', borderRadius: 'var(--radius-full)',
+        fontSize: groot ? 15 : 'var(--text-label)', padding: groot ? '0 18px' : '8px 16px',
+        minHeight: groot ? 44 : undefined, borderRadius: 'var(--radius-full)',
         border: tone || selected ? 'none' : '1.5px solid var(--color-ink)',
         background: bg, color: fg, cursor: 'pointer',
         transition: 'background var(--motion-fast) var(--ease)', whiteSpace: 'nowrap',

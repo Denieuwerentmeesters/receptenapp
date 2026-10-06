@@ -42,6 +42,19 @@ export function vegaDoel(voorkeuren: WeekVoorkeuren): number {
   return Math.min(voorkeuren.kookavonden, Math.round((voorkeuren.vega_minimum / 10) * voorkeuren.kookavonden))
 }
 
+/**
+ * Andersom: "2 van je 4 avonden vegetarisch" terug naar "x van de 10", zoals
+ * de kolom vega_minimum het bewaart. Kiest de waarde die het dichtst bij de
+ * verhouding ligt en waarmee vegaDoel weer precies op je avonden uitkomt.
+ */
+export function vegaMinimumVoor(vegaAvonden: number, kookavonden: number): number {
+  const precies = kookavonden > 0 ? (vegaAvonden / kookavonden) * 10 : 0
+  const passend = Array.from({ length: 11 }, (_, n) => n)
+    .filter((n) => vegaDoel({ vega_minimum: n, kookavonden }) === vegaAvonden)
+    .sort((a, b) => Math.abs(a - precies) - Math.abs(b - precies))
+  return passend[0] ?? Math.max(0, Math.min(10, Math.round(precies)))
+}
+
 /** De ingrediënten die ertoe doen voor het delen: zonder zout, olie en wat je in huis hebt. */
 function sleutels(r: Kandidaat, inHuis: ReadonlySet<string>): Set<string> {
   const uit = new Set<string>()
