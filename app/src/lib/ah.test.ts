@@ -48,3 +48,42 @@ describe('gedroogd kruid krijgt niet het verse product', () => {
     ['tijm', 'Takjes tijm'], ['gedroogde tijm', undefined],
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
 })
+
+describe('de deelmatch laat alleen vallen wat het product niet verandert', () => {
+  const M: Record<string, string> = {
+    sambal: 'Sambal oelek', paprikapoeder: 'Paprikapoeder mild', ui: 'Uien', bosui: 'Bosui', bloem: 'Tarwebloem',
+    'witte wijn': 'Witte wijn', 'witte wijnazijn': 'Witte wijnazijn', kikkererwten: 'Kikkererwten', tomaten: 'Tomaten',
+    tomatenpuree: 'Tomatenpuree', cashewnoten: 'Cashewnoten', paprika: 'Paprika', guacamole: 'Guacamole',
+    'zure room': 'Sour cream', sojasaus: 'Sojasaus', tijm: 'Tijm', zalmfilet: 'Zalmfilet',
+  }
+  const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, M)
+
+  test.each([
+    ['sambal badjak', undefined], ['pittige paprikapoeder', undefined], ['gerookte paprikapoeder', undefined],
+    ['eetbare bloemen', undefined], ['tomaten in blik', undefined], ['geroosterde paprika', undefined],
+    ['lente-uien, in ringetjes', 'Bosui'], ['witte wijn azijn', 'Witte wijnazijn'], ['gele uien, gehalveerd', 'Uien'],
+    ['ui, fijngesnipperd', 'Uien'], ['kikkererwten uit blik, uitgelekt', 'Kikkererwten'],
+    ['klein blikje tomatenpuree (70 g)', 'Tomatenpuree'], ['geroosterde cashewnoten', 'Cashewnoten'],
+    ['zalmfilet, zonder huid', 'Zalmfilet'], ['tijm, blad gehakt', 'Tijm'],
+    ['guacamole, zure room of tomatensalsa (optioneel)', 'Guacamole'], ['tamari of sojasaus', 'Sojasaus'],
+  ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
+})
+
+describe('gedroogd en geraspt zijn een eigen product', () => {
+  const M: Record<string, { weergavenaam: string }> = {
+    paddenstoelen: { weergavenaam: 'ah witte champignons' }, 'gedroogde tomaten': { weergavenaam: 'ah gedroogde tomaten' },
+    tomaten: { weergavenaam: 'ah tomaten' }, oregano: { weergavenaam: 'ah oregano' },
+    kaas: { weergavenaam: 'ah goudse jong 48 plakken' }, cheddar: { weergavenaam: 'ah smeltkaas met cheddar plakken' },
+    'geraspte cheddar': { weergavenaam: 'ah cheddar geraspte kaas' }, 'parmezaanse kaas': { weergavenaam: 'ah parmigiano reggiano' },
+    gember: { weergavenaam: 'ah gember' },
+  }
+  const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, M)?.weergavenaam
+
+  test.each([
+    ['gedroogde paddenstoelen', undefined], ['paddenstoelen', 'ah witte champignons'],
+    ['gedroogde tomaten', 'ah gedroogde tomaten'], ['gedroogde oregano', 'ah oregano'],
+    ['geraspte kaas', undefined], ['grof geraspte kaas', undefined], ['kaas', 'ah goudse jong 48 plakken'],
+    ['geraspte cheddar', 'ah cheddar geraspte kaas'], ['cheddar', 'ah smeltkaas met cheddar plakken'],
+    ['geraspte Parmezaanse kaas', 'ah parmigiano reggiano'], ['gember, geraspt', 'ah gember'],
+  ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
+})

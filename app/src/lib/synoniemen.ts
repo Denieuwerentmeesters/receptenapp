@@ -82,6 +82,8 @@ const ANDERS_GESPELD: Record<string, string> = {
   'wit zuurdesem brood': 'wit zuurdesembrood', 'zuurdesem brood': 'zuurdesembrood',
   'paddenstoelen bouillon': 'paddenstoelenbouillon',
   'lente ui': 'bosui', 'lenteui': 'bosui', 'lente uitje': 'bosui',
+  // Een ui is een gele ui; rode ui en sjalot blijven apart.
+  'gele ui': 'ui', 'witte ui': 'ui',
   'parmezaan': 'parmezaanse kaas', 'parmigiano reggiano': 'parmezaanse kaas',
   // Boter is roomboter, ongezouten, tenzij het recept iets anders zegt.
   'boter': 'roomboter', 'ongezouten boter': 'roomboter', 'ongezouten roomboter': 'roomboter',
