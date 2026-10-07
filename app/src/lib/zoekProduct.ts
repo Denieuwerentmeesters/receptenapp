@@ -1,5 +1,5 @@
 import { ingredientKey } from './schaal'
-import { canoniek, droogKruid } from './synoniemen'
+import { canoniek, droogKruid, lijstSleutel } from './synoniemen'
 import type { BoodschapItem } from './database.types'
 
 /*
@@ -76,16 +76,16 @@ function zonderVerkleining(woord: string): string[] {
  * maar dat is een ander product. Zo'n gok legt stilletjes het verkeerde artikel
  * in je mandje, en dat merk je pas bij de kassa.
  *
- * Geeft het recept een keuze ("wraps of pitabroodjes"), dan nemen we de eerste.
- * Zonder die regel won de sleutel die toevallig het eerst in de mapping stond.
+ * Geeft het recept een keuze ("wraps of pitabroodjes"), dan nemen we de eerste
+ * die een product heeft ("tamari of sojasaus" wordt sojasaus). Zonder die regel
+ * won de sleutel die toevallig het eerst in de mapping stond.
  */
 export function zoekProduct<P>(
   item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
   mapping: Record<string, P>,
 ): P | undefined {
-  const eerste = eersteKeuze(item.naam)
-  if (eerste) {
-    const product = zoekZonderKeuze({ ingredient_key: ingredientKey(eerste), naam: eerste }, mapping)
+  for (const keuze of keuzes(item.naam)) {
+    const product = zoekZonderKeuze({ ingredient_key: ingredientKey(keuze), naam: keuze }, mapping)
     if (product) return product
   }
   return zoekZonderKeuze(item, mapping)
@@ -97,13 +97,93 @@ export function zoekProduct<P>(
  * ("verse of diepvries doperwten"): dan zoeken we op de hele naam.
  */
 export function eersteKeuze(naam: string): string | undefined {
-  if (/-\s+of\s/.test(naam)) return undefined
-  const key = ingredientKey(naam)
-  const plek = key.indexOf(' of ')
-  return plek > 0 ? key.slice(0, plek) : undefined
+  return /-\s+of\s/.test(naam) ? undefined : keuzes(naam)[0]
 }
 
+/**
+ * Alle mogelijkheden uit "a of b of c", op volgorde; leeg als het recept geen
+ * keuze geeft. Bij een gedeeld woorddeel ("kippen- of groentebouillon") is
+ * alleen de laatste een heel woord.
+ */
+function keuzes(naam: string): string[] {
+  const key = ingredientKey(naam)
+  if (key.indexOf(' of ') <= 0) return []
+  const delen = key.split(' of ').map((k) => k.trim()).filter(Boolean)
+  return /-\s+of\s/.test(naam) ? delen.slice(-1) : delen
+}
+
+/**
+ * Woorden die naast de productnaam mogen staan zonder dat het een ander
+ * product wordt: hoe je het snijdt, waar het voor is, hoeveel. Al het andere
+ * houdt de deelmatch tegen ("gerookte", "pittige", "uit blik", "volkoren"):
+ * dat is vaak wél een ander product, en dan is een zoeklink beter dan een gok.
+ * Mist hier een woord, dan krijgt een regel onterecht een zoeklink; vul het
+ * dan aan, of geef het ingrediënt een eigen mapping-regel.
+ */
+const ONSCHULDIG = new Set(`
+  in of en van voor op om te een plus de met erbij naar ter bij het je aan dan als ook
+  blokje blokjes plakje plakjes reepje reepjes ring ringen ringetje stuk stukken stukje stukjes stuks
+  part partje partjes parten linten vieren lengte diagonaal dun dunne dik dikke grof fijn roosje
+  steeltjes blaadjes takje takjes scheutje kneepje eetlepel eetlepels tl el cm kilo ongeveer sap rasp
+  garnering garneren serveren topping decoratie bestuiven invetten bakken braden keuze kamertemperatuur
+  rijpe koud koude warme lauwwarme zachte middelgrote flinke groot lange korte brede goede lekker
+  zonder vel huid graat graten pit bot korst zaadje zaadlijsten verwijderd
+  blad bos naalden naaldjes geristd bewaard krop kropje kropjes bollen stronken vellen plakken blokken
+  jonge baby ontpitte pitloze panklare gladde romige pure vloeibare houdbare koelverse ongesneden medium
+  volle halfvolle naturel milde bevroren diepvries gekookt gekookte voorgekookte ongekookt ongekookte
+  kaas pasta sla zout zeezout water olie erover jus uit blik blikje pot
+  jong julienne wilde trosrijpe mini gedopte dubbel
+`.split(/\s+/).filter(Boolean))
+
+/**
+ * Mag dit woord wegvallen naast deze mappingsleutel? Uit de lijst, of een
+ * bereiding ("gesnipperd", "fijngehakt"). Twee uitzonderingen hangen van het
+ * product af: geroosterd of gebrand maakt bij noten en zaden niet uit, en uit
+ * blik of pot is bij tomaten en paprika juist een ander product.
+ */
+function onschuldig(woord: string, sleutel: string): boolean {
+  if (UIT_BLIK.test(woord)) return !VERS_OF_BLIK.test(sleutel)
+  if (GEROOSTERD.test(woord)) return NOOT_OF_ZAAD.test(sleutel)
+  return ONSCHULDIG.has(woord) || BEREID.test(woord)
+}
+const UIT_BLIK = /^(?:blik|blikje|pot)$/
+const VERS_OF_BLIK = /^(?:tomaten|tomaat|(?:rode |gele |groene )?paprika|ananas|perzik(?:en)?|champignons?|asperges?|bieten)$/
+const GEROOSTERD = /^(?:geroosterde?|gebrande?|ongebrande?)$/
+const NOOT_OF_ZAAD = /noot|noten|zaad|pinda|pitten|kokos|amandel|pistache/
+
+/**
+ * Wat je er thuis mee doet. Bewust een vaste lijst en geen "elk voltooid
+ * deelwoord": gerookt, gekookt, gedroogd en gezouten koop je zo, en dat zijn
+ * andere producten.
+ */
+const BEREID = /^(?:fijn|grof)?ge(?:hakt|snipperd|sneden|schild|halveerd|smolten|plukt|kneusd|perst|plet|kwart|scheiden|klopt|peld|schaafd|wassen|raspte?)e?$|^(?:vers|fijn)geraspte?$|^(?:uitgelekt|losgeklopt|schoongemaakte?|afgekoelde?|afgespoeld|verkruimelde?|ontdooid|afgegoten|ontpit|hardgekookte|zachtgekookte)$/
+
+/**
+ * Producten die je vers én gedroogd koopt, en waar de gewone sleutel het
+ * verse product is. ingredientKey haalt "gedroogde" weg, dus zonder deze
+ * regel werden gedroogde paddenstoelen een bakje champignons.
+ */
+const VERS_PRODUCT = /^(?:(?:gemengde )?paddenstoel(?:en)?|champignons?|shiitake|tomaat|tomaten|rode peper|gember)$/
+
 function zoekZonderKeuze<P>(
+  item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
+  mapping: Record<string, P>,
+): P | undefined {
+  const naam = item.naam.toLowerCase()
+  const key = canoniek(ingredientKey(item.naam))
+  if (/\bgedroogde?\b/.test(naam) && VERS_PRODUCT.test(key)) return mapping[`gedroogde ${key}`]
+
+  // Geraspte kaas is een eigen product. Staat het er niet apart in, dan is een
+  // stuk kaas om zelf te raspen goed, maar plakken nooit.
+  const geraspt = /\b(?:fijn|vers)?geraspte?\b/.test(naam)
+  if (geraspt && mapping[`geraspte ${key}`]) return mapping[`geraspte ${key}`]
+  const product = zoekOpNaam(item, mapping)
+  const weergavenaam = (product as { weergavenaam?: string | null } | undefined)?.weergavenaam
+  if (geraspt && weergavenaam && /plak/i.test(weergavenaam)) return undefined
+  return product
+}
+
+function zoekOpNaam<P>(
   item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
   mapping: Record<string, P>,
 ): P | undefined {
@@ -122,8 +202,18 @@ function zoekZonderKeuze<P>(
     if (mapping[vorm]) return mapping[vorm]
   }
 
+  // Zoals de lijst het product noemt: zonder bereiding en wat achter de komma
+  // staat, en in één spelling ("witte wijn azijn" is witte wijnazijn,
+  // "lente-uien" zijn bosui en geen uien).
+  const voorKomma = canoniek(ingredientKey(item.naam.replace(/\([^)]*\)/g, ' ').split(',')[0]))
+  const opLijst = lijstSleutel(item)
+  for (const vorm of [voorKomma, ...enkelvoudVormen(voorKomma), opLijst, ...enkelvoudVormen(opLijst)]) {
+    if (mapping[vorm]) return mapping[vorm]
+  }
+
   // Deel van de naam: "rijpe cherrytomaatjes" vindt cherrytomaten, ook via
-  // de enkelvouds- en verkleinvormen van het laatste woord.
+  // de enkelvouds- en verkleinvormen van het laatste woord. Alleen als wat
+  // wegvalt het product niet verandert: "sambal badjak" is geen sambal oelek.
   const naam = ingredientKey(item.naam)
   let beste: P | undefined
   let besteLengte = 0
@@ -134,11 +224,12 @@ function zoekZonderKeuze<P>(
       const deel = sleutel.split(' ')
       if (deel.length >= woorden.length || deel.length <= besteLengte) continue
       for (let i = 0; i + deel.length <= woorden.length; i++) {
-        if (deel.every((w, n) => woorden[i + n] === w)) {
-          beste = product
-          besteLengte = deel.length
-          break
-        }
+        if (!deel.every((w, n) => woorden[i + n] === w)) continue
+        const rest = [...woorden.slice(0, i), ...woorden.slice(i + deel.length)]
+        if (!rest.every((w) => onschuldig(w, sleutel))) continue
+        beste = product
+        besteLengte = deel.length
+        break
       }
     }
   }

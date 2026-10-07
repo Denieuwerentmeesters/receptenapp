@@ -128,6 +128,22 @@ altijd beter dan een foute gok. De eerste zoektreffer op ah.nl is vaak níét he
 juiste product ("citroen" → Spa Fruit Citron, "pesto" → een diepvriespizza), dus
 rangschik op woordovereenkomst en huismerk, en gooi weg wat niet standhoudt.
 
+**Zoeken op naam is streng** (`zoekProduct` in `src/lib/zoekProduct.ts`). Staat
+de naam niet letterlijk in de mapping, dan mag een deel ervan matchen, maar
+alleen als wat wegvalt het product niet verandert (`ONSCHULDIG`, `BEREID`:
+"in blokjes", "fijngehakt", "voor de garnering"). "Sambal badjak" wordt dus
+geen sambal oelek en "gerookte paprikapoeder" geen milde: die krijgen een
+zoeklink tot ze een eigen mapping-regel hebben. Krijgt een regel onterecht een
+zoeklink, vul dan die lijst aan of geef het ingrediënt een eigen regel.
+
+- **Gedroogd** (`VERS_PRODUCT`): gedroogde paddenstoelen en tomaten zoeken op
+  "gedroogde …" en krijgen nooit het verse product.
+- **Geraspt:** eerst "geraspte …"; anders het gewone product, behalve als dat
+  plakken zijn (`weergavenaam` met "plak").
+- **Uit blik of pot** is bij tomaten en paprika een ander product, bij
+  kikkererwten en kokosmelk niet (`VERS_OF_BLIK`).
+- **Een keuze** ("tamari of sojasaus"): de eerste die een product heeft.
+
 **Nog te bouwen: opzoeken bij gebruik.** Zodra er eigen recepten bijkomen
 (plan §7) verschijnen er ingrediënten die in geen enkele batch zaten. De
 duurzame oplossing is: staat een `ingredient_key` niet in `ah_product_cache`,
