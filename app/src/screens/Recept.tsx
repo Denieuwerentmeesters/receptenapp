@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useHartje } from '../components/Hartje'
+import { volgendeWeek } from '../lib/week'
 import { useQueryClient } from '@tanstack/react-query'
 import type { ReceptAllergie } from '../lib/allergenen'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -7,12 +9,11 @@ import { Inhoud, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
-import { sleutels, useDezeWeek, useLijstActies, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { sleutels, useActieveWeek, useDezeWeek, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { deel, deelLink, heeftDeelvenster, heeftLink, maakDeellink, magDelen, whatsappLink } from '../lib/delen'
 import { foutTekst } from '../lib/fouten'
 import { isBudget } from '../lib/prijsschatting'
 import { ingredientKey, schaalIngredienten } from '../lib/schaal'
-import { weekStart } from '../lib/week'
 import { tokoIngredienten, tokoProduct } from '../lib/toko'
 import { openBijWinkel } from '../lib/ah'
 import { dieetLabels } from '../lib/dieet'
@@ -27,12 +28,18 @@ export function Recept() {
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
   const opslaan = useVoorkeurenOpslaan()
-  const week = weekStart()
-  const dezeWeek = useDezeWeek(week)
+  // Staat het recept in komende week, dan werkt dit scherm op die week: op je
+  // lijst zetten laat het daar staan. Anders deze week.
+  const actief = useActieveWeek()
+  const komende = volgendeWeek(actief)
+  const dezeWeek = useDezeWeek(actief)
+  const komendeWeek = useDezeWeek(komende)
+  const inDezeWeek = dezeWeek.data?.find((r) => r.id === id)
+  const inKomendeWeek = komendeWeek.data?.find((r) => r.id === id)
+  const week = !inDezeWeek?.gekozen && inKomendeWeek ? komende : actief
   const { voegToe, dialoog, bezig } = useOpLijst(week)
-  // Het hartje werkt hier net als in Ontdekken: het recept in "Deze week" zetten.
-  const { zetInWeek, haalUitWeek } = useLijstActies(week)
-  const [wegVraag, setWegVraag] = useState(false)
+  // Het hartje werkt hier net als in Ontdekken: bewaren voor "Komende week".
+  const hartje = useHartje()
   const allergieen = useAllergieen()
   const regels = useAllergeenRegels(allergieen.length > 0)
   const bonus = useBonus()
@@ -63,9 +70,10 @@ export function Recept() {
 
   // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
   // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
-  const inWeek = dezeWeek.data?.find((r) => r.id === id)
+  const inWeek = week === komende ? inKomendeWeek : inDezeWeek
   const gekozen = inWeek?.gekozen ?? false
   const opLijst = inWeek?.opLijst ?? false
+  const bewaard = Boolean(id && hartje.bewaard.has(id))
 
   // Lokale overschrijving: je kunt per recept even schuiven met het aantal
   // personen zonder je vaste voorkeur te veranderen.
@@ -115,12 +123,12 @@ export function Recept() {
                       style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
                     />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {inWeek && (
+                      {(gekozen || bewaard) && (
                         <span style={{
                           padding: '8px 12px', borderRadius: 'var(--radius-full)',
                           background: 'rgba(20,20,20,0.5)', backdropFilter: 'blur(8px)',
                           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
-                        }}>{opLijst ? 'Op je lijst' : "In 'Deze week'"}</span>
+                        }}>{opLijst ? 'Op je lijst' : gekozen && week === actief ? "In 'Deze week'" : "In 'Komende week'"}</span>
                       )}
                       <IconButton
                         icon="share" label="Deel dit recept" size={42}
@@ -131,14 +139,10 @@ export function Recept() {
                       />
                       <IconButton
                         icon="heart" size={42}
-                        label={inWeek ? 'Uit deze week halen' : 'In deze week zetten'}
-                        onClick={() => {
-                          if (!inWeek) zetInWeek.mutate(r)
-                          else if (opLijst) setWegVraag(true)
-                          else haalUitWeek.mutate(r.id)
-                        }}
+                        label={bewaard ? 'Uit komende week halen' : 'Bewaren voor komende week'}
+                        onClick={() => hartje.tik(r)}
                         style={{
-                          background: inWeek ? 'var(--c-red-bright)' : 'rgba(20,20,20,0.5)',
+                          background: bewaard ? 'var(--c-red-bright)' : 'rgba(20,20,20,0.5)',
                           color: 'var(--c-paper)', backdropFilter: 'blur(8px)',
                         }}
                       />
@@ -282,7 +286,7 @@ export function Recept() {
                   {/* Staat het al op je lijst, dan wil je alleen nog koken. */}
                   {!opLijst && (
                     <Button
-                      disabled={bezig || dezeWeek.isPending}
+                      disabled={bezig || dezeWeek.isPending || komendeWeek.isPending}
                       icon="plus"
                       onClick={() => {
                         // Het aantal personen dat je hier koos wordt je voorkeur, zodat
@@ -356,16 +360,7 @@ export function Recept() {
                 onSluit={() => setDeelStap(null)}
                 acties={[{ label: 'Oké', hoofd: true, onClick: () => setDeelStap(null) }]}
               />
-              <Dialoog
-                open={wegVraag}
-                kop="Uit je week halen?"
-                tekst={`${r.titel_nl ?? r.titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.`}
-                onSluit={() => setWegVraag(false)}
-                acties={[
-                  { label: 'Ja, haal weg', hoofd: true, onClick: () => { haalUitWeek.mutate(r.id); setWegVraag(false) } },
-                  { label: 'Laat maar', onClick: () => setWegVraag(false) },
-                ]}
-              />
+              {hartje.dialoog}
             </>
           )
         })()}

@@ -4,7 +4,8 @@ import { Button, Checkbox, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
 import { Fout, Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
-import { useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
+import { volgendeWeek } from '../lib/week'
+import { useActieveWeek, useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
 import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from '../lib/queries2'
 import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
 import type { Bestelling, BoodschapItem } from '../lib/database.types'
@@ -21,7 +22,6 @@ import { inhoudTekst } from '../lib/eenheden'
 import { bonusVoor, bonusVoordeel, totTekst, useBonus } from '../lib/bonus'
 import { bezorgdagen, dagLabel, useBezorgkeuze } from '../lib/bezorgdag'
 import { BonusBron } from '../components/Bonus'
-import { weekStart } from '../lib/week'
 import {
   bewaarAllergieKeuzes, leesAllergieKeuzes, metAllergieKeuze, opsomming, treffers,
   useAllergeenRegels, useAllergieen, vervangerVoor, type AllergieKeuze,
@@ -53,11 +53,17 @@ interface Doorgestuurd {
 }
 
 export function Boodschappen() {
-  const week = weekStart()
+  const week = useActieveWeek()
   const navigeer = useNavigate()
 
   const boodschappen = useBoodschappen(week)
-  const dezeWeek = useDezeWeek(week)
+  // De lijst loopt over deze en komende week; de recepten dus ook.
+  const dezeWeekQuery = useDezeWeek(week)
+  const komendeWeekQuery = useDezeWeek(volgendeWeek(week))
+  const weekRecepten = useMemo(
+    () => [...(dezeWeekQuery.data ?? []), ...(komendeWeekQuery.data ?? [])],
+    [dezeWeekQuery.data, komendeWeekQuery.data],
+  )
   const winkel = useWinkel()
   const voorraad = useVoorraad()
   const voorkeuren = useVoorkeuren()
@@ -81,7 +87,7 @@ export function Boodschappen() {
   const [bespaard, setBespaard] = useState<Bestelling | null>(null)
   const [kruidVraag, setKruidVraag] = useState<LijstRegel[] | null>(null)
 
-  const receptenOpLijst = (dezeWeek.data ?? []).filter((r) => r.opLijst).length
+  const receptenOpLijst = weekRecepten.filter((r) => r.opLijst).length
   const items = useMemo(() => boodschappen.data ?? [], [boodschappen.data])
   const regels = useMemo(() => voegSamen(items), [items])
   const open = regels.filter((r) => !r.afgevinkt)
@@ -183,11 +189,11 @@ export function Boodschappen() {
       // bij Jumbo kan het in een ander mandje landen dan dat in je Jumbo-app.
       // Alles wat naar de winkel gaat telt mee, ook wat je los koopt: een
       // maaltijdbox levert ook het hele recept.
-      const aantalPerRecept = new Map((dezeWeek.data ?? []).map((r) => [r.id, r.aantal]))
+      const aantalPerRecept = new Map(weekRecepten.map((r) => [r.id, r.aantal]))
       // Een zelf samengesteld menu (tien gasten) is geen maaltijd uit een box
       // voor je huishouden: het telt niet mee voor Bespaard!, niet als maaltijd
       // en niet in de kosten van het mandje.
-      const menuRecepten = new Set((dezeWeek.data ?? []).filter((r) => r.bron_type === 'samengesteld').map((r) => r.id))
+      const menuRecepten = new Set(weekRecepten.filter((r) => r.bron_type === 'samengesteld').map((r) => r.id))
       const uitMenu = (i: BoodschapItem) => Boolean(i.bron_recept_id && menuRecepten.has(i.bron_recept_id))
       const meeZonderMenu = mee
         .map((r) => ({ ...r, items: r.items.filter((i) => !uitMenu(i)) }))
