@@ -8,7 +8,7 @@ import type { AllergeenRegel, BoodschapItem } from './database.types'
  * Allergieën (migratie 20260930233000_allergieen.sql). Je stelt ze één keer in
  * bij Instellingen; daarna gelden ze overal:
  *
- * - Weekmenu, Ontdekken, Vul mijn week en Ruil laten recepten weg met een
+ * - Weekmenu, Ontdekken en Vul mijn week laten recepten weg met een
  *   allergeen zonder vervanger (recepten.allergenen_vast, bijgehouden door een
  *   trigger in de database).
  * - Het receptscherm zegt wat erin zit, wat vervangen wordt en van welke

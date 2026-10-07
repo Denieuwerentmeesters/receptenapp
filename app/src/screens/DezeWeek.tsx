@@ -13,9 +13,7 @@ import { useWeekRecepten } from '../lib/weekoverzicht'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusLabel } from '../components/Bonus'
-import { receptBonus, receptBonusProducten, useBonus, type BonusProduct } from '../lib/bonus'
-import { useVoorraad } from '../lib/queries2'
-import { kiesWeek } from '../lib/weekvullen'
+import { receptBonusProducten, useBonus, type BonusProduct } from '../lib/bonus'
 import { pastBijDieet } from '../lib/dieet'
 import { standaardPersonen } from '../lib/menu'
 
@@ -59,8 +57,6 @@ function isVega(recept: WeekRecept) {
  * voor die week. Het werkt als deze week: op je lijst zetten, bestellen. De
  * recepten blijven daar staan tot deze week gekookt is en de week doorschuift
  * (lib/weekwissel.ts). De boodschappenlijst toont beide weken samen.
- *
- * Wat je niet ziet zitten ruil je per kaart (lib/weekvullen.ts).
  */
 export function DezeWeek() {
   const week = useActieveWeek()
@@ -78,13 +74,10 @@ export function DezeWeek() {
   const voorkeuren = useVoorkeuren()
   const { voegToe, dialoog } = useOpLijst(week)
   const lijstStraks = useOpLijst(komende)
-  const { zetOpLijst, haalUitWeek } = useLijstActies(week)
+  const { haalUitWeek } = useLijstActies(week)
   const straks = useLijstActies(komende)
-  const voorraad = useVoorraad()
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<{ recept: WeekRecept; tab: Tab } | null>(null)
-  const [bezig, setBezig] = useState(false)
-  const [suggestiesOp, setSuggestiesOp] = useState(false)
 
   // Kom je van het hartje ("Bekijk komende week"), dan sta je er meteen, zonder schuiven.
   useLayoutEffect(() => {
@@ -100,42 +93,17 @@ export function DezeWeek() {
 
   const recepten = dezeWeek.recepten
   const bonus = useBonus()
-  // Het label: een of meer producten in de bonus. Ruilen weegt alleen het
-  // hoofdingrediënt, net als de weekmenu-generator.
+  // Het label: een of meer producten in de bonus.
   const bonusPerRecept = useMemo(
     () => new Map([...recepten, ...komendeWeek.recepten].map((r) => [r.id, receptBonusProducten(r.ingredienten, bonus.data)])),
     [recepten, komendeWeek.recepten, bonus.data],
   )
-  const hoofdInBonus = useMemo(() => new Set(recepten.filter((r) => receptBonus(r.ingredienten, bonus.data)).map((r) => r.id)), [recepten, bonus.data])
 
   const opLijst = recepten.filter((r) => r.opLijst).length
   const personen = voorkeuren.data?.aantal_personen ?? 4
   const bewaard = komendeWeek.recepten.filter((r) => r.gekozen)
   const suggesties = komendeWeek.recepten.filter((r) => !r.gekozen)
   const inBeeld = tab === 'deze' ? recepten : komendeWeek.recepten
-
-  // Kandidaten voor ruilen: suggesties die je nog niet koos. Bonus weegt mee.
-  const kandidaten = recepten
-    .filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp)
-    .map((r) => ({ ...r, inBonus: hoofdInBonus.has(r.id) }))
-  // Wat al in je week zit telt mee, ook als je het al gekocht of gekookt hebt.
-  const gekozen = recepten.filter((r) => r.gekozen)
-  const inHuis = new Set((voorraad.data ?? []).filter((v) => v.in_huis).map((v) => v.ingredient_key))
-  const vegaMinimum = voorkeuren.data?.vega_minimum ?? 0
-
-  /** Haalt een recept van je lijst en zet het volgende passende recept uit de tien ervoor in de plaats. */
-  async function ruil(recept: WeekRecept) {
-    const rest = gekozen.filter((r) => r.id !== recept.id)
-    const [vervanger] = kiesWeek(kandidaten, { vega_minimum: vegaMinimum, kookavonden: rest.length + 1 }, rest, inHuis)
-    if (!vervanger) { setSuggestiesOp(true); return }
-    setBezig(true)
-    try {
-      await haalUitWeek.mutateAsync({ receptId: recept.id, geruild: true })
-      await zetOpLijst.mutateAsync({ receptId: vervanger, automatisch: true })
-    } finally {
-      setBezig(false)
-    }
-  }
 
   const kaartDezeWeek = (recept: WeekRecept, i: number) => {
     // Besteld en van de lijst: de boodschappen zijn binnen, dus de knop kookt.
@@ -151,13 +119,12 @@ export function DezeWeek() {
         onOpen={() => navigeer(`/recept/${recept.id}`)}
         onKnop={() => (koken ? navigeer(`/koken/${recept.id}`) : voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel }))}
         onWeg={() => (recept.opLijst ? setWegVraag({ recept, tab: 'deze' }) : haalUitWeek.mutate(recept.id))}
-        onRuil={recept.opLijst && !recept.gekooktOp && !bezig && !dezeWeek.isBesteld ? () => void ruil(recept) : undefined}
       />
     )
   }
 
   // Zelfde kaart als deze week, op de week erna: het recept blijft hier staan,
-  // ook op je lijst en na het bestellen. Ruilen kan alleen in deze week.
+  // ook op je lijst en na het bestellen.
   const kaartKomendeWeek = (recept: WeekRecept, i: number) => {
     const koken = Boolean(recept.besteldOp) && !recept.opLijst && !recept.gekooktOp
     return (
@@ -300,16 +267,6 @@ export function DezeWeek() {
           { label: 'Laat maar', onClick: () => setWegVraag(null) },
         ]}
       />
-      <Dialoog
-        open={suggestiesOp}
-        kop="De suggesties zijn op"
-        tekst="Alle recepten van deze week zijn gekozen of weggeklikt. In Ontdekken vind je er meer."
-        onSluit={() => setSuggestiesOp(false)}
-        acties={[
-          { label: 'Naar Ontdekken', hoofd: true, onClick: () => { setSuggestiesOp(false); navigeer('/ontdekken') } },
-          { label: 'Laat maar', onClick: () => setSuggestiesOp(false) },
-        ]}
-      />
       <OnderBalk />
     </Scherm>
   )
@@ -342,7 +299,7 @@ function knopTekst(recept: WeekRecept): string {
   return 'Zet op je lijst'
 }
 
-function ReceptKaart({ recept, vlak, bonus, personen, knop, onOpen, onKnop, onWeg, onRuil }: {
+function ReceptKaart({ recept, vlak, bonus, personen, knop, onOpen, onKnop, onWeg }: {
   recept: WeekRecept
   vlak: string
   /** Producten van het recept in de bonus bij je winkel: het gele label op de foto. */
@@ -353,8 +310,6 @@ function ReceptKaart({ recept, vlak, bonus, personen, knop, onOpen, onKnop, onWe
   onOpen: () => void
   onKnop: () => void
   onWeg: () => void
-  /** Alleen op kaarten die op je lijst staan: ruil voor een ander recept uit de tien. */
-  onRuil?: () => void
 }) {
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   return (
@@ -431,18 +386,6 @@ function ReceptKaart({ recept, vlak, bonus, personen, knop, onOpen, onKnop, onWe
         <Icon name={knop.icoon} size={14} />
         {knop.tekst}
       </button>
-      {onRuil && (
-        <button
-          onClick={onRuil}
-          aria-label="Ruil voor een ander recept"
-          title="Ruil"
-          style={{
-            flex: 'none', width: 34, height: 34, borderRadius: 'var(--radius-full)', cursor: 'pointer',
-            background: 'var(--c-paper)', border: '1.5px solid var(--c-red)', color: 'var(--c-red)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
-          }}
-        ><Icon name="shuffle" size={14} /></button>
-      )}
       </div>
     </div>
   )

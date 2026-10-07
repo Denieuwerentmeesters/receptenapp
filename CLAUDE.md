@@ -467,7 +467,7 @@ gluten, koemelk, ei, noten, pinda, vis, schaaldieren, soja, sesam.
 - **Regels veranderen:** nieuwe migratie, en daarin herrekenen met
   `update recepten set ingredienten = ingredienten;`.
 - **Weg uit de pool** gaat alleen wat een allergeen zonder vervanger bevat
-  (weekmenu-generator, Ontdekken, Vul mijn week, Ruil). "Mogelijk" blijft
+  (weekmenu-generator, Ontdekken, Vul mijn week). "Mogelijk" blijft
   zichtbaar met "check het etiket". Gluten en koemelk hebben vervangers; die
   gaan standaard naar de lijst, per regel terug te zetten (zoals vega).
 - **Ontdekken:** de filterrij is Alles, Budget, Kooktijd ▾, Dieet ▾, Allergieën ▾;
