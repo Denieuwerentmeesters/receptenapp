@@ -11,9 +11,7 @@ import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '..
 import type { Bestelling, BoodschapItem } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isBijzonderKruid, isDroogKruid } from '../lib/kruiden'
 import { inVoorraad } from '../lib/voorraad'
-import {
-  bewaarVegaKeuzes, leesVegaKeuzes, metVegaKeuze, vegaVervanger, type VegaKeuze,
-} from '../lib/vega'
+import { bewaarVegaKeuzes, leesVegaKeuzes, metVegaKeuze, vegaOpties, type VegaKeuze } from '../lib/vega'
 import { openBijWinkel } from '../lib/ah'
 import { tokoProduct } from '../lib/toko'
 import { productvoorkeur, useWinkel } from '../lib/winkel'
@@ -349,17 +347,24 @@ export function Boodschappen() {
                           </span>
                         )
                       })()}
-                      {vegaVervanger(regel.key) && !regel.afgevinkt && (
-                        <select
-                          value={vegaKeuze(regel.key)}
-                          onChange={(e) => kiesVega(regel.key, e.target.value as VegaKeuze)}
-                          aria-label={`Vega of vlees voor ${regel.naam}`}
-                          style={keuzeStijl}
-                        >
-                          <option value="vega">{vegaVervanger(regel.key)?.label}</option>
-                          <option value="recept">{regel.naam.charAt(0).toUpperCase() + regel.naam.slice(1)}</option>
-                        </select>
-                      )}
+                      {!regel.afgevinkt && (() => {
+                        // Vlees: vega of het recept. Vega: het recept of vlees.
+                        const opties = vegaOpties(regel.key)
+                        if (opties.length === 0) return null
+                        // "vegagehakt (of gehakt)" heet in de lijst gewoon Vegagehakt.
+                        const kaal = regel.naam.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim()
+                        const receptNaam = kaal.charAt(0).toUpperCase() + kaal.slice(1)
+                        return (
+                          <select
+                            value={vegaKeuze(regel.key)}
+                            onChange={(e) => kiesVega(regel.key, e.target.value as VegaKeuze)}
+                            aria-label={`Vega of vlees voor ${regel.naam}`}
+                            style={keuzeStijl}
+                          >
+                            {opties.map((o) => <option key={o.keuze} value={o.keuze}>{o.label ?? receptNaam}</option>)}
+                          </select>
+                        )
+                      })()}
                       {!regel.afgevinkt && allergieen.length > 0 && (() => {
                         const vervanger = allergieVervanger(regel)
                         if (vervanger) {

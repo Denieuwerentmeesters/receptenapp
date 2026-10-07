@@ -142,7 +142,12 @@ zoeklink, vul dan die lijst aan of geef het ingrediënt een eigen regel.
   plakken zijn (`weergavenaam` met "plak").
 - **Uit blik of pot** is bij tomaten en paprika een ander product, bij
   kikkererwten en kokosmelk niet (`VERS_OF_BLIK`).
-- **Een keuze** ("tamari of sojasaus"): de eerste die een product heeft.
+- **Een keuze** ("tamari of sojasaus"): de eerste die een product heeft. Ook
+  tussen haakjes: "geraspte kaas (cheddar of jong belegen)" wordt geraspte
+  cheddar, de bereiding ervoor gaat mee en het soortwoord valt weg. Bij
+  "(of …)" is het ingrediënt zelf de eerste keuze. Staat geen van de keuzes in
+  de mapping, dan telt de hele naam.
+- **Geraspte kaas is jong belegen**, tenzij het recept een soort noemt.
 
 **Nog te bouwen: opzoeken bij gebruik.** Zodra er eigen recepten bijkomen
 (plan §7) verschijnen er ingrediënten die in geen enkele batch zaten. De
@@ -213,6 +218,17 @@ kiest; `src/lib/jumbo.ts` bouwt de link.
 - **Niet getest op een iPhone:** of de Jumbo-app de link als Universal Link
   opvangt en de `add`-parameter dan ook verwerkt, is nog onbekend. In Safari
   werkt het.
+
+## Vega of vlees
+
+Gehakt, rookworst en spekjes gaan standaard vega naar het mandje
+(`src/lib/vega.ts`); onder zo'n regel staat een keuzelijst om terug te gaan
+naar wat het recept vraagt. Andersom ook: vraagt het recept zelf om vega
+(vegagehakt, een vega kipschnitzel), dan kies je daar rundergehakt, kipgehakt
+of kipschnitzel. Standaard staat altijd vega. De keuze wordt per ingrediënt
+op het toestel onthouden (`localStorage`, `gehakt-keuze`). Een vleesvariant
+komt alleen in de lijst als die een productnummer heeft bij AH én Jumbo
+(`vleesVarianten`); een nieuwe variant is dus ook een mapping-regel.
 
 ## Verpakkingen tellen
 
