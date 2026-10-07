@@ -20,8 +20,10 @@ import { Onboarding } from './screens/Onboarding'
 import { Uitleg } from './components/Uitleg'
 import { Fout, Laden } from './components/Staten'
 import { huidigeSessie } from './lib/auth'
-import { zorgVoorGebruiker } from './lib/gebruiker'
+import { andereGebruiker, zorgVoorGebruiker } from './lib/gebruiker'
+import { vergeetHuishouden } from './lib/huishouden'
 import { foutTekst } from './lib/fouten'
+import { useQueryClient } from '@tanstack/react-query'
 import { useVoorkeuren } from './lib/queries'
 
 type Status = 'bezig' | 'uitgelogd' | 'klaar' | 'fout'
@@ -34,6 +36,7 @@ type Status = 'bezig' | 'uitgelogd' | 'klaar' | 'fout'
 export default function App() {
   const [status, setStatus] = useState<Status>('bezig')
   const [fout, setFout] = useState('')
+  const qc = useQueryClient()
 
   const start = useCallback(async () => {
     setStatus('bezig')
@@ -45,13 +48,19 @@ export default function App() {
       }
       // Idempotent: maakt de gebruiker en de voorkeurenrij aan als ze er nog
       // niet zijn, en doet verder niets.
-      await zorgVoorGebruiker()
+      const id = await zorgVoorGebruiker()
+      // De kopie van de vorige gebruiker mag hier niet blijven staan: de poort
+      // zou zijn voorkeuren lezen en een nieuw account langs de onboarding sturen.
+      if (andereGebruiker(id)) {
+        vergeetHuishouden()
+        qc.clear()
+      }
       setStatus('klaar')
     } catch (e) {
       setFout(foutTekst(e))
       setStatus('fout')
     }
-  }, [])
+  }, [qc])
 
   useEffect(() => { void start() }, [start])
 
