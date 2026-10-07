@@ -27,3 +27,27 @@ export async function zorgVoorGebruiker(): Promise<string> {
 
   return id
 }
+
+const VORIGE = 'pinch-gebruiker'
+
+/**
+ * Is dit een ander account dan er het laatst op dit toestel was? Dan hoort
+ * alles wat hier bewaard staat bij iemand anders en ruimen we het op.
+ *
+ * Uitloggen wist de opslag al, maar een sessie kan ook verlopen: dan log je
+ * opnieuw in zonder dat er ooit is uitgelogd. Geeft terug of de kopie van de
+ * gegevens (de query-cache) weg moet. Weten we niet wie er het laatst was,
+ * dan ook: liever één keer trager openen dan de voorkeuren van een ander.
+ */
+export function andereGebruiker(id: string): boolean {
+  try {
+    const vorige = localStorage.getItem(VORIGE)
+    if (vorige === id) return false
+    // Niet alles wissen: je bent al ingelogd, en wat de inlog hier bewaart moet blijven.
+    for (const sleutel of ['pinch-onboarding', 'pinch-samenstellen']) localStorage.removeItem(sleutel)
+    localStorage.setItem(VORIGE, id)
+    return true
+  } catch {
+    return false
+  }
+}
