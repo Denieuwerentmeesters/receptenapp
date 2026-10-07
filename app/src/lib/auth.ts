@@ -90,8 +90,11 @@ export async function logUit(): Promise<void> {
   await authClient().signOut()
   client = null
   tokenCache = null
-  // Het menu dat je aan het samenstellen was hoort bij jou, niet bij wie hierna inlogt.
-  try { localStorage.removeItem('pinch-samenstellen') } catch { /* geen opslag */ }
+  // Alles op dit toestel hoort bij jou, niet bij wie hierna inlogt: het menu
+  // dat je aan het samenstellen was, en de kopie van je voorkeuren en je week
+  // waarmee de app snel opent. Blijft die kopie staan, dan ziet een nieuw
+  // account even jouw voorkeuren en slaat het daardoor de onboarding over.
+  try { localStorage.clear() } catch { /* geen opslag: niets op te ruimen */ }
 }
 
 /**
