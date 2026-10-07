@@ -24,7 +24,8 @@ export function Profiel() {
   const bespaard = bestellingen.data ?? []
 
   // Instellingen bovenaan: daar kom je het vaakst. Ontdekken zit al in de
-  // onderbalk, en het hartje zet een recept tegenwoordig in je week.
+  // onderbalk. Het hartje bewaart een recept voor komende week én als favoriet;
+  // een favoriet weer weghalen kan alleen op het scherm Favorieten.
   const rijen = [
     { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
     {
@@ -35,6 +36,7 @@ export function Profiel() {
       pad: '/bespaard',
     },
     { label: 'Voorraadkast', sub: `${voorraad.data?.filter((v) => v.in_huis).length ?? 0} producten in huis`, pad: '/voorraadkast' },
+    { label: 'Favorieten', sub: 'Komen vaker terug in je weekmenu', pad: '/favorieten' },
     { label: 'Geschiedenis', sub: `${weken.length} ${weken.length === 1 ? 'week' : 'weken'}`, pad: '/geschiedenis' },
     { label: 'Recept toevoegen', sub: 'Uit een kookboek of je eigen recept', pad: '/toevoegen' },
     // Alleen zichtbaar als je admin bent (plan §7.7).

@@ -1,96 +1,112 @@
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Chip, Icon, Woordmerk } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
-import { useDezeWeek, useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
-import { weekLabel, weekStart } from '../lib/week'
-import { isBudget } from '../lib/prijsschatting'
+import { useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
+import { volgendeWeek, weekLabel, weekStart } from '../lib/week'
+import { useWeekRecepten } from '../lib/weekoverzicht'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
-import { BonusBron, BonusLabel } from '../components/Bonus'
-import { BONUS_BRON, receptBonus, receptBonusProducten, useBonus, type BonusProduct } from '../lib/bonus'
-import { dagLabel } from '../lib/bezorgdag'
+import { BonusLabel } from '../components/Bonus'
+import { receptBonus, receptBonusProducten, useBonus, type BonusProduct } from '../lib/bonus'
 import { useVoorraad } from '../lib/queries2'
 import { kiesWeek } from '../lib/weekvullen'
-import { useAllergieen, vastVoorJou } from '../lib/allergenen'
-import { DIETEN, pastBijDieet, type Dieet } from '../lib/dieet'
+import { pastBijDieet } from '../lib/dieet'
 import { standaardPersonen } from '../lib/menu'
 
-type Filter = 'alles' | 'lijst' | 'bonus' | 'budget' | 'snel' | Dieet
+type Tab = 'deze' | 'komende'
 
-const FILTERS: { id: Filter; label: string }[] = [
-  { id: 'alles', label: 'Alles' },
-  { id: 'lijst', label: 'Op mijn lijst' },
-  { id: 'bonus', label: 'In de bonus' },
-  { id: 'budget', label: 'Budget' },
-  { id: 'vegetarisch', label: 'Vegetarisch' },
-  { id: 'snel', label: 'Binnen 30 min' },
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'deze', label: 'Deze week' },
+  { id: 'komende', label: 'Komende week' },
 ]
-
-/** Na de vaste filters; alleen zichtbaar als er deze week een recept bij past. */
-const DIEET_FILTERS = DIETEN.filter((d) => d.id !== 'vegetarisch')
 
 /** De kaarten wisselen af tussen de twee roodtinten — het merkritme uit de designs. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
+
+/** De baan met de twee weken naast elkaar: geen schuifbalk, die zit in de chips. */
+const BAAN_STIJL = '.weekbaan{scrollbar-width:none}.weekbaan::-webkit-scrollbar{display:none}'
+
+const KOPJE: React.CSSProperties = {
+  fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
+  textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
+}
+
+const ROOSTER: React.CSSProperties = {
+  display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 12,
+}
 
 function isVega(recept: WeekRecept) {
   return pastBijDieet(recept, 'vegetarisch')
 }
 
 /**
- * Het startscherm: je week. De tien suggesties van de generator, plus wat je
- * zelf via Ontdekken (het hartje) toevoegde. Tik je een recept aan, dan gaat
+ * Het startscherm: twee weken naast elkaar. Je veegt ertussen, of tikt op een
+ * van de twee chips; de baan schuift dan zelf (scroll-snap, dus het vegen en
+ * de animatie zijn van de browser).
+ *
+ * Deze week: de suggesties van de generator. Tik je een recept aan, dan gaat
  * het op je boodschappenlijst en krijgt het een gele rand; met het kruisje
- * haal je het helemaal uit je week. Na de boodschappen verdwijnt de gele
- * rand, maar het recept blijft staan — hiervandaan kook je.
+ * haal je het uit je week. Heb je besteld, dan blijft alleen staan wat je
+ * koos (lib/weekoverzicht.ts) en kook je hiervandaan.
+ *
+ * Komende week: wat je met het hartje bewaarde, en daaronder de suggesties
+ * voor die week. Zet je er een op je lijst, dan verhuist het naar deze week:
+ * er is één boodschappenlijst.
  *
  * Wat je niet ziet zitten ruil je per kaart (lib/weekvullen.ts).
  */
 export function DezeWeek() {
   const week = weekStart()
+  const komende = volgendeWeek(week)
   const navigeer = useNavigate()
-  const [filter, setFilter] = useState<Filter>('alles')
+  const start = (useLocation().state as { tab?: Tab } | null)?.tab === 'komende' ? 'komende' : 'deze'
+  const [tab, setTab] = useState<Tab>(start)
+  const baan = useRef<HTMLDivElement>(null)
 
-  const dezeWeek = useDezeWeek(week)
+  const dezeWeek = useWeekRecepten(week)
+  const komendeWeek = useWeekRecepten(komende)
   const voorkeuren = useVoorkeuren()
   const { voegToe, dialoog } = useOpLijst(week)
   const { zetOpLijst, haalUitWeek } = useLijstActies(week)
+  const straks = useLijstActies(komende)
   const voorraad = useVoorraad()
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<WeekRecept | null>(null)
   const [bezig, setBezig] = useState(false)
   const [suggestiesOp, setSuggestiesOp] = useState(false)
 
-  // Een suggestie met een allergeen zonder vervanger laten we weg — ook als je
-  // je allergie pas instelde nadat dit weekmenu er al stond. Wat je zelf koos
-  // blijft staan. Zo doet Ruil er ook niets mee.
-  const allergieen = useAllergieen()
-  const recepten = useMemo(
-    () => (dezeWeek.data ?? []).filter((r) => r.gekozen || vastVoorJou(r, allergieen).length === 0),
-    [dezeWeek.data, allergieen],
-  )
+  // Kom je van het hartje ("Bekijk komende week"), dan sta je er meteen, zonder schuiven.
+  useLayoutEffect(() => {
+    if (start === 'komende' && baan.current) baan.current.scrollLeft = baan.current.clientWidth
+  }, [start])
+
+  function naar(doel: Tab) {
+    const el = baan.current
+    if (!el) return
+    const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollTo({ left: doel === 'komende' ? el.clientWidth : 0, behavior: rustig ? 'auto' : 'smooth' })
+  }
+
+  const recepten = dezeWeek.recepten
   const bonus = useBonus()
-  // Het label en het filter: een of meer producten in de bonus. Ruilen
-  // weegt alleen het hoofdingrediënt, net als de weekmenu-generator.
-  const bonusPerRecept = useMemo(() => new Map(recepten.map((r) => [r.id, receptBonusProducten(r.ingredienten, bonus.data)])), [recepten, bonus.data])
+  // Het label: een of meer producten in de bonus. Ruilen weegt alleen het
+  // hoofdingrediënt, net als de weekmenu-generator.
+  const bonusPerRecept = useMemo(
+    () => new Map([...recepten, ...komendeWeek.recepten].map((r) => [r.id, receptBonusProducten(r.ingredienten, bonus.data)])),
+    [recepten, komendeWeek.recepten, bonus.data],
+  )
   const hoofdInBonus = useMemo(() => new Set(recepten.filter((r) => receptBonus(r.ingredienten, bonus.data)).map((r) => r.id)), [recepten, bonus.data])
-  const zichtbaar = recepten.filter((r) =>
-    filter === 'alles' ? true
-      : filter === 'lijst' ? r.opLijst
-      : filter === 'bonus' ? (bonusPerRecept.get(r.id)?.length ?? 0) > 0
-      : filter === 'budget' ? isBudget(r)
-      : filter === 'snel' ? (r.bereidingstijd_minuten ?? 999) <= 30
-      : pastBijDieet(r, filter))
-  // Tien recepten is weinig: een dieetchip zonder één treffer laten we weg.
-  const filters = [...FILTERS, ...DIEET_FILTERS.filter((d) => recepten.some((r) => pastBijDieet(r, d.id)))]
 
   const opLijst = recepten.filter((r) => r.opLijst).length
-  const vegaAantal = recepten.filter(isVega).length
   const personen = voorkeuren.data?.aantal_personen ?? 4
+  const bewaard = komendeWeek.recepten.filter((r) => r.gekozen)
+  const suggesties = komendeWeek.recepten.filter((r) => !r.gekozen)
+  const inBeeld = tab === 'deze' ? recepten : komendeWeek.recepten
 
   // Kandidaten voor ruilen: suggesties die je nog niet koos. Bonus weegt mee.
   const kandidaten = recepten
@@ -115,91 +131,146 @@ export function DezeWeek() {
     }
   }
 
+  /** Van komende week naar je lijst: het recept verhuist naar deze week. */
+  function naarLijst(recept: WeekRecept) {
+    zetOpLijst.mutate(recept.id)
+    straks.haalUitWeek.mutate(recept.id)
+  }
+
+  const kaartDezeWeek = (recept: WeekRecept, i: number) => {
+    // Besteld en van de lijst: de boodschappen zijn binnen, dus de knop kookt.
+    const koken = dezeWeek.besteld.has(recept.id) && !recept.opLijst && !recept.gekooktOp
+    return (
+      <ReceptKaart
+        key={recept.id}
+        recept={recept}
+        vlak={VLAKKEN[i % VLAKKEN.length]}
+        bonus={bonusPerRecept.get(recept.id) ?? []}
+        personen={standaardPersonen(recept, personen)}
+        knop={koken ? { tekst: 'Koken', icoon: 'chefHat' } : { tekst: knopTekst(recept), icoon: recept.opLijst ? 'check' : 'plus' }}
+        onOpen={() => navigeer(`/recept/${recept.id}`)}
+        onKnop={() => (koken ? navigeer(`/koken/${recept.id}`) : voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel }))}
+        onWeg={() => (recept.opLijst ? setWegVraag(recept) : haalUitWeek.mutate(recept.id))}
+        onRuil={recept.opLijst && !recept.gekooktOp && !bezig && !dezeWeek.isBesteld ? () => void ruil(recept) : undefined}
+      />
+    )
+  }
+
+  const kaartKomendeWeek = (recept: WeekRecept, i: number) => (
+    <ReceptKaart
+      key={recept.id}
+      recept={recept}
+      vlak={VLAKKEN[i % VLAKKEN.length]}
+      bonus={bonusPerRecept.get(recept.id) ?? []}
+      personen={standaardPersonen(recept, personen)}
+      knop={{ tekst: 'Zet op je lijst', icoon: 'plus' }}
+      onOpen={() => navigeer(`/recept/${recept.id}`)}
+      onKnop={() => naarLijst(recept)}
+      onWeg={() => straks.haalUitWeek.mutate(recept.id)}
+    />
+  )
+
   return (
     <Scherm>
       <BespaardMelding />
-      <Grens query={dezeWeek} ladenTekst="Je week ophalen">
+      <Grens query={dezeWeek.query} ladenTekst="Je week ophalen">
         {/* Compact: de recepten zijn waar het om gaat, niet de kop. */}
         <Kop kleur="var(--c-red-bright)" style={{ paddingBottom: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <Label>Week van {weekLabel(week)}</Label>
+            <Label>Week van {weekLabel(tab === 'deze' ? week : komende)}</Label>
             <Woordmerk hoogte={24} />
           </div>
-          <div style={{ marginTop: 6 }}><Titel grootte={22}>Wat eet jij deze week?</Titel></div>
+          <div style={{ marginTop: 6 }}>
+            <Titel grootte={22}>{tab === 'deze' ? 'Wat eet jij deze week?' : 'Wat eet jij komende week?'}</Titel>
+          </div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, margin: '6px 0 0' }}>
-            {recepten.length} recepten · {vegaAantal} vegetarisch · voor {personen} {personen === 1 ? 'persoon' : 'personen'}
+            {inBeeld.length} recepten · {inBeeld.filter(isVega).length} vegetarisch · voor {personen} {personen === 1 ? 'persoon' : 'personen'}
           </p>
         </Kop>
 
-        <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '12px 22px 4px', overflowX: 'auto' }}>
-          {filters.map((f) => (
-            <Chip key={f.id} selected={filter === f.id} onClick={() => setFilter(f.id)}>
-              {f.label}
-            </Chip>
+        <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '12px 22px 4px' }}>
+          {TABS.map((t) => (
+            <Chip key={t.id} selected={tab === t.id} onClick={() => naar(t.id)}>{t.label}</Chip>
           ))}
         </div>
 
-        {filter === 'bonus' && (
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, color: 'rgba(20,20,20,0.6)', margin: '6px 22px 0' }}>
-            Een of meer producten van het recept zijn in de bonus {bonus.peildatum.zelfHalen ? 'vandaag' : `op je bezorgdag (${dagLabel(bonus.peildatum.peil)})`}. {BONUS_BRON.uitleg} <BonusBron klein />
-          </p>
-        )}
-
-        {recepten.length === 0 ? (
-          <Leeg
-            icoon="utensils"
-            kop="Nog geen weekmenu"
-            tekst="We zetten elke week 10 recepten voor je klaar. Je voorkeuren kun je altijd nog aanpassen in Instellingen."
-            knop={dezeWeek.isFetching ? 'Even zoeken…' : 'Zet mijn week klaar'}
-            onKnop={() => { if (!dezeWeek.isFetching) void dezeWeek.refetch() }}
-          />
-        ) : (
-          <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingBottom: 10 }}>
-              <span style={{
-                fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
-                textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
-              }}>
-                {filter === 'alles' ? `Alle ${recepten.length} recepten` : `${zichtbaar.length} in dit filter`}
-              </span>
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)' }}>
-                {opLijst} op je lijst
-              </span>
-            </div>
-
-            {zichtbaar.length === 0 ? (
-              <div style={{ padding: '48px 20px', textAlign: 'center' }}>
-                <Icon name="utensils" size={28} />
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, margin: '10px 0 4px' }}>
-                  Niets binnen dit filter
-                </p>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(20,20,20,0.6)', margin: 0 }}>
-                  Zet het filter op Alles om alles te zien.
-                </p>
-              </div>
+        <style>{BAAN_STIJL}</style>
+        <div
+          ref={baan}
+          className="weekbaan"
+          onScroll={(e) => {
+            const el = e.currentTarget
+            const nu: Tab = el.scrollLeft > el.clientWidth / 2 ? 'komende' : 'deze'
+            if (nu !== tab) setTab(nu)
+          }}
+          style={{
+            flex: 1, minHeight: 0, display: 'flex', overflowX: 'auto', overflowY: 'hidden',
+            scrollSnapType: 'x mandatory', overscrollBehaviorX: 'contain', WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          <Paneel verborgen={tab !== 'deze'}>
+            {recepten.length === 0 ? (
+              <Leeg
+                icoon="utensils"
+                kop="Nog geen weekmenu"
+                tekst="We zetten elke week 10 recepten voor je klaar. Je voorkeuren kun je altijd nog aanpassen in Instellingen."
+                knop={dezeWeek.query.isFetching ? 'Even zoeken…' : 'Zet mijn week klaar'}
+                onKnop={() => { if (!dezeWeek.query.isFetching) void dezeWeek.query.refetch() }}
+              />
             ) : (
-              <div style={{
-                display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
-                gap: 12,
-              }}>
-                {zichtbaar.map((recept, i) => (
-                  <ReceptKaart
-                    key={recept.id}
-                    recept={recept}
-                    vlak={VLAKKEN[i % VLAKKEN.length]}
-                    bonus={bonusPerRecept.get(recept.id) ?? []}
-                    personen={standaardPersonen(recept, personen)}
-                    onOpen={() => navigeer(`/recept/${recept.id}`)}
-                    onLijst={() => voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
-                    onWeg={() => (recept.opLijst ? setWegVraag(recept) : haalUitWeek.mutate(recept.id))}
-                    onRuil={recept.opLijst && !recept.gekooktOp && !bezig ? () => void ruil(recept) : undefined}
-                  />
-                ))}
-              </div>
+              <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingBottom: 10 }}>
+                  <span style={KOPJE}>
+                    {dezeWeek.isBesteld ? `Besteld · ${recepten.length} om te koken` : `Alle ${recepten.length} recepten`}
+                  </span>
+                  {opLijst > 0 && (
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)' }}>
+                      {opLijst} op je lijst
+                    </span>
+                  )}
+                </div>
+                <div style={ROOSTER}>{recepten.map(kaartDezeWeek)}</div>
+              </Inhoud>
             )}
-          </Inhoud>
-        )}
+          </Paneel>
 
+          <Paneel verborgen={tab !== 'komende'}>
+            {komendeWeek.query.isError ? (
+              <Leeg
+                icoon="utensils"
+                kop="Dat lukte niet"
+                tekst="We konden komende week niet ophalen. Er is niets kwijt."
+                knop="Probeer opnieuw"
+                onKnop={() => void komendeWeek.query.refetch()}
+              />
+            ) : komendeWeek.recepten.length === 0 ? (
+              <Leeg
+                icoon="heart"
+                kop={komendeWeek.query.isLoading ? 'Even zoeken…' : 'Nog niets voor komende week'}
+                tekst="Tik in Ontdekken op het hartje bij een recept: dan staat het hier klaar."
+                knop="Naar Ontdekken"
+                onKnop={() => navigeer('/ontdekken')}
+              />
+            ) : (
+              <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
+                {bewaard.length > 0 && (
+                  <>
+                    <span style={{ ...KOPJE, paddingBottom: 10 }}>Door jou bewaard · {bewaard.length}</span>
+                    <div style={{ ...ROOSTER, paddingBottom: 18 }}>{bewaard.map(kaartKomendeWeek)}</div>
+                  </>
+                )}
+                {suggesties.length > 0 && (
+                  <>
+                    <span style={{ ...KOPJE, paddingBottom: 10 }}>
+                      {bewaard.length > 0 ? `Suggesties · ${suggesties.length}` : `${suggesties.length} suggesties`}
+                    </span>
+                    <div style={ROOSTER}>{suggesties.map((r, i) => kaartKomendeWeek(r, i + bewaard.length))}</div>
+                  </>
+                )}
+              </Inhoud>
+            )}
+          </Paneel>
+        </div>
       </Grens>
 
       {dialoog}
@@ -218,7 +289,7 @@ export function DezeWeek() {
       <Dialoog
         open={suggestiesOp}
         kop="De suggesties zijn op"
-        tekst="Alle tien recepten van deze week zijn gekozen of weggeklikt. In Ontdekken vind je er meer."
+        tekst="Alle recepten van deze week zijn gekozen of weggeklikt. In Ontdekken vind je er meer."
         onSluit={() => setSuggestiesOp(false)}
         acties={[
           { label: 'Naar Ontdekken', hoofd: true, onClick: () => { setSuggestiesOp(false); navigeer('/ontdekken') } },
@@ -227,6 +298,23 @@ export function DezeWeek() {
       />
       <OnderBalk />
     </Scherm>
+  )
+}
+
+/**
+ * Eén week in de baan: precies een scherm breed, met een eigen scroll omlaag.
+ * De week die niet in beeld is doet niet mee voor toetsenbord en schermlezer.
+ */
+function Paneel({ children, verborgen }: { children: React.ReactNode; verborgen: boolean }) {
+  return (
+    <section
+      aria-hidden={verborgen}
+      inert={verborgen}
+      style={{
+        flex: '0 0 100%', width: '100%', minHeight: 0, display: 'flex', flexDirection: 'column',
+        scrollSnapAlign: 'start', scrollSnapStop: 'always',
+      }}
+    >{children}</section>
   )
 }
 
@@ -240,14 +328,16 @@ function knopTekst(recept: WeekRecept): string {
   return 'Zet op je lijst'
 }
 
-function ReceptKaart({ recept, vlak, bonus, personen, onOpen, onLijst, onWeg, onRuil }: {
+function ReceptKaart({ recept, vlak, bonus, personen, knop, onOpen, onKnop, onWeg, onRuil }: {
   recept: WeekRecept
   vlak: string
   /** Producten van het recept in de bonus bij je winkel: het gele label op de foto. */
   bonus: BonusProduct[]
   personen: number
+  /** De knop onder de kaart: wat een tik doet, of hoe het recept ervoor staat. */
+  knop: { tekst: string; icoon: string }
   onOpen: () => void
-  onLijst: () => void
+  onKnop: () => void
   onWeg: () => void
   /** Alleen op kaarten die op je lijst staan: ruil voor een ander recept uit de tien. */
   onRuil?: () => void
@@ -314,7 +404,7 @@ function ReceptKaart({ recept, vlak, bonus, personen, onOpen, onLijst, onWeg, on
 
       <div style={{ display: 'flex', gap: 6, margin: '0 4px 4px' }}>
       <button
-        onClick={onLijst}
+        onClick={onKnop}
         style={{
           flex: 1, minWidth: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, height: 34,
@@ -324,8 +414,8 @@ function ReceptKaart({ recept, vlak, bonus, personen, onOpen, onLijst, onWeg, on
           color: recept.opLijst ? 'var(--c-red)' : 'var(--c-ink)',
         }}
       >
-        <Icon name={recept.opLijst ? 'check' : 'plus'} size={14} />
-        {knopTekst(recept)}
+        <Icon name={knop.icoon} size={14} />
+        {knop.tekst}
       </button>
       {onRuil && (
         <button

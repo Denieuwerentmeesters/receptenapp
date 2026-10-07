@@ -4,7 +4,8 @@ import { Chip, Icon } from '../ds'
 import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../lib/queries2'
-import { useDezeWeek, useLijstActies, type WeekRecept } from '../lib/queries'
+import { useDezeWeek, type WeekRecept } from '../lib/queries'
+import { useHartje } from '../components/Hartje'
 import type { Recept } from '../lib/database.types'
 import { isBudget } from '../lib/prijsschatting'
 import { tokoIngredienten } from '../lib/toko'
@@ -57,7 +58,7 @@ const onthouden = {
 /**
  * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en dieet —
  * precies de dingen waarop je een doordeweekse avond selecteert. Het hartje
- * zet een recept in "Deze week"; daar kies je of het op je lijst gaat.
+ * bewaart een recept voor "Komende week" (components/Hartje.tsx).
  */
 export function Ontdekken() {
   const navigeer = useNavigate()
@@ -99,7 +100,7 @@ export function Ontdekken() {
     ]
   }, [keukens.data, voorkeurKeukens])
   const dezeWeek = useDezeWeek()
-  const { zetInWeek, haalUitWeek } = useLijstActies()
+  const hartje = useHartje()
   // Geen Map als querydata (zie useAhMapping), maar hier is het afgeleid.
   const inWeek = useMemo(
     () => new Map((dezeWeek.data ?? []).map((r) => [r.id, r])),
@@ -237,7 +238,8 @@ export function Ontdekken() {
                   week={inWeek.get(r.id)}
                   bevat={vastVoorJou(r, allergieen)}
                   onOpen={() => navigeer(`/recept/${r.id}`)}
-                  onHartje={() => (inWeek.has(r.id) ? haalUitWeek.mutate(r.id) : zetInWeek.mutate(r))}
+                  bewaard={hartje.bewaard.has(r.id)}
+                  onHartje={() => hartje.tik(r)}
                 />
               ))}
             </div>
@@ -303,6 +305,7 @@ export function Ontdekken() {
         />
       </Dialoog>
 
+      {hartje.dialoog}
       <OnderBalk />
     </Scherm>
   )
@@ -336,13 +339,16 @@ function Keuzelijst({ keuzes, gekozen, onWissel }: {
 }
 
 /**
- * Een recept als foto met de tekst eronder. Het hartje rechtsboven zet 'm in
- * "Deze week" (of haalt 'm eruit); staat 'ie op je lijst, dan de gele rand.
+ * Een recept als foto met de tekst eronder. Het hartje rechtsboven bewaart 'm
+ * voor "Komende week" (of haalt 'm eruit); staat 'ie op je lijst, dan de gele rand.
  */
-function FotoKaart({ recept, index, week, bevat, onOpen, onHartje }: {
+function FotoKaart({ recept, index, week, bewaard, bevat, onOpen, onHartje }: {
   recept: Recept
   index: number
+  /** Hoe het recept in deze week staat: voor de gele rand. */
   week: WeekRecept | undefined
+  /** Staat in komende week: het hartje is gevuld. */
+  bewaard: boolean
   /** Jouw allergenen die erin zitten, zonder vervanger. Alleen als het filter uit staat. */
   bevat: string[]
   onOpen: () => void
@@ -354,7 +360,7 @@ function FotoKaart({ recept, index, week, bevat, onOpen, onHartje }: {
     recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
     label === 'vegan' || label === 'vegetarisch' ? label : recept.keuken,
   ].filter(Boolean).join(' · ')
-  const status = week?.opLijst ? 'Op je lijst' : week ? "In 'Deze week' geplaatst" : null
+  const status = week?.opLijst ? 'Op je lijst' : bewaard ? "In 'Komende week'" : null
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   const bonusData = useBonus().data
   const bonus = useMemo(() => receptBonusProducten(recept.ingredienten, bonusData), [recept.ingredienten, bonusData])
@@ -384,14 +390,14 @@ function FotoKaart({ recept, index, week, bevat, onOpen, onHartje }: {
 
         <button
           onClick={onHartje}
-          aria-label={week ? 'Uit deze week halen' : 'In deze week zetten'}
-          aria-pressed={Boolean(week)}
+          aria-label={bewaard ? 'Uit komende week halen' : 'Bewaren voor komende week'}
+          aria-pressed={bewaard}
           style={{
             position: 'absolute', top: 12, right: 12, width: 38, height: 38,
             borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: week ? 'var(--c-red)' : 'rgba(255,255,255,0.92)',
-            color: week ? 'var(--c-cream)' : 'var(--c-red)',
+            background: bewaard ? 'var(--c-red)' : 'rgba(255,255,255,0.92)',
+            color: bewaard ? 'var(--c-cream)' : 'var(--c-red)',
             boxShadow: '0 2px 8px rgba(20,20,20,0.18)',
             transition: 'background var(--motion-fast) var(--ease)',
           }}

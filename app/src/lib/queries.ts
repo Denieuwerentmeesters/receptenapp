@@ -291,8 +291,8 @@ export function useLijstActies(week = weekStart()) {
   })
 
   /**
-   * Zet een recept in je week zonder het op de lijst te zetten — het hartje in
-   * Ontdekken. Was het een weggeklikte suggestie, dan komt die gewoon terug.
+   * Zet een recept in een week zonder het op de lijst te zetten — het hartje,
+   * dat dit voor komende week doet (components/Hartje.tsx). Was het een weggeklikte suggestie, dan komt die gewoon terug.
    * Anders wordt het een keuze die (nog) niet op de lijst staat; daarvoor
    * gebruiken we van_lijst_op, zodat "op de lijst" daarna precies zo werkt
    * als na een boodschappenronde.
