@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import { Button, Chip, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
+import { Button, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
 import { Label, Titel } from '../components/Layout'
 import { Grens, Laden } from '../components/Staten'
-import { AANTAL_UITLEGKAARTEN, Uitleg } from '../components/Uitleg'
-import { AllergieKeuze, KeukenKeuze } from '../components/voorkeuren'
+import { AANTAL_UITLEGKAARTEN, Uitleg, UitlegVoorladen } from '../components/Uitleg'
+import { AllergieKeuze, KeukenKeuze, VoorraadKeuze } from '../components/voorkeuren'
 import { haalDezeWeek, sleutels, useLijstActies, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { useKeukens, useVoorraad, useVoorraadMuteren } from '../lib/queries2'
-import { VOORRAAD_SUGGESTIES } from '../lib/voorraad'
 import { ingredientKey } from '../lib/schaal'
 import { DROGE_KRUIDEN } from '../lib/kruiden'
 import { opsomming, vastVoorJou } from '../lib/allergenen'
@@ -38,9 +37,6 @@ type Vraag = (typeof VRAGEN)[number]
 type Winkel = Voorkeuren['voorkeurswinkel']
 
 const MAX_PERSONEN = 8
-
-/** De producten waar de voorraadvraag naar vraagt: de bovenste van de voorraadkast. */
-const VOORRAAD_KEUZES = VOORRAAD_SUGGESTIES.slice(0, 15)
 
 interface Antwoorden {
   personen: number
@@ -130,22 +126,33 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   const [bezig, setBezig] = useState(false)
 
   // De voorraadkast staat niet bij de voorkeuren maar in voorraad_item. Wat
-  // je aantikt is een concept; null = nog niet aangeraakt, dan geldt wat er al staat.
+  // je aan- en uittikt is een concept bovenop wat er al in de kast staat.
   const voorraad = useVoorraad()
   const { toevoegen, verwijderen } = useVoorraadMuteren()
-  const [voorraadKeuze, setVoorraadKeuze] = useState<string[] | null>(null)
-  const inKast = new Set((voorraad.data ?? []).filter((i) => i.in_huis).map((i) => i.ingredient_key))
-  const voorraadGekozen = voorraadKeuze ?? VOORRAAD_KEUZES.filter((n) => inKast.has(ingredientKey(n)))
+  const [erbij, setErbij] = useState<string[]>([])
+  const [eraf, setEraf] = useState<string[]>([])
+  const kast = (voorraad.data ?? []).filter((i) => i.in_huis)
+  const inKast = new Set(kast.map((i) => i.ingredient_key))
+  const kastNamen = kast.map((i) => i.naam)
+  const voorraadGekozen = [
+    ...kastNamen.filter((n) => !eraf.includes(ingredientKey(n))),
+    ...erbij.filter((n) => !inKast.has(ingredientKey(n))),
+  ]
   const voorraadOpslag = useRef<Promise<void>>(Promise.resolve())
+
+  function zetVoorraad(product: string, aan: boolean) {
+    const key = ingredientKey(product)
+    if (!key) return
+    setEraf(aan ? eraf.filter((k) => k !== key) : inKast.has(key) && !eraf.includes(key) ? [...eraf, key] : eraf)
+    const zonder = erbij.filter((n) => ingredientKey(n) !== key)
+    setErbij(aan && !inKast.has(key) ? [...zonder, product] : zonder)
+  }
 
   /** Zet wat je koos in je voorraadkast en haalt eruit wat je weer uittikte. */
   function bewaarVoorraad(): Promise<void> {
-    const erbij = voorraadGekozen.filter((n) => !inKast.has(ingredientKey(n)))
-    const eraf = VOORRAAD_KEUZES.map(ingredientKey)
-      .filter((key) => inKast.has(key) && !voorraadGekozen.some((n) => ingredientKey(n) === key))
     return Promise.all([
-      ...erbij.map((n) => toevoegen.mutateAsync(n)),
-      ...eraf.map((key) => verwijderen.mutateAsync(key)),
+      ...erbij.filter((n) => !inKast.has(ingredientKey(n))).map((n) => toevoegen.mutateAsync(n)),
+      ...eraf.filter((key) => inKast.has(key)).map((key) => verwijderen.mutateAsync(key)),
     ]).then(() => undefined)
   }
 
@@ -204,7 +211,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   function slaOver() {
     // Wat je aantikte maar niet bevestigde gaat terug naar wat er stond.
     const stond = uitVoorkeuren(voorkeuren)
-    if (naam === 'voorraad') setVoorraadKeuze(null)
+    if (naam === 'voorraad') { setErbij([]); setEraf([]) }
     else {
       setAntw({
         ...antw,
@@ -272,6 +279,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
         background: 'var(--c-red)', color: 'var(--c-cream)',
         padding: 'calc(env(safe-area-inset-top) + 28px) 26px calc(env(safe-area-inset-bottom) + 20px)',
       }}>
+        <UitlegVoorladen />
         <Woordmerk hoogte={48} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Label>Welkom bij Pinch</Label>
@@ -385,7 +393,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     kookavonden: ['Hoeveel avonden wil je koken?', 'Per week. De rest laat je vrij.'],
     keukens: ['Welke keukens vind je lekker?', 'Kies er zoveel als je wilt. Daarvan krijg je meer in je weekmenu. De rest blijft gewoon te vinden.'],
     allergieen: ['Moet Pinch ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
-    voorraad: ['Wat heb je standaard in huis?', 'Dat laat Pinch van je boodschappenlijst af. Aanvullen kan later in je voorraadkast.'],
+    voorraad: ['Wat heb je standaard in huis?', 'Dat laat Pinch van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.'],
     winkel: ['Waar doe je je boodschappen?', 'Naar deze supermarkt stuurt Pinch je boodschappenlijst.'],
   }
 
@@ -482,17 +490,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
 
         {naam === 'voorraad' && (
           <>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {VOORRAAD_KEUZES.map((n) => {
-                const aan = voorraadGekozen.includes(n)
-                return (
-                  <Chip
-                    key={n} groot selected={aan}
-                    onClick={() => setVoorraadKeuze(aan ? voorraadGekozen.filter((x) => x !== n) : [...voorraadGekozen, n])}
-                  >{n}</Chip>
-                )
-              })}
-            </div>
+            <VoorraadKeuze gekozen={voorraadGekozen} bekend={kastNamen} onZet={zetVoorraad} />
             {voorraadGekozen.includes(DROGE_KRUIDEN) && (
               <p style={{ ...kleinStijl, flex: 'none', marginTop: 4 }}>
                 Droge kruiden staat voor je hele kruidenrek. Die blijven op je lijst staan, maar gaan niet in je mandje.

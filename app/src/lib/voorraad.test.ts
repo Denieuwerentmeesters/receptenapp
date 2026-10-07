@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { inVoorraad } from './voorraad'
+import { inVoorraad, VOORRAAD_SUGGESTIES, voorraadNaam } from './voorraad'
 import { ingredientKey } from './schaal'
 
 // De sleutels zoals de voorraadkast ze opslaat (Voorraadkast.tsx, STANDAARD).
@@ -47,5 +47,37 @@ describe('inVoorraad', () => {
     expect(thuis('knoflooktenen')).toBe(true)
     expect(inVoorraad('preien', new Set(['prei']))).toBe(true)
     expect(inVoorraad('ui', new Set())).toBe(false)
+  })
+})
+
+describe('VOORRAAD_SUGGESTIES', () => {
+  test('elk product staat er één keer in', () => {
+    const keys = VOORRAAD_SUGGESTIES.map(ingredientKey)
+    expect(new Set(keys).size).toBe(keys.length)
+  })
+
+  // De naam in de lijst moet het ingrediënt uit het recept afdekken, anders
+  // staat het in je kast en toch op je lijst.
+  test.each([
+    ['Misopasta', 'witte misopasta'], ['Chipotlesaus', 'milde chipotlesaus'], ['Currypasta', 'rode currypasta'],
+    ['Parmezaanse kaas', 'geraspte parmezaanse kaas'], ['Ketjap manis', 'ketjap manis'],
+    ['Tomatenblokjes', 'tomatenblokjes (blik)'], ["Tortilla's", "tortilla's"], ['Sesamzaadjes', 'sesamzaadjes'],
+  ])('%s in de kast dekt %s', (kastNaam, recept) => {
+    expect(inVoorraad(ingredientKey(recept), new Set([ingredientKey(kastNaam)]))).toBe(true)
+  })
+})
+
+describe('voorraadNaam', () => {
+  test('neemt de naam uit de lijst als die past', () => {
+    expect(voorraadNaam('miso')).toBe('Misopasta')
+    expect(voorraadNaam(' Chipotle ')).toBe('Chipotlesaus')
+    expect(voorraadNaam('rijst')).toBe('Rijst')
+    expect(voorraadNaam('sojasaus')).toBe('Sojasaus')
+  })
+
+  test('laat staan wat er niet in staat, met een hoofdletter', () => {
+    expect(voorraadNaam('truffelolie')).toBe('Truffelolie')
+    expect(voorraadNaam('ui')).toBe('Ui')
+    expect(voorraadNaam('   ')).toBe('')
   })
 })
