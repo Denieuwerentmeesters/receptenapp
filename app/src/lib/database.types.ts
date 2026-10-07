@@ -5,7 +5,7 @@
  *   npx supabase gen types typescript --project-id <ref> > src/lib/database.types.ts
  */
 
-export type BronType = 'scraper' | 'kookboek_foto' | 'eigen_input' | 'samengesteld'
+export type BronType = 'scraper' | 'kookboek_foto' | 'eigen_input' | 'samengesteld' | 'website' | 'screenshot' | 'instagram'
 export type DeelStatus = 'prive' | 'aangevraagd' | 'goedgekeurd' | 'afgewezen'
 export type AfbeeldingBron = 'gegenereerd' | 'origineel_bron' | 'kookboek_foto' | 'eigen_foto'
 
@@ -43,6 +43,10 @@ export interface Recept {
   slug?: string | null
   /** Sinds wanneer de deellink van dit eigen recept werkt (lib/delen.ts); null = geen link. */
   deellink_sinds?: string | null
+  /** De maker van een geïmporteerd recept: @account of de naam van de website (lib/importeren.ts). */
+  bron_maker?: string | null
+  /** De scan (api/extraheer.ts) waar dit recept uit kwam; null bij de pool en bij zelf getypte recepten. */
+  scan_id?: string | null
   aangemaakt_op: string
   /** Ruwe schatting in euro's (lib/prijsschatting.ts); null als er niets te schatten viel. */
   prijs_pp_schatting: number | null

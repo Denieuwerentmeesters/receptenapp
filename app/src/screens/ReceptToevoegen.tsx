@@ -1,10 +1,14 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Icon } from '../ds'
 import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { foutTekst } from '../lib/fouten'
-import { leesFoto, leesTekst, type Concept } from '../lib/extractie'
+import {
+  BestaatAl, MAX_SCREENSHOTS, leesFoto, leesLink, leesScreenshots, leesTekst, type Concept, type Uitgelezen,
+} from '../lib/extractie'
+import { bronTypeVoor, normaliseerUrl, isInstagramUrl, siteNaam } from '../lib/importeren'
 import { useReceptOpslaan } from '../lib/queries2'
+import { openBijWinkel } from '../lib/ah'
 import type { BronType } from '../lib/database.types'
 
 type Stap = 'kiezen' | 'invoer' | 'bezig' | 'concept'
@@ -12,75 +16,119 @@ type Stap = 'kiezen' | 'invoer' | 'bezig' | 'concept'
 /**
  * Waar het recept vandaan komt bepaalt wat ermee mag.
  *
+ *  link           — een website of Instagram-post; altijd privé, met bronvermelding.
+ *  screenshots    — een of meer screenshots van een recept; altijd privé.
  *  prive_kookboek — foto van een kookboekpagina, blijft altijd van jou alleen.
  *  eigen          — je eigen bedenksel, mag je aanmelden om te delen.
  */
-type Route = 'prive_kookboek' | 'eigen'
+type Route = 'link' | 'screenshots' | 'prive_kookboek' | 'eigen'
+
+/** De routes zoals ze in de URL staan (?route=…), voor de knop Toevoegen op Ontdekken. */
+const ROUTES: Record<string, Route | 'zelf'> = {
+  link: 'link', screenshots: 'screenshots', kookboek: 'prive_kookboek', eigen: 'eigen', zelf: 'zelf',
+}
 
 const LEEG: Concept = {
   titel: '', personen: 4, tags: [], ingredienten: [], bereiding_nl: [],
 }
 
 /**
- * Recept toevoegen (plan §7).
+ * Recept toevoegen (plan §7 en het importplan).
  *
- * Twee routes: een foto van een kookboekpagina, of je eigen recept in vrije
- * tekst. Beide komen uit op hetzelfde conceptscherm waar jij controleert wat
- * eruit kwam — OCR is niet feilloos en het model doet soms een verkeerde
- * aanname over een hoeveelheid.
+ * Vier routes: een link (website of Instagram), screenshots, een foto van een
+ * kookboekpagina, of je eigen recept in vrije tekst. Alles komt uit op
+ * hetzelfde conceptscherm waar jij controleert wat eruit kwam — het model
+ * doet soms een verkeerde aanname over een hoeveelheid, en een video is niet
+ * altijd goed te verstaan.
  *
- * De kookboekfoto wordt gebruikt om uit te lezen en daarna weggegooid, niet
- * opgeslagen. Dat scheelt opslag en het is ook precies wat je wil: de pagina uit
- * een boek van iemand anders hoeft nergens te blijven staan.
+ * Wat de server ophaalt (pagina, video, foto's) wordt na het uitlezen
+ * weggegooid, niet opgeslagen. Van een import blijven alleen het recept, de
+ * link en de naam van de maker over; die staan op het receptscherm.
+ *
+ * Opent ook via /toevoegen?route=link&url=… (straks de deelknop van iOS).
  */
 export function ReceptToevoegen() {
   const navigeer = useNavigate()
+  const [params] = useSearchParams()
   const opslaan = useReceptOpslaan()
 
-  const [stap, setStap] = useState<Stap>('kiezen')
-  const [route, setRoute] = useState<Route>('eigen')
+  const gevraagd = ROUTES[params.get('route') ?? '']
+  const [stap, setStap] = useState<Stap>(gevraagd ? (gevraagd === 'zelf' ? 'concept' : 'invoer') : 'kiezen')
+  const [route, setRoute] = useState<Route>(gevraagd && gevraagd !== 'zelf' ? gevraagd : 'eigen')
   const [tekst, setTekst] = useState('')
+  const [link, setLink] = useState(params.get('url') ?? '')
+  const [stapTekst, setStapTekst] = useState('')
   const [concept, setConcept] = useState<Concept>(LEEG)
+  const [scanId, setScanId] = useState<string | null>(null)
   const [delen, setDelen] = useState(false)
   const [fout, setFout] = useState('')
   const bestandKiezer = useRef<HTMLInputElement>(null)
 
-  const bron: BronType = route === 'prive_kookboek' ? 'kookboek_foto' : 'eigen_input'
   const kookboek = route === 'prive_kookboek'
+  // Een import is van de maker: nooit in de pool. Een eigen tekst mag je aanmelden.
+  const bron: BronType = concept.bron ? bronTypeVoor(concept.bron.soort) : kookboek ? 'kookboek_foto' : 'eigen_input'
+  const magDelen = bron === 'eigen_input'
 
-  async function verwerk(actie: () => Promise<Concept>) {
-    setStap('bezig'); setFout('')
+  async function verwerk(actie: (opStap: (t: string) => void) => Promise<Uitgelezen>) {
+    setStap('bezig'); setFout(''); setStapTekst('')
     try {
-      setConcept(await actie())
+      const { concept, scanId } = await actie(setStapTekst)
+      setConcept(concept)
+      setScanId(scanId)
       setStap('concept')
     } catch (f) {
+      if (f instanceof BestaatAl) {
+        navigeer(`/recept/${f.receptId}`, { replace: true })
+        return
+      }
       setFout(foutTekst(f))
       setStap('invoer')
     }
   }
+
+  // Gedeeld vanuit een andere app: meteen aan de slag, zonder eerst op een knop te tikken.
+  const gestart = useRef(false)
+  useEffect(() => {
+    const url = params.get('url')
+    if (!url || gestart.current) return
+    gestart.current = true
+    void verwerk((opStap) => leesLink(url, opStap))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function bewaar() {
     opslaan.mutate(
       {
         concept,
         bronType: bron,
-        // Kookboekrecepten kunnen nooit gedeeld worden (plan §7.3) — hier én in
-        // de database afgedwongen met een check-constraint.
-        deelStatus: kookboek ? 'prive' : delen ? 'aangevraagd' : 'prive',
+        // Kookboek en imports kunnen nooit gedeeld worden (plan §7.3) — hier én in
+        // de database afgedwongen met check-constraints.
+        deelStatus: magDelen && delen ? 'aangevraagd' : 'prive',
+        url: concept.bron?.url ?? null,
+        bronMaker: concept.bron?.maker ?? null,
+        scanId,
       },
       {
-        onSuccess: (id) => navigeer(`/recept/${id}`),
+        onSuccess: (id) => navigeer(`/recept/${id}`, { replace: true }),
         onError: (f) => setFout(foutTekst(f)),
       },
     )
   }
+
+  const linkGeldig = normaliseerUrl(link) !== null
+  const titel = stap === 'kiezen' ? 'Waar komt het vandaan?'
+    : stap === 'concept' ? 'Klopt dit?'
+    : stap === 'bezig' ? 'Even geduld'
+    : route === 'link' ? 'Van een link'
+    : route === 'screenshots' ? 'Van screenshots'
+    : kookboek ? 'Uit je kookboek' : 'Je eigen recept'
 
   return (
     <Scherm>
       <Kop kleur="var(--c-purple)" style={{ paddingBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
-            onClick={() => (stap === 'kiezen' ? navigeer(-1) : setStap('kiezen'))}
+            onClick={() => (stap === 'kiezen' || gevraagd ? navigeer(-1) : setStap('kiezen'))}
             aria-label="Terug"
             style={{
               border: 'none', background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)',
@@ -91,11 +139,7 @@ export function ReceptToevoegen() {
           <Label>Recept toevoegen</Label>
         </div>
         <div style={{ marginTop: 14 }}>
-          <Titel grootte={26}>
-            {stap === 'kiezen' ? 'Waar komt het vandaan?'
-              : stap === 'concept' ? 'Klopt dit?'
-              : kookboek ? 'Uit je kookboek' : 'Je eigen recept'}
-          </Titel>
+          <Titel grootte={26}>{titel}</Titel>
         </div>
       </Kop>
 
@@ -110,91 +154,172 @@ export function ReceptToevoegen() {
       {stap === 'kiezen' && (
         <Inhoud style={{ gap: 12 }}>
           <Keuze
+            icoon="share"
+            kop="Plak een link"
+            tekst="Van Instagram of een receptensite. We halen het recept op en zetten het om naar jouw lijst."
+            onClick={() => { setRoute('link'); setStap('invoer') }}
+          />
+          <Keuze
+            icoon="grid"
+            kop="Kies screenshots"
+            tekst={`Tot ${MAX_SCREENSHOTS} screenshots van één recept, bijvoorbeeld uit een app of een story.`}
+            onClick={() => { setRoute('screenshots'); setStap('invoer') }}
+          />
+          <Keuze
             icoon="chefHat"
-            kop="Maak een foto van een recept"
-            tekst="We lezen 'm uit; de foto zelf bewaren we niet. Het recept komt in jouw omgeving, maar mag niet gedeeld worden."
+            kop="Foto van een kookboek"
+            tekst="We lezen 'm uit; de foto zelf bewaren we niet. Het recept blijft van jou alleen."
             onClick={() => { setRoute('prive_kookboek'); setStap('invoer') }}
           />
           <Keuze
             icoon="pencil"
-            kop="Maak een eigen recept"
-            tekst="Typ in eigen woorden hoe je het maakt. Geen vaste vorm nodig."
+            kop="Typ zelf"
+            tekst="In eigen woorden hoe je het maakt. Geen vaste vorm nodig."
             onClick={() => { setRoute('eigen'); setStap('invoer') }}
+          />
+          <Keuze
+            icoon="utensils"
+            kop="Laat Pinch een menu samenstellen"
+            tekst="Kies een keuken en het aantal personen; Pinch bedenkt de gerechten."
+            onClick={() => navigeer('/samenstellen')}
           />
         </Inhoud>
       )}
 
       {stap === 'invoer' && (
-        <>
-          <Inhoud style={{ gap: 14 }}>
-            {kookboek && (
-              <div style={{
-                background: 'var(--c-yellow)', color: 'var(--c-ink)', borderRadius: 'var(--radius-sm)',
-                padding: '14px 16px', fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5,
-              }}>
-                Dit recept komt uit een kookboek en blijft alleen voor jou zichtbaar. Delen
-                kan niet — het boek is niet van jou om te herpubliceren.
-              </div>
-            )}
+        <Inhoud style={{ gap: 14 }}>
+          {kookboek && (
+            <Toelichting>
+              Dit recept komt uit een kookboek en blijft alleen voor jou zichtbaar. Delen
+              kan niet — het boek is niet van jou om te herpubliceren.
+            </Toelichting>
+          )}
+          {route === 'link' && (
+            <Toelichting>
+              Werkt met openbare posts en reels op Instagram en met receptensites. Het recept
+              komt in het Nederlands en met hoeveelheden in grammen; de maker en de link
+              staan erbij. Het blijft alleen voor jou zichtbaar.
+            </Toelichting>
+          )}
 
+          {route === 'link' && (
             <>
-                {kookboek ? (
-                  <>
-                    <input
-                      ref={bestandKiezer}
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={(e) => {
-                        const bestand = e.target.files?.[0]
-                        if (bestand) void verwerk(() => leesFoto(bestand))
-                      }}
-                    />
-                    <Button
-                      tone="purple"
-                      icon="chefHat"
-                      onClick={() => bestandKiezer.current?.click()}
-                      style={{ width: '100%', padding: '17px 24px' }}
-                    >Foto maken of kiezen</Button>
-                  </>
-                ) : (
-                  <>
-                    <textarea
-                      value={tekst}
-                      onChange={(e) => setTekst(e.target.value)}
-                      rows={9}
-                      placeholder="Bijvoorbeeld: ui, knoflook en gehakt in de pan, tomatenblokjes erbij, 20 minuten laten sudderen. Voor 4 personen."
-                      style={{
-                        width: '100%', background: 'var(--c-paper)', borderRadius: 14,
-                        border: '1.5px solid rgba(20,20,20,0.14)', padding: '14px 16px',
-                        fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.5, resize: 'vertical',
-                      }}
-                    />
-                    <Button
-                      tone="purple"
-                      disabled={tekst.trim().length < 20}
-                      onClick={() => void verwerk(() => leesTekst(tekst))}
-                      style={{ width: '100%', padding: '17px 24px' }}
-                    >Laat uitlezen</Button>
-                  </>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  type="url"
+                  inputMode="url"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                  placeholder="https://www.instagram.com/reel/…"
+                  style={{ ...regelStijl, padding: '13px 15px', fontSize: 16 }}
+                />
+                {typeof navigator !== 'undefined' && navigator.clipboard?.readText && (
+                  <button
+                    onClick={() => navigator.clipboard.readText().then((t) => { if (t.trim()) setLink(t.trim()) }, () => undefined)}
+                    style={{ ...tekstKnop, alignSelf: 'center', flex: 'none', padding: '8px 10px' }}
+                  >Plak</button>
                 )}
-                <button
-                  onClick={() => { setConcept(LEEG); setStap('concept') }}
-                  style={tekstKnop}
-                >Liever zelf invullen</button>
+              </div>
+              <Button
+                tone="purple"
+                icon="arrowRight"
+                disabled={!linkGeldig}
+                onClick={() => { const url = normaliseerUrl(link); if (url) void verwerk((opStap) => leesLink(url, opStap)) }}
+                style={{ width: '100%', padding: '17px 24px' }}
+              >{linkGeldig && isInstagramUrl(normaliseerUrl(link) ?? '') ? 'Haal het recept van Instagram' : 'Haal het recept op'}</Button>
             </>
-          </Inhoud>
-        </>
+          )}
+
+          {route === 'screenshots' && (
+            <>
+              <input
+                ref={bestandKiezer}
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const bestanden = [...(e.target.files ?? [])]
+                  if (bestanden.length > MAX_SCREENSHOTS) {
+                    setFout(`Kies hooguit ${MAX_SCREENSHOTS} screenshots van één recept.`)
+                    return
+                  }
+                  if (bestanden.length > 0) void verwerk((opStap) => leesScreenshots(bestanden, opStap))
+                }}
+              />
+              <Button
+                tone="purple"
+                icon="grid"
+                onClick={() => bestandKiezer.current?.click()}
+                style={{ width: '100%', padding: '17px 24px' }}
+              >Kies screenshots</Button>
+              <p style={uitlegStijl}>
+                Staat het recept op meerdere schermen, kies ze dan allemaal tegelijk, in volgorde.
+                De screenshots bewaren we niet.
+              </p>
+            </>
+          )}
+
+          {kookboek && (
+            <>
+              <input
+                ref={bestandKiezer}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const bestand = e.target.files?.[0]
+                  if (bestand) void verwerk((opStap) => leesFoto(bestand, opStap))
+                }}
+              />
+              <Button
+                tone="purple"
+                icon="chefHat"
+                onClick={() => bestandKiezer.current?.click()}
+                style={{ width: '100%', padding: '17px 24px' }}
+              >Foto maken of kiezen</Button>
+            </>
+          )}
+
+          {route === 'eigen' && (
+            <>
+              <textarea
+                value={tekst}
+                onChange={(e) => setTekst(e.target.value)}
+                rows={9}
+                placeholder="Bijvoorbeeld: ui, knoflook en gehakt in de pan, tomatenblokjes erbij, 20 minuten laten sudderen. Voor 4 personen."
+                style={{
+                  width: '100%', background: 'var(--c-paper)', borderRadius: 14,
+                  border: '1.5px solid rgba(20,20,20,0.14)', padding: '14px 16px',
+                  fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.5, resize: 'vertical',
+                }}
+              />
+              <Button
+                tone="purple"
+                disabled={tekst.trim().length < 20}
+                onClick={() => void verwerk((opStap) => leesTekst(tekst, opStap))}
+                style={{ width: '100%', padding: '17px 24px' }}
+              >Laat uitlezen</Button>
+            </>
+          )}
+
+          <button
+            onClick={() => { setConcept(LEEG); setScanId(null); setStap('concept') }}
+            style={tekstKnop}
+          >Liever zelf invullen</button>
+        </Inhoud>
       )}
 
       {stap === 'bezig' && (
         <Inhoud style={{ alignItems: 'center', justifyContent: 'center', gap: 12 }}>
           <Icon name="chefHat" size={32} style={{ color: 'var(--c-purple)' }} />
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, margin: 0 }}>
-            We lezen je recept uit
+            {stapTekst || 'We lezen je recept uit'}
           </p>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(20,20,20,0.6)', margin: 0 }}>
-            Duurt een paar seconden.
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(20,20,20,0.6)', margin: 0, textAlign: 'center' }}>
+            {route === 'link' ? 'Een video duurt het langst: tot een minuut.' : 'Duurt een paar seconden.'}
           </p>
         </Inhoud>
       )}
@@ -202,9 +327,24 @@ export function ReceptToevoegen() {
       {stap === 'concept' && (
         <>
           <Inhoud style={{ gap: 14 }}>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(20,20,20,0.6)' }}>
+            <p style={{ ...uitlegStijl, margin: 0 }}>
               Controleer en verbeter waar nodig. Pas na jouw akkoord slaan we het op.
             </p>
+
+            {concept.bron?.url && (
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+                background: 'var(--c-paper)', borderRadius: 'var(--radius-sm)', padding: '12px 14px',
+                fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4,
+              }}>
+                <span>Recept van <strong>{concept.bron.maker ?? siteNaam(concept.bron.url)}</strong></span>
+                <a
+                  href={concept.bron.url}
+                  onClick={(e) => { e.preventDefault(); void openBijWinkel(concept.bron!.url!) }}
+                  style={{ ...tekstKnop, padding: 0, whiteSpace: 'nowrap' }}
+                >{concept.bron.soort === 'instagram' ? 'Bekijk post' : 'Bekijk'}</a>
+              </div>
+            )}
 
             <Veld label="Titel" waarde={concept.titel} onChange={(v) => setConcept({ ...concept, titel: v })} />
 
@@ -238,7 +378,7 @@ export function ReceptToevoegen() {
               groot
             />
 
-            {!kookboek && (
+            {magDelen && (
               <label style={{
                 display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer',
                 background: 'var(--c-paper)', borderRadius: 'var(--radius-md)', padding: 14,
@@ -254,6 +394,12 @@ export function ReceptToevoegen() {
                   </span>
                 </span>
               </label>
+            )}
+            {!magDelen && !kookboek && concept.bron && (
+              <p style={uitlegStijl}>
+                Dit recept is van de maker en blijft alleen voor jou zichtbaar. Je kunt het wel op
+                je lijst zetten en bewerken.
+              </p>
             )}
           </Inhoud>
 
@@ -292,6 +438,15 @@ function Keuze({ icoon, kop, tekst, onClick }: {
       </span>
       <Icon name="chevronRight" size={18} style={{ color: 'var(--c-purple)' }} />
     </button>
+  )
+}
+
+function Toelichting({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      background: 'var(--c-yellow)', color: 'var(--c-ink)', borderRadius: 'var(--radius-sm)',
+      padding: '14px 16px', fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5,
+    }}>{children}</div>
   )
 }
 
@@ -358,8 +513,12 @@ function Lijst({ label, regels, onChange, plaatshouder, groot }: {
 
 const regelStijl: React.CSSProperties = {
   flex: 1, minWidth: 0, background: 'var(--c-paper)', border: '1.5px solid rgba(20,20,20,0.14)',
-  borderRadius: 14, padding: '12px 15px', fontFamily: 'var(--font-body)', fontSize: 15,
+  borderRadius: 14, padding: '12px 15px', fontFamily: 'var(--font-body)', fontSize: 16,
   lineHeight: 1.4, resize: 'vertical',
+}
+
+const uitlegStijl: React.CSSProperties = {
+  fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(20,20,20,0.6)',
 }
 
 const tekstKnop: React.CSSProperties = {

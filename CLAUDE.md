@@ -10,7 +10,10 @@ commentaar. Houd dat aan.
 ## Waar wat staat
 
 ```
-api/extraheer.ts     Serverless functie (Vercel) die recepten uitleest met Claude
+api/extraheer.ts     Serverless functie (Vercel) die recepten uitleest met Claude:
+                     link (website, Instagram), screenshots, kookboekfoto, tekst
+lib/extractie/       Website (JSON-LD), Instagram (Apify), uitschrijven (OpenAI),
+                     prompt en kostenschatting voor api/extraheer.ts
 api/samenstellen.ts  Stelt met Claude een menu samen (Zelf samenstellen)
 api/afbeeldingen.ts  Nachtelijke cron (Vercel) die nieuwe recepten een afbeelding geeft
 lib/afbeeldingen/    Prompt-opbouw en generatie van receptafbeeldingen (gedeeld door
@@ -299,9 +302,11 @@ dus de schuifanimatie is van de browser.
 
 ## Recepten toevoegen en de adminrol
 
-Twee routes (plan §7): een foto van een kookboekpagina, of je eigen recept in
-vrije tekst. Beide gaan door `api/extraheer.ts` en komen uit op een
-conceptscherm waar de gebruiker corrigeert voordat er iets wordt opgeslagen.
+Vier routes (plan §7 en het importplan): een link, screenshots, een foto van
+een kookboekpagina, of je eigen recept in vrije tekst. Alles gaat door
+`api/extraheer.ts` en komt uit op een conceptscherm waar de gebruiker
+corrigeert voordat er iets wordt opgeslagen. Link en screenshots staan
+hierboven bij "Recepten importeren".
 
 **De kookboekfoto wordt niet bewaard.** Hij gaat één keer naar de extractie en
 wordt daarna weggegooid — dat scheelt opslag en de pagina uit andermans boek
@@ -326,6 +331,67 @@ bij, geef die dan meteen een eigen titel.
 De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
 ziet `/beoordelen` met de aangemelde recepten van anderen.
+
+## Recepten importeren: link, Instagram, screenshots
+
+Je plakt een link (website of Instagram-post) of kiest screenshots, en
+`api/extraheer.ts` maakt er een recept van in het schema van de app:
+Nederlands, metrisch, de bereiding in eigen woorden, ingrediënten op een
+bestaande `ingredient_key` waar dat past. Daarna het controlescherm
+(`ReceptToevoegen.tsx`), en pas bij opslaan komt er iets in `recepten`.
+Ingangen: de knop Toevoegen rechtsboven op Ontdekken (vervangt de losse knop
+Zelf samenstellen), de schakelaar Alle / Mijn recepten, de lege zoekuitkomst,
+en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
+
+- **Gratis in de testfase.** Het plan voorziet 5 gratis scans en daarna
+  Pinch Plus; dat is bewust nog niet gebouwd (Reinoud, 7 okt 2026: eerst
+  gratis maken en testen). Wel staat er een daglimiet tegen misbruik
+  (`SCAN_LIMIET_PER_DAG`, standaard 30, alle pogingen). Elke poging staat in
+  `scan`: soort, link, gelukt of niet, tokens en een kostenschatting in
+  centen (`lib/extractie/kosten.ts`). De app leest alleen de eigen rijen;
+  schrijven doet de functie. Kijk daar om te zien wat een import kost.
+- **Alleen ingelogd.** De functie controleert de sessie zoals `samenstellen`
+  en `account-verwijderen` (`lib/sessie.ts`, geen CORS-headers). Dat dichtte
+  meteen het lek dat de functie zonder login open stond.
+- **Het antwoord is een stroom** (`stroom: true`): regels JSON met de
+  stappen ("Video uitschrijven") en aan het eind het recept
+  (`ScanGebeurtenis` in `src/lib/importeren.ts`). Zonder `stroom` komt er
+  één object terug, voor app-builds van vóór het importeren. Edge-runtime:
+  zonder stroom breekt een Instagram-video na 25 seconden af.
+- **Routes** (`lib/extractie/`): een Instagram-link gaat via `social.ts`
+  (scraper op Apify, `haalSocialPost`); staat het recept in het onderschrift
+  (`lijktRecept`), dan alleen dat; verwijst het onderschrift naar een
+  website, dan die; anders bij een video de gesproken tekst
+  (`transcriptie.ts`, OpenAI) plus de omslag, bij een carrousel de beelden.
+  Een website gaat via `website.ts`: eerst het JSON-LD-receptblok, anders de
+  zichtbare tekst. Niets van wat de server ophaalt wordt bewaard.
+- **Vier frames uit een video zitten er niet in:** op de edge-runtime is geen
+  ffmpeg. In plaats daarvan gaat de omslag (`displayUrl`) mee; vaak staat
+  daar de titel of het recept op.
+- **Uitzetten:** `INSTAGRAM_IMPORT_AAN=false` op Vercel. De app vraagt dan
+  bij een Instagram-link om een screenshot. Omgevingsvariabelen verder:
+  `APIFY_TOKEN`, `APIFY_INSTAGRAM_ACTOR` (standaard `apify~instagram-scraper`),
+  `OPENAI_API_KEY`, `OPENAI_TRANSCRIBE_MODEL` (standaard
+  `gpt-4o-mini-transcribe`), `ANTHROPIC_MODEL_EXTRAHEER` (standaard
+  `claude-sonnet-5-5`). Zonder `OPENAI_API_KEY` gaat een video zonder
+  transcript verder; zonder `APIFY_TOKEN` krijgt een Instagram-link een
+  melding.
+- **De link staat in `url`, de maker in `bron_maker`** (`@account` of de
+  sitenaam). `url` is sinds migratie `20261007150001` uniek per gebruiker
+  (`nulls not distinct`, de pool blijft onderling uniek); dezelfde link twee
+  keer plakken opent het bestaande recept (`bestaat`). `recepten.scan_id`
+  wijst naar de scan; de app zet die bij het opslaan.
+- **Altijd privé** (`import_altijd_prive`): een geïmporteerd recept is van
+  de maker, niet van jou om te herpubliceren. Op het receptscherm staat
+  "Recept van @account · Bekijk op Instagram" (`bronVermelding`). Een
+  screenshot krijgt ook geen deellink (`screenshot_geen_deellink`), zoals
+  een kookboekfoto; website en Instagram wel, met de bronvermelding erbij.
+  Imports staan wél in Ontdekken en in de weekmenu-generator (het zijn jouw
+  recepten), en de nachtelijke ronde geeft ze een eigen foto.
+- **Niet gebouwd uit het plan:** Pinch Plus (RevenueCat, Stripe, Plus-scherm,
+  teller), de Share Extension voor iOS (App Group), de uitleg na de
+  onboarding, en het herroepingsscherm. De privacyverklaring noemt
+  Anthropic, OpenAI en Apify al.
 
 ## Een recept delen met een link
 

@@ -50,7 +50,7 @@ export default async function handler(request: Request): Promise<Response> {
                  (user_id is null or deel_status = 'goedgekeurd') as "inPool"
           from recepten
           where id = ${gezocht.id}
-            and bron_type <> 'kookboek_foto'
+            and bron_type not in ('kookboek_foto', 'screenshot')
             and (user_id is null or deel_status = 'goedgekeurd' or deellink_sinds is not null)
         `
       : await sql`
@@ -58,7 +58,7 @@ export default async function handler(request: Request): Promise<Response> {
                  ingredienten, bereiding_nl, afbeelding_url, true as "inPool"
           from recepten
           where slug = ${gezocht.slug}
-            and bron_type <> 'kookboek_foto'
+            and bron_type not in ('kookboek_foto', 'screenshot')
             and (user_id is null or deel_status = 'goedgekeurd')
         `) as DeelRecept[]
     recept = rijen[0]

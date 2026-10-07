@@ -8,6 +8,7 @@ import { haalActieveWeek, sleutels, useActieveWeek } from './queries'
 import { volgendeWeek } from './week'
 import type { Bestelling, BronType, DeelStatus, Recept } from './database.types'
 import type { Concept } from './extractie'
+import { isImport } from './importeren'
 import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
 import { maaltijdboxKosten } from './besparing'
 import type { Verpakking } from './eenheden'
@@ -24,7 +25,17 @@ export interface OntdekFilters {
   alleenBudget: boolean
   /** Laat recepten weg die een van deze allergenen vast bevatten (lib/allergenen.ts). */
   zonderAllergenen: string[]
+  /** Alleen je eigen recepten: toegevoegd, geïmporteerd en samengesteld. */
+  mijn?: boolean
 }
+
+/**
+ * Wat in Ontdekken tussen de hoofdgerechten staat. Als lijst van wat wél mag:
+ * zo werkt het ook tegen een database die een nieuwe waarde nog niet kent.
+ * Zelf samengestelde menu's horen er niet bij (een bijgerecht voor tien is
+ * geen doordeweeks hoofdgerecht); die staan onder "Mijn recepten".
+ */
+const ONTDEK_BRON_TYPES: BronType[] = ['scraper', 'kookboek_foto', 'eigen_input', 'website', 'screenshot', 'instagram']
 
 const PER_PAGINA = 30
 
@@ -43,11 +54,11 @@ interface Filterbaar {
  * uiteenlopen. De casts zijn nodig omdat de volledige builder-typen van
  * postgrest-js TypeScript in een oneindige lus laten lopen.
  */
-function metFilters<T>(vraag: T, filters: OntdekFilters): T {
-  // Zelf samengestelde menu's staan bij Mijn recepten, niet tussen de
-  // hoofdgerechten. Als lijst van wat wél mag: zo werkt het ook tegen een
-  // database die de waarde 'samengesteld' nog niet kent.
-  let v = (vraag as unknown as Filterbaar).in('bron_type', ['scraper', 'kookboek_foto', 'eigen_input'])
+function metFilters<T>(vraag: T, filters: OntdekFilters, userId: string | null): T {
+  let v = vraag as unknown as Filterbaar
+  // Mijn recepten: alles wat van jou is, ook een samengesteld menu. Anders de pool en je eigen hoofdgerechten.
+  if (filters.mijn && userId) v = v.eq('user_id', userId)
+  else v = v.in('bron_type', ONTDEK_BRON_TYPES)
   const zoek = filters.zoek.trim()
   if (zoek) {
     // Zoek op titel én op de Nederlandse titel; PostgREST's `or` wil
@@ -106,8 +117,9 @@ export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []
     initialPageParam: { fase: voorkeur.length > 0 ? 'voorkeur' : 'rest', van: 0 } as OntdekPlek,
     getNextPageParam: (laatste: OntdekPagina) => laatste.volgende,
     queryFn: async ({ pageParam }): Promise<OntdekPagina> => {
+      const userId = filters.mijn ? await huidigeUserId() : null
       const haal = async (fase: OntdekPlek['fase'], van: number): Promise<Recept[]> => {
-        const vraag = metKeukenFase(metFilters(db.from('recepten').select('*'), filters), fase, voorkeur)
+        const vraag = metKeukenFase(metFilters(db.from('recepten').select('*'), filters, userId), fase, voorkeur)
         // Gemengde, vaste volgorde met gemiddeld meer vega bovenaan; zie migratie
         // 20260929000000_ontdek_volgorde.sql. `id` als tiebreaker voor stabiele pagina's.
         const { data, error } = await vraag
@@ -147,8 +159,9 @@ export function useOntdekTelling(filters: OntdekFilters) {
   return useQuery({
     queryKey: ['ontdek-telling', filters],
     queryFn: async (): Promise<number> => {
+      const userId = filters.mijn ? await huidigeUserId() : null
       const { count, error } = await metFilters(
-        db.from('recepten').select('id', { count: 'exact', head: true }), filters,
+        db.from('recepten').select('id', { count: 'exact', head: true }), filters, userId,
       )
       if (error) throw error
       return count ?? 0
@@ -400,6 +413,21 @@ export interface OpslaanInvoer {
   concept: Concept
   bronType: BronType
   deelStatus: DeelStatus
+  /** Bij een import: de link, de maker (@account of sitenaam) en de scan waar het uit kwam. */
+  url?: string | null
+  bronMaker?: string | null
+  scanId?: string | null
+}
+
+/** De tekst in `recepten.bron`: waar het vandaan komt, in één woord. */
+function bronTekst(bronType: BronType, bronMaker: string | null | undefined): string {
+  switch (bronType) {
+    case 'kookboek_foto': return 'Kookboek'
+    case 'instagram': return bronMaker ? `Instagram · ${bronMaker}` : 'Instagram'
+    case 'website': return bronMaker ?? 'Website'
+    case 'screenshot': return 'Screenshot'
+    default: return 'Eigen recept'
+  }
 }
 
 /**
@@ -412,17 +440,23 @@ export interface OpslaanInvoer {
 export function useReceptOpslaan() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async ({ concept, bronType, deelStatus }: OpslaanInvoer): Promise<string> => {
+    mutationFn: async ({ concept, bronType, deelStatus, url, bronMaker, scanId }: OpslaanInvoer): Promise<string> => {
       if (bronType === 'kookboek_foto' && deelStatus !== 'prive') {
         throw new Error('Een recept uit een kookboek kan niet gedeeld worden.')
+      }
+      // Geïmporteerd is van de maker: nooit in de pool (check-constraint import_altijd_prive).
+      if (isImport(bronType) && deelStatus !== 'prive') {
+        throw new Error('Een geïmporteerd recept kan niet gedeeld worden.')
       }
 
       const userId = await huidigeUserId()
       const { data, error } = await db.from('recepten').insert({
         user_id: userId,
         titel: concept.titel.trim(),
-        bron: bronType === 'kookboek_foto' ? 'Kookboek' : 'Eigen recept',
-        url: null,
+        bron: bronTekst(bronType, bronMaker),
+        url: url ?? null,
+        bron_maker: bronMaker ?? null,
+        scan_id: scanId ?? null,
         personen: concept.personen,
         bereidingstijd_minuten: concept.bereidingstijd_minuten ?? null,
         keuken: concept.keuken ?? null,
@@ -434,6 +468,8 @@ export function useReceptOpslaan() {
         prijs_pp_schatting: schatPrijsPerPersoon(concept),
       }).select('id').single()
 
+      // Dezelfde link twee keer (unieke index recepten_url_uniek, per gebruiker).
+      if (error?.code === '23505' && url) throw new Error('Dit recept staat al bij je recepten.')
       if (error) throw error
       return (data as { id: string }).id
     },

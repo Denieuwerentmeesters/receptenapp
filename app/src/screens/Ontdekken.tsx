@@ -52,8 +52,19 @@ const onthouden = {
   // vaak heeft maar één iemand in het gezin een allergie, of eet er iemand mee
   // die iets niet mag — maar het moet niet ongemerkt blijven hangen.
   zonder: null as string[] | null,
+  // Alleen je eigen recepten (toegevoegd, geïmporteerd, samengesteld).
+  mijn: false,
   scrollTop: 0,
 }
+
+/** De keuzes achter de knop Toevoegen; de route staat in de URL van /toevoegen. */
+const TOEVOEGEN = [
+  { label: 'Plak een link', naar: '/toevoegen?route=link' },
+  { label: 'Kies screenshots', naar: '/toevoegen?route=screenshots' },
+  { label: 'Foto van een kookboek', naar: '/toevoegen?route=kookboek' },
+  { label: 'Typ zelf', naar: '/toevoegen?route=eigen' },
+  { label: 'Laat Pinch een menu samenstellen', naar: '/samenstellen' },
+]
 
 /**
  * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en dieet —
@@ -68,6 +79,8 @@ export function Ontdekken() {
   const [dieet, setDieet] = useState(onthouden.dieet)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
   const [zonder, setZonder] = useState(onthouden.zonder)
+  const [mijn, setMijn] = useState(onthouden.mijn)
+  const [toevoegenOpen, setToevoegenOpen] = useState(false)
   // Welke keuzelijst onderin openstaat: kooktijd, dieet of allergieën.
   const [open, setOpen] = useState<'tijd' | 'dieet' | 'allergie' | null>(null)
   const allergieen = useAllergieen()
@@ -75,8 +88,8 @@ export function Ontdekken() {
   const voorkeurKeukens = useVoorkeuren().data?.favoriete_keukens ?? GEEN
 
   const filters: OntdekFilters = useMemo(
-    () => ({ zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen }),
-    [zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen],
+    () => ({ zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen, mijn }),
+    [zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen, mijn],
   )
 
   // Ander filter = andere lijst: dan hoort de oude scrollpositie er niet meer bij.
@@ -84,11 +97,11 @@ export function Ontdekken() {
   useEffect(() => {
     if (vorigeFilters.current === filters) return
     vorigeFilters.current = filters
-    Object.assign(onthouden, { zoek, maxTijd, keuken, dieet, alleenBudget, zonder, scrollTop: 0 })
+    Object.assign(onthouden, { zoek, maxTijd, keuken, dieet, alleenBudget, zonder, mijn, scrollTop: 0 })
     scroller.current?.scrollTo({ top: 0 })
-  }, [filters, zoek, maxTijd, keuken, dieet, alleenBudget, zonder])
+  }, [filters, zoek, maxTijd, keuken, dieet, alleenBudget, zonder, mijn])
 
-  const resultaten = useOntdek(filters, voorkeurKeukens)
+  const resultaten = useOntdek(filters, mijn ? GEEN : voorkeurKeukens)
   const telling = useOntdekTelling(filters)
   const keukens = useKeukens()
   // Je voorkeurskeukens vooraan in de rij; daarbinnen blijft de volgorde op aantal.
@@ -141,16 +154,17 @@ export function Ontdekken() {
         {/* Op 26 past de titel niet naast de knop: die viel rechts buiten beeld. Op een heel smal scherm zakt de knop een regel. */}
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '8px 12px' }}>
           <Titel grootte={20}>Ontdekken</Titel>
-          {/* Klein gehouden: de recepten blijven het belangrijkste op dit scherm. */}
+          {/* Klein gehouden: de recepten blijven het belangrijkste op dit scherm.
+              Eén knop voor alles wat erbij kan: link, screenshots, kookboek, zelf typen, menu. */}
           <button
-            onClick={() => navigeer('/samenstellen')}
+            onClick={() => setToevoegenOpen(true)}
             style={{
               flex: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, border: 'none',
               borderRadius: 'var(--radius-full)', padding: '7px 12px 7px 9px', cursor: 'pointer',
               background: 'var(--c-paper)', color: 'var(--c-ink)',
               fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 800,
             }}
-          ><Icon name="chefHat" size={16} />Zelf samenstellen</button>
+          ><Icon name="plus" size={16} />Toevoegen</button>
         </div>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10, marginTop: 16,
@@ -177,6 +191,25 @@ export function Ontdekken() {
       </Kop>
 
       <div style={{ flex: 'none', padding: '14px 22px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {/* Alle recepten of alleen die van jou: wat je toevoegde, importeerde of liet samenstellen. */}
+        <div role="tablist" aria-label="Welke recepten" style={{
+          display: 'flex', background: 'rgba(20,20,20,0.08)', borderRadius: 'var(--radius-full)', padding: 3,
+        }}>
+          {([false, true] as const).map((waarde) => (
+            <button
+              key={String(waarde)}
+              role="tab"
+              aria-selected={mijn === waarde}
+              onClick={() => setMijn(waarde)}
+              style={{
+                flex: 1, border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-full)', padding: '9px 12px',
+                background: mijn === waarde ? 'var(--c-paper)' : 'transparent',
+                color: 'var(--c-ink)', fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 800,
+                boxShadow: mijn === waarde ? '0 1px 4px rgba(20,20,20,0.12)' : 'none',
+              }}
+            >{waarde ? 'Mijn recepten' : 'Alle recepten'}</button>
+          ))}
+        </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
           <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setDieet([]); setAlleenBudget(false) }}>
             Alles
@@ -209,11 +242,23 @@ export function Ontdekken() {
             anders zie je 'm even bij elke filterwissel, en na een herstart uit
             de cache zelfs terwijl de goede uitslag nog binnenkomt. */}
         {recepten.length === 0 && !resultaten.isFetching ? (
-          <Leeg
-            icoon="search"
-            kop="Niets gevonden"
-            tekst={zoek ? `Geen recept voor "${zoek}". Probeer een ingrediënt, bijvoorbeeld aubergine.` : 'Geen recept binnen deze filters.'}
-          />
+          mijn && !zoek && !heeftFilter && zonderAllergenen.length === 0 ? (
+            <Leeg
+              icoon="plus"
+              kop="Nog geen eigen recepten"
+              tekst="Zet je eerste recept erbij. Plak een link van Instagram of een website, of kies screenshots."
+              knop="Plak een link"
+              onKnop={() => navigeer('/toevoegen?route=link')}
+            />
+          ) : (
+            <Leeg
+              icoon="search"
+              kop="Niets gevonden"
+              tekst={zoek ? `Geen recept voor "${zoek}". Probeer een ingrediënt, bijvoorbeeld aubergine.` : 'Geen recept binnen deze filters.'}
+              knop={zoek ? 'Plak de link van je eigen recept' : undefined}
+              onKnop={() => navigeer('/toevoegen?route=link')}
+            />
+          )
         ) : (
           <Inhoud
             style={{ gap: 12 }}
@@ -261,6 +306,14 @@ export function Ontdekken() {
           </Inhoud>
         )}
       </Grens>
+
+      <Dialoog
+        open={toevoegenOpen}
+        kop="Recept toevoegen"
+        tekst="Waar komt het vandaan?"
+        acties={TOEVOEGEN.map((k, i) => ({ label: k.label, hoofd: i === 0, onClick: () => { setToevoegenOpen(false); navigeer(k.naar) } }))}
+        onSluit={() => setToevoegenOpen(false)}
+      />
 
       <Dialoog
         open={open === 'tijd'}
