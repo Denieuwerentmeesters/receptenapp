@@ -13,3 +13,11 @@ export function weekLabel(weekStartDatum: string): string {
   const d = new Date(`${weekStartDatum}T00:00:00`)
   return `${d.getDate()} ${MAANDEN[d.getMonth()]}`
 }
+
+/** De maandag een week later: "Komende week" naast "Deze week". */
+export function volgendeWeek(weekStartDatum = weekStart()): string {
+  // Midden op de dag rekenen: dan schuift de zomertijd de datum niet een dag op.
+  const d = new Date(`${weekStartDatum}T12:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + 7)
+  return d.toISOString().slice(0, 10)
+}

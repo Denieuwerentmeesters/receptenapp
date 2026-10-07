@@ -238,6 +238,31 @@ vragen, gedeeld door de inhoud van de verpakking.
 - **El, tl, takjes en tenen tellen niet mee:** dat is nooit meer dan één
   verpakking.
 
+## Deze week en komende week
+
+Het startscherm (`src/screens/DezeWeek.tsx`) heeft twee weken naast elkaar,
+met twee chips erboven. Vegen of tikken: de baan is een scroll-snap-container,
+dus de schuifanimatie is van de browser.
+
+- **Komende week is gewoon de volgende `week_start_datum`** (`volgendeWeek` in
+  `src/lib/week.ts`). De generator draait er ook voor; die slaat over wat de
+  afgelopen vier weken getoond is, dus de suggesties verschillen van deze week.
+- **Het hartje bewaart voor komende week én als favoriet**
+  (`components/Hartje.tsx`), in Ontdekken en op het receptscherm. Nog een tik
+  haalt het uit komende week; favoriet blijft het (weghalen bij Favorieten).
+  De eerste keer komt er uitleg (`pinch-komende-week-uitleg` in `localStorage`).
+- **Er is één boodschappenlijst.** "Zet op je lijst" in komende week verhuist
+  het recept naar deze week.
+- **Besteld = een rij in `bestelling` voor die week.** Dan toont Deze week
+  alleen nog wat je koos, en wordt de knop onder een gekocht recept "Koken"
+  (`useWeekRecepten` in `src/lib/weekoverzicht.ts`; de onderbalk telt hetzelfde).
+- **Van elke soort gerecht één suggestie per week** (`src/lib/gerechtsoort.ts`):
+  de soort komt uit de titel, want er is geen kolom voor. Twee keer wraps? Vul
+  die lijst aan. Wat je zelf koos blijft altijd staan.
+- **Nog niet gebouwd:** de vraag "Gekookt? Kan deze van je lijst?" na het
+  koken, komende week die doorschuift als alles gekookt is, en de vraag een
+  week na het bestellen. De week wisselt nu nog op maandag.
+
 ## Recepten toevoegen en de adminrol
 
 Twee routes (plan §7): een foto van een kookboekpagina, of je eigen recept in

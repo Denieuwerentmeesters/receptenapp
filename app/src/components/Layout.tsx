@@ -5,7 +5,9 @@ import {
 import { createPortal } from 'react-dom'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
-import { useBoodschappen, useDezeWeek } from '../lib/queries'
+import { useBoodschappen } from '../lib/queries'
+import { useWeekRecepten } from '../lib/weekoverzicht'
+import { weekStart } from '../lib/week'
 import { voegSamen } from '../lib/lijst'
 
 /**
@@ -274,7 +276,8 @@ function Teller({ aantal, label }: { aantal: number; label: string }) {
 
 export function OnderBalk() {
   const { balkPlek } = useContext(OnderkantContext)
-  const dezeWeek = useDezeWeek()
+  // Zelfde telling als het scherm Deze week: na het bestellen alleen wat je koos.
+  const dezeWeek = useWeekRecepten(weekStart())
   const boodschappen = useBoodschappen()
   // Zelfde telling als het Boodschappen-scherm: samengevoegde regels, nog niet afgevinkt.
   const producten = useMemo(
@@ -282,7 +285,7 @@ export function OnderBalk() {
     [boodschappen.data],
   )
   const tellers: Record<string, { aantal: number; label: string }> = {
-    '/deze-week': { aantal: dezeWeek.data?.length ?? 0, label: 'recepten deze week' },
+    '/deze-week': { aantal: dezeWeek.recepten.length, label: 'recepten deze week' },
     '/boodschappen': { aantal: producten, label: 'producten op je lijst' },
   }
 
