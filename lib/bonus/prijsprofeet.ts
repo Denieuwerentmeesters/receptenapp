@@ -1,7 +1,7 @@
 /**
  * Bonus en aanbiedingen van AH en Jumbo, via PrijsProfeet (plan "gemak en
- * bonus", onderdeel 5). Gedeeld door de nachtelijke cron (api/bonus.ts) en de
- * proef (scripts/bonus_proef.ts).
+ * bonus", onderdeel 5). Gedeeld door de nachtelijke ronde
+ * (scripts/bonus_ophalen.ts) en de proef (scripts/bonus_proef.ts).
  *
  * Voorwaarden (prijsprofeet.nl/api-voorwaarden, versie 1.10):
  * - lopende en komende acties in hun geheel ophalen via /api/v1/products mag

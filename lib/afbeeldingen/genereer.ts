@@ -21,7 +21,7 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import { put } from '@vercel/blob'
 import sharp from 'sharp'
-import { bouwPrompt, type ReceptVoorPrompt } from './prompt'
+import { bouwPrompt, type ReceptVoorPrompt } from './prompt.js'
 
 export const STANDAARD_MODEL = 'gemini-3.1-flash-lite-image'
 /** Breedte van de opgeslagen WebP. Kaarten in de app zijn hooguit ~360 px breed,

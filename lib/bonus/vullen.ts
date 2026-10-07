@@ -40,7 +40,7 @@ type Sql = NeonQueryFunction<false, false>
  * transactie, samen met recept_bonus (welke recepten daardoor in de bonus
  * zijn; die weegt mee in genereer_weekmenu). Mislukt één winkel, dan blijft
  * die staan zoals hij was.
- * Gebruikt door de cron (api/bonus.ts) en scripts/bonus_ophalen.ts.
+ * Gebruikt door scripts/bonus_ophalen.ts, elke nacht via .github/workflows/bonus.yml.
  */
 export async function vulBonus(sql: Sql, apiKey?: string): Promise<Record<Winkel, { acties: number; gekoppeld: number; recepten: number } | { fout: string }>> {
   const [ah, jumbo, recepten] = await Promise.all([
