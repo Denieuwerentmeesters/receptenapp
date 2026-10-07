@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { kiesWeek, vegaDoel, type Kandidaat } from './weekvullen'
+import { kiesWeek, vegaDoel, vegaMinimumVoor, type Kandidaat } from './weekvullen'
 
 let n = 0
 function recept(deel: Partial<Kandidaat> & { ingr?: string[] } = {}): Kandidaat {
@@ -21,6 +21,23 @@ describe('vegaDoel', () => {
     expect(vegaDoel({ vega_minimum: 3, kookavonden: 4 })).toBe(1)
     expect(vegaDoel({ vega_minimum: 10, kookavonden: 3 })).toBe(3)
     expect(vegaDoel({ vega_minimum: 0, kookavonden: 7 })).toBe(0)
+  })
+})
+
+describe('vegaMinimumVoor', () => {
+  test('geeft een "x van de 10" die weer op je avonden uitkomt', () => {
+    for (let avonden = 1; avonden <= 7; avonden++) {
+      for (let vega = 0; vega <= avonden; vega++) {
+        const minimum = vegaMinimumVoor(vega, avonden)
+        expect(vegaDoel({ vega_minimum: minimum, kookavonden: avonden })).toBe(vega)
+      }
+    }
+  })
+
+  test('blijft bij de verhouding', () => {
+    expect(vegaMinimumVoor(2, 4)).toBe(5)
+    expect(vegaMinimumVoor(0, 5)).toBe(0)
+    expect(vegaMinimumVoor(7, 7)).toBe(10)
   })
 })
 

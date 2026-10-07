@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Route, HashRouter as Router, Routes } from 'react-router-dom'
+import { Navigate, Outlet, Route, HashRouter as Router, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { DezeWeek } from './screens/DezeWeek'
 import { Kookmodus } from './screens/Kookmodus'
 import { Ontdekken } from './screens/Ontdekken'
@@ -16,10 +16,13 @@ import { Boodschappen } from './screens/Boodschappen'
 import { Instellingen } from './screens/Instellingen'
 import { Inloggen } from './screens/Inloggen'
 import { Account } from './screens/Account'
+import { Onboarding } from './screens/Onboarding'
+import { Uitleg } from './components/Uitleg'
 import { Fout, Laden } from './components/Staten'
 import { huidigeSessie } from './lib/auth'
 import { zorgVoorGebruiker } from './lib/gebruiker'
 import { foutTekst } from './lib/fouten'
+import { useVoorkeuren } from './lib/queries'
 
 type Status = 'bezig' | 'uitgelogd' | 'klaar' | 'fout'
 
@@ -74,6 +77,9 @@ export default function App() {
     // het bestandssysteem en is er geen server die diepe paden kan serveren.
     <Router>
       <Routes>
+        <Route element={<Poort />}>
+        <Route path="/welkom" element={<Onboarding />} />
+        <Route path="/uitleg" element={<UitlegTerugkijken />} />
         <Route path="/" element={<Navigate to="/deze-week" replace />} />
         <Route path="/deze-week" element={<DezeWeek />} />
         {/* Oude paden: Vandaag en Weekmenu zijn samen "Deze week" geworden. */}
@@ -94,7 +100,33 @@ export default function App() {
         <Route path="/instellingen" element={<Instellingen />} />
         <Route path="/account" element={<Account />} />
         <Route path="*" element={<Navigate to="/deze-week" replace />} />
+        </Route>
       </Routes>
     </Router>
   )
+}
+
+/**
+ * Wie de onboarding nog niet gehad heeft gaat eerst naar /welkom, welk scherm
+ * hij ook opent. Dat moet vóór Deze week: daar maakt de generator het
+ * weekmenu, en dat hoort pas te gebeuren als je voorkeuren er staan.
+ *
+ * Alleen null telt als "nog niet". Ontbreekt de kolom (de migratie is nog niet
+ * gedraaid, of de voorkeuren komen uit een oude kopie op je toestel), dan
+ * laten we je gewoon door.
+ */
+function Poort() {
+  const voorkeuren = useVoorkeuren()
+  const plek = useLocation()
+  if (voorkeuren.isPending) return <Laden tekst="De app wordt klaargezet" />
+  const nieuw = voorkeuren.data?.onboarding_klaar_op === null
+  if (nieuw && plek.pathname !== '/welkom') return <Navigate to="/welkom" replace />
+  return <Outlet />
+}
+
+/** "Bekijk de uitleg" in Instellingen: alleen de vijf kaarten, zonder de vragen. */
+function UitlegTerugkijken() {
+  const navigeer = useNavigate()
+  const terug = () => navigeer('/instellingen', { replace: true })
+  return <Uitleg laatsteKnop="Klaar" overslaanTekst="Sluit" onKlaar={terug} onOverslaan={terug} onTerug={terug} />
 }

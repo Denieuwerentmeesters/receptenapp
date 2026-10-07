@@ -17,7 +17,7 @@ lib/afbeeldingen/    Prompt-opbouw en generatie van receptafbeeldingen (gedeeld 
                      api/afbeeldingen.ts en scripts/genereer_afbeeldingen.ts)
 app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
   src/ds/            Design system uit Claude Design: tokens + componenten
-  src/screens/       Weekmenu, Recept, Boodschappen, Instellingen, Inloggen
+  src/screens/       Weekmenu, Recept, Boodschappen, Instellingen, Inloggen, Onboarding
   src/lib/           auth, db, queries, schaal, ah, week, config, fouten
 db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
 scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
@@ -468,6 +468,38 @@ in twee fasen op: voorkeur, dan de rest) en zet hun chips vooraan.
   komt er een dienst bij, werk dan beide talen bij én de privacyvragen in
   App Store Connect. Beloof er niets wat de app niet doet.
 - De rest van de aanmelding staat in `docs/app-store/checklist.md`.
+
+## Onboarding
+
+Een nieuwe gebruiker ziet na het aanmelden één keer een welkomscherm, vijf
+uitlegkaarten en vijf vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
+staat daarna op Deze week.
+
+- **`Poort` in `App.tsx` stuurt naar `/welkom`** zolang
+  `gebruiker_voorkeuren.onboarding_klaar_op` null is. Alleen null telt:
+  ontbreekt de kolom, dan mag je door. Wie er vóór de migratie al was heeft
+  een datum gekregen.
+- **De antwoorden gaan naar dezelfde kolommen als Instellingen.** Geen
+  tweede plek om iets in te stellen. De chips voor keukens en allergieën
+  staan in `src/components/voorkeuren/` en worden door beide gebruikt.
+- **Het weekmenu wordt pas na de vragen gemaakt.** `genereer_weekmenu` is
+  idempotent per week; draait hij eerder, dan zijn de tien suggesties op de
+  standaardwaarden gemaakt. De poort moet dus vóór Deze week blijven, en de
+  onboarding roept `haalDezeWeek` pas aan bij "Vul mijn week".
+- **"Vul mijn week" zet direct recepten op je lijst** (`kiesWeek`, zoveel als
+  `kookavonden`), zonder bevestigscherm. Vegetarisch vraag je als "2 van je
+  4 avonden"; `vegaMinimumVoor` rekent dat om naar "x van de 10".
+- **Keukens komen uit de pool** (`useKeukens`), niet uit een vaste lijst: een
+  chip die bij geen recept hoort doet niets in de generator.
+- **Opslaan per stap**, en waar je was staat in `localStorage`
+  (`pinch-onboarding`). De winkelvraag kun je niet overslaan.
+- **Meten:** zes events in `onboarding_event` (`src/lib/meten.ts`). Alleen
+  welke kaart of vraag, nooit het antwoord: een allergie hoort daar niet.
+  Uitlezen gaat met de hand in de database; de app kan alleen schrijven.
+- **Terugkijken:** Instellingen → Over de app → "Bekijk de uitleg" (`/uitleg`),
+  alleen de kaarten.
+- **Nog niet gebouwd:** wie via een uitnodiging bij een huishouden komt
+  krijgt nu de hele onboarding, niet alleen de uitleg.
 
 ## Wat er nog niet is
 

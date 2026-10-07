@@ -1,11 +1,11 @@
+import { useNavigate } from 'react-router-dom'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens } from '../components/Staten'
 import { useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import type { Voorkeuren } from '../lib/database.types'
 import { BONUS_BRON } from '../lib/bonus'
 import { BonusBron } from '../components/Bonus'
-import { Chip } from '../ds'
-import { ALLERGENEN } from '../lib/allergenen'
+import { AllergieKeuze, KeukenKeuze } from '../components/voorkeuren'
 import { HuishoudenBlok } from '../components/Huishouden'
 import { useKeukens } from '../lib/queries2'
 
@@ -16,6 +16,7 @@ export function Instellingen() {
   const opslaan = useVoorkeurenOpslaan()
   const zet = (wijziging: Partial<Voorkeuren>) => opslaan.mutate(wijziging)
   const keukens = useKeukens()
+  const navigeer = useNavigate()
 
   return (
     <Scherm>
@@ -67,28 +68,13 @@ export function Instellingen() {
                       bovenaan in Ontdekken; de rest komt nog af en toe langs. Tik uit wat je
                       minder graag eet.
                     </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingBottom: 14 }}>
-                      {(() => {
-                        // Een lege lijst betekent "alles aan": zo staat het standaard,
-                        // en zo telt een keuken die er later bijkomt vanzelf mee.
-                        const alle = keukens.data.map((k) => k.keuken)
-                        const mijn = v.favoriete_keukens ?? []
-                        const gekozen = mijn.length > 0 ? alle.filter((k) => mijn.includes(k)) : alle
-                        return alle.map((k) => {
-                          const aan = gekozen.includes(k)
-                          return (
-                            <Chip
-                              key={k}
-                              selected={aan}
-                              onClick={() => {
-                                const nieuw = aan ? gekozen.filter((x) => x !== k) : [...gekozen, k]
-                                // Alles aan of alles uit is hetzelfde: geen voorkeur.
-                                zet({ favoriete_keukens: nieuw.length === alle.length ? [] : nieuw })
-                              }}
-                            >{k}</Chip>
-                          )
-                        })
-                      })()}
+                    <div style={{ paddingBottom: 14 }}>
+                      <KeukenKeuze
+                        keukens={keukens.data.map((k) => k.keuken)}
+                        gekozen={v.favoriete_keukens ?? []}
+                        leegIsAlles
+                        onWijzig={(nieuw) => zet({ favoriete_keukens: nieuw })}
+                      />
                     </div>
                   </Sectie>
                 )}
@@ -102,18 +88,8 @@ export function Instellingen() {
                     kan, dan krijg je op je lijst bijvoorbeeld glutenvrije pasta of havermelk. Staat
                     er een product in waarvan alleen het etiket het zeker weet, dan zeggen we dat erbij.
                   </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingBottom: 14 }}>
-                    {ALLERGENEN.map((a) => {
-                      const mijn = v.allergieen ?? []
-                      const aan = mijn.includes(a.id)
-                      return (
-                        <Chip
-                          key={a.id}
-                          selected={aan}
-                          onClick={() => zet({ allergieen: aan ? mijn.filter((x) => x !== a.id) : [...mijn, a.id] })}
-                        >{a.label}</Chip>
-                      )
-                    })}
+                  <div style={{ paddingBottom: 14 }}>
+                    <AllergieKeuze gekozen={v.allergieen ?? []} onWijzig={(nieuw) => zet({ allergieen: nieuw })} />
                   </div>
                 </Sectie>
 
@@ -180,6 +156,15 @@ export function Instellingen() {
                     {BONUS_BRON.uitleg}
                   </p>
                   <BonusBron />
+                  <button
+                    onClick={() => navigeer('/uitleg')}
+                    style={{
+                      alignSelf: 'flex-start', marginTop: 12, padding: '10px 0', border: 'none',
+                      background: 'transparent', cursor: 'pointer', color: 'var(--c-red)',
+                      fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700,
+                      textDecoration: 'underline', textUnderlineOffset: 3,
+                    }}
+                  >Bekijk de uitleg</button>
                 </Sectie>
               </Inhoud>
             </>

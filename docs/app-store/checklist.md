@@ -47,6 +47,7 @@ Alles is "gekoppeld aan de gebruiker", niets wordt gebruikt om te volgen
 | Gebruikerscontent → overige content | eigen recepten, lijst | App-functionaliteit |
 | Aankopen → aankoopgeschiedenis | bevestigde bestellingen (Bespaard!) | App-functionaliteit |
 | Identificatiemiddelen → gebruikers-ID | het account-id | App-functionaliteit |
+| Gebruiksgegevens → productinteractie | stappen in de onboarding (`onboarding_event`) | Analyse |
 
 Foto's hoef je niet op te geven: een kookboekfoto wordt uitgelezen en niet
 bewaard.
