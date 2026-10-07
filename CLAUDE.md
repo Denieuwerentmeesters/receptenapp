@@ -516,6 +516,11 @@ staat daarna op Deze week.
   Uitlezen gaat met de hand in de database; de app kan alleen schrijven.
 - **Terugkijken:** Instellingen → Over de app → "Bekijk de uitleg" (`/uitleg`),
   alleen de kaarten.
+- **De uitlegkaarten zijn schermafbeeldingen van de app zelf** met één ding
+  uitgelicht (`components/Uitleg.tsx`, `src/assets/uitleg/`), geen
+  nagetekende schermen. Verandert Ontdekken, Deze week, de Voorraadkast of
+  de Lijst zichtbaar, maak dan een nieuwe afbeelding (780 × 1688 px, een
+  telefoon van 390 breed) en zet het uitgelichte vlak opnieuw.
 - **Nog niet gebouwd:** wie via een uitnodiging bij een huishouden komt
   krijgt nu de hele onboarding, niet alleen de uitleg.
 
