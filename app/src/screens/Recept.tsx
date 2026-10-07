@@ -8,12 +8,11 @@ import { Inhoud, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useOpLijst } from '../components/OpLijst'
-import { sleutels, useDezeWeek, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { sleutels, useActieveWeek, useDezeWeek, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { deel, deelLink, heeftDeelvenster, heeftLink, maakDeellink, magDelen, whatsappLink } from '../lib/delen'
 import { foutTekst } from '../lib/fouten'
 import { isBudget } from '../lib/prijsschatting'
 import { ingredientKey, schaalIngredienten } from '../lib/schaal'
-import { weekStart } from '../lib/week'
 import { tokoIngredienten, tokoProduct } from '../lib/toko'
 import { openBijWinkel } from '../lib/ah'
 import { dieetLabels } from '../lib/dieet'
@@ -28,7 +27,7 @@ export function Recept() {
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
   const opslaan = useVoorkeurenOpslaan()
-  const week = weekStart()
+  const week = useActieveWeek()
   const dezeWeek = useDezeWeek(week)
   const { voegToe, dialoog, bezig } = useOpLijst(week)
   // Het hartje werkt hier net als in Ontdekken: bewaren voor "Komende week".

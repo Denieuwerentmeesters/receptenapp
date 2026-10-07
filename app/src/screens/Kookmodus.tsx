@@ -3,8 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
 import { Scherm } from '../components/Layout'
 import { Grens } from '../components/Staten'
-import { useRecept, useVoorkeuren } from '../lib/queries'
-import { useGekooktMarkeren } from '../lib/queries2'
+import { useDezeWeek, useRecept, useVoorkeuren } from '../lib/queries'
+import { useWeekWissel } from '../lib/weekwissel'
+import { Dialoog } from '../components/Dialoog'
 import { schaalIngredienten } from '../lib/schaal'
 import { formatteerDuur, tijdenUitStap } from '../lib/kookmodus'
 import { bereidGeluidVoor, houdSchermAan, planWekker, trekWekkerIn, wekkerAfgelopen } from '../lib/kookwekker'
@@ -39,7 +40,24 @@ export function Kookmodus() {
   const navigeer = useNavigate()
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
-  const gekooktMarkeren = useGekooktMarkeren()
+  const dezeWeek = useDezeWeek()
+  const { gekookt } = useWeekWissel()
+  // Na de laatste stap: gekookt, en mag het van je lijst? Alleen voor een recept uit je week.
+  const [klaarVraag, setKlaarVraag] = useState(false)
+  const inWeek = Boolean(dezeWeek.data?.some((r) => r.id === id && r.gekozen))
+
+  /** Legt vast dat je kookte en gaat terug naar je week; schoof die door, dan zegt Deze week dat. */
+  async function rondAf(opruimen: boolean) {
+    setKlaarVraag(false)
+    if (!id) return
+    try {
+      const { doorgeschoven } = await gekookt.mutateAsync({ receptId: id, opruimen })
+      navigeer('/deze-week', { state: doorgeschoven ? { doorgeschoven: true } : null })
+    } catch {
+      // Je eten staat klaar; het vinkje komt de volgende keer wel.
+      navigeer('/deze-week')
+    }
+  }
 
   const [stap, setStap] = useState(0)
   const [timer, setTimer] = useState<Timer | null>(null)
@@ -257,8 +275,8 @@ export function Kookmodus() {
                 <button
                   onClick={() => {
                     if (!laatste) { setStap(stap + 1); return }
-                    gekooktMarkeren.mutate({ receptId: r.id, gekookt: true })
-                    navigeer('/deze-week')
+                    if (inWeek) setKlaarVraag(true)
+                    else navigeer('/deze-week')
                   }}
                   style={{
                     flex: 1, height: 56, borderRadius: 'var(--radius-full)', border: 'none',
@@ -271,6 +289,17 @@ export function Kookmodus() {
           )
         })()}
       </Grens>
+      <Dialoog
+        open={klaarVraag}
+        kop="Gekookt?"
+        tekst={`Kan ${titel} van je lijst? Dan staat het niet meer in Deze week; je vindt het terug in je geschiedenis.`}
+        onSluit={() => setKlaarVraag(false)}
+        acties={[
+          { label: 'Ja, gekookt en van mijn lijst', hoofd: true, onClick: () => void rondAf(true) },
+          { label: 'Gekookt, maar laat staan', onClick: () => void rondAf(false) },
+          { label: 'Nog niet gekookt', onClick: () => { setKlaarVraag(false); navigeer('/deze-week') } },
+        ]}
+      />
     </Scherm>
   )
 }

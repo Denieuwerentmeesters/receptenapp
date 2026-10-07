@@ -4,8 +4,7 @@ import { effectieveUserId, gedeeld } from './huishouden'
 import { huidigeUserId } from './auth'
 import { ingredientKey } from './schaal'
 import { DROGE_KRUIDEN_KEY } from './kruiden'
-import { weekStart } from './week'
-import { sleutels } from './queries'
+import { haalActieveWeek, sleutels, useActieveWeek } from './queries'
 import type { Bestelling, BronType, DeelStatus, Recept } from './database.types'
 import type { Concept } from './extractie'
 import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
@@ -264,7 +263,7 @@ export function useVoorraad() {
 
 /** Zet een opgeraakt product op de lijst van deze week, tenzij het er al (open) op staat. */
 async function zetAanvullingOpLijst(naam: string, key: string) {
-  const week = weekStart()
+  const week = await haalActieveWeek()
   const al = await (await gedeeld('boodschappenlijst_item')).select('id')
     .eq('week_start_datum', week).eq('ingredient_key', key).eq('is_afgevinkt', false).limit(1)
   if (al.error) throw al.error
@@ -288,7 +287,7 @@ async function zetAanvullingOpLijst(naam: string, key: string) {
 /** Haalt een nog niet gekochte voorraadaanvulling weer van de lijst. */
 async function haalAanvullingWeg(key: string) {
   const { error } = await (await gedeeld('boodschappenlijst_item')).delete()
-    .eq('week_start_datum', weekStart()).eq('ingredient_key', key)
+    .eq('week_start_datum', await haalActieveWeek()).eq('ingredient_key', key)
     .eq('voorraad_aanvulling', true).eq('is_afgevinkt', false)
   if (error) throw error
 }
@@ -297,7 +296,7 @@ export function useVoorraadMuteren() {
   const qc = useQueryClient()
   const ververs = () => {
     void qc.invalidateQueries({ queryKey: ['voorraad'] })
-    void qc.invalidateQueries({ queryKey: sleutels.boodschappen(weekStart()) })
+    void qc.invalidateQueries({ queryKey: ['boodschappen'] })
   }
 
   /**
@@ -393,22 +392,6 @@ export function useGeschiedenis() {
   })
 }
 
-/** Markeert een recept als gekookt — of draait dat terug. */
-export function useGekooktMarkeren(week = weekStart()) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ receptId, gekookt }: { receptId: string; gekookt: boolean }) => {
-      const { error } = await (await gedeeld('weekmenu_gekozen'))
-        .update({ gekookt_op: gekookt ? new Date().toISOString() : null })
-        .eq('week_start_datum', week).eq('recept_id', receptId)
-      if (error) throw error
-    },
-    onSettled: () => {
-      void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
-      void qc.invalidateQueries({ queryKey: ['geschiedenis'] })
-    },
-  })
-}
 
 /* ------------------------------------------------- recept zelf toevoegen */
 
@@ -599,7 +582,9 @@ export interface BestellingInvoer {
  * tweede alleen de recepten die er nog niet bij zaten. De bezorgkosten van de
  * maaltijdbox tellen bij de eerste bestelling van de week.
  */
-export function useBestellingVastleggen(week = weekStart()) {
+export function useBestellingVastleggen(gevraagd?: string) {
+  const actief = useActieveWeek()
+  const week = gevraagd ?? actief
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (invoer: BestellingInvoer): Promise<Bestelling> => {
@@ -624,9 +609,27 @@ export function useBestellingVastleggen(week = weekStart()) {
         ...(invoer.bonusVoordeel ? { bonus_voordeel: invoer.bonusVoordeel } : {}),
       }).select().single()
       if (error) throw error
+
+      // De recepten zijn besteld: Deze week toont vanaf nu wat je gaat koken, en
+      // blijft deze week tot dat gebeurd is — ook als het intussen maandag wordt.
+      const ids = Object.keys(invoer.recepten)
+      if (ids.length > 0) {
+        const nu = new Date().toISOString()
+        const besteld = await (await gedeeld('weekmenu_gekozen')).update({ besteld_op: nu })
+          .eq('week_start_datum', week).in('recept_id', ids).is('besteld_op', null)
+        if (besteld.error) throw besteld.error
+        const vast = await (await gedeeld('gebruiker_voorkeuren')).update({ actieve_week: week })
+          .eq('user_id', await effectieveUserId())
+        if (vast.error) throw vast.error
+      }
+
       const b = data as Bestelling
       return { ...b, mandje_kosten: Number(b.mandje_kosten), maaltijdbox_kosten: Number(b.maaltijdbox_kosten), bonus_voordeel: Number(b.bonus_voordeel ?? 0) }
     },
-    onSuccess: () => { void qc.invalidateQueries({ queryKey: ['bestellingen'] }) },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['bestellingen'] })
+      void qc.invalidateQueries({ queryKey: sleutels.voorkeuren })
+      void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
+    },
   })
 }

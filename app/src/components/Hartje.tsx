@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Dialoog } from './Dialoog'
-import { useDezeWeek, useLijstActies } from '../lib/queries'
+import { useActieveWeek, useDezeWeek, useLijstActies } from '../lib/queries'
 import { useFavorietIds, useFavorietToggle } from '../lib/queries2'
 import { volgendeWeek } from '../lib/week'
 import type { Recept } from '../lib/database.types'
@@ -24,7 +24,7 @@ function uitlegGezien(): boolean {
  */
 export function useHartje() {
   const navigeer = useNavigate()
-  const week = volgendeWeek()
+  const week = volgendeWeek(useActieveWeek())
   const komendeWeek = useDezeWeek(week)
   const { zetInWeek, haalUitWeek } = useLijstActies(week)
   const favorietIds = useFavorietIds()

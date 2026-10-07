@@ -4,7 +4,7 @@ import { Button, Checkbox, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel, Voet } from '../components/Layout'
 import { Fout, Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
-import { useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
+import { useActieveWeek, useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
 import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from '../lib/queries2'
 import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
 import type { Bestelling, BoodschapItem } from '../lib/database.types'
@@ -21,7 +21,6 @@ import { inhoudTekst } from '../lib/eenheden'
 import { bonusVoor, bonusVoordeel, totTekst, useBonus } from '../lib/bonus'
 import { bezorgdagen, dagLabel, useBezorgkeuze } from '../lib/bezorgdag'
 import { BonusBron } from '../components/Bonus'
-import { weekStart } from '../lib/week'
 import {
   bewaarAllergieKeuzes, leesAllergieKeuzes, metAllergieKeuze, opsomming, treffers,
   useAllergeenRegels, useAllergieen, vervangerVoor, type AllergieKeuze,
@@ -53,7 +52,7 @@ interface Doorgestuurd {
 }
 
 export function Boodschappen() {
-  const week = weekStart()
+  const week = useActieveWeek()
   const navigeer = useNavigate()
 
   const boodschappen = useBoodschappen(week)

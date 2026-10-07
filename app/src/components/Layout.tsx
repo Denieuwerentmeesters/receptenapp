@@ -5,9 +5,8 @@ import {
 import { createPortal } from 'react-dom'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
-import { useBoodschappen } from '../lib/queries'
+import { useActieveWeek, useBoodschappen } from '../lib/queries'
 import { useWeekRecepten } from '../lib/weekoverzicht'
-import { weekStart } from '../lib/week'
 import { voegSamen } from '../lib/lijst'
 
 /**
@@ -277,7 +276,7 @@ function Teller({ aantal, label }: { aantal: number; label: string }) {
 export function OnderBalk() {
   const { balkPlek } = useContext(OnderkantContext)
   // Zelfde telling als het scherm Deze week: na het bestellen alleen wat je koos.
-  const dezeWeek = useWeekRecepten(weekStart())
+  const dezeWeek = useWeekRecepten(useActieveWeek())
   const boodschappen = useBoodschappen()
   // Zelfde telling als het Boodschappen-scherm: samengevoegde regels, nog niet afgevinkt.
   const producten = useMemo(

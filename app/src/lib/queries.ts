@@ -66,6 +66,26 @@ export function useVoorkeurenOpslaan() {
 /* --------------------------------------------------------------- deze week */
 
 /**
+ * De week die "Deze week" is. Meestal de kalenderweek; heb je besteld, dan
+ * blijft het de week van die bestelling tot alles gekookt is, en schuift
+ * komende week daarna door (lib/weekwissel.ts).
+ */
+export function actieveWeekVan(voorkeuren: Pick<Voorkeuren, 'actieve_week'> | null | undefined): string {
+  return voorkeuren?.actieve_week ?? weekStart()
+}
+
+export function useActieveWeek(): string {
+  return actieveWeekVan(useVoorkeuren().data)
+}
+
+/** Voor code buiten een component: leest de actieve week uit de database. */
+export async function haalActieveWeek(): Promise<string> {
+  const { data, error } = await (await gedeeld('gebruiker_voorkeuren')).select('actieve_week').single()
+  if (error) throw error
+  return actieveWeekVan(data as Pick<Voorkeuren, 'actieve_week'>)
+}
+
+/**
  * Een recept zoals het in "Deze week" staat: uit de tien suggesties van de
  * generator, of zelf toegevoegd via Ontdekken of Favorieten.
  */
@@ -78,6 +98,10 @@ export interface WeekRecept extends Recept {
   /** Staat nog op de boodschappenlijst: de gele rand. */
   opLijst: boolean
   gekooktOp: string | null
+  /** Naar AH of Jumbo gestuurd: de boodschappen zijn (bijna) in huis. */
+  besteldOp: string | null
+  /** Gekookt en van je lijst: staat niet meer in Deze week. */
+  opgeruimdOp: string | null
 }
 
 /**
@@ -100,7 +124,7 @@ export async function haalDezeWeek(week = weekStart()): Promise<WeekRecept[]> {
       .eq('week_start_datum', week)
       .order('positie'),
     (await gedeeld('weekmenu_gekozen'))
-      .select('recept_id, aantal, van_lijst_op, gekookt_op, gekozen_op, recepten(*)')
+      .select('recept_id, aantal, van_lijst_op, gekookt_op, besteld_op, opgeruimd_op, gekozen_op, recepten(*)')
       .eq('week_start_datum', week)
       .order('gekozen_op'),
   ])
@@ -110,7 +134,7 @@ export async function haalDezeWeek(week = weekStart()): Promise<WeekRecept[]> {
   const keuzes = new Map(
     (gekozen.data as unknown as {
       recept_id: string; aantal: number; van_lijst_op: string | null
-      gekookt_op: string | null; recepten: Recept
+      gekookt_op: string | null; besteld_op: string | null; opgeruimd_op: string | null; recepten: Recept
     }[]).map((g) => [g.recept_id, g]),
   )
   const metKeuze = (recept: Recept, positie: number | null): WeekRecept => {
@@ -122,6 +146,8 @@ export async function haalDezeWeek(week = weekStart()): Promise<WeekRecept[]> {
       aantal: keuze?.aantal ?? 0,
       opLijst: Boolean(keuze) && !keuze?.van_lijst_op,
       gekooktOp: keuze?.gekookt_op ?? null,
+      besteldOp: keuze?.besteld_op ?? null,
+      opgeruimdOp: keuze?.opgeruimd_op ?? null,
     }
   }
 
@@ -141,7 +167,9 @@ export async function haalDezeWeek(week = weekStart()): Promise<WeekRecept[]> {
   return [...zelfGekozen, ...suggesties]
 }
 
-export function useDezeWeek(week = weekStart()) {
+export function useDezeWeek(gevraagd?: string) {
+  const actief = useActieveWeek()
+  const week = gevraagd ?? actief
   const samen = useDeeltLijst()
   return useQuery({
     queryKey: sleutels.dezeWeek(week),
@@ -164,7 +192,9 @@ function leesInvoer(invoer: OpLijstInvoer) {
  * samenvoegen gebeurt pas bij het tonen (lib/lijst.ts). Daardoor kan een
  * recept er weer af zonder dat de hoeveelheden van een ander recept meegaan.
  */
-export function useLijstActies(week = weekStart()) {
+export function useLijstActies(gevraagd?: string) {
+  const actief = useActieveWeek()
+  const week = gevraagd ?? actief
   const qc = useQueryClient()
   const ververs = () => {
     void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
@@ -318,7 +348,7 @@ export function useLijstActies(week = weekStart()) {
       const vorige = qc.getQueryData<WeekRecept[]>(sleutels.dezeWeek(week))
       if (vorige && !vorige.some((r) => r.id === recept.id)) {
         qc.setQueryData<WeekRecept[]>(sleutels.dezeWeek(week), [{
-          ...recept, positie: null, gekozen: true, aantal: 1, opLijst: false, gekooktOp: null,
+          ...recept, positie: null, gekozen: true, aantal: 1, opLijst: false, gekooktOp: null, besteldOp: null, opgeruimdOp: null,
         }, ...vorige])
       }
       return { vorige }
@@ -381,7 +411,9 @@ export function useRecept(id: string | undefined) {
 
 /* ---------------------------------------------------------- boodschappen */
 
-export function useBoodschappen(week = weekStart()) {
+export function useBoodschappen(gevraagd?: string) {
+  const actief = useActieveWeek()
+  const week = gevraagd ?? actief
   // Deel je de lijst, dan elke 5 seconden en bij terugkeren naar de app verversen:
   // afvinken is zo binnen een paar tellen bij je huisgenoot te zien.
   const samen = useDeeltLijst()
@@ -408,7 +440,9 @@ export function useBoodschappen(week = weekStart()) {
  * één samengevoegde regel (lib/lijst.ts): "400 g tomaten" kan uit twee
  * recepten komen, en afvinken moet ze allebei raken.
  */
-export function useBoodschapMuteren(week = weekStart()) {
+export function useBoodschapMuteren(gevraagd?: string) {
+  const actief = useActieveWeek()
+  const week = gevraagd ?? actief
   const qc = useQueryClient()
   const ververs = () => {
     void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) })

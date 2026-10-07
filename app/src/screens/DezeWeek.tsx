@@ -6,8 +6,9 @@ import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
-import { useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
-import { volgendeWeek, weekLabel, weekStart } from '../lib/week'
+import { useActieveWeek, useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
+import { volgendeWeek, weekLabel } from '../lib/week'
+import { WeekVraag } from '../components/WeekVraag'
 import { useWeekRecepten } from '../lib/weekoverzicht'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
@@ -61,10 +62,13 @@ function isVega(recept: WeekRecept) {
  * Wat je niet ziet zitten ruil je per kaart (lib/weekvullen.ts).
  */
 export function DezeWeek() {
-  const week = weekStart()
+  const week = useActieveWeek()
   const komende = volgendeWeek(week)
   const navigeer = useNavigate()
-  const start = (useLocation().state as { tab?: Tab } | null)?.tab === 'komende' ? 'komende' : 'deze'
+  const vanaf = useLocation().state as { tab?: Tab; doorgeschoven?: boolean } | null
+  const start = vanaf?.tab === 'komende' ? 'komende' : 'deze'
+  // Net het laatste bestelde recept gekookt: de week is doorgeschoven.
+  const [doorgeschoven, setDoorgeschoven] = useState(Boolean(vanaf?.doorgeschoven))
   const [tab, setTab] = useState<Tab>(start)
   const baan = useRef<HTMLDivElement>(null)
 
@@ -139,7 +143,7 @@ export function DezeWeek() {
 
   const kaartDezeWeek = (recept: WeekRecept, i: number) => {
     // Besteld en van de lijst: de boodschappen zijn binnen, dus de knop kookt.
-    const koken = dezeWeek.besteld.has(recept.id) && !recept.opLijst && !recept.gekooktOp
+    const koken = Boolean(recept.besteldOp) && !recept.opLijst && !recept.gekooktOp
     return (
       <ReceptKaart
         key={recept.id}
@@ -274,6 +278,14 @@ export function DezeWeek() {
       </Grens>
 
       {dialoog}
+      <WeekVraag />
+      <Dialoog
+        open={doorgeschoven}
+        kop="Alles gekookt!"
+        tekst="Komende week staat nu in Deze week. Zet op je lijst wat je wilt bestellen."
+        onSluit={() => setDoorgeschoven(false)}
+        acties={[{ label: 'Oké', hoofd: true, onClick: () => setDoorgeschoven(false) }]}
+      />
       <Dialoog
         open={Boolean(wegVraag)}
         kop="Uit je week halen?"
