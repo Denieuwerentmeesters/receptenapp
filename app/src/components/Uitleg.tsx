@@ -1,52 +1,67 @@
 import { useRef, useState } from 'react'
-import { Button, Icon, IconButton } from '../ds'
+import { Button, IconButton } from '../ds'
+import ontdekken from '../assets/uitleg/ontdekken.webp'
+import dezeWeek from '../assets/uitleg/deze-week.webp'
+import voorraadkast from '../assets/uitleg/voorraadkast.webp'
+import lijst from '../assets/uitleg/lijst.webp'
 
 /**
  * De uitleg in vijf kaarten: wat Pinch doet, van zoeken tot mandje. Staat in
  * de onboarding vóór de vragen, en is later terug te kijken via Instellingen.
- * Elke kaart heeft een kop, één zin en een klein beeld dat op de app lijkt.
  *
- * De beelden zijn getekend, geen schermafbeeldingen: zo kloppen ze op elk
- * toestel en verouderen ze niet bij elke kleine wijziging.
+ * Elke kaart is een schermafbeelding van de app zelf, met één ding uitgelicht:
+ * de rest is gedimd. Geen nagetekende schermen: wat je hier ziet is wat je
+ * daarna tegenkomt. Verandert een scherm, maak dan een nieuwe afbeelding
+ * (src/assets/uitleg/, 780 × 1688 px: een telefoon van 390 breed) en zet het uitgelichte
+ * vlak opnieuw.
  */
+
+/** Een vlak op de afbeelding, in delen van de breedte en hoogte (0 t/m 1). */
+interface Vlak { x: number; y: number; b: number; h: number }
 
 interface Kaart {
   kop: string
   tekst: string
-  vlak: string
-  beeld: React.ReactNode
+  beeld: string
+  /** Wat de afbeelding laat zien, voor wie hem niet ziet. */
+  alt: string
+  /** Hoogte gedeeld door breedte van de afbeelding. */
+  verhouding: number
+  licht: Vlak
+  /** Afronding van het uitgelichte vlak, in px. */
+  rond?: number
 }
 
 const KAARTEN: Kaart[] = [
   {
     kop: 'Zoek',
-    tekst: 'Ruim 500 recepten. Filter op keuken, tijd, budget en vegetarisch.',
-    vlak: 'var(--c-orange)',
-    beeld: <BeeldZoek />,
+    tekst: 'Honderden recepten. Zoek op gerecht of ingrediënt, of filter op keuken, tijd, budget en dieet.',
+    beeld: ontdekken, alt: 'Het scherm Ontdekken, met de zoekbalk en de filters uitgelicht.',
+    verhouding: 1688 / 780, licht: { x: 0.03, y: 0.068, b: 0.94, h: 0.21 }, rond: 18,
   },
   {
     kop: 'Bewaar',
     tekst: 'Tik op het hartje en het recept staat bij je favorieten. Je eigen recepten zet je er ook bij.',
-    vlak: 'var(--cat-lunch-tint)',
-    beeld: <BeeldBewaar />,
+    beeld: ontdekken, alt: 'Een receptkaart in Ontdekken, met het hartje uitgelicht.',
+    verhouding: 1688 / 780, licht: { x: 0.352, y: 0.331, b: 0.124, h: 0.0575 }, rond: 999,
   },
   {
     kop: 'Zet op je lijst',
     tekst: 'Kies je recepten voor deze week. Pinch zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
-    vlak: 'var(--c-red-bright)',
-    beeld: <BeeldLijst />,
+    beeld: dezeWeek, alt: 'Het scherm Deze week, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
+    verhouding: 1688 / 780, licht: { x: 0.05, y: 0.249, b: 0.44, h: 0.293 }, rond: 26,
   },
   {
     kop: 'Voorraadkast',
     tekst: 'Laat Pinch weten wat je standaard in huis hebt, zoals olie, rijst of kruiden. Dat gaat niet mee in je bestelling.',
-    vlak: 'var(--c-green)',
-    beeld: <BeeldVoorraad />,
+    beeld: voorraadkast, alt: 'Het scherm Voorraadkast, met de producten die je in één tik toevoegt uitgelicht: olijfolie, uien, rijst.',
+    verhouding: 1688 / 780, licht: { x: 0.05, y: 0.842, b: 0.9, h: 0.145 }, rond: 18,
   },
   {
     kop: 'Naar je supermarkt',
     tekst: 'Eén tik en alles gaat naar je mandje bij AH of Jumbo.',
-    vlak: 'var(--c-yellow)',
-    beeld: <BeeldMandje />,
+    beeld: lijst, alt: 'De boodschappenlijst, met de mandjeknop uitgelicht.',
+    verhouding: 1688 / 780, licht: { x: 0.045, y: 0.805, b: 0.91, h: 0.071 }, rond: 999,
   },
 ]
 
@@ -109,13 +124,7 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
         >{overslaanTekst}</button>
       </div>
 
-      <div style={{
-        flex: '1 1 0', minHeight: 0, maxHeight: 340, boxSizing: 'border-box', overflow: 'hidden',
-        borderRadius: 24, background: huidig.vlak, padding: 20,
-        display: 'flex', flexDirection: 'column', gap: 12,
-      }}>
-        {huidig.beeld}
-      </div>
+      <Beeld kaart={huidig} />
 
       <div style={{ flex: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.1em', color: 'var(--c-ink-500)' }}>
@@ -135,158 +144,37 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
   )
 }
 
-/* ------------------------------------------------------------------ beelden */
+/* -------------------------------------------------------------------- beeld */
 
-const wit: React.CSSProperties = { background: 'var(--c-paper)', borderRadius: 16, color: 'var(--c-ink)' }
-const grijs = 'var(--c-ink-500)'
-const lijn = '1px solid rgba(20,20,20,0.08)'
-
-/** Een bord van boven: de plek van de foto. */
-function Bord({ hoogte, vlak }: { hoogte: number; vlak: string }) {
+/**
+ * De schermafbeelding, zo geschoven dat het uitgelichte vlak midden in het
+ * venster staat. Het vlak zelf is een gat in een donkere laag: de schaduw
+ * van het vlak dekt de rest van de afbeelding af.
+ */
+function Beeld({ kaart }: { kaart: Kaart }) {
+  const { licht } = kaart
+  // Niet verder schuiven dan de afbeelding lang is: anders zie je boven of onder een lege strook.
+  const midden = Math.min(0.7, Math.max(0.3, licht.y + licht.h / 2))
   return (
-    <div style={{ height: hoogte, background: vlak, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <svg width={hoogte * 0.5} height={hoogte * 0.5} viewBox="0 0 40 40" fill="none" stroke="var(--c-warm-700)" strokeWidth={2}>
-        <circle cx={20} cy={20} r={15} /><circle cx={20} cy={20} r={9} />
-      </svg>
-    </div>
-  )
-}
-
-function MiniChip({ children, aan }: { children: React.ReactNode; aan?: boolean }) {
-  return (
-    <span style={{
-      padding: '6px 12px', borderRadius: 'var(--radius-full)', fontSize: 12, whiteSpace: 'nowrap',
-      fontWeight: aan ? 700 : 400,
-      background: aan ? 'var(--c-red)' : 'var(--c-paper)', color: aan ? 'var(--c-cream)' : 'var(--c-ink)',
-    }}>{children}</span>
-  )
-}
-
-function BeeldZoek() {
-  const kaart = (titel: string, meta: string, vlak: string) => (
-    <div style={{ ...wit, overflow: 'hidden' }}>
-      <Bord hoogte={72} vlak={vlak} />
-      <div style={{ padding: '8px 10px 10px' }}>
-        <div style={{ fontSize: 13, lineHeight: 1.25, fontWeight: 700 }}>{titel}</div>
-        <div style={{ fontSize: 11, color: grijs, marginTop: 4 }}>{meta}</div>
-      </div>
-    </div>
-  )
-  return (
-    <>
-      <div style={{ ...wit, borderRadius: 12, height: 44, flex: 'none', display: 'flex', alignItems: 'center', gap: 10, padding: '0 14px', fontSize: 14, color: grijs }}>
-        <Icon name="search" size={18} />Zoek een recept
-      </div>
-      <div style={{ display: 'flex', gap: 8, flex: 'none', overflow: 'hidden' }}>
-        <MiniChip aan>Italiaans</MiniChip><MiniChip>Vegetarisch</MiniChip><MiniChip>Binnen 30 min</MiniChip>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 }}>
-        {kaart('Ribollita met bonen en brood', '50 min · vegetarisch', 'var(--cat-lunch-tint)')}
-        {kaart('Pasta uit de oven met gehakt', '45 min · budget', 'var(--c-warm-300)')}
-      </div>
-    </>
-  )
-}
-
-function BeeldBewaar() {
-  return (
-    <>
-      <div style={{ ...wit, overflow: 'hidden', flex: 'none' }}>
-        <div style={{ position: 'relative' }}>
-          <Bord hoogte={120} vlak="var(--c-warm-300)" />
-          {/* Het hartje is waar het om gaat: groot, met een gele ring. */}
-          <div style={{
-            position: 'absolute', top: 12, right: 12, width: 52, height: 52, borderRadius: 'var(--radius-full)',
-            background: 'var(--c-paper)', boxShadow: '0 0 0 5px var(--c-yellow)', color: 'var(--c-red)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Icon name="heart" size={26} style={{ fill: 'currentColor' }} />
-          </div>
-        </div>
-        <div style={{ padding: '10px 14px 12px' }}>
-          <div style={{ fontSize: 15, lineHeight: 1.25, fontWeight: 700 }}>Ribollita met bonen en brood</div>
-          <div style={{ fontSize: 12, color: grijs, marginTop: 4 }}>Bewaard bij je favorieten</div>
-        </div>
-      </div>
-      <div style={{ ...wit, flex: 'none', padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <div>
-          <div style={{ fontSize: 15, lineHeight: 1.25, fontWeight: 700 }}>Oma's stoofpot</div>
-          <div style={{ fontSize: 12, color: grijs, marginTop: 4 }}>3 uur · voor 4 personen</div>
-        </div>
-        <span style={{
-          padding: '4px 10px', borderRadius: 'var(--radius-full)', background: 'var(--c-ink)', color: 'var(--c-cream)',
-          fontSize: 11, fontWeight: 700, letterSpacing: '.06em', whiteSpace: 'nowrap',
-        }}>EIGEN RECEPT</span>
-      </div>
-    </>
-  )
-}
-
-function BeeldLijst() {
-  const regels: [string, string][] = [
-    ['3 uien', 'uit Nasi goreng en Pasta uit de oven'],
-    ['500 g kipdijfilet', 'uit Nasi goreng'],
-    ['350 g penne', 'uit Pasta uit de oven'],
-    ['1 blik tomatenblokjes', 'uit Pasta uit de oven'],
-  ]
-  return (
-    <div style={{ ...wit, padding: '14px 16px 6px' }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', color: grijs, paddingBottom: 4 }}>BOODSCHAPPENLIJST</div>
-      {regels.map(([naam, uit], i) => (
-        <div key={naam} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0', borderTop: i ? lijn : 'none' }}>
-          <span style={{ width: 20, height: 20, flex: 'none', boxSizing: 'border-box', border: '2px solid var(--c-ink-300)', borderRadius: 'var(--radius-full)' }} />
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{naam}</div>
-            <div style={{ fontSize: 12, color: grijs }}>{uit}</div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function BeeldVoorraad() {
-  const regels: [string, boolean][] = [['Olijfolie', true], ['Rijst', true], ['Paprikapoeder', true], ['Knoflook', false]]
-  return (
-    <div style={{ ...wit, padding: '14px 16px 6px' }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', color: grijs, paddingBottom: 4 }}>VOORRAADKAST</div>
-      {regels.map(([naam, inHuis], i) => (
-        <div key={naam} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderTop: i ? lijn : 'none' }}>
-          <span style={{ fontSize: 14, fontWeight: 700 }}>{naam}</span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: grijs }}>
-            {inHuis ? 'In huis' : 'Op'}
-            <span style={{
-              width: 40, height: 24, borderRadius: 'var(--radius-full)', padding: 3, boxSizing: 'border-box',
-              display: 'flex', justifyContent: inHuis ? 'flex-end' : 'flex-start',
-              background: inHuis ? 'var(--c-red)' : 'rgba(20,20,20,0.18)',
-            }}>
-              <span style={{ width: 18, height: 18, borderRadius: 'var(--radius-full)', background: 'var(--c-paper)' }} />
-            </span>
-          </span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function BeeldMandje() {
-  const rij: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', fontSize: 14 }
-  const thuis = (
-    <span style={{
-      textDecoration: 'none', padding: '3px 9px', borderRadius: 'var(--radius-full)', background: 'var(--c-red-100)',
-      color: 'var(--c-ink)', fontSize: 11, fontWeight: 700, letterSpacing: '.06em',
-    }}>THUIS</span>
-  )
-  return (
-    <div style={{ ...wit, padding: '8px 16px 16px', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ ...rij, fontWeight: 700 }}>500 g kipdijfilet</div>
-      <div style={{ ...rij, fontWeight: 700, borderTop: lijn }}>3 uien</div>
-      <div style={{ ...rij, borderTop: lijn, color: grijs }}><s>Rijst</s>{thuis}</div>
+    <div
+      role="img" aria-label={kaart.alt}
+      style={{
+        flex: '1 1 0', minHeight: 0, maxHeight: 440, position: 'relative', overflow: 'hidden',
+        borderRadius: 24, background: 'var(--c-ink)',
+      }}
+    >
       <div style={{
-        marginTop: 12, height: 48, borderRadius: 'var(--radius-full)', background: 'var(--c-red)', color: 'var(--c-cream)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: 15, fontWeight: 700,
+        position: 'absolute', left: 0, right: 0, top: '50%', aspectRatio: `1 / ${kaart.verhouding}`,
+        transform: `translateY(-${midden * 100}%)`,
       }}>
-        <Icon name="cart" size={20} />Naar je mandje (15)
+        <img src={kaart.beeld} alt="" draggable={false} style={{ display: 'block', width: '100%', height: '100%' }} />
+        <div style={{
+          position: 'absolute', boxSizing: 'border-box',
+          left: `${licht.x * 100}%`, top: `${licht.y * 100}%`,
+          width: `${licht.b * 100}%`, height: `${licht.h * 100}%`,
+          borderRadius: kaart.rond ?? 14, border: '3px solid var(--c-paper)',
+          boxShadow: '0 0 0 2000px rgba(20,20,20,0.55)',
+        }} />
       </div>
     </div>
   )

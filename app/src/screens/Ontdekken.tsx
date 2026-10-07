@@ -137,8 +137,9 @@ export function Ontdekken() {
   return (
     <Scherm achtergrond={ACHTERGROND}>
       <Kop kleur="var(--c-orange)" tekstKleur="var(--c-paper)" style={{ paddingBottom: 22 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-          <Titel grootte={26}>Ontdekken</Titel>
+        {/* Op 26 past de titel niet naast de knop: die viel rechts buiten beeld. Op een heel smal scherm zakt de knop een regel. */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '8px 12px' }}>
+          <Titel grootte={20}>Ontdekken</Titel>
           {/* Klein gehouden: de recepten blijven het belangrijkste op dit scherm. */}
           <button
             onClick={() => navigeer('/samenstellen')}
