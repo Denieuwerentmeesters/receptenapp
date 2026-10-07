@@ -3,7 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
 import { Scherm } from '../components/Layout'
 import { Grens } from '../components/Staten'
-import { useDezeWeek, useRecept, useVoorkeuren } from '../lib/queries'
+import { useActieveWeek, useDezeWeek, useRecept, useVoorkeuren } from '../lib/queries'
+import { volgendeWeek } from '../lib/week'
 import { useWeekWissel } from '../lib/weekwissel'
 import { Dialoog } from '../components/Dialoog'
 import { schaalIngredienten } from '../lib/schaal'
@@ -40,18 +41,23 @@ export function Kookmodus() {
   const navigeer = useNavigate()
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
-  const dezeWeek = useDezeWeek()
+  const actief = useActieveWeek()
+  const komende = volgendeWeek(actief)
+  const dezeWeek = useDezeWeek(actief)
+  const komendeWeek = useDezeWeek(komende)
   const { gekookt } = useWeekWissel()
   // Na de laatste stap: gekookt, en mag het van je lijst? Alleen voor een recept uit je week.
   const [klaarVraag, setKlaarVraag] = useState(false)
-  const inWeek = Boolean(dezeWeek.data?.some((r) => r.id === id && r.gekozen))
+  const staatIn = (recepten?: { id: string; gekozen: boolean }[]) => Boolean(recepten?.some((r) => r.id === id && r.gekozen))
+  const receptWeek = staatIn(dezeWeek.data) ? actief : staatIn(komendeWeek.data) ? komende : null
+  const inWeek = receptWeek !== null
 
   /** Legt vast dat je kookte en gaat terug naar je week; schoof die door, dan zegt Deze week dat. */
   async function rondAf(opruimen: boolean) {
     setKlaarVraag(false)
     if (!id) return
     try {
-      const { doorgeschoven } = await gekookt.mutateAsync({ receptId: id, opruimen })
+      const { doorgeschoven } = await gekookt.mutateAsync({ receptId: id, opruimen, inWeek: receptWeek ?? undefined })
       navigeer('/deze-week', { state: doorgeschoven ? { doorgeschoven: true } : null })
     } catch {
       // Je eten staat klaar; het vinkje komt de volgende keer wel.
@@ -292,7 +298,7 @@ export function Kookmodus() {
       <Dialoog
         open={klaarVraag}
         kop="Gekookt?"
-        tekst={`Kan ${titel} van je lijst? Dan staat het niet meer in Deze week; je vindt het terug in je geschiedenis.`}
+        tekst={`Kan ${titel} van je lijst? Dan staat het niet meer in je week; je vindt het terug in je geschiedenis.`}
         onSluit={() => setKlaarVraag(false)}
         acties={[
           { label: 'Ja, gekookt en van mijn lijst', hoofd: true, onClick: () => void rondAf(true) },

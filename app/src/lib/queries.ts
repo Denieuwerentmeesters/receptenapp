@@ -6,7 +6,7 @@ import { DROGE_KRUIDEN_KEY } from './kruiden'
 import { ingredientKey, schaalIngredienten } from './schaal'
 import { lijstSleutel } from './synoniemen'
 import { inVoorraad } from './voorraad'
-import { weekStart } from './week'
+import { volgendeWeek, weekStart } from './week'
 import { standaardPersonen } from './menu'
 import type { AhProduct, BoodschapItem, JumboProduct, Recept, Voorkeuren } from './database.types'
 
@@ -198,7 +198,8 @@ export function useLijstActies(gevraagd?: string) {
   const qc = useQueryClient()
   const ververs = () => {
     void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
-    void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) })
+    // De lijst loopt over deze en komende week: alle lijsten verversen.
+    void qc.invalidateQueries({ queryKey: ['boodschappen'] })
     void qc.invalidateQueries({ queryKey: ['geschiedenis'] })
   }
   const pasAan = (receptId: string, wijziging: Partial<WeekRecept>) => {
@@ -411,6 +412,14 @@ export function useRecept(id: string | undefined) {
 
 /* ---------------------------------------------------------- boodschappen */
 
+/**
+ * Deze week en de week erna: er is één boodschappenlijst, maar een recept dat
+ * je in komende week op je lijst zet blijft daar staan tot de week doorschuift.
+ */
+function lijstWeken(week: string): string[] {
+  return [week, volgendeWeek(week)]
+}
+
 export function useBoodschappen(gevraagd?: string) {
   const actief = useActieveWeek()
   const week = gevraagd ?? actief
@@ -423,7 +432,7 @@ export function useBoodschappen(gevraagd?: string) {
     refetchOnWindowFocus: samen,
     queryFn: async (): Promise<BoodschapItem[]> => {
       const { data, error } = await (await gedeeld('boodschappenlijst_item')).select('*')
-        .eq('week_start_datum', week)
+        .in('week_start_datum', lijstWeken(week))
         .order('naam')
       if (error) throw error
       // Oudere lijsten kunnen nog "peper en zout" of "water" bevatten van
@@ -446,7 +455,8 @@ export function useBoodschapMuteren(gevraagd?: string) {
   const qc = useQueryClient()
   const ververs = () => {
     void qc.invalidateQueries({ queryKey: sleutels.boodschappen(week) })
-    void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
+    // De lijst loopt over deze en komende week: beide weken verversen.
+    void qc.invalidateQueries({ queryKey: ['deze-week'] })
   }
 
   const afvinken = useMutation({
@@ -523,7 +533,7 @@ export function useBoodschapMuteren(gevraagd?: string) {
         }
       }
       const over = await (await gedeeld('boodschappenlijst_item')).select('bron_recept_id, ingredient_key')
-        .eq('week_start_datum', week).not('bron_recept_id', 'is', null)
+        .in('week_start_datum', lijstWeken(week)).not('bron_recept_id', 'is', null)
       if (over.error) throw over.error
       // Een onzichtbare "peper en zout" mag een recept niet op de lijst houden.
       const nogOpLijst = [...new Set(
@@ -534,7 +544,7 @@ export function useBoodschapMuteren(gevraagd?: string) {
 
       let vraag = (await gedeeld('weekmenu_gekozen'))
         .update({ van_lijst_op: new Date().toISOString() })
-        .eq('week_start_datum', week).is('van_lijst_op', null)
+        .in('week_start_datum', lijstWeken(week)).is('van_lijst_op', null)
       if (nogOpLijst.length > 0) vraag = vraag.not('recept_id', 'in', `(${nogOpLijst.join(',')})`)
       const { error } = await vraag
       if (error) throw error
@@ -548,11 +558,11 @@ export function useBoodschapMuteren(gevraagd?: string) {
   /** "Alles wissen": de lijst leeg, alle recepten eraf. */
   const allesWissen = useMutation({
     mutationFn: async () => {
-      const items = await (await gedeeld('boodschappenlijst_item')).delete().eq('week_start_datum', week)
+      const items = await (await gedeeld('boodschappenlijst_item')).delete().in('week_start_datum', lijstWeken(week))
       if (items.error) throw items.error
       const { error } = await (await gedeeld('weekmenu_gekozen'))
         .update({ van_lijst_op: new Date().toISOString() })
-        .eq('week_start_datum', week).is('van_lijst_op', null)
+        .in('week_start_datum', lijstWeken(week)).is('van_lijst_op', null)
       if (error) throw error
     },
     onSuccess: ververs,

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Dialoog } from './Dialoog'
 import { Icon } from '../ds'
-import { useActieveWeek, useDezeWeek } from '../lib/queries'
+import { useActieveWeek, useDezeWeek, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { nogTeKoken, useWeekWissel, weekVoorbij } from '../lib/weekwissel'
 import { weekStart } from '../lib/week'
 
@@ -40,6 +40,18 @@ export function WeekVraag() {
     ingehaald.current = week
     haalIn.mutate()
   }, [achter, week, haalIn])
+
+  // Besteld, maar de week staat niet vast (de bestelling stond in komende week
+  // en het werd maandag): vastzetten, anders is ze volgende maandag weg.
+  const voorkeuren = useVoorkeuren()
+  const opslaan = useVoorkeurenOpslaan()
+  const vastgezet = useRef<string | null>(null)
+  const los = voorkeuren.data?.actieve_week == null && voorkeuren.isSuccess && open.length > 0
+  useEffect(() => {
+    if (!los || vastgezet.current === week) return
+    vastgezet.current = week
+    opslaan.mutate({ actieve_week: week })
+  }, [los, week, opslaan])
 
   const later = () => {
     try { localStorage.setItem(LATER, String(Date.now())) } catch { /* dan vragen we het zo weer */ }

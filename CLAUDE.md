@@ -256,8 +256,11 @@ dus de schuifanimatie is van de browser.
   (`components/Hartje.tsx`), in Ontdekken en op het receptscherm. Nog een tik
   haalt het uit komende week; favoriet blijft het (weghalen bij Favorieten).
   De eerste keer komt er uitleg (`pinch-komende-week-uitleg` in `localStorage`).
-- **Er is één boodschappenlijst.** "Zet op je lijst" in komende week verhuist
-  het recept naar deze week.
+- **Er is één boodschappenlijst, over beide weken** (`lijstWeken` in
+  `src/lib/queries.ts`). "Zet op je lijst" in komende week laat het recept
+  daar staan, ook na het bestellen; het komt pas in deze week als de week
+  doorschuift. Het receptscherm en de kookmodus werken op de week waar het
+  recept in staat.
 - **Besteld = `weekmenu_gekozen.besteld_op`**, gezet als je bevestigt dat het
   mandje aankwam (`useBestellingVastleggen`); dat zet ook `actieve_week` vast,
   zodat je recepten op maandag niet verdwijnen. Deze week toont dan alleen nog

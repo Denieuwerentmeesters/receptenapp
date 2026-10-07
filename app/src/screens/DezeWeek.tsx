@@ -56,8 +56,9 @@ function isVega(recept: WeekRecept) {
  * koos (lib/weekoverzicht.ts) en kook je hiervandaan.
  *
  * Komende week: wat je met het hartje bewaarde, en daaronder de suggesties
- * voor die week. Zet je er een op je lijst, dan verhuist het naar deze week:
- * er is één boodschappenlijst.
+ * voor die week. Het werkt als deze week: op je lijst zetten, bestellen. De
+ * recepten blijven daar staan tot deze week gekookt is en de week doorschuift
+ * (lib/weekwissel.ts). De boodschappenlijst toont beide weken samen.
  *
  * Wat je niet ziet zitten ruil je per kaart (lib/weekvullen.ts).
  */
@@ -76,11 +77,12 @@ export function DezeWeek() {
   const komendeWeek = useWeekRecepten(komende)
   const voorkeuren = useVoorkeuren()
   const { voegToe, dialoog } = useOpLijst(week)
+  const lijstStraks = useOpLijst(komende)
   const { zetOpLijst, haalUitWeek } = useLijstActies(week)
   const straks = useLijstActies(komende)
   const voorraad = useVoorraad()
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
-  const [wegVraag, setWegVraag] = useState<WeekRecept | null>(null)
+  const [wegVraag, setWegVraag] = useState<{ recept: WeekRecept; tab: Tab } | null>(null)
   const [bezig, setBezig] = useState(false)
   const [suggestiesOp, setSuggestiesOp] = useState(false)
 
@@ -135,12 +137,6 @@ export function DezeWeek() {
     }
   }
 
-  /** Van komende week naar je lijst: het recept verhuist naar deze week. */
-  function naarLijst(recept: WeekRecept) {
-    zetOpLijst.mutate(recept.id)
-    straks.haalUitWeek.mutate(recept.id)
-  }
-
   const kaartDezeWeek = (recept: WeekRecept, i: number) => {
     // Besteld en van de lijst: de boodschappen zijn binnen, dus de knop kookt.
     const koken = Boolean(recept.besteldOp) && !recept.opLijst && !recept.gekooktOp
@@ -154,25 +150,30 @@ export function DezeWeek() {
         knop={koken ? { tekst: 'Koken', icoon: 'chefHat' } : { tekst: knopTekst(recept), icoon: recept.opLijst ? 'check' : 'plus' }}
         onOpen={() => navigeer(`/recept/${recept.id}`)}
         onKnop={() => (koken ? navigeer(`/koken/${recept.id}`) : voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel }))}
-        onWeg={() => (recept.opLijst ? setWegVraag(recept) : haalUitWeek.mutate(recept.id))}
+        onWeg={() => (recept.opLijst ? setWegVraag({ recept, tab: 'deze' }) : haalUitWeek.mutate(recept.id))}
         onRuil={recept.opLijst && !recept.gekooktOp && !bezig && !dezeWeek.isBesteld ? () => void ruil(recept) : undefined}
       />
     )
   }
 
-  const kaartKomendeWeek = (recept: WeekRecept, i: number) => (
-    <ReceptKaart
-      key={recept.id}
-      recept={recept}
-      vlak={VLAKKEN[i % VLAKKEN.length]}
-      bonus={bonusPerRecept.get(recept.id) ?? []}
-      personen={standaardPersonen(recept, personen)}
-      knop={{ tekst: 'Zet op je lijst', icoon: 'plus' }}
-      onOpen={() => navigeer(`/recept/${recept.id}`)}
-      onKnop={() => naarLijst(recept)}
-      onWeg={() => straks.haalUitWeek.mutate(recept.id)}
-    />
-  )
+  // Zelfde kaart als deze week, op de week erna: het recept blijft hier staan,
+  // ook op je lijst en na het bestellen. Ruilen kan alleen in deze week.
+  const kaartKomendeWeek = (recept: WeekRecept, i: number) => {
+    const koken = Boolean(recept.besteldOp) && !recept.opLijst && !recept.gekooktOp
+    return (
+      <ReceptKaart
+        key={recept.id}
+        recept={recept}
+        vlak={VLAKKEN[i % VLAKKEN.length]}
+        bonus={bonusPerRecept.get(recept.id) ?? []}
+        personen={standaardPersonen(recept, personen)}
+        knop={koken ? { tekst: 'Koken', icoon: 'chefHat' } : { tekst: knopTekst(recept), icoon: recept.opLijst ? 'check' : 'plus' }}
+        onOpen={() => navigeer(`/recept/${recept.id}`)}
+        onKnop={() => (koken ? navigeer(`/koken/${recept.id}`) : lijstStraks.voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel }))}
+        onWeg={() => (recept.opLijst ? setWegVraag({ recept, tab: 'komende' }) : straks.haalUitWeek.mutate(recept.id))}
+      />
+    )
+  }
 
   return (
     <Scherm>
@@ -259,7 +260,7 @@ export function DezeWeek() {
               <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
                 {bewaard.length > 0 && (
                   <>
-                    <span style={{ ...KOPJE, paddingBottom: 10 }}>Door jou bewaard · {bewaard.length}</span>
+                    <span style={{ ...KOPJE, paddingBottom: 10 }}>Jouw keuze · {bewaard.length}</span>
                     <div style={{ ...ROOSTER, paddingBottom: 18 }}>{bewaard.map(kaartKomendeWeek)}</div>
                   </>
                 )}
@@ -278,6 +279,7 @@ export function DezeWeek() {
       </Grens>
 
       {dialoog}
+      {lijstStraks.dialoog}
       <WeekVraag />
       <Dialoog
         open={doorgeschoven}
@@ -290,11 +292,11 @@ export function DezeWeek() {
         open={Boolean(wegVraag)}
         kop="Uit je week halen?"
         tekst={wegVraag
-          ? `${wegVraag.titel_nl ?? wegVraag.titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.`
+          ? `${wegVraag.recept.titel_nl ?? wegVraag.recept.titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.`
           : undefined}
         onSluit={() => setWegVraag(null)}
         acties={[
-          { label: 'Ja, haal weg', hoofd: true, onClick: () => { if (wegVraag) haalUitWeek.mutate(wegVraag.id); setWegVraag(null) } },
+          { label: 'Ja, haal weg', hoofd: true, onClick: () => { if (wegVraag) (wegVraag.tab === 'deze' ? haalUitWeek : straks.haalUitWeek).mutate(wegVraag.recept.id); setWegVraag(null) } },
           { label: 'Laat maar', onClick: () => setWegVraag(null) },
         ]}
       />

@@ -105,15 +105,20 @@ export function useWeekWissel() {
    * Staat het recept niet in je week (gekookt vanuit Ontdekken), dan gebeurt er niets.
    */
   const gekookt = useMutation({
-    mutationFn: async ({ receptId, opruimen }: { receptId: string; opruimen: boolean }): Promise<{ doorgeschoven: boolean }> => {
+    mutationFn: async ({ receptId, opruimen, inWeek = week }: {
+      receptId: string
+      opruimen: boolean
+      /** De week waar het recept in staat: deze, of komende als je vooruit kookt. */
+      inWeek?: string
+    }): Promise<{ doorgeschoven: boolean }> => {
       const nu = new Date().toISOString()
       const { error } = await (await gedeeld('weekmenu_gekozen'))
         .update(opruimen ? { gekookt_op: nu, opgeruimd_op: nu, van_lijst_op: nu } : { gekookt_op: nu })
-        .eq('week_start_datum', week).eq('recept_id', receptId)
+        .eq('week_start_datum', inWeek).eq('recept_id', receptId)
       if (error) throw error
       if (opruimen) {
         const items = await (await gedeeld('boodschappenlijst_item')).delete()
-          .eq('week_start_datum', week).eq('bron_recept_id', receptId)
+          .eq('week_start_datum', inWeek).eq('bron_recept_id', receptId)
         if (items.error) throw items.error
       }
 

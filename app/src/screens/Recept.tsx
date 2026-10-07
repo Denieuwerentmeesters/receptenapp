@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useHartje } from '../components/Hartje'
+import { volgendeWeek } from '../lib/week'
 import { useQueryClient } from '@tanstack/react-query'
 import type { ReceptAllergie } from '../lib/allergenen'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -27,8 +28,15 @@ export function Recept() {
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
   const opslaan = useVoorkeurenOpslaan()
-  const week = useActieveWeek()
-  const dezeWeek = useDezeWeek(week)
+  // Staat het recept in komende week, dan werkt dit scherm op die week: op je
+  // lijst zetten laat het daar staan. Anders deze week.
+  const actief = useActieveWeek()
+  const komende = volgendeWeek(actief)
+  const dezeWeek = useDezeWeek(actief)
+  const komendeWeek = useDezeWeek(komende)
+  const inDezeWeek = dezeWeek.data?.find((r) => r.id === id)
+  const inKomendeWeek = komendeWeek.data?.find((r) => r.id === id)
+  const week = !inDezeWeek?.gekozen && inKomendeWeek ? komende : actief
   const { voegToe, dialoog, bezig } = useOpLijst(week)
   // Het hartje werkt hier net als in Ontdekken: bewaren voor "Komende week".
   const hartje = useHartje()
@@ -62,7 +70,7 @@ export function Recept() {
 
   // Hoe dit recept in je week staat. Komt het uit Ontdekken en heb je het
   // nog niet gekozen, dan staat het er niet in — dat is gewoon "niet gekozen".
-  const inWeek = dezeWeek.data?.find((r) => r.id === id)
+  const inWeek = week === komende ? inKomendeWeek : inDezeWeek
   const gekozen = inWeek?.gekozen ?? false
   const opLijst = inWeek?.opLijst ?? false
   const bewaard = Boolean(id && hartje.bewaard.has(id))
@@ -120,7 +128,7 @@ export function Recept() {
                           padding: '8px 12px', borderRadius: 'var(--radius-full)',
                           background: 'rgba(20,20,20,0.5)', backdropFilter: 'blur(8px)',
                           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
-                        }}>{opLijst ? 'Op je lijst' : gekozen ? "In 'Deze week'" : "In 'Komende week'"}</span>
+                        }}>{opLijst ? 'Op je lijst' : gekozen && week === actief ? "In 'Deze week'" : "In 'Komende week'"}</span>
                       )}
                       <IconButton
                         icon="share" label="Deel dit recept" size={42}
@@ -278,7 +286,7 @@ export function Recept() {
                   {/* Staat het al op je lijst, dan wil je alleen nog koken. */}
                   {!opLijst && (
                     <Button
-                      disabled={bezig || dezeWeek.isPending}
+                      disabled={bezig || dezeWeek.isPending || komendeWeek.isPending}
                       icon="plus"
                       onClick={() => {
                         // Het aantal personen dat je hier koos wordt je voorkeur, zodat

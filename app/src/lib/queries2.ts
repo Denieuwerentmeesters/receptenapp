@@ -5,6 +5,7 @@ import { huidigeUserId } from './auth'
 import { ingredientKey } from './schaal'
 import { DROGE_KRUIDEN_KEY } from './kruiden'
 import { haalActieveWeek, sleutels, useActieveWeek } from './queries'
+import { volgendeWeek } from './week'
 import type { Bestelling, BronType, DeelStatus, Recept } from './database.types'
 import type { Concept } from './extractie'
 import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
@@ -615,8 +616,9 @@ export function useBestellingVastleggen(gevraagd?: string) {
       const ids = Object.keys(invoer.recepten)
       if (ids.length > 0) {
         const nu = new Date().toISOString()
+        // Ook wat in komende week op de lijst stond: dat blijft daar staan, als besteld.
         const besteld = await (await gedeeld('weekmenu_gekozen')).update({ besteld_op: nu })
-          .eq('week_start_datum', week).in('recept_id', ids).is('besteld_op', null)
+          .in('week_start_datum', [week, volgendeWeek(week)]).in('recept_id', ids).is('besteld_op', null)
         if (besteld.error) throw besteld.error
         const vast = await (await gedeeld('gebruiker_voorkeuren')).update({ actieve_week: week })
           .eq('user_id', await effectieveUserId())
@@ -629,7 +631,7 @@ export function useBestellingVastleggen(gevraagd?: string) {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['bestellingen'] })
       void qc.invalidateQueries({ queryKey: sleutels.voorkeuren })
-      void qc.invalidateQueries({ queryKey: sleutels.dezeWeek(week) })
+      void qc.invalidateQueries({ queryKey: ['deze-week'] })
     },
   })
 }
