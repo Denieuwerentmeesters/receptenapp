@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Dialoog } from './Dialoog'
 import { useLijstActies } from '../lib/queries'
-import { weekStart } from '../lib/week'
 
 /** Wat we van een recept moeten weten om te beslissen of we eerst iets vragen. */
 export interface LijstStatus {
@@ -21,7 +20,7 @@ export interface LijstStatus {
  *
  * Geeft een functie terug plus het dialoogelement; zet dat ergens in je scherm.
  */
-export function useOpLijst(week = weekStart()) {
+export function useOpLijst(week?: string) {
   const { zetOpLijst, haalVanLijst } = useLijstActies(week)
   const [vraag, setVraag] = useState<LijstStatus | null>(null)
 

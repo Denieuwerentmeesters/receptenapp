@@ -238,6 +238,49 @@ vragen, gedeeld door de inhoud van de verpakking.
 - **El, tl, takjes en tenen tellen niet mee:** dat is nooit meer dan één
   verpakking.
 
+## Deze week en komende week
+
+Het startscherm (`src/screens/DezeWeek.tsx`) heeft twee weken naast elkaar,
+met twee chips erboven. Vegen of tikken: de baan is een scroll-snap-container,
+dus de schuifanimatie is van de browser.
+
+- **Deze week volgt je bestelling, niet de kalender.** `useActieveWeek`
+  (`src/lib/queries.ts`) geeft `gebruiker_voorkeuren.actieve_week`, of de
+  kalenderweek als die null is. Gebruik in een scherm nooit `weekStart()` voor
+  "deze week": dan kijk je na het doorschuiven naar de verkeerde lijst. Buiten
+  een component: `haalActieveWeek`.
+- **Komende week is de week erna** (`volgendeWeek`). De generator draait er
+  ook voor; die slaat over wat de afgelopen vier weken getoond is, dus de
+  suggesties verschillen van deze week.
+- **Het hartje bewaart voor komende week én als favoriet**
+  (`components/Hartje.tsx`), in Ontdekken en op het receptscherm. Nog een tik
+  haalt het uit komende week; favoriet blijft het (weghalen bij Favorieten).
+  De eerste keer komt er uitleg (`pinch-komende-week-uitleg` in `localStorage`).
+- **Er is één boodschappenlijst, over beide weken** (`lijstWeken` in
+  `src/lib/queries.ts`). "Zet op je lijst" in komende week laat het recept
+  daar staan, ook na het bestellen; het komt pas in deze week als de week
+  doorschuift. Het receptscherm en de kookmodus werken op de week waar het
+  recept in staat.
+- **Besteld = `weekmenu_gekozen.besteld_op`**, gezet als je bevestigt dat het
+  mandje aankwam (`useBestellingVastleggen`); dat zet ook `actieve_week` vast,
+  zodat je recepten op maandag niet verdwijnen. Deze week toont dan alleen nog
+  wat je koos, en de knop onder een gekocht recept wordt "Koken"
+  (`useWeekRecepten` in `src/lib/weekoverzicht.ts`; de onderbalk telt hetzelfde).
+- **Na het koken** vraagt de kookmodus "Gekookt? Kan deze van je lijst?". Ja
+  zet `gekookt_op` en `opgeruimd_op`: het recept is weg uit Deze week, niet
+  uit je geschiedenis.
+- **Doorschuiven** (`src/lib/weekwissel.ts`): is alles wat besteld was
+  gekookt, dan wordt komende week deze week. Wat nog op je lijst stond gaat
+  mee, met de lijst zelf. Een week na het bestellen vraagt
+  `components/WeekVraag.tsx` het bij het openen: "Alle recepten van deze week
+  gekookt?". Bij nee wijs je aan wat je nog kookt; dat gaat mee als besteld,
+  met de datum van nu, dus een week later komt de vraag terug.
+- **Een week overslaan kost je hartjes:** schuif je pas door als de week erna
+  ook al voorbij is, dan blijft wat daar bewaard stond achter (wel favoriet).
+- **Van elke soort gerecht één suggestie per week** (`src/lib/gerechtsoort.ts`):
+  de soort komt uit de titel, want er is geen kolom voor. Twee keer wraps? Vul
+  die lijst aan. Wat je zelf koos blijft altijd staan.
+
 ## Recepten toevoegen en de adminrol
 
 Twee routes (plan §7): een foto van een kookboekpagina, of je eigen recept in

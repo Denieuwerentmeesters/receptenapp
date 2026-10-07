@@ -99,6 +99,8 @@ export interface Voorkeuren {
    * /welkom. Ontbreekt de kolom (migratie nog niet gedraaid), dan is dit undefined.
    */
   onboarding_klaar_op?: string | null
+  /** De week die de app als "Deze week" toont; null = de kalenderweek (lib/weekwissel.ts). */
+  actieve_week?: string | null
   /** Allergieën (lib/allergenen.ts); gelden in weekmenu, Ontdekken, recept en lijst. */
   allergieen?: string[]
   pushbericht_aan: boolean

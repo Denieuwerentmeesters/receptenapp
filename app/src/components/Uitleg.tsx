@@ -41,7 +41,7 @@ const KAARTEN: Kaart[] = [
   },
   {
     kop: 'Bewaar',
-    tekst: 'Tik op het hartje en het recept staat bij je favorieten. Je eigen recepten zet je er ook bij.',
+    tekst: 'Tik op het hartje en het recept staat klaar voor komende week, en bij je favorieten.',
     beeld: ontdekken, alt: 'Een receptkaart in Ontdekken, met het hartje uitgelicht.',
     verhouding: 1688 / 780, licht: { x: 0.352, y: 0.331, b: 0.124, h: 0.0575 }, rond: 999,
   },
