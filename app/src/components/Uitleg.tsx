@@ -12,7 +12,7 @@ import lijst from '../assets/uitleg/lijst.webp'
  * Elke kaart is een schermafbeelding van de app zelf, met één ding uitgelicht:
  * de rest is gedimd. Geen nagetekende schermen: wat je hier ziet is wat je
  * daarna tegenkomt. Verandert een scherm, maak dan een nieuwe afbeelding
- * (src/assets/uitleg/, 780 × 1688 px: een telefoon van 390 breed) en zet het uitgelichte
+ * (src/assets/uitleg/, 780 px breed; de verhouding staat per kaart) en zet het uitgelichte
  * vlak opnieuw.
  */
 
@@ -54,14 +54,14 @@ const KAARTEN: Kaart[] = [
   {
     kop: 'Voorraadkast',
     tekst: 'Laat Pinch weten wat je standaard in huis hebt, zoals olie, rijst of kruiden. Dat gaat niet mee in je bestelling.',
-    beeld: voorraadkast, alt: 'Het scherm Voorraadkast, met de producten die je in één tik toevoegt uitgelicht: olijfolie, uien, rijst.',
-    verhouding: 1688 / 780, licht: { x: 0.05, y: 0.842, b: 0.9, h: 0.145 }, rond: 18,
+    beeld: voorraadkast, alt: 'Het scherm Voorraadkast, met een paar producten die in huis zijn uitgelicht: azijn, bloem, boter.',
+    verhouding: 2000 / 924, licht: { x: 0.035, y: 0.405, b: 0.93, h: 0.2 }, rond: 18,
   },
   {
     kop: 'Naar je supermarkt',
     tekst: 'Eén tik en alles gaat naar je mandje bij AH of Jumbo.',
     beeld: lijst, alt: 'De boodschappenlijst, met de mandjeknop uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.045, y: 0.805, b: 0.91, h: 0.071 }, rond: 999,
+    verhouding: 2000 / 924, licht: { x: 0.045, y: 0.762, b: 0.91, h: 0.074 }, rond: 999,
   },
 ]
 

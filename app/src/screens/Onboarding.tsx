@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import { Button, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
+import { Button, Chip, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
 import { Label, Titel } from '../components/Layout'
 import { Grens, Laden } from '../components/Staten'
 import { AANTAL_UITLEGKAARTEN, Uitleg } from '../components/Uitleg'
 import { AllergieKeuze, KeukenKeuze } from '../components/voorkeuren'
 import { haalDezeWeek, sleutels, useLijstActies, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
-import { useKeukens } from '../lib/queries2'
+import { useKeukens, useVoorraad, useVoorraadMuteren } from '../lib/queries2'
+import { VOORRAAD_SUGGESTIES } from '../lib/voorraad'
+import { ingredientKey } from '../lib/schaal'
+import { DROGE_KRUIDEN } from '../lib/kruiden'
 import { opsomming, vastVoorJou } from '../lib/allergenen'
 import { kiesWeek, vegaDoel, vegaMinimumVoor } from '../lib/weekvullen'
 import { weekStart } from '../lib/week'
@@ -17,7 +20,7 @@ import type { Voorkeuren } from '../lib/database.types'
 
 /**
  * De onboarding: één keer na het aanmaken van een account. Eerst de uitleg,
- * dan vijf vragen, en daarna sta je op Deze week met een weekmenu dat bij je
+ * dan zes vragen, en daarna sta je op Deze week met een weekmenu dat bij je
  * huishouden past.
  *
  * - De antwoorden gaan naar dezelfde kolommen als Instellingen
@@ -30,11 +33,14 @@ import type { Voorkeuren } from '../lib/database.types'
  * - App.tsx stuurt hierheen zolang onboarding_klaar_op leeg is.
  */
 
-const VRAGEN = ['personen', 'kookavonden', 'keukens', 'allergieen', 'winkel'] as const
+const VRAGEN = ['personen', 'kookavonden', 'keukens', 'allergieen', 'voorraad', 'winkel'] as const
 type Vraag = (typeof VRAGEN)[number]
 type Winkel = Voorkeuren['voorkeurswinkel']
 
 const MAX_PERSONEN = 8
+
+/** De producten waar de voorraadvraag naar vraagt: de bovenste van de voorraadkast. */
+const VOORRAAD_KEUZES = VOORRAAD_SUGGESTIES.slice(0, 15)
 
 interface Antwoorden {
   personen: number
@@ -123,6 +129,26 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   const [fout, setFout] = useState('')
   const [bezig, setBezig] = useState(false)
 
+  // De voorraadkast staat niet bij de voorkeuren maar in voorraad_item. Wat
+  // je aantikt is een concept; null = nog niet aangeraakt, dan geldt wat er al staat.
+  const voorraad = useVoorraad()
+  const { toevoegen, verwijderen } = useVoorraadMuteren()
+  const [voorraadKeuze, setVoorraadKeuze] = useState<string[] | null>(null)
+  const inKast = new Set((voorraad.data ?? []).filter((i) => i.in_huis).map((i) => i.ingredient_key))
+  const voorraadGekozen = voorraadKeuze ?? VOORRAAD_KEUZES.filter((n) => inKast.has(ingredientKey(n)))
+  const voorraadOpslag = useRef<Promise<void>>(Promise.resolve())
+
+  /** Zet wat je koos in je voorraadkast en haalt eruit wat je weer uittikte. */
+  function bewaarVoorraad(): Promise<void> {
+    const erbij = voorraadGekozen.filter((n) => !inKast.has(ingredientKey(n)))
+    const eraf = VOORRAAD_KEUZES.map(ingredientKey)
+      .filter((key) => inKast.has(key) && !voorraadGekozen.some((n) => ingredientKey(n) === key))
+    return Promise.all([
+      ...erbij.map((n) => toevoegen.mutateAsync(n)),
+      ...eraf.map((key) => verwijderen.mutateAsync(key)),
+    ]).then(() => undefined)
+  }
+
   const gestart = useRef(false)
   useEffect(() => {
     if (gestart.current || hervat) return
@@ -144,6 +170,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     kookavonden: { kookavonden: antw.avonden, vega_minimum: vegaMinimum },
     keukens: { favoriete_keukens: keukensOpslaan },
     allergieen: { allergieen: antw.allergieen },
+    voorraad: {},
     winkel: { voorkeurswinkel: antw.winkel },
   }
 
@@ -163,7 +190,13 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   }
 
   function beantwoord(extra: Partial<Voorkeuren> = {}) {
-    opslaan.mutate({ ...wijziging[naam], ...extra })
+    if (naam === 'voorraad') {
+      voorraadOpslag.current = bewaarVoorraad()
+      // Mislukt het hier, dan proberen we het bij het afronden nog een keer.
+      voorraadOpslag.current.catch(() => undefined)
+    } else {
+      opslaan.mutate({ ...wijziging[naam], ...extra })
+    }
     meet('vraag_beantwoord', { vraag: naam })
     verder(overgeslagen.filter((v) => v !== naam))
   }
@@ -171,13 +204,16 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   function slaOver() {
     // Wat je aantikte maar niet bevestigde gaat terug naar wat er stond.
     const stond = uitVoorkeuren(voorkeuren)
-    setAntw({
-      ...antw,
-      ...(naam === 'personen' ? { personen: stond.personen }
-        : naam === 'kookavonden' ? { avonden: stond.avonden, vega: stond.vega }
-        : naam === 'keukens' ? { keukens: stond.keukens }
-        : { allergieen: stond.allergieen }),
-    })
+    if (naam === 'voorraad') setVoorraadKeuze(null)
+    else {
+      setAntw({
+        ...antw,
+        ...(naam === 'personen' ? { personen: stond.personen }
+          : naam === 'kookavonden' ? { avonden: stond.avonden, vega: stond.vega }
+          : naam === 'keukens' ? { keukens: stond.keukens }
+          : { allergieen: stond.allergieen }),
+      })
+    }
     meet('vraag_overgeslagen', { vraag: naam })
     verder(overgeslagen.includes(naam) ? overgeslagen : [...overgeslagen, naam])
   }
@@ -212,6 +248,8 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       // Alles nog één keer in één schrijfactie: dan staat het er zeker voordat
       // de generator het weekmenu maakt.
       await opslaan.mutateAsync(Object.assign({}, ...VRAGEN.map((v) => wijziging[v])) as Partial<Voorkeuren>)
+      // De voorraadkast moet er ook staan: wat in huis is komt niet op de lijst.
+      await voorraadOpslag.current.catch(() => bewaarVoorraad())
       const aantal = vullen ? await vulWeek() : 0
       await opslaan.mutateAsync({ onboarding_klaar_op: new Date().toISOString() })
       if (vullen) meet('week_gevuld_onboarding', { recepten: aantal })
@@ -278,6 +316,8 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       ['kookavonden', `${antw.avonden === 7 ? 'Elke avond' : `${antw.avonden} ${antw.avonden === 1 ? 'avond' : 'avonden'}`}, ${antw.vega} vegetarisch`],
       ['keukens', keukensOpslaan.length > 0 ? keukensOpslaan.join(', ') : 'Alle keukens'],
       ['allergieen', antw.allergieen.length > 0 ? `Zonder ${opsomming(antw.allergieen)}` : 'Geen allergieën'],
+      ['voorraad', voorraadGekozen.length === 0 ? 'Voorraadkast leeg'
+        : `${voorraadGekozen.length} ${voorraadGekozen.length === 1 ? 'product' : 'producten'} in huis`],
       ['winkel', antw.winkel === 'ah' ? 'Albert Heijn' : 'Jumbo'],
     ]
     return (
@@ -345,6 +385,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     kookavonden: ['Hoeveel avonden wil je koken?', 'Per week. De rest laat je vrij.'],
     keukens: ['Welke keukens vind je lekker?', 'Kies er zoveel als je wilt. Daarvan krijg je meer in je weekmenu. De rest blijft gewoon te vinden.'],
     allergieen: ['Moet Pinch ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
+    voorraad: ['Wat heb je standaard in huis?', 'Dat laat Pinch van je boodschappenlijst af. Aanvullen kan later in je voorraadkast.'],
     winkel: ['Waar doe je je boodschappen?', 'Naar deze supermarkt stuurt Pinch je boodschappenlijst.'],
   }
 
@@ -439,6 +480,27 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
           </>
         )}
 
+        {naam === 'voorraad' && (
+          <>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {VOORRAAD_KEUZES.map((n) => {
+                const aan = voorraadGekozen.includes(n)
+                return (
+                  <Chip
+                    key={n} groot selected={aan}
+                    onClick={() => setVoorraadKeuze(aan ? voorraadGekozen.filter((x) => x !== n) : [...voorraadGekozen, n])}
+                  >{n}</Chip>
+                )
+              })}
+            </div>
+            {voorraadGekozen.includes(DROGE_KRUIDEN) && (
+              <p style={{ ...kleinStijl, flex: 'none', marginTop: 4 }}>
+                Droge kruiden staat voor je hele kruidenrek. Die blijven op je lijst staan, maar gaan niet in je mandje.
+              </p>
+            )}
+          </>
+        )}
+
         {naam === 'winkel' && (
           <>
             <div role="radiogroup" aria-label="Supermarkt" style={lijstStijl}>
@@ -464,7 +526,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
             ? <div style={{ height: 44 }} />
             : (
               <button onClick={slaOver} style={{ ...linkStijl, color: 'var(--c-red)', textDecoration: 'none', fontSize: 14 }}>
-                {naam === 'allergieen' ? 'Sla over' : 'Sla over, kies voor mij'}
+                {naam === 'allergieen' || naam === 'voorraad' ? 'Sla over' : 'Sla over, kies voor mij'}
               </button>
             )}
         </div>
