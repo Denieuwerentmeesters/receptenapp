@@ -532,7 +532,7 @@ in twee fasen op: voorkeur, dan de rest) en zet hun chips vooraan.
 
 ## Onboarding
 
-Een nieuwe gebruiker ziet na het aanmelden één keer een welkomscherm, vijf
+Een nieuwe gebruiker ziet na het aanmelden één keer een welkomscherm, zes
 uitlegkaarten en zes vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
 staat daarna op Deze week.
 

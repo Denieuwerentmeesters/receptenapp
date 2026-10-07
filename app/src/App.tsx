@@ -133,7 +133,7 @@ function Poort() {
   return <Outlet />
 }
 
-/** "Bekijk de uitleg" in Instellingen: alleen de vijf kaarten, zonder de vragen. */
+/** "Bekijk de uitleg" in Instellingen: alleen de kaarten, zonder de vragen. */
 function UitlegTerugkijken() {
   const navigeer = useNavigate()
   const terug = () => navigeer('/instellingen', { replace: true })

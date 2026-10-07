@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button, IconButton } from '../ds'
 import ontdekken from '../assets/uitleg/ontdekken.webp'
 import dezeWeek from '../assets/uitleg/deze-week.webp'
@@ -6,7 +6,7 @@ import voorraadkast from '../assets/uitleg/voorraadkast.webp'
 import lijst from '../assets/uitleg/lijst.webp'
 
 /**
- * De uitleg in vijf kaarten: wat Pinch doet, van zoeken tot mandje. Staat in
+ * De uitleg in zes kaarten: wat Pinch doet, van zoeken tot mandje. Staat in
  * de onboarding vóór de vragen, en is later terug te kijken via Instellingen.
  *
  * Elke kaart is een schermafbeelding van de app zelf, met één ding uitgelicht:
@@ -52,6 +52,12 @@ const KAARTEN: Kaart[] = [
     verhouding: 1688 / 780, licht: { x: 0.05, y: 0.249, b: 0.44, h: 0.293 }, rond: 26,
   },
   {
+    kop: 'Komende week',
+    tekst: 'Zet alvast recepten klaar voor komende week en bestel ze mee. Heb je een recept gekookt, dan verdwijnt het uit je week. Wegklikken kan ook.',
+    beeld: dezeWeek, alt: 'Het scherm Deze week, met de twee knoppen Deze week en Komende week uitgelicht.',
+    verhouding: 1688 / 780, licht: { x: 0.04, y: 0.16, b: 0.61, h: 0.055 }, rond: 999,
+  },
+  {
     kop: 'Voorraadkast',
     tekst: 'Laat Pinch weten wat je standaard in huis hebt, zoals olie, rijst of kruiden. Dat gaat niet mee in je bestelling.',
     beeld: voorraadkast, alt: 'Het scherm Voorraadkast, met een paar producten die in huis zijn uitgelicht: azijn, bloem, boter.',
@@ -81,6 +87,7 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
 }) {
   const [kaart, setKaart] = useState(Math.min(Math.max(start, 0), KAARTEN.length - 1))
   const veegStart = useRef<number | null>(null)
+  useEffect(laadUitlegBeelden, [])
   const huidig = KAARTEN[kaart]
   const laatste = kaart === KAARTEN.length - 1
 
@@ -124,7 +131,7 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
         >{overslaanTekst}</button>
       </div>
 
-      <Beeld kaart={huidig} />
+      <Beelden kaart={kaart} />
 
       <div style={{ flex: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.1em', color: 'var(--c-ink-500)' }}>
@@ -147,35 +154,81 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
 /* -------------------------------------------------------------------- beeld */
 
 /**
- * De schermafbeelding, zo geschoven dat het uitgelichte vlak midden in het
- * venster staat. Het vlak zelf is een gat in een donkere laag: de schaduw
- * van het vlak dekt de rest van de afbeelding af.
+ * Haalt de afbeeldingen alvast op, zodat de eerste kaart er meteen staat.
  */
-function Beeld({ kaart }: { kaart: Kaart }) {
-  const { licht } = kaart
-  // Niet verder schuiven dan de afbeelding lang is: anders zie je boven of onder een lege strook.
-  const midden = Math.min(0.7, Math.max(0.3, licht.y + licht.h / 2))
+const opgehaald: HTMLImageElement[] = []
+function laadUitlegBeelden() {
+  if (opgehaald.length > 0) return
+  for (const src of new Set(KAARTEN.map((k) => k.beeld))) {
+    const img = new Image()
+    img.src = src
+    opgehaald.push(img)
+  }
+}
+
+/**
+ * Tekent niets, haalt alleen de afbeeldingen op. De onboarding zet dit op het
+ * welkomscherm: tegen de tijd dat je op "Laat zien hoe het werkt" tikt zijn
+ * ze binnen.
+ */
+export function UitlegVoorladen() {
+  useEffect(laadUitlegBeelden, [])
+  return null
+}
+
+/**
+ * De schermafbeeldingen van alle kaarten, op elkaar. Alleen die van de
+ * huidige kaart is zichtbaar; wisselen is een korte overvloeier in plaats van
+ * een lege kaart die volloopt. Een kaart verschijnt pas als zijn afbeelding
+ * er is: anders zie je eerst het uitgelichte vlak boven een leeg venster.
+ *
+ * Elke afbeelding is zo geschoven dat het uitgelichte vlak midden in het
+ * venster staat. Het vlak zelf is een gat in een donkere laag: de schaduw van
+ * het vlak dekt de rest van de afbeelding af.
+ */
+function Beelden({ kaart }: { kaart: number }) {
+  const [geladen, setGeladen] = useState<ReadonlySet<string>>(new Set())
+  const klaar = (src: string) => setGeladen((oud) => (oud.has(src) ? oud : new Set(oud).add(src)))
   return (
     <div
-      role="img" aria-label={kaart.alt}
+      role="img" aria-label={KAARTEN[kaart].alt}
       style={{
         flex: '1 1 0', minHeight: 0, maxHeight: 440, position: 'relative', overflow: 'hidden',
-        borderRadius: 24, background: 'var(--c-ink)',
+        borderRadius: 24, background: 'var(--c-red-100)',
       }}
     >
-      <div style={{
-        position: 'absolute', left: 0, right: 0, top: '50%', aspectRatio: `1 / ${kaart.verhouding}`,
-        transform: `translateY(-${midden * 100}%)`,
-      }}>
-        <img src={kaart.beeld} alt="" draggable={false} style={{ display: 'block', width: '100%', height: '100%' }} />
-        <div style={{
-          position: 'absolute', boxSizing: 'border-box',
-          left: `${licht.x * 100}%`, top: `${licht.y * 100}%`,
-          width: `${licht.b * 100}%`, height: `${licht.h * 100}%`,
-          borderRadius: kaart.rond ?? 14, border: '3px solid var(--c-paper)',
-          boxShadow: '0 0 0 2000px rgba(20,20,20,0.55)',
-        }} />
-      </div>
+      {KAARTEN.map((k, i) => {
+        const { licht } = k
+        // Niet verder schuiven dan de afbeelding lang is: anders zie je boven of onder een lege strook.
+        const midden = Math.min(0.7, Math.max(0.3, licht.y + licht.h / 2))
+        return (
+          <div key={k.kop} aria-hidden style={{
+            position: 'absolute', inset: 0,
+            opacity: i === kaart && geladen.has(k.beeld) ? 1 : 0,
+            transition: 'opacity 220ms var(--ease)',
+          }}>
+            <div style={{
+              position: 'absolute', left: 0, right: 0, top: '50%', aspectRatio: `1 / ${k.verhouding}`,
+              transform: `translateY(-${midden * 100}%)`,
+            }}>
+              <img
+                src={k.beeld} alt="" draggable={false}
+                // Staat de afbeelding al in het geheugen, dan komt onLoad soms niet meer: vandaar ook de ref.
+                ref={(el) => { if (el?.complete && el.naturalWidth > 0) klaar(k.beeld) }}
+                onLoad={() => klaar(k.beeld)}
+                style={{ display: 'block', width: '100%', height: '100%' }}
+              />
+              <div style={{
+                position: 'absolute', boxSizing: 'border-box',
+                left: `${licht.x * 100}%`, top: `${licht.y * 100}%`,
+                width: `${licht.b * 100}%`, height: `${licht.h * 100}%`,
+                borderRadius: k.rond ?? 14, border: '3px solid var(--c-paper)',
+                boxShadow: '0 0 0 2000px rgba(20,20,20,0.55)',
+              }} />
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
