@@ -9,11 +9,11 @@ import type { Ingredient } from './database.types'
 
 /**
  * Regels rond bonus en aanbiedingen, zonder React of database: gedeeld door
- * de app (lib/bonus.ts) en de nachtelijke cron (lib/bonus/vullen.ts).
+ * de app (lib/bonus.ts) en de nachtelijke ronde (lib/bonus/vullen.ts).
  *
  * Bonus en aanbiedingen (plan "gemak en bonus", onderdeel 5). De acties komen
- * elke nacht uit PrijsProfeet in bonus_actie (api/bonus.ts), al gekoppeld aan
- * een ingredient_key.
+ * elke nacht uit PrijsProfeet in bonus_actie (scripts/bonus_ophalen.ts), al
+ * gekoppeld aan een ingredient_key.
  *
  * Of een actie telt, hangt af van de bezorgdag, niet van vandaag: AH en Jumbo
  * rekenen de bonus van de week waarin bezorgd wordt. Op dezelfde dag en op

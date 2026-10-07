@@ -1,6 +1,6 @@
 /**
- * Vult bonus_actie nu meteen, met dezelfde code als de nachtelijke cron
- * (api/bonus.ts). Handig na een deploy of om te testen.
+ * Vult bonus_actie en recept_bonus. Draait elke nacht via GitHub Actions
+ * (.github/workflows/bonus.yml); met de hand om te testen.
  *
  *   export DATABASE_URL=...
  *   npm run bonus-ophalen
