@@ -1,20 +1,62 @@
 import { enkelvoudVormen } from './ah'
 import { BEREIDING, canoniek } from './synoniemen'
 import { DROGE_KRUIDEN } from './kruiden'
+import { ingredientKey } from './schaal'
 
 /**
- * Wat de meeste mensen standaard in huis hebben, van vaak naar minder vaak.
+ * Wat mensen standaard in huis hebben, van vaak naar zelden: eerst wat in
+ * bijna elke keuken staat, dan de voorraadkast van wie vaak kookt, dan wat je
+ * alleen hebt als je een bepaalde keuken kookt (miso, chipotle, sumak).
+ *
  * De voorraadkast toont er steeds een paar (voeg je er een toe, dan schuift de
- * volgende door); de onboarding vraagt naar de eerste rij. Zout, peper, suiker
- * en bouillon staan er niet bij: die komen sowieso nooit op de lijst
- * (altijdInHuis).
+ * volgende door). De onboarding begint met de eerste rij en zet er bij elke
+ * tik de volgende bij; via het zoekveld vind je ze allemaal.
+ *
+ * - De namen volgen de recepten, want daar wordt mee vergeleken (inVoorraad):
+ *   "Misopasta" en niet "Miso", "Chipotlesaus" en niet "Chipotle".
+ * - Geen losse droge kruiden: die vallen onder "Droge kruiden". Bijzondere
+ *   kruiden (sumak, saffraan) wel, die horen daar niet bij (lib/kruiden.ts).
+ * - Geen verse groente en geen vlees: dat heb je niet "standaard" in huis.
+ * - Zout, peper, suiker en bouillon staan er niet bij: die komen sowieso
+ *   nooit op de lijst (altijdInHuis).
  */
 export const VOORRAAD_SUGGESTIES = [
+  // In bijna elke keuken
   DROGE_KRUIDEN, 'Olijfolie', 'Uien', 'Knoflook', 'Rijst', 'Pasta', 'Eieren', 'Boter',
-  'Zonnebloemolie', 'Bloem', 'Sojasaus', 'Tomatenpuree', 'Mosterd', 'Honing', 'Azijn',
-  'Balsamicoazijn', 'Ketjap', 'Sambal', 'Maizena', 'Melk', 'Parmezaan', 'Paneermeel',
-  'Couscous', 'Passata', 'Kokosmelk', 'Mayonaise',
+  'Zonnebloemolie', 'Bloem', 'Melk', 'Mosterd', 'Mayonaise', 'Ketchup', 'Honing', 'Azijn',
+  // Wie regelmatig kookt
+  'Tomatenpuree', 'Sojasaus', 'Tomatenblokjes', 'Spaghetti', 'Paneermeel', 'Maizena',
+  'Parmezaanse kaas', 'Passata', 'Sambal', 'Ketjap manis', 'Pindakaas', 'Kokosmelk',
+  'Balsamicoazijn', 'Bakpoeder', 'Penne', 'Couscous', 'Basterdsuiker', 'Poedersuiker',
+  // De goed gevulde kast
+  'Sesamolie', 'Pesto', 'Kappertjes', 'Vissaus', 'Pijnboompitten', 'Basmatirijst',
+  'Dijonmosterd', 'Kikkererwten', 'Zongedroogde tomaten', 'Olijven', 'Currypasta',
+  'Sesamzaadjes', 'Noedels', 'Linzen', 'Rijstazijn', 'Worcestershiresaus', 'Walnoten',
+  'Rozijnen', 'Cashewnoten', 'Tabasco', 'Panko', 'Risottorijst', 'Orzo', "Tortilla's",
+  'Ansjovis', 'Kokosolie', 'Vanille-extract', 'Cacaopoeder', 'Pure chocolade',
+  'Ahornsiroop', 'Havermout', 'Zelfrijzend bakmeel',
+  // Voor een bepaalde keuken
+  'Misopasta', 'Hoisinsaus', 'Oestersaus', 'Chipotlesaus', 'Sriracha', 'Tahin',
+  'Harissa', 'Gochujang', 'Mirin', 'Sumak', 'Ras el hanout', 'Kokosrasp',
+  'Pistachenoten', 'Amandelmeel', 'Tamarindepasta', 'Saffraan', "Za'atar", 'Nori',
+  'Gedroogde gist',
 ]
+
+/**
+ * Wat iemand in het open veld typt, als product. Staat het in de lijst, dan
+ * de naam uit de lijst: "miso" wordt "Misopasta", want zo heet het in de
+ * recepten. Anders wat er getypt is, met een hoofdletter.
+ */
+export function voorraadNaam(invoer: string): string {
+  const schoon = invoer.trim().replace(/\s+/g, ' ')
+  const key = ingredientKey(schoon)
+  if (!key) return ''
+  const precies = VOORRAAD_SUGGESTIES.find((s) => ingredientKey(s) === key)
+  if (precies) return precies
+  // Pas vanaf drie letters raden: "ui" is geen "uien", "ri" is geen "rijst".
+  const begin = key.length >= 3 ? VOORRAAD_SUGGESTIES.find((s) => ingredientKey(s).startsWith(key)) : undefined
+  return begin ?? schoon.charAt(0).toUpperCase() + schoon.slice(1)
+}
 
 /**
  * Soorten die in je voorraadkast onder één naam staan. "Azijn" is de gewone
