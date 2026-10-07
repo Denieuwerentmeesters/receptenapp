@@ -2,13 +2,14 @@ import { useNavigate } from 'react-router-dom'
 import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useGeschiedenis } from '../lib/queries2'
-import { weekLabel, weekStart } from '../lib/week'
+import { weekLabel } from '../lib/week'
+import { useActieveWeek } from '../lib/queries'
 
 export function Geschiedenis() {
   const navigeer = useNavigate()
   const geschiedenis = useGeschiedenis()
   const weken = geschiedenis.data ?? []
-  const dezeWeek = weekStart()
+  const dezeWeek = useActieveWeek()
 
   return (
     <Scherm>
