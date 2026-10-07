@@ -19,7 +19,7 @@
  * zonder geldige secret doet de functie niets).
  */
 
-import { haalReceptenZonderAfbeelding, maakSql, verwerkRecept } from '../lib/afbeeldingen/genereer'
+import { haalReceptenZonderAfbeelding, maakSql, verwerkRecept } from '../lib/afbeeldingen/genereer.js'
 
 const MAX_PER_RUN = 8
 const TIJDSLIMIET_MS = 45_000

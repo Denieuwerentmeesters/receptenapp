@@ -389,6 +389,24 @@ de details staan in Mijn keuken → Bespaard!.
 - Rekent zich bewust niet rijk: gewone prijs zonder aanbieding, hele
   verpakkingen, geen premiumtoeslag aan de HelloFresh-kant.
 
+## Bonus
+
+De acties van AH en Jumbo komen uit PrijsProfeet (`lib/bonus/`) en staan in
+`bonus_actie`; `recept_bonus` zegt welke recepten daardoor in de bonus zijn.
+
+- **Elke nacht verversen** doet GitHub Actions (`.github/workflows/bonus.yml`,
+  04:00 UTC), niet Vercel. Met de hand: `gh workflow run bonus.yml`; kijken of
+  het lukte: `gh run list --workflow bonus.yml`. Mislukt een winkel, dan is de
+  run rood en blijft die winkel staan zoals hij was.
+- **Zie je geen bonus meer, kijk dan eerst daar.** De tabel wordt per nacht
+  vervangen; draait de ronde niet, dan lopen de acties af en verdwijnt de
+  bonus zonder foutmelding uit de app.
+- **Een Node-functie op Vercel heeft `.js` achter elke eigen import**
+  (`'../lib/afbeeldingen/genereer.js'`). De root is `"type": "module"` en
+  Vercel bundelt alleen edge-functies; zonder extensie crasht de functie bij
+  het laden met een 500, ook de cron. De bonus trekt de halve `app/src/lib`
+  mee, vandaar dat die ronde niet op Vercel draait.
+
 ## Allergieën
 
 Je stelt ze één keer in bij Instellingen (`gebruiker_voorkeuren.allergieen`):
