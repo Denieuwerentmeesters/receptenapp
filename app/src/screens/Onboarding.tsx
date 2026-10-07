@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Button, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
 import { Label, Titel } from '../components/Layout'
 import { Grens, Laden } from '../components/Staten'
-import { AANTAL_UITLEGKAARTEN, Uitleg } from '../components/Uitleg'
+import { AANTAL_UITLEGKAARTEN, Uitleg, UitlegVoorladen } from '../components/Uitleg'
 import { AllergieKeuze, KeukenKeuze, VoorraadKeuze } from '../components/voorkeuren'
 import { haalDezeWeek, sleutels, useLijstActies, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { useKeukens, useVoorraad, useVoorraadMuteren } from '../lib/queries2'
@@ -279,6 +279,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
         background: 'var(--c-red)', color: 'var(--c-cream)',
         padding: 'calc(env(safe-area-inset-top) + 28px) 26px calc(env(safe-area-inset-bottom) + 20px)',
       }}>
+        <UitlegVoorladen />
         <Woordmerk hoogte={48} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Label>Welkom bij Pinch</Label>
