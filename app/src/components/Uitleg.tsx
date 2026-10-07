@@ -6,7 +6,7 @@ import voorraadkast from '../assets/uitleg/voorraadkast.webp'
 import lijst from '../assets/uitleg/lijst.webp'
 
 /**
- * De uitleg in vijf kaarten: wat Pinch doet, van zoeken tot mandje. Staat in
+ * De uitleg in zes kaarten: wat Pinch doet, van zoeken tot mandje. Staat in
  * de onboarding vóór de vragen, en is later terug te kijken via Instellingen.
  *
  * Elke kaart is een schermafbeelding van de app zelf, met één ding uitgelicht:
@@ -50,6 +50,12 @@ const KAARTEN: Kaart[] = [
     tekst: 'Kies je recepten voor deze week. Pinch zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
     beeld: dezeWeek, alt: 'Het scherm Deze week, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
     verhouding: 1688 / 780, licht: { x: 0.05, y: 0.249, b: 0.44, h: 0.293 }, rond: 26,
+  },
+  {
+    kop: 'Komende week',
+    tekst: 'Zet alvast recepten klaar voor komende week en bestel ze mee. Heb je een recept gekookt, dan verdwijnt het uit je week. Wegklikken kan ook.',
+    beeld: dezeWeek, alt: 'Het scherm Deze week, met de twee knoppen Deze week en Komende week uitgelicht.',
+    verhouding: 1688 / 780, licht: { x: 0.04, y: 0.16, b: 0.61, h: 0.055 }, rond: 999,
   },
   {
     kop: 'Voorraadkast',
