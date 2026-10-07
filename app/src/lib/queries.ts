@@ -80,67 +80,73 @@ export interface WeekRecept extends Recept {
   gekooktOp: string | null
 }
 
+/**
+ * Haalt je week op, en laat eerst de generator lopen. Los van de hook, zodat
+ * de onboarding het weekmenu pas kan laten maken als je voorkeuren er staan.
+ */
+export async function haalDezeWeek(week = weekStart()): Promise<WeekRecept[]> {
+  const id = await userId()
+
+  // De generator is idempotent: bestaat de week al, dan doet 'ie niets.
+  // Zo staat er ook een menu klaar als de cron nog niet gedraaid heeft.
+  // Faalt de generator, dan willen we dat zien: stil doorlopen gaf een
+  // leeg weekmenu zonder uitleg.
+  const generator = await db.rpc('genereer_weekmenu', { p_user_id: id, p_week_start: week })
+  if (generator.error) throw generator.error
+
+  const [getoond, gekozen] = await Promise.all([
+    (await gedeeld('weekmenu_getoond'))
+      .select('positie, recept_id, verborgen_op, recepten(*)')
+      .eq('week_start_datum', week)
+      .order('positie'),
+    (await gedeeld('weekmenu_gekozen'))
+      .select('recept_id, aantal, van_lijst_op, gekookt_op, gekozen_op, recepten(*)')
+      .eq('week_start_datum', week)
+      .order('gekozen_op'),
+  ])
+  if (getoond.error) throw getoond.error
+  if (gekozen.error) throw gekozen.error
+
+  const keuzes = new Map(
+    (gekozen.data as unknown as {
+      recept_id: string; aantal: number; van_lijst_op: string | null
+      gekookt_op: string | null; recepten: Recept
+    }[]).map((g) => [g.recept_id, g]),
+  )
+  const metKeuze = (recept: Recept, positie: number | null): WeekRecept => {
+    const keuze = keuzes.get(recept.id)
+    return {
+      ...recept,
+      positie,
+      gekozen: Boolean(keuze),
+      aantal: keuze?.aantal ?? 0,
+      opLijst: Boolean(keuze) && !keuze?.van_lijst_op,
+      gekooktOp: keuze?.gekookt_op ?? null,
+    }
+  }
+
+  // Weggeklikte suggesties tellen niet mee — tenzij je ze toch koos.
+  const suggesties = (getoond.data as unknown as {
+    positie: number; verborgen_op: string | null; recepten: Recept
+  }[])
+    .filter((rij) => rij.recepten && (!rij.verborgen_op || keuzes.has(rij.recepten.id)))
+    .map((rij) => metKeuze(rij.recepten, rij.positie))
+  const inSuggesties = new Set(suggesties.map((r) => r.id))
+
+  // Wat je zelf toevoegde komt bovenaan: dat heb je bewust gekozen.
+  const zelfGekozen = [...keuzes.values()]
+    .filter((g) => g.recepten && !inSuggesties.has(g.recept_id))
+    .map((g) => metKeuze(g.recepten, null))
+
+  return [...zelfGekozen, ...suggesties]
+}
+
 export function useDezeWeek(week = weekStart()) {
   const samen = useDeeltLijst()
   return useQuery({
     queryKey: sleutels.dezeWeek(week),
     refetchOnWindowFocus: samen,
-    queryFn: async (): Promise<WeekRecept[]> => {
-      const id = await userId()
-
-      // De generator is idempotent: bestaat de week al, dan doet 'ie niets.
-      // Zo staat er ook een menu klaar als de cron nog niet gedraaid heeft.
-      // Faalt de generator, dan willen we dat zien: stil doorlopen gaf een
-      // leeg weekmenu zonder uitleg.
-      const generator = await db.rpc('genereer_weekmenu', { p_user_id: id, p_week_start: week })
-      if (generator.error) throw generator.error
-
-      const [getoond, gekozen] = await Promise.all([
-        (await gedeeld('weekmenu_getoond'))
-          .select('positie, recept_id, verborgen_op, recepten(*)')
-          .eq('week_start_datum', week)
-          .order('positie'),
-        (await gedeeld('weekmenu_gekozen'))
-          .select('recept_id, aantal, van_lijst_op, gekookt_op, gekozen_op, recepten(*)')
-          .eq('week_start_datum', week)
-          .order('gekozen_op'),
-      ])
-      if (getoond.error) throw getoond.error
-      if (gekozen.error) throw gekozen.error
-
-      const keuzes = new Map(
-        (gekozen.data as unknown as {
-          recept_id: string; aantal: number; van_lijst_op: string | null
-          gekookt_op: string | null; recepten: Recept
-        }[]).map((g) => [g.recept_id, g]),
-      )
-      const metKeuze = (recept: Recept, positie: number | null): WeekRecept => {
-        const keuze = keuzes.get(recept.id)
-        return {
-          ...recept,
-          positie,
-          gekozen: Boolean(keuze),
-          aantal: keuze?.aantal ?? 0,
-          opLijst: Boolean(keuze) && !keuze?.van_lijst_op,
-          gekooktOp: keuze?.gekookt_op ?? null,
-        }
-      }
-
-      // Weggeklikte suggesties tellen niet mee — tenzij je ze toch koos.
-      const suggesties = (getoond.data as unknown as {
-        positie: number; verborgen_op: string | null; recepten: Recept
-      }[])
-        .filter((rij) => rij.recepten && (!rij.verborgen_op || keuzes.has(rij.recepten.id)))
-        .map((rij) => metKeuze(rij.recepten, rij.positie))
-      const inSuggesties = new Set(suggesties.map((r) => r.id))
-
-      // Wat je zelf toevoegde komt bovenaan: dat heb je bewust gekozen.
-      const zelfGekozen = [...keuzes.values()]
-        .filter((g) => g.recepten && !inSuggesties.has(g.recept_id))
-        .map((g) => metKeuze(g.recepten, null))
-
-      return [...zelfGekozen, ...suggesties]
-    },
+    queryFn: () => haalDezeWeek(week),
   })
 }
 

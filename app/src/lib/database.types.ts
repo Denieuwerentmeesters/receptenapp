@@ -92,8 +92,13 @@ export interface Voorkeuren {
   aantal_personen: number
   /** Je haalt zelf in de winkel: de bonus van vandaag telt, niet die van de bezorgdag. */
   zelf_halen: boolean
-  /** Niet meer in gebruik: stuurde "Vul mijn week" aan, die knop is weg. De kolom blijft staan. */
+  /** Hoeveel recepten "Vul mijn week" op je lijst zet; je kiest het in de onboarding. */
   kookavonden: number
+  /**
+   * Wanneer je de onboarding afrondde. Null = nog niet: de app stuurt je naar
+   * /welkom. Ontbreekt de kolom (migratie nog niet gedraaid), dan is dit undefined.
+   */
+  onboarding_klaar_op?: string | null
   /** Allergieën (lib/allergenen.ts); gelden in weekmenu, Ontdekken, recept en lijst. */
   allergieen?: string[]
   pushbericht_aan: boolean
@@ -169,6 +174,15 @@ export interface SamenstellingRij {
   aangemaakt_op: string
 }
 
+/** Eén event uit de onboarding (lib/meten.ts); de app schrijft alleen. */
+export interface OnboardingEventRij {
+  id: string
+  user_id: string
+  event: string
+  extra: Record<string, string | number>
+  aangemaakt_op: string
+}
+
 /** Eén patroon uit allergeen_regel; zie migratie 20260930233000_allergieen.sql. */
 export interface AllergeenRegel {
   id: number
@@ -196,6 +210,7 @@ export interface Database {
       voorraad_item: Tabel<VoorraadRij>
       allergeen_regel: Tabel<AllergeenRegel>
       samenstelling: Tabel<SamenstellingRij>
+      onboarding_event: Tabel<OnboardingEventRij>
     }
     Views: Record<string, never>
     Functions: {
