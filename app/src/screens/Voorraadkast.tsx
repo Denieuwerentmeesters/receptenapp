@@ -4,7 +4,8 @@ import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel, Voet } from '../component
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useVoorraad, useVoorraadMuteren, type VoorraadItem } from '../lib/queries2'
-import { DROGE_KRUIDEN, DROGE_KRUIDEN_KEY, DROGE_KRUIDEN_UITLEG } from '../lib/kruiden'
+import { DROGE_KRUIDEN_KEY, DROGE_KRUIDEN_UITLEG } from '../lib/kruiden'
+import { VOORRAAD_SUGGESTIES } from '../lib/voorraad'
 import { ingredientKey } from '../lib/schaal'
 import { useBoodschappen } from '../lib/queries'
 
@@ -14,17 +15,6 @@ import { useBoodschappen } from '../lib/queries'
  */
 const ALTIJD_IN_HUIS = ['Zout', 'Peper', 'Suiker', 'Bouillon', 'Olijfolie', 'Zonnebloemolie']
 
-/**
- * Wat de meeste mensen standaard in huis hebben. We tonen er steeds een paar;
- * voeg je er een toe, dan schuift de volgende door. Zout, peper, suiker en
- * bouillon staan er niet bij: die komen sowieso nooit op de lijst (altijdInHuis).
- */
-const SUGGESTIES = [
-  DROGE_KRUIDEN, 'Olijfolie', 'Uien', 'Knoflook', 'Rijst', 'Pasta', 'Eieren', 'Boter',
-  'Zonnebloemolie', 'Bloem', 'Sojasaus', 'Tomatenpuree', 'Mosterd', 'Honing', 'Azijn',
-  'Balsamicoazijn', 'Ketjap', 'Sambal', 'Maizena', 'Melk', 'Parmezaan', 'Paneermeel',
-  'Couscous', 'Passata', 'Kokosmelk', 'Mayonaise',
-]
 const ZICHTBAAR = 8
 
 /**
@@ -47,7 +37,7 @@ export function Voorraadkast() {
   const inHuis = items.filter((i) => i.in_huis).length
   const groepen = groepeer(items)
   const inKast = new Set(items.map((i) => i.ingredient_key))
-  const suggesties = SUGGESTIES.filter((s) => !inKast.has(ingredientKey(s))).slice(0, ZICHTBAAR)
+  const suggesties = VOORRAAD_SUGGESTIES.filter((s) => !inKast.has(ingredientKey(s))).slice(0, ZICHTBAAR)
 
   function voegToe(naam: string) {
     if (!naam.trim()) return

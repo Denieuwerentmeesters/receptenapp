@@ -490,7 +490,7 @@ in twee fasen op: voorkeur, dan de rest) en zet hun chips vooraan.
 ## Onboarding
 
 Een nieuwe gebruiker ziet na het aanmelden één keer een welkomscherm, vijf
-uitlegkaarten en vijf vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
+uitlegkaarten en zes vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
 staat daarna op Deze week.
 
 - **`Poort` in `App.tsx` stuurt naar `/welkom`** zolang
@@ -507,6 +507,11 @@ staat daarna op Deze week.
 - **"Vul mijn week" zet direct recepten op je lijst** (`kiesWeek`, zoveel als
   `kookavonden`), zonder bevestigscherm. Vegetarisch vraag je als "2 van je
   4 avonden"; `vegaMinimumVoor` rekent dat om naar "x van de 10".
+- **De voorraadvraag schrijft naar `voorraad_item`**, niet naar de
+  voorkeuren: dezelfde rijen als het scherm Voorraadkast. De chips zijn de
+  eerste vijftien uit `VOORRAAD_SUGGESTIES` (`src/lib/voorraad.ts`), die de
+  voorraadkast ook gebruikt. Het moet er staan vóór "Vul mijn week": wat in
+  huis is komt niet op de lijst.
 - **Keukens komen uit de pool** (`useKeukens`), niet uit een vaste lijst: een
   chip die bij geen recept hoort doet niets in de generator.
 - **Opslaan per stap**, en waar je was staat in `localStorage`

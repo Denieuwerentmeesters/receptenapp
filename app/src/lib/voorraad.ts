@@ -1,5 +1,20 @@
 import { enkelvoudVormen } from './ah'
 import { BEREIDING, canoniek } from './synoniemen'
+import { DROGE_KRUIDEN } from './kruiden'
+
+/**
+ * Wat de meeste mensen standaard in huis hebben, van vaak naar minder vaak.
+ * De voorraadkast toont er steeds een paar (voeg je er een toe, dan schuift de
+ * volgende door); de onboarding vraagt naar de eerste rij. Zout, peper, suiker
+ * en bouillon staan er niet bij: die komen sowieso nooit op de lijst
+ * (altijdInHuis).
+ */
+export const VOORRAAD_SUGGESTIES = [
+  DROGE_KRUIDEN, 'Olijfolie', 'Uien', 'Knoflook', 'Rijst', 'Pasta', 'Eieren', 'Boter',
+  'Zonnebloemolie', 'Bloem', 'Sojasaus', 'Tomatenpuree', 'Mosterd', 'Honing', 'Azijn',
+  'Balsamicoazijn', 'Ketjap', 'Sambal', 'Maizena', 'Melk', 'Parmezaan', 'Paneermeel',
+  'Couscous', 'Passata', 'Kokosmelk', 'Mayonaise',
+]
 
 /**
  * Soorten die in je voorraadkast onder één naam staan. "Azijn" is de gewone
