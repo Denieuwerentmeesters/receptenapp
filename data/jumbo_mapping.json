@@ -2178,6 +2178,33 @@
   "huismerk_naam": null
  },
  {
+  "key": "geraspte cheddar",
+  "naam": "Jumbo Geraspte Cheddar Kaas 50+ 150 g",
+  "standaard": "588988ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "geraspte jong belegen",
+  "naam": "Jumbo Geraspte Kaas Jong Belegen 48+ 175 g",
+  "standaard": "395036ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "geraspte kaas",
+  "naam": "Jumbo Geraspte Kaas Jong Belegen 48+ 175 g",
+  "standaard": "395036ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "gerookt ontbijtspek",
   "naam": "Ontbijtspek Gerookt 150 g",
   "standaard": "611514TRA",
@@ -3405,6 +3432,15 @@
   "key": "kippendijfilet",
   "naam": "Jumbo Scharrelkip Kippendijfilet 750 g",
   "standaard": "515052TRA",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "kipschnitzel",
+  "naam": "Jumbo Kipschnitzel 2 Stuks",
+  "standaard": "721509KGR",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,

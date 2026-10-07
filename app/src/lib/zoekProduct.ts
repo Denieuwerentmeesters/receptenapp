@@ -76,9 +76,10 @@ function zonderVerkleining(woord: string): string[] {
  * maar dat is een ander product. Zo'n gok legt stilletjes het verkeerde artikel
  * in je mandje, en dat merk je pas bij de kassa.
  *
- * Geeft het recept een keuze ("wraps of pitabroodjes"), dan nemen we de eerste
- * die een product heeft ("tamari of sojasaus" wordt sojasaus). Zonder die regel
- * won de sleutel die toevallig het eerst in de mapping stond.
+ * Geeft het recept een keuze ("wraps of pitabroodjes", "geraspte kaas (cheddar
+ * of jong belegen)"), dan nemen we de eerste die een product heeft ("tamari of
+ * sojasaus" wordt sojasaus). Zonder die regel won de sleutel die toevallig het
+ * eerst in de mapping stond, of viel de keuze tussen haakjes helemaal weg.
  */
 export function zoekProduct<P>(
   item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
@@ -92,25 +93,52 @@ export function zoekProduct<P>(
 }
 
 /**
- * "wraps of pitabroodjes" → "wraps". Niets bij een gedeeld woorddeel
- * ("kippen- of groentebouillon") of als er voor de "of" geen product staat
- * ("verse of diepvries doperwten"): dan zoeken we op de hele naam.
- */
-export function eersteKeuze(naam: string): string | undefined {
-  return /-\s+of\s/.test(naam) ? undefined : keuzes(naam)[0]
-}
-
-/**
- * Alle mogelijkheden uit "a of b of c", op volgorde; leeg als het recept geen
- * keuze geeft. Bij een gedeeld woorddeel ("kippen- of groentebouillon") is
- * alleen de laatste een heel woord.
+ * Alle mogelijkheden uit een keuze in het recept, op volgorde; leeg als het
+ * recept geen keuze geeft.
+ *
+ *  - "wraps of pitabroodjes" → wraps, pitabroodjes. Bij een gedeeld woorddeel
+ *    ("kippen- of groentebouillon") is alleen de laatste een heel woord.
+ *  - Tussen haakjes: "geraspte kaas (cheddar of jong belegen)" → geraspte
+ *    cheddar, cheddar, geraspte jong belegen, jong belegen. De bereiding vóór
+ *    de haakjes gaat mee, het soortwoord ("kaas") valt weg. "Grana Padano (of
+ *    Parmezaanse kaas)" → eerst grana padano zelf, dan parmezaanse kaas: wat
+ *    na "of" staat is het alternatief. Staat geen van de keuzes in de mapping,
+ *    dan zoekt zoekProduct alsnog op de hele naam.
  */
 function keuzes(naam: string): string[] {
+  const haakjes = naam.match(/^([^(]*)\(([^)]*\bof\b[^)]*)\)/)
+  if (haakjes) return keuzesTussenHaakjes(haakjes[1], haakjes[2], naam)
   const key = ingredientKey(naam)
   if (key.indexOf(' of ') <= 0) return []
   const delen = key.split(' of ').map((k) => k.trim()).filter(Boolean)
   return /-\s+of\s/.test(naam) ? delen.slice(-1) : delen
 }
+
+function keuzesTussenHaakjes(voor: string, binnen: string, naam: string): string[] {
+  // Een mix is geen keuze: "gemengde sla (rucola, bietenblad of veldsla)"
+  // somt op wat erin zit, en dan willen we de mix en niet alleen rucola.
+  if (/\bgemengde?\b/i.test(voor)) return []
+  // "grof geraspte kaas" → "grof geraspte": alles behalve het laatste woord.
+  const woorden = voor.split(',')[0].trim().split(/\s+/).filter(Boolean)
+  const bereiding = woorden.slice(0, -1).join(' ')
+  // De spatie ervoor: "(of gehakt)" begint met "of", en die lege eerste keuze
+  // is het ingrediënt zelf.
+  const opties = ` ${binnen}`.split(/,| of /).map((o) => o.trim().replace(VOORBEELD, ''))
+  return opties.flatMap((optie) => {
+    if (!optie) return [naam]
+    // "tortilla's (mais of tarwe)", "paprika (rood of groen)": dat beschrijft
+    // het product en vervangt het niet. Zonder deze regel werd dat een pak mais.
+    const key = ingredientKey(optie)
+    if (!key || EIGENSCHAP.test(key)) return []
+    return bereiding ? [`${bereiding} ${optie}`, optie] : [optie]
+  })
+}
+
+/** "zoals Appenzeller", "bijv. snijbiet": het voorbeeldwoord hoort niet bij het product. */
+const VOORBEELD = /^(?:zoals|bijv\.?|bijvoorbeeld|bv\.?)\s+/i
+
+/** Een los woord dat zegt hoe het product is, niet welk product: kleur, graan, rijping, verpakking. */
+const EIGENSCHAP = /^(?:mais|tarwe|volkoren|spelt|rood|rode|groen|groene|geel|gele|oranje|wit|witte|zwart|zwarte|bruin|bruine|jong|jonge|oud|oude|belegen|blik|pot|diepvries|gekocht|zelfgemaakt|rauw|rauwe|geroosterd|ongebrand|gekruid|mild|milde|pittig|zoet|zuur|mager|magere|vol|volle|halfvol|halfvolle|naturel|filet|flakes|beiden|mix)$/
 
 /**
  * Woorden die naast de productnaam mogen staan zonder dat het een ander
@@ -176,7 +204,9 @@ function zoekZonderKeuze<P>(
   // Geraspte kaas is een eigen product. Staat het er niet apart in, dan is een
   // stuk kaas om zelf te raspen goed, maar plakken nooit.
   const geraspt = /\b(?:fijn|vers)?geraspte?\b/.test(naam)
-  if (geraspt && mapping[`geraspte ${key}`]) return mapping[`geraspte ${key}`]
+  // "grof geraspte kaas" is gewoon geraspte kaas.
+  const geraspteKey = `geraspte ${key.replace(/^(?:grof|fijn) /, '')}`
+  if (geraspt && mapping[geraspteKey]) return mapping[geraspteKey]
   const product = zoekOpNaam(item, mapping)
   const weergavenaam = (product as { weergavenaam?: string | null } | undefined)?.weergavenaam
   if (geraspt && weergavenaam && /plak/i.test(weergavenaam)) return undefined

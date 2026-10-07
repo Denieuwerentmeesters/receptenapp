@@ -4176,6 +4176,15 @@
     "eenheid": "g"
   },
   {
+    "product_id": 419547,
+    "titel": "AH Goudse jong belegen 48+ geraspt",
+    "inhoud_tekst": "175 g",
+    "prijs": 3.49,
+    "leverbaar": true,
+    "inhoud": 175.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 419753,
     "titel": "AH Zwitserse kaasfondue",
     "inhoud_tekst": "400 g",
@@ -5811,6 +5820,15 @@
     "prijs": 5.49,
     "leverbaar": true,
     "inhoud": 300.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 533082,
+    "titel": "AH Scharrel kipschnitzel 2 stuks",
+    "inhoud_tekst": "205 g",
+    "prijs": 3.39,
+    "leverbaar": true,
+    "inhoud": 205.0,
     "eenheid": "g"
   },
   {

@@ -1460,6 +1460,24 @@
   "bio": 207510
  },
  {
+  "key": "geraspte cheddar",
+  "naam": "ah cheddar geraspte kaas",
+  "standaard": 454161,
+  "bio": null
+ },
+ {
+  "key": "geraspte jong belegen",
+  "naam": "ah goudse jong belegen 48+ geraspt",
+  "standaard": 419547,
+  "bio": null
+ },
+ {
+  "key": "geraspte kaas",
+  "naam": "ah goudse jong belegen 48+ geraspt",
+  "standaard": 419547,
+  "bio": null
+ },
+ {
   "key": "gerookt ontbijtspek",
   "naam": "ah gerookt ontbijtspek",
   "standaard": 197147,
@@ -2320,6 +2338,12 @@
   "naam": "ah scharrel kipdijfilet",
   "standaard": 531848,
   "bio": 600464
+ },
+ {
+  "key": "kipschnitzel",
+  "naam": "ah scharrel kipschnitzel 2 stuks",
+  "standaard": 533082,
+  "bio": null
  },
  {
   "key": "klapstuk",

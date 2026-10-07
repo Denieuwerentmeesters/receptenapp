@@ -69,6 +69,37 @@ describe('de deelmatch laat alleen vallen wat het product niet verandert', () =>
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
 })
 
+describe('keuze tussen haakjes: de eerste telt, met de bereiding ervoor', () => {
+  const HAAKJES: Record<string, string> = {
+    'geraspte cheddar': 'Geraspte cheddar', cheddar: 'Cheddar plakken', 'geraspte kaas': 'Geraspte kaas',
+    'parmezaanse kaas': 'Parmezaan', stilton: 'Stilton', paprika: 'Paprika',
+    fusilli: 'Fusilli', penne: 'Penne', snijbiet: 'Snijbiet',
+    rundergehakt: 'Rundergehakt', 'vegetarisch gehakt': 'Vegagehakt', vegagehakt: 'Vegagehakt',
+    mais: 'Mais', tortilla: 'Tortilla', rucola: 'Rucola', 'gemengde sla': 'Gemengde sla',
+  }
+  const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, HAAKJES)
+
+  test.each([
+    ['geraspte kaas (cheddar of jong belegen)', 'Geraspte cheddar'],
+    ['grof geraspte kaas (cheddar of belegen)', 'Geraspte cheddar'],
+    // Geen van de keuzes bekend: dan de hele naam.
+    ['geraspte kaas (zoals Appenzeller, Gruyère of Emmentaler)', 'Geraspte kaas'],
+    ['paprika (rood of groen)', 'Paprika'],
+    // Het soortwoord valt weg: niet "blauwe stilton".
+    ['blauwe kaas (stilton of roquefort)', 'Stilton'],
+    ['pasta (fusilli of penne)', 'Fusilli'],
+    ['bladgroente (bijv. snijbiet of Chinese kool), in reepjes', 'Snijbiet'],
+    // "(of …)": eerst het ingrediënt zelf, dan het alternatief.
+    ['rundergehakt (of vegetarisch gehakt)', 'Rundergehakt'],
+    ['vegagehakt (of gehakt)', 'Vegagehakt'],
+    ['Grana Padano (of Parmezaanse kaas)', 'Parmezaan'],
+    // Een eigenschap vervangt het product niet: geen pak mais.
+    ["kleine zachte tortilla's (mais of tarwe)", 'Tortilla'],
+    // Een mix is geen keuze.
+    ['gemengde sla (rucola, mosterdblad, bietenblad of veldsla)', 'Gemengde sla'],
+  ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
+})
+
 describe('gedroogd en geraspt zijn een eigen product', () => {
   const M: Record<string, { weergavenaam: string }> = {
     paddenstoelen: { weergavenaam: 'ah witte champignons' }, 'gedroogde tomaten': { weergavenaam: 'ah gedroogde tomaten' },

@@ -798,6 +798,12 @@
     "naam": "Jumbo Ansjovis 90 g"
   },
   {
+    "sku": "395036ZK",
+    "inhoud": 175.0,
+    "eenheid": "g",
+    "naam": "Jumbo Geraspte Kaas Jong Belegen 48+ 175 g"
+  },
+  {
     "sku": "396197PAK",
     "inhoud": 200.0,
     "eenheid": "g",
@@ -2392,6 +2398,12 @@
     "inhoud": 36.0,
     "eenheid": "g",
     "naam": "Jumbo Cayennepeper 36 g"
+  },
+  {
+    "sku": "721509KGR",
+    "inhoud": 2.0,
+    "eenheid": "stuks",
+    "naam": "Jumbo Kipschnitzel 2 Stuks"
   },
   {
     "sku": "721522BUS",
