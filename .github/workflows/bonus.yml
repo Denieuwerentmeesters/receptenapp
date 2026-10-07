@@ -1,8 +1,12 @@
-# Vult bonus_actie nu meteen, met dezelfde code als de nachtelijke cron
-# (api/bonus.ts). Handmatig: gh workflow run bonus.yml
+# Vult bonus_actie en recept_bonus, elke nacht. PrijsProfeet ververst rond
+# 23:00 UTC; een prijs mag niet langer dan 24 uur als actueel getoond worden.
+# Tussendoor met de hand: gh workflow run bonus.yml
+# Kijken of het lukte: gh run list --workflow bonus.yml
 name: Bonus ophalen
 
 on:
+  schedule:
+    - cron: '0 4 * * *'
   workflow_dispatch:
 
 jobs:
