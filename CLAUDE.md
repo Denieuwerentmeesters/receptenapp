@@ -508,10 +508,15 @@ staat daarna op Deze week.
   `kookavonden`), zonder bevestigscherm. Vegetarisch vraag je als "2 van je
   4 avonden"; `vegaMinimumVoor` rekent dat om naar "x van de 10".
 - **De voorraadvraag schrijft naar `voorraad_item`**, niet naar de
-  voorkeuren: dezelfde rijen als het scherm Voorraadkast. De chips zijn de
-  eerste vijftien uit `VOORRAAD_SUGGESTIES` (`src/lib/voorraad.ts`), die de
-  voorraadkast ook gebruikt. Het moet er staan vóór "Vul mijn week": wat in
-  huis is komt niet op de lijst.
+  voorkeuren: dezelfde rijen als het scherm Voorraadkast. Het moet er staan
+  vóór "Vul mijn week": wat in huis is komt niet op de lijst.
+- **De chips komen uit `VOORRAAD_SUGGESTIES`** (`src/lib/voorraad.ts`), van
+  vaak naar zelden; het scherm Voorraadkast gebruikt dezelfde lijst. De
+  vraag begint met twaalf en zet er bij elke tik de volgende bij
+  (`VoorraadKeuze`). In het open veld typ je de rest; staat het in de lijst,
+  dan wordt het die naam ("miso" → "Misopasta"). Een nieuw product in de
+  lijst krijgt de naam die de recepten gebruiken, anders dekt `inVoorraad`
+  het niet; `voorraad.test.ts` bewaakt een paar gevallen.
 - **Keukens komen uit de pool** (`useKeukens`), niet uit een vaste lijst: een
   chip die bij geen recept hoort doet niets in de generator.
 - **Opslaan per stap**, en waar je was staat in `localStorage`
