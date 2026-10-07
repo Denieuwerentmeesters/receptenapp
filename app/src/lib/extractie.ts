@@ -1,23 +1,36 @@
 import { Capacitor } from '@capacitor/core'
 import { WEBSITE } from './config'
-import type { Ingredient } from './database.types'
 
 /**
  * Praat met de serverless functie in api/extraheer.ts.
  *
- * De functie leest een foto of vrije tekst en geeft gestructureerde velden
- * terug. De Anthropic-sleutel staat daar op de server, niet hier — anders kan
- * iedereen die de app installeert 'm eruit halen.
+ * De functie leest een link (website of Instagram), screenshots, een
+ * kookboekfoto of vrije tekst en geeft gestructureerde velden terug. De
+ * sleutels van Anthropic, OpenAI en de scraper staan daar op de server, niet
+ * hier — anders kan iedereen die de app installeert ze eruit halen.
+ *
+ * Het antwoord komt als één gebeurtenis per regel (ScanGebeurtenis): de
+ * stappen onderweg ("Video uitschrijven") en aan het eind het recept. In de
+ * browser druppelen die binnen; in de iOS-app (CapacitorHttp) komt alles
+ * tegelijk. Beide lopen door dezelfde lus, net als bij Zelf samenstellen.
  */
 
-export interface Concept {
-  titel: string
-  personen: number
-  bereidingstijd_minuten?: number
-  keuken?: string
-  tags: string[]
-  ingredienten: Ingredient[]
-  bereiding_nl: string[]
+export type { Concept, ConceptBron, ScanGebeurtenis } from './importeren'
+import type { Concept, ScanGebeurtenis } from './importeren'
+
+/** Het recept zoals het terugkwam, met de scan waar het bij hoort (voor recepten.scan_id). */
+export interface Uitgelezen {
+  concept: Concept
+  scanId: string | null
+}
+
+/** De link is al eens geïmporteerd; de app opent dat recept. */
+export class BestaatAl extends Error {
+  receptId: string
+  constructor(receptId: string) {
+    super('Dit recept staat al bij je recepten.')
+    this.receptId = receptId
+  }
 }
 
 /**
@@ -30,38 +43,75 @@ function endpoint(): string {
     || (Capacitor.isNativePlatform() ? `${WEBSITE}/api/extraheer` : '/api/extraheer')
 }
 
-async function vraag(body: unknown): Promise<Concept> {
+type OpStap = (tekst: string) => void
+
+async function vraag(body: Record<string, unknown>, opStap: OpStap, signaal?: AbortSignal): Promise<Uitgelezen> {
   const respons = await fetch(endpoint(), {
     method: 'POST',
+    credentials: 'include',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ ...body, stroom: true }),
+    signal: signaal,
   })
-
-  const data = (await respons.json()) as Partial<Concept> & { fout?: string }
-  if (!respons.ok || data.fout) {
-    throw new Error(data.fout ?? 'Het uitlezen is niet gelukt.')
+  if (!respons.ok) {
+    const { fout } = (await respons.json().catch(() => ({}))) as { fout?: string }
+    throw new Error(fout ?? 'Het uitlezen is niet gelukt.')
   }
 
-  return {
-    titel: data.titel ?? '',
-    personen: data.personen ?? 4,
-    bereidingstijd_minuten: data.bereidingstijd_minuten,
-    keuken: data.keuken,
-    tags: data.tags ?? [],
-    ingredienten: data.ingredienten ?? [],
-    bereiding_nl: data.bereiding_nl ?? [],
+  let klaar: Uitgelezen | null = null
+  const verwerk = (regel: string) => {
+    if (!regel.trim()) return
+    const g = JSON.parse(regel) as ScanGebeurtenis
+    if (g.soort === 'fout') throw new Error(g.fout)
+    if (g.soort === 'bestaat') throw new BestaatAl(g.receptId)
+    if (g.soort === 'klaar') klaar = { concept: g.concept, scanId: g.scanId }
+    if (g.soort === 'stap') opStap(g.tekst)
   }
+
+  const lezer = respons.body?.getReader()
+  if (!lezer) {
+    for (const regel of (await respons.text()).split('\n')) verwerk(regel)
+  } else {
+    const decoder = new TextDecoder()
+    let rest = ''
+    for (;;) {
+      const { done, value } = await lezer.read()
+      rest += decoder.decode(value, { stream: !done })
+      const regels = rest.split('\n')
+      rest = regels.pop() ?? ''
+      for (const regel of regels) verwerk(regel)
+      if (done) break
+    }
+    verwerk(rest)
+  }
+
+  if (!klaar) throw new Error('De verbinding viel weg voordat het recept af was. Probeer het opnieuw.')
+  return klaar
 }
 
-export function leesTekst(tekst: string): Promise<Concept> {
-  return vraag({ tekst })
+export function leesTekst(tekst: string, opStap: OpStap = () => undefined): Promise<Uitgelezen> {
+  return vraag({ tekst }, opStap)
 }
 
-export async function leesFoto(bestand: File): Promise<Concept> {
+export async function leesFoto(bestand: File, opStap: OpStap = () => undefined): Promise<Uitgelezen> {
   // Verkleinen voor verzenden: een telefoonfoto van 4 MB is zonde van de tijd
   // en het model leest een kleinere versie net zo goed.
-  const { data, mediaType } = await verklein(bestand)
-  return vraag({ afbeelding: { data, mediaType } })
+  const afbeelding = await verklein(bestand)
+  return vraag({ afbeelding }, opStap)
+}
+
+/** Een link van een website of Instagram. De server bepaalt de route. */
+export function leesLink(url: string, opStap: OpStap = () => undefined, signaal?: AbortSignal): Promise<Uitgelezen> {
+  return vraag({ url }, opStap, signaal)
+}
+
+/** Hooguit zoveel screenshots per recept; dezelfde grens als de server. */
+export const MAX_SCREENSHOTS = 4
+
+/** Screenshots van één recept, in de volgorde waarin ze gekozen zijn. */
+export async function leesScreenshots(bestanden: File[], opStap: OpStap = () => undefined): Promise<Uitgelezen> {
+  const afbeeldingen = await Promise.all(bestanden.slice(0, MAX_SCREENSHOTS).map(verklein))
+  return vraag({ afbeeldingen }, opStap)
 }
 
 const MAX_ZIJDE = 1600

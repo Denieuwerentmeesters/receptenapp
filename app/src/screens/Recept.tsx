@@ -21,6 +21,7 @@ import { allergeenNaam, opsomming, receptAllergie, useAllergeenRegels, useAllerg
 import { BonusBron } from '../components/Bonus'
 import { receptBonusProducten, totTekst, useBonus } from '../lib/bonus'
 import { standaardPersonen } from '../lib/menu'
+import { bronVermelding } from '../lib/importeren'
 
 export function Recept() {
   const { id } = useParams<{ id: string }>()
@@ -88,6 +89,7 @@ export function Recept() {
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
           const dieet = dieetLabels(r)
           const toko = tokoIngredienten(r.ingredienten)
+          const bron = bronVermelding(r)
           const allergie = allergieen.length > 0 && regels.data
             ? receptAllergie(r.ingredienten.map((i) => i.naam), regels.data, allergieen)
             : null
@@ -179,6 +181,23 @@ export function Recept() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '20px 22px 8px' }}>
+                {/* Geïmporteerd: de maker en de link naar de bron, zoals afgesproken (plan, auteursrecht). */}
+                {bron && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+                    background: 'var(--c-paper)', borderRadius: 'var(--radius-sm)', padding: '11px 14px',
+                    marginBottom: 6, fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4,
+                  }}>
+                    <span>{bron.tekst}</span>
+                    {bron.url && (
+                      <a
+                        href={bron.url}
+                        onClick={(e) => { e.preventDefault(); void openBijWinkel(bron.url) }}
+                        style={{ fontWeight: 700, color: 'var(--c-purple)', textDecoration: 'none', whiteSpace: 'nowrap' }}
+                      >{bron.bekijk}</a>
+                    )}
+                  </div>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <span style={{
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',

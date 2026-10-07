@@ -65,6 +65,12 @@
       voorraadkast bijhouden, en uitrekenen wat je bespaart. Je allergieën gebruiken we alleen om
       recepten te filteren en producten op je lijst te vervangen.
     </p>
+    <p>
+      Als je een recept van Instagram of een website toevoegt, halen we die pagina op om het recept
+      uit te lezen. De tekst, foto's en video van de pagina bewaren we niet. We bewaren het recept,
+      de link en de naam van de maker, zodat je terug kunt naar de bron. Van elke import bewaren we
+      ook de link en wat het kostte, om misbruik tegen te gaan.
+    </p>
     <p>Daarnaast gebruiken we technische gegevens om de app te beveiligen en misbruik tegen te gaan.</p>
 
     <h2>4. Rechtsgrondslag (AVG)</h2>
@@ -92,7 +98,9 @@
     <ul>
       <li><b>Neon</b> (database en inloggen): hier staan je account en je gegevens uit de app.</li>
       <li><b>Vercel</b> (hosting): de website en de servers van de app.</li>
-      <li><b>Anthropic</b> (Claude): leest een recept uit als je een foto of tekst toevoegt, en stelt een menu samen als je daarom vraagt. Alleen die foto of tekst gaat erheen, of bij een menu je keuze, je wensen en je allergieën; niet je account. Wat je bij een menu vroeg en terugkreeg bewaren we bij je account.</li>
+      <li><b>Anthropic</b> (Claude): leest een recept uit als je een link, screenshots, een foto of tekst toevoegt, en stelt een menu samen als je daarom vraagt. Alleen die inhoud gaat erheen, of bij een menu je keuze, je wensen en je allergieën; niet je account. Wat je bij een menu vroeg en terugkreeg bewaren we bij je account.</li>
+      <li><b>OpenAI</b>: schrijft de gesproken tekst uit als je een video van Instagram toevoegt. Alleen de video gaat erheen; niet je account.</li>
+      <li><b>Apify</b>: haalt een openbare Instagram-post op als je de link ervan toevoegt. Alleen de link gaat erheen; niet je account.</li>
       <li><b>Google</b> (Gemini): maakt de foto bij een recept, op basis van titel en ingrediënten. Daar gaan geen gegevens over jou heen.</li>
     </ul>
     <p>
@@ -176,6 +184,12 @@
       and pantry, and calculating your savings. We use your allergies only to filter recipes and
       to substitute products on your list.
     </p>
+    <p>
+      When you add a recipe from Instagram or a website, we fetch that page to extract the recipe.
+      We do not store the page's text, photos or video. We store the recipe, the link and the
+      creator's name, so you can go back to the source. For each import we also keep the link and
+      what it cost, to prevent abuse.
+    </p>
     <p>We also use technical data to secure the app and prevent abuse.</p>
 
     <h2>4. Legal basis (GDPR)</h2>
@@ -203,7 +217,9 @@
     <ul>
       <li><b>Neon</b> (database and sign-in): stores your account and your app data.</li>
       <li><b>Vercel</b> (hosting): the website and the app's servers.</li>
-      <li><b>Anthropic</b> (Claude): extracts a recipe when you add a photo or text, and puts together a menu when you ask for one. Only that photo or text is sent, or for a menu your choices, your wishes and your allergies; not your account. What you asked for a menu and what came back is stored with your account.</li>
+      <li><b>Anthropic</b> (Claude): extracts a recipe when you add a link, screenshots, a photo or text, and puts together a menu when you ask for one. Only that content is sent, or for a menu your choices, your wishes and your allergies; not your account. What you asked for a menu and what came back is stored with your account.</li>
+      <li><b>OpenAI</b>: transcribes the spoken text when you add an Instagram video. Only the video is sent; not your account.</li>
+      <li><b>Apify</b>: fetches a public Instagram post when you add its link. Only the link is sent; not your account.</li>
       <li><b>Google</b> (Gemini): generates the photo for a recipe from its title and ingredients. No data about you is sent.</li>
     </ul>
     <p>
