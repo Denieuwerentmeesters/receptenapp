@@ -9,6 +9,7 @@ import {
 import { bronTypeVoor, normaliseerUrl, isInstagramUrl, siteNaam } from '../lib/importeren'
 import { useReceptOpslaan } from '../lib/queries2'
 import { openBijWinkel } from '../lib/ah'
+import { LaadScherm } from '../components/Laadanimatie'
 import type { BronType } from '../lib/database.types'
 
 type Stap = 'kiezen' | 'invoer' | 'bezig' | 'concept'
@@ -319,15 +320,11 @@ export function ReceptToevoegen() {
       )}
 
       {stap === 'bezig' && (
-        <Inhoud style={{ alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-          <Icon name="chefHat" size={32} style={{ color: 'var(--c-purple)' }} />
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, margin: 0 }}>
-            {stapTekst || 'We lezen je recept uit'}
-          </p>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(20,20,20,0.6)', margin: 0, textAlign: 'center' }}>
-            {route === 'link' ? 'Een video duurt het langst: tot een minuut.' : 'Duurt een paar seconden.'}
-          </p>
-        </Inhoud>
+        <LaadScherm
+          kleur="paars"
+          tekst={stapTekst || 'We lezen je recept uit'}
+          subtekst={route === 'link' ? 'Een video duurt het langst: tot een minuut.' : 'Duurt een paar seconden.'}
+        />
       )}
 
       {stap === 'concept' && (

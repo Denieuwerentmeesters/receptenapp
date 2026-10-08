@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Button, Icon } from '../ds'
-import { Label, Titel, useOnderRuimte } from './Layout'
+import { Titel, useOnderRuimte } from './Layout'
+import { LaadScherm } from './Laadanimatie'
 import { foutTekst } from '../lib/fouten'
 
 /**
@@ -9,26 +10,10 @@ import { foutTekst } from '../lib/fouten'
  * icoon verschillen.
  */
 
-export function Laden({ tekst = 'We stellen je week samen' }: { tekst?: string }) {
-  return (
-    <div style={{
-      height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center',
-      gap: 16, background: 'var(--c-red)', color: 'var(--c-cream)', padding: '0 26px 46px',
-    }}>
-      <Label>Even geduld</Label>
-      <Titel grootte={32}>{tekst}</Titel>
-      <div style={{
-        height: 8, borderRadius: 'var(--radius-full)',
-        background: 'rgba(255,246,232,0.28)', overflow: 'hidden', marginTop: 6,
-      }}>
-        <div style={{
-          height: '100%', width: '60%', borderRadius: 'var(--radius-full)',
-          background: 'var(--c-yellow)', animation: 'laadbalk 1.4s ease-in-out infinite',
-        }} />
-      </div>
-      <style>{'@keyframes laadbalk{0%{width:12%}50%{width:82%}100%{width:12%}}'}</style>
-    </div>
-  )
+export function Laden({ tekst }: { tekst?: string }) {
+  // Het logo pruttelt en verdampt (components/Laadanimatie.tsx). Geen
+  // "Even geduld" meer: de animatie zegt het al.
+  return <LaadScherm kleur="rood" tekst={tekst} />
 }
 
 export function Leeg({ icoon, kop, tekst, knop, onKnop }: {
