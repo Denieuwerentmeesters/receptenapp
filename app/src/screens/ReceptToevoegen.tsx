@@ -78,7 +78,7 @@ export function ReceptToevoegen() {
       setStap('concept')
     } catch (f) {
       if (f instanceof BestaatAl) {
-        navigeer(`/recept/${f.receptId}`, { replace: true })
+        navigeer(`/recept/${f.receptId}`, { replace: true, state: { terug: '/ontdekken' } })
         return
       }
       setFout(foutTekst(f))
@@ -109,7 +109,8 @@ export function ReceptToevoegen() {
         scanId,
       },
       {
-        onSuccess: (id) => navigeer(`/recept/${id}`, { replace: true }),
+        // Terug vanaf het nieuwe recept gaat naar Ontdekken, niet naar het toevoegscherm (dat is al vervangen).
+        onSuccess: (id) => navigeer(`/recept/${id}`, { replace: true, state: { terug: '/ontdekken' } }),
         onError: (f) => setFout(foutTekst(f)),
       },
     )

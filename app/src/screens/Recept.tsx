@@ -3,7 +3,7 @@ import { useHartje } from '../components/Hartje'
 import { volgendeWeek } from '../lib/week'
 import { useQueryClient } from '@tanstack/react-query'
 import type { ReceptAllergie } from '../lib/allergenen'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button, Icon, IconButton } from '../ds'
 import { Inhoud, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { Grens } from '../components/Staten'
@@ -26,6 +26,8 @@ import { bronVermelding } from '../lib/importeren'
 export function Recept() {
   const { id } = useParams<{ id: string }>()
   const navigeer = useNavigate()
+  // Na het toevoegen zegt het toevoegscherm waar terug heen moet (Ontdekken).
+  const terugNaar = (useLocation().state as { terug?: string } | null)?.terug
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
   const opslaan = useVoorkeurenOpslaan()
@@ -123,7 +125,11 @@ export function Recept() {
                     {/* Geopend via een link of direct na het toevoegen: dan is er geen vorige pagina. */}
                     <IconButton
                       icon="chevronLeft" label="Terug" size={42}
-                      onClick={() => (((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0 ? navigeer(-1) : navigeer('/ontdekken'))}
+                      onClick={() => {
+                        if (terugNaar) return navigeer(terugNaar)
+                        if (((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0) navigeer(-1)
+                        else navigeer('/ontdekken')
+                      }}
                       style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
                     />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
