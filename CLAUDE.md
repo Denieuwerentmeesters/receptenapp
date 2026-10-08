@@ -511,6 +511,18 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 - Wijzig je de prompt-lijsten, draai dan eerst `--dry-run --telling`: het doel is
   ongeveer half top-down, half schuin, en een derde zonder rekwisieten.
 
+## Laadanimatie
+
+Het woordmerk pruttelt en verdampt letter voor letter
+(`components/Laadanimatie.tsx`, naar "Pinch Loader" uit Claude Design,
+variant gekookt). `Pruttel` is de SVG, per letter een groep met een eigen
+blur-filter op een requestAnimationFrame-klok; `LaadScherm` zet 'm op een
+rood of paars scherm. `Laden` in `Staten.tsx` (bij het openen van de app,
+`Grens`, de onboarding) is rood en toont alleen een tekst als een scherm er
+een meegeeft: bij het openen van de app staat er niets. Het toevoegscherm
+gebruikt paars met de stap ("Video uitschrijven"). Bij "verminder beweging"
+staat het logo stil.
+
 ## Bespaard!
 
 Wat je bespaart ten opzichte van een maaltijdbox (HelloFresh). Bij het openen

@@ -67,7 +67,7 @@ export default function App() {
 
   useEffect(() => { void start() }, [start])
 
-  if (status === 'bezig') return <Laden tekst="De app wordt klaargezet" />
+  if (status === 'bezig') return <Laden />
   if (status === 'uitgelogd') return <Inloggen onKlaar={() => void start()} />
   if (status === 'fout') {
     return (
@@ -131,7 +131,7 @@ export default function App() {
 function Poort() {
   const voorkeuren = useVoorkeuren()
   const plek = useLocation()
-  if (voorkeuren.isPending) return <Laden tekst="De app wordt klaargezet" />
+  if (voorkeuren.isPending) return <Laden />
   const nieuw = voorkeuren.data?.onboarding_klaar_op === null
   if (nieuw && plek.pathname !== '/welkom') return <Navigate to="/welkom" replace />
   return <Outlet />
