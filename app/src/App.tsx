@@ -1,5 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Navigate, Outlet, Route, HashRouter as Router, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Capacitor } from '@capacitor/core'
+import { App as CapacitorApp } from '@capacitor/app'
+import { haalGedeeldeLink, linkUitSchema, toevoegPad } from './lib/deelknop'
 import { DezeWeek } from './screens/DezeWeek'
 import { Kookmodus } from './screens/Kookmodus'
 import { Ontdekken } from './screens/Ontdekken'
@@ -85,6 +88,7 @@ export default function App() {
     // HashRouter, niet BrowserRouter: in een Capacitor-webview draait de app van
     // het bestandssysteem en is er geen server die diepe paden kan serveren.
     <Router>
+      <GedeeldeLink />
       <Routes>
         <Route element={<Poort />}>
         <Route path="/welkom" element={<Onboarding />} />
@@ -138,4 +142,46 @@ function UitlegTerugkijken() {
   const navigeer = useNavigate()
   const terug = () => navigeer('/instellingen', { replace: true })
   return <Uitleg laatsteKnop="Klaar" overslaanTekst="Sluit" onKlaar={terug} onOverslaan={terug} onTerug={terug} />
+}
+
+/**
+ * De deelknop van iOS (lib/deelknop.ts): een link die via pinch://toevoegen
+ * binnenkomt, of die de extension in de App Group achterliet, opent het
+ * toevoegscherm. Beide wegen kunnen dezelfde link brengen; de laatste
+ * onthouden we even, zodat het scherm niet twee keer start.
+ */
+function GedeeldeLink() {
+  const navigeer = useNavigate()
+  const laatste = useRef<{ link: string; op: number } | null>(null)
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+    let gestopt = false
+    const open = (link: string) => {
+      if (gestopt) return
+      const nu = Date.now()
+      if (laatste.current?.link === link && nu - laatste.current.op < 10_000) return
+      laatste.current = { link, op: nu }
+      navigeer(toevoegPad(link))
+    }
+    const uitSchema = (url: string) => {
+      const link = linkUitSchema(url)
+      if (!link) return
+      // De extension zette 'm ook in de App Group; die kopie hoeft niet meer.
+      void haalGedeeldeLink()
+      open(link)
+    }
+    const uitGroep = () => haalGedeeldeLink().then((link) => { if (link) open(link) })
+
+    void CapacitorApp.getLaunchUrl().then((r) => (r?.url ? uitSchema(r.url) : uitGroep()))
+    const l1 = CapacitorApp.addListener('appUrlOpen', (e) => uitSchema(e.url))
+    const l2 = CapacitorApp.addListener('appStateChange', (s) => { if (s.isActive) void uitGroep() })
+    return () => {
+      gestopt = true
+      void l1.then((h) => h.remove())
+      void l2.then((h) => h.remove())
+    }
+  }, [navigeer])
+
+  return null
 }

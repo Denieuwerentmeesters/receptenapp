@@ -118,6 +118,19 @@ is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
 - **`viewport-fit=cover` in `index.html` moet blijven.** Zonder is
   `env(safe-area-inset-top)` nul en schuiven alle koppen onder de klok.
 - Alleen iPhone, alleen staand. Push staat nog niet aan (geen entitlement).
+- **De deelknop** (`app/ios/App/Delen`, target `Delen`, bundle-id
+  `nl.reinoudtencate.receptenapp.delen`): in Instagram of Safari tik je op
+  Delen en kies je Pinch. De extension pakt de link, zet 'm in de App Group
+  `group.nl.reinoudtencate.receptenapp` (`App.entitlements` en
+  `Delen.entitlements`, Xcode registreert de groep zelf bij automatisch
+  signen) en opent de app met `pinch://toevoegen?url=…` via de responder
+  chain, want een extension mag UIApplication officieel niet aanroepen.
+  `GedeeldeLink` in `App.tsx` vangt het URL-schema op (`appUrlOpen`,
+  `getLaunchUrl`) en kijkt bij elke activering ook in de App Group
+  (`src/lib/deelknop.ts`, via `@capacitor/preferences` met `group`), voor
+  als het openen niet lukte. Alleen links; geen screenshots. De target is
+  met de hand in `project.pbxproj` gezet (id's beginnen met `DE1E`);
+  `cap sync` raakt 'm niet aan.
 
 ## AH-mapping — hoe het hoort te werken
 
@@ -389,8 +402,8 @@ en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
   Imports staan wél in Ontdekken en in de weekmenu-generator (het zijn jouw
   recepten), en de nachtelijke ronde geeft ze een eigen foto.
 - **Niet gebouwd uit het plan:** Pinch Plus (RevenueCat, Stripe, Plus-scherm,
-  teller), de Share Extension voor iOS (App Group), de uitleg na de
-  onboarding, en het herroepingsscherm. De privacyverklaring noemt
+  teller), de uitleg na de onboarding, en het herroepingsscherm. De deelknop
+  van iOS staat hierboven bij "iOS-app". De privacyverklaring noemt
   Anthropic, OpenAI en Apify al.
 
 ## Een recept delen met een link
