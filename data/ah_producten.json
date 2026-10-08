@@ -243,6 +243,15 @@
     "eenheid": "ml"
   },
   {
+    "product_id": 3853,
+    "titel": "AH Goudse oud 48+ geraspt",
+    "inhoud_tekst": "175 g",
+    "prijs": 4.29,
+    "leverbaar": true,
+    "inhoud": 175.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 3869,
     "titel": "AH Sour cream",
     "inhoud_tekst": "125 g",
@@ -510,6 +519,15 @@
     "prijs": 2.89,
     "leverbaar": true,
     "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 46564,
+    "titel": "AH Goudse jong 48+ geraspt",
+    "inhoud_tekst": "175 g",
+    "prijs": 3.39,
+    "leverbaar": true,
+    "inhoud": 175.0,
     "eenheid": "g"
   },
   {
