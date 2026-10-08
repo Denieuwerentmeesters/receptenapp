@@ -26,6 +26,14 @@ import {
 } from '../lib/allergenen'
 
 /** De keuzelijst onder een regel: vega of vlees, vervanger of origineel. */
+/** De keuzelijst in de regel zelf, achter de hoeveelheid. */
+const keuzeInRegel: React.CSSProperties = {
+  display: 'inline-block', verticalAlign: 'baseline', maxWidth: '100%',
+  fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
+  color: 'var(--c-green)', background: 'var(--c-paper)',
+  border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 10, padding: '3px 8px',
+}
+
 const keuzeStijl: React.CSSProperties = {
   display: 'block', marginTop: 6, marginLeft: 36, maxWidth: 'calc(100% - 36px)',
   fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
@@ -309,7 +317,33 @@ export function Boodschappen() {
                         checked={regel.afgevinkt}
                         onChange={() => afvinken.mutate({ itemIds: regel.ids, afgevinkt: !regel.afgevinkt })}
                       >
-                        {regel.label}
+                        {(() => {
+                          // Vlees of vega: de keuze staat op de plek van de naam ("800 g [Rundergehakt ▾]"),
+                          // anders staat er boven rundergehakt en kies je eronder vegagehakt, en klopt het niet meer.
+                          const opties = regel.afgevinkt ? [] : vegaOpties(regel.key)
+                          if (opties.length === 0) return regel.label
+                          const kleineNaam = regel.naam.toLowerCase()
+                          const hoeveelheid = regel.label.endsWith(kleineNaam)
+                            ? regel.label.slice(0, regel.label.length - kleineNaam.length).trim() : ''
+                          // "vegagehakt (of gehakt)" heet in de lijst gewoon Vegagehakt.
+                          const kaal = regel.naam.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim()
+                          const receptNaam = kaal.charAt(0).toUpperCase() + kaal.slice(1)
+                          return (
+                            <>
+                              {hoeveelheid && `${hoeveelheid} `}
+                              {/* De tik op de keuzelijst mag het vinkje niet omzetten. */}
+                              <select
+                                value={vegaKeuze(regel.key)}
+                                onChange={(e) => kiesVega(regel.key, e.target.value as VegaKeuze)}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Vega of vlees voor ${regel.naam}`}
+                                style={keuzeInRegel}
+                              >
+                                {opties.map((o) => <option key={o.keuze} value={o.keuze}>{o.label ?? receptNaam}</option>)}
+                              </select>
+                            </>
+                          )
+                        })()}
                       </Checkbox>
                       {nietGevonden.includes(regel) && (
                         <span style={{
@@ -345,24 +379,6 @@ export function Boodschappen() {
                             {aantal.totaal}× {inhoudTekst(verpakking)}
                             {aantal.samenMet.length > 0 && ` · samen met ${aantal.samenMet.join(' en ')}`}
                           </span>
-                        )
-                      })()}
-                      {!regel.afgevinkt && (() => {
-                        // Vlees: vega of het recept. Vega: het recept of vlees.
-                        const opties = vegaOpties(regel.key)
-                        if (opties.length === 0) return null
-                        // "vegagehakt (of gehakt)" heet in de lijst gewoon Vegagehakt.
-                        const kaal = regel.naam.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim()
-                        const receptNaam = kaal.charAt(0).toUpperCase() + kaal.slice(1)
-                        return (
-                          <select
-                            value={vegaKeuze(regel.key)}
-                            onChange={(e) => kiesVega(regel.key, e.target.value as VegaKeuze)}
-                            aria-label={`Vega of vlees voor ${regel.naam}`}
-                            style={keuzeStijl}
-                          >
-                            {opties.map((o) => <option key={o.keuze} value={o.keuze}>{o.label ?? receptNaam}</option>)}
-                          </select>
                         )
                       })()}
                       {!regel.afgevinkt && allergieen.length > 0 && (() => {

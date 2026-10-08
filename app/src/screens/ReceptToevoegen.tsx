@@ -128,7 +128,12 @@ export function ReceptToevoegen() {
       <Kop kleur="var(--c-purple)" style={{ paddingBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
-            onClick={() => (stap === 'kiezen' || gevraagd ? navigeer(-1) : setStap('kiezen'))}
+            onClick={() => {
+              if (stap !== 'kiezen' && !gevraagd) return setStap('kiezen')
+              // Geopend via een link van buiten: dan is er geen vorige pagina.
+              if (((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0) navigeer(-1)
+              else navigeer('/ontdekken')
+            }}
             aria-label="Terug"
             style={{
               border: 'none', background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)',
@@ -329,6 +334,7 @@ export function ReceptToevoegen() {
           <Inhoud style={{ gap: 14 }}>
             <p style={{ ...uitlegStijl, margin: 0 }}>
               Controleer en verbeter waar nodig. Pas na jouw akkoord slaan we het op.
+              {' '}Een foto maken we vannacht; morgen staat hij erbij.
             </p>
 
             {concept.bron?.url && (

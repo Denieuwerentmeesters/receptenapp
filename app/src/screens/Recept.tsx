@@ -120,8 +120,10 @@ export function Recept() {
                     position: 'absolute', top: 16, left: 16, right: 16,
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
                   }}>
+                    {/* Geopend via een link of direct na het toevoegen: dan is er geen vorige pagina. */}
                     <IconButton
-                      icon="chevronLeft" label="Terug" size={42} onClick={() => navigeer(-1)}
+                      icon="chevronLeft" label="Terug" size={42}
+                      onClick={() => (((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0 ? navigeer(-1) : navigeer('/ontdekken'))}
                       style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
                     />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -153,9 +155,17 @@ export function Recept() {
 
                   {!r.afbeelding_url && (
                     <div style={{
-                      position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      opacity: 0.5,
-                    }}><Icon name="utensils" size={48} /></div>
+                      position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      justifyContent: 'center', gap: 10, opacity: 0.6,
+                    }}>
+                      <Icon name="utensils" size={48} />
+                      {/* Een eigen recept krijgt vannacht een foto (api/afbeeldingen.ts); een samengesteld menu niet. */}
+                      {r.user_id && r.bron_type !== 'samengesteld' && (
+                        <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>
+                          De foto komt vannacht
+                        </span>
+                      )}
+                    </div>
                   )}
 
                   <div style={{ position: 'absolute', left: 22, right: 22, bottom: 22 }}>

@@ -572,7 +572,7 @@
  {
   "key": "boter",
   "naam": "ah roomboter ongezouten",
-  "standaard": 127487,
+  "standaard": 193236,
   "bio": 58082
  },
  {
@@ -1385,6 +1385,12 @@
   "key": "gele paprika",
   "naam": "ah paprika geel",
   "standaard": 368705,
+  "bio": null
+ },
+ {
+  "key": "gele rijst",
+  "naam": "lassie gele rijst 325 g",
+  "standaard": 62372,
   "bio": null
  },
  {
@@ -4087,7 +4093,7 @@
  {
   "key": "roomboter",
   "naam": "ah roomboter ongezouten",
-  "standaard": 127487,
+  "standaard": 193236,
   "bio": 58082
  },
  {
