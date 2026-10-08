@@ -42,8 +42,11 @@ const svg = (maat, kleur, tekening, [x0, y0, breed, hoog], schaal) => {
 await sharp(svg(1024, FEL, beeldmerk, [0, 0, 120, 120], 0.78)).flatten({ background: FEL }).png()
   .toFile(`${ASSETS}AppIcon.appiconset/AppIcon-512@2x.png`)
 
-// Opstartscherm: iOS snijdt het vierkant bij tot het scherm, dus het woordmerk klein in het midden.
-const splash = await sharp(svg(2732, ROOD, woordmerk, [-4, -16, 240, 104], 0.2)).flatten({ background: ROOD }).png().toBuffer()
+// Opstartscherm: alleen rood, zonder woordmerk. Het eerste logo dat je ziet
+// is de laadanimatie in de app (components/Laadanimatie.tsx); met een stil
+// logo ervoor leek het alsof de app eerst bevroor en dan pas ging bewegen.
+// iOS snijdt het vierkant bij tot het scherm.
+const splash = await sharp(svg(2732, ROOD, '', [0, 0, 1, 1], 1)).flatten({ background: ROOD }).png().toBuffer()
 for (const naam of ['splash-2732x2732.png', 'splash-2732x2732-1.png', 'splash-2732x2732-2.png']) {
   await sharp(splash).toFile(`${ASSETS}Splash.imageset/${naam}`)
 }

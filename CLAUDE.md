@@ -115,6 +115,9 @@ is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
   verzoek zich in de app anders dan in de browser, kijk dan daar eerst.
 - **Het opstartscherm gaat niet vanzelf weg** (`launchAutoHide: false`);
   `main.tsx` haalt het weg. Valt dat weg, dan hangt de app op een rood scherm.
+  Het opstartscherm is bewust alleen rood, zonder logo (`ios/ontwerp/maak.mjs`):
+  het eerste logo dat je ziet is de laadanimatie, anders lijkt het logo eerst
+  stil te staan en dan pas te bewegen.
 - **`viewport-fit=cover` in `index.html` moet blijven.** Zonder is
   `env(safe-area-inset-top)` nul en schuiven alle koppen onder de klok.
 - Alleen iPhone, alleen staand. Push staat nog niet aan (geen entitlement).
