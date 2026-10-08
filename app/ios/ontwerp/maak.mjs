@@ -15,8 +15,8 @@ const beeldmerk = `
   </g>
   <rect x="82" y="8" width="18" height="18" rx="3.5" transform="rotate(20 91 17)" fill="${GEEL}"/>`
 
-/** Het woordmerk "pinch", getekend in een vlak van 240 bij 104 (vanaf -4, -16). */
-const woordmerk = `
+/** Het woordmerk "pinch", getekend in een vlak van 240 bij 104 (vanaf -4, -16). Nu nergens meer in gebruik (het opstartscherm is alleen rood), maar bewaard als referentie. */
+const _woordmerk = `
   <g fill="none" stroke="${CREME}" stroke-width="16">
     <path d="M8 16V84"/>
     <circle cx="32" cy="40" r="16"/>

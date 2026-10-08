@@ -121,6 +121,13 @@ is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
 - **`viewport-fit=cover` in `index.html` moet blijven.** Zonder is
   `env(safe-area-inset-top)` nul en schuiven alle koppen onder de klok.
 - Alleen iPhone, alleen staand. Push staat nog niet aan (geen entitlement).
+- **De weekmenu-melding is een lokale melding** (`src/lib/weekmenuMelding.ts`),
+  geen push: de app plant 'm zelf op het toestel, elke week op de dag en
+  tijd uit Instellingen (`pushbericht_dag`, `pushbericht_tijd`), en zet 'm
+  bij elke start en elke wijziging opnieuw (`Poort` in `App.tsx`). Daarom
+  is de tekst vast ("Je weekmenu staat klaar"): welke recepten er zijn weet
+  de app pas als je 'm opent. De eerste keer vraagt iOS om toestemming. In
+  de browser gebeurt er niets. Id 2026; de kookwekker heeft 4711.
 - **De deelknop** (`app/ios/App/Delen`, target `Delen`, bundle-id
   `nl.reinoudtencate.receptenapp.delen`): in Instagram of Safari tik je op
   Delen en kies je Pinch. De extension pakt de link, zet 'm in de App Group
@@ -700,7 +707,8 @@ staat daarna op Deze week.
 ## Wat er nog niet is
 
 - Prijsindicatie per recept in echte prijzen — er is alleen de klassenschatting
-- Push (APNs), huisgenoten delen
+- Push (APNs) met de recepten in de tekst; nu is de weekmenu-melding lokaal
+- Huisgenoten delen
 
 ## Werkwijze (verplicht)
 
