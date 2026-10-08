@@ -204,8 +204,11 @@ function zoekZonderKeuze<P>(
   // Geraspte kaas is een eigen product. Staat het er niet apart in, dan is een
   // stuk kaas om zelf te raspen goed, maar plakken nooit.
   const geraspt = /\b(?:fijn|vers)?geraspte?\b/.test(naam)
-  // "grof geraspte kaas" is gewoon geraspte kaas.
-  const geraspteKey = `geraspte ${key.replace(/^(?:grof|fijn) /, '')}`
+  // "grof geraspte kaas", "oude geraspte kaas" en "geraspte oude kaas" zoeken
+  // allemaal op "geraspte oude kaas": het woord geraspte eruit, vooraan terug.
+  // ingredientKey haalt "geraspte" soms al weg als bereiding; "grof" blijft dan staan.
+  const zonderGeraspt = key.replace(/\b(?:grof|fijn|vers|geraspte?)\b ?/g, '').replace(/\s+/g, ' ').trim()
+  const geraspteKey = `geraspte ${zonderGeraspt}`
   if (geraspt && mapping[geraspteKey]) return mapping[geraspteKey]
   const product = zoekOpNaam(item, mapping)
   const weergavenaam = (product as { weergavenaam?: string | null } | undefined)?.weergavenaam

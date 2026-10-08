@@ -2187,6 +2187,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "geraspte belegen kaas",
+  "naam": "Jumbo Geraspte Kaas Belegen 48+ 175 g",
+  "standaard": "395035ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "geraspte cheddar",
   "naam": "Jumbo Geraspte Cheddar Kaas 50+ 150 g",
   "standaard": "588988ZK",
@@ -2205,9 +2214,36 @@
   "huismerk_naam": null
  },
  {
+  "key": "geraspte jong belegen kaas",
+  "naam": "Jumbo Geraspte Kaas Jong Belegen 48+ 175 g",
+  "standaard": "395036ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "geraspte jonge kaas",
+  "naam": "Jumbo Geraspte Kaas Jong 48+ 175 g",
+  "standaard": "395037ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "geraspte kaas",
   "naam": "Jumbo Geraspte Kaas Jong Belegen 48+ 175 g",
   "standaard": "395036ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "geraspte oude kaas",
+  "naam": "Jumbo Geraspt Kaas Oud 48+ 175 g",
+  "standaard": "395039ZK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,

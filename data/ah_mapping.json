@@ -1466,6 +1466,12 @@
   "bio": 207510
  },
  {
+  "key": "geraspte belegen kaas",
+  "naam": "ah goudse belegen geraspte kaas 50",
+  "standaard": 165625,
+  "bio": null
+ },
+ {
   "key": "geraspte cheddar",
   "naam": "ah cheddar geraspte kaas",
   "standaard": 454161,
@@ -1478,9 +1484,27 @@
   "bio": null
  },
  {
+  "key": "geraspte jong belegen kaas",
+  "naam": "ah goudse jong belegen 48+ geraspt",
+  "standaard": 419547,
+  "bio": null
+ },
+ {
+  "key": "geraspte jonge kaas",
+  "naam": "ah goudse jong 48+ geraspt",
+  "standaard": 46564,
+  "bio": null
+ },
+ {
   "key": "geraspte kaas",
   "naam": "ah goudse jong belegen 48+ geraspt",
   "standaard": 419547,
+  "bio": null
+ },
+ {
+  "key": "geraspte oude kaas",
+  "naam": "ah goudse oud 48+ geraspt",
+  "standaard": 3853,
   "bio": null
  },
  {
