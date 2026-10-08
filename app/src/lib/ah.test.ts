@@ -106,6 +106,8 @@ describe('gedroogd en geraspt zijn een eigen product', () => {
     tomaten: { weergavenaam: 'ah tomaten' }, oregano: { weergavenaam: 'ah oregano' },
     kaas: { weergavenaam: 'ah goudse jong 48 plakken' }, cheddar: { weergavenaam: 'ah smeltkaas met cheddar plakken' },
     'geraspte cheddar': { weergavenaam: 'ah cheddar geraspte kaas' }, 'parmezaanse kaas': { weergavenaam: 'ah parmigiano reggiano' },
+    'oude kaas': { weergavenaam: 'ah goudse oud 48 plakken' }, 'geraspte oude kaas': { weergavenaam: 'ah goudse oud 48+ geraspt' },
+    'geraspte jonge kaas': { weergavenaam: 'ah goudse jong 48+ geraspt' },
     gember: { weergavenaam: 'ah gember' },
   }
   const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, M)?.weergavenaam
@@ -114,6 +116,10 @@ describe('gedroogd en geraspt zijn een eigen product', () => {
     ['gedroogde paddenstoelen', undefined], ['paddenstoelen', 'ah witte champignons'],
     ['gedroogde tomaten', 'ah gedroogde tomaten'], ['gedroogde oregano', 'ah oregano'],
     ['geraspte kaas', undefined], ['grof geraspte kaas', undefined], ['kaas', 'ah goudse jong 48 plakken'],
+    // Soort en rasp in elke volgorde: één product, en nooit de plakken.
+    ['geraspte oude kaas', 'ah goudse oud 48+ geraspt'], ['oude geraspte kaas', 'ah goudse oud 48+ geraspt'],
+    ['oude kaas, geraspt', 'ah goudse oud 48+ geraspt'], ['oude kaas', 'ah goudse oud 48 plakken'],
+    ['jonge geraspte kaas', 'ah goudse jong 48+ geraspt'],
     ['geraspte cheddar', 'ah cheddar geraspte kaas'], ['cheddar', 'ah smeltkaas met cheddar plakken'],
     ['geraspte Parmezaanse kaas', 'ah parmigiano reggiano'], ['gember, geraspt', 'ah gember'],
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })

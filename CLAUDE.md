@@ -163,7 +163,11 @@ zoeklink, vul dan die lijst aan of geef het ingrediënt een eigen regel.
   cheddar, de bereiding ervoor gaat mee en het soortwoord valt weg. Bij
   "(of …)" is het ingrediënt zelf de eerste keuze. Staat geen van de keuzes in
   de mapping, dan telt de hele naam.
-- **Geraspte kaas is jong belegen**, tenzij het recept een soort noemt.
+- **Geraspte kaas is jong belegen**, tenzij het recept een soort noemt. Oud,
+  jong, belegen en jong belegen hebben elk een regel `geraspte <soort> kaas`;
+  `zoekProduct` zoekt daarop in welke volgorde het recept het ook schrijft
+  ("oude geraspte kaas", "oude kaas, geraspt"). Een nieuwe soort is dus één
+  mapping-regel bij AH én Jumbo, plus de verpakking.
 
 **Nog te bouwen: opzoeken bij gebruik.** Zodra er eigen recepten bijkomen
 (plan §7) verschijnen er ingrediënten die in geen enkele batch zaten. De

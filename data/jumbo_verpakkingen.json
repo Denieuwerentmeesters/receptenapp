@@ -798,10 +798,28 @@
     "naam": "Jumbo Ansjovis 90 g"
   },
   {
+    "sku": "395035ZK",
+    "inhoud": 175.0,
+    "eenheid": "g",
+    "naam": "Jumbo Geraspte Kaas Belegen 48+ 175 g"
+  },
+  {
     "sku": "395036ZK",
     "inhoud": 175.0,
     "eenheid": "g",
     "naam": "Jumbo Geraspte Kaas Jong Belegen 48+ 175 g"
+  },
+  {
+    "sku": "395037ZK",
+    "inhoud": 175.0,
+    "eenheid": "g",
+    "naam": "Jumbo Geraspte Kaas Jong 48+ 175 g"
+  },
+  {
+    "sku": "395039ZK",
+    "inhoud": 175.0,
+    "eenheid": "g",
+    "naam": "Jumbo Geraspt Kaas Oud 48+ 175 g"
   },
   {
     "sku": "396197PAK",
