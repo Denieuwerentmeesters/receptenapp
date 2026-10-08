@@ -19,7 +19,8 @@ import type { Dieet } from './dieet'
 export interface OntdekFilters {
   zoek: string
   maxTijd: number | null
-  keuken: string | null
+  /** Een of meer keukens; leeg = alle. */
+  keukens: string[]
   /** Alle gekozen diëten moeten kloppen (lib/dieet.ts). */
   dieet: Dieet[]
   alleenBudget: boolean
@@ -67,7 +68,7 @@ function metFilters<T>(vraag: T, filters: OntdekFilters, userId: string | null):
     v = v.or(`titel.ilike.${patroon},titel_nl.ilike.${patroon}`)
   }
   if (filters.maxTijd) v = v.lte('bereidingstijd_minuten', filters.maxTijd)
-  if (filters.keuken) v = v.eq('keuken', filters.keuken)
+  if (filters.keukens.length > 0) v = v.in('keuken', filters.keukens)
   if (filters.dieet.includes('vegetarisch')) v = v.contains('tags', ['vegetarisch'])
   const afgeleid = filters.dieet.filter((d) => d !== 'vegetarisch')
   if (afgeleid.length > 0) v = v.contains('dieet', afgeleid)
@@ -91,10 +92,41 @@ function metKeukenFase<T>(vraag: T, fase: 'voorkeur' | 'rest', voorkeur: string[
   return v as unknown as T
 }
 
-/** Waar de volgende pagina begint: eerst je voorkeurskeukens, dan de rest. */
+/** Waar de volgende pagina begint: eerst je voorkeurskeukens, dan de rest, en wat je al kookte achteraan. */
 interface OntdekPlek {
-  fase: 'voorkeur' | 'rest'
+  fase: 'voorkeur' | 'rest' | 'gekookt'
   van: number
+}
+
+/**
+ * Wat je al eens maakte: gekookt, of in een eerdere week op je lijst gehad.
+ * Die komen in Ontdekken achteraan, zodat je bovenaan altijd iets nieuws
+ * ziet. Hooguit 150, nieuwste eerst: de ids gaan in de URL van elke pagina
+ * mee. Lukt het ophalen niet, dan gewoon de normale volgorde.
+ */
+async function gekookteIds(): Promise<string[]> {
+  try {
+    const week = await haalActieveWeek()
+    const { data, error } = await (await gedeeld('weekmenu_gekozen'))
+      .select('recept_id, week_start_datum, gekookt_op')
+      .or(`gekookt_op.not.is.null,week_start_datum.lt.${week}`)
+      .order('week_start_datum', { ascending: false })
+      .limit(400)
+    if (error) throw error
+    const ids = new Set<string>()
+    for (const rij of data as { recept_id: string }[]) ids.add(rij.recept_id)
+    return [...ids].slice(0, 150)
+  } catch (e) {
+    console.error('ontdek: gekookte recepten', e)
+    return []
+  }
+}
+
+/** De fase 'gekookt' haalt alleen wat je al maakte; de andere laten dat weg. */
+function metGekookt<T>(vraag: T, fase: OntdekPlek['fase'], gekookt: string[]): T {
+  if (gekookt.length === 0) return vraag
+  const v = vraag as unknown as Filterbaar
+  return (fase === 'gekookt' ? v.in('id', gekookt) : v.not('id', 'in', `(${gekookt.join(',')})`)) as unknown as T
 }
 
 interface OntdekPagina {
@@ -111,15 +143,19 @@ interface OntdekPagina {
  * voorkeur er niet toe.
  */
 export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []) {
-  const voorkeur = filters.keuken ? [] : voorkeurKeukens
+  const voorkeur = filters.keukens.length > 0 ? [] : voorkeurKeukens
   return useInfiniteQuery({
     queryKey: ['ontdek', filters, voorkeur],
     initialPageParam: { fase: voorkeur.length > 0 ? 'voorkeur' : 'rest', van: 0 } as OntdekPlek,
     getNextPageParam: (laatste: OntdekPagina) => laatste.volgende,
     queryFn: async ({ pageParam }): Promise<OntdekPagina> => {
-      const userId = filters.mijn ? await huidigeUserId() : null
+      const [userId, gekookt] = await Promise.all([filters.mijn ? huidigeUserId() : null, gekookteIds()])
       const haal = async (fase: OntdekPlek['fase'], van: number): Promise<Recept[]> => {
-        const vraag = metKeukenFase(metFilters(db.from('recepten').select('*'), filters, userId), fase, voorkeur)
+        // In de laatste fase telt de keukenvoorkeur niet meer: alles wat je al maakte, in één rij.
+        const vraag = metGekookt(metKeukenFase(
+          metFilters(db.from('recepten').select('*'), filters, userId),
+          fase === 'gekookt' ? 'rest' : fase, fase === 'gekookt' ? [] : voorkeur,
+        ), fase, gekookt)
         // Gemengde, vaste volgorde met gemiddeld meer vega bovenaan; zie migratie
         // 20260929000000_ontdek_volgorde.sql. `id` als tiebreaker voor stabiele pagina's.
         const { data, error } = await vraag
@@ -141,11 +177,19 @@ export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []
         fase = 'rest'
         van = 0
       }
-      const deel = await haal('rest', van)
+      if (fase === 'rest') {
+        const deel = await haal('rest', van)
+        recepten.push(...deel)
+        if (deel.length === PER_PAGINA) return { recepten, volgende: { fase: 'rest', van: van + PER_PAGINA } }
+        if (gekookt.length === 0) return { recepten, volgende: undefined }
+        fase = 'gekookt'
+        van = 0
+      }
+      const deel = await haal('gekookt', van)
       recepten.push(...deel)
       return {
         recepten,
-        volgende: deel.length === PER_PAGINA ? { fase: 'rest', van: van + PER_PAGINA } : undefined,
+        volgende: deel.length === PER_PAGINA ? { fase: 'gekookt', van: van + PER_PAGINA } : undefined,
       }
     },
   })

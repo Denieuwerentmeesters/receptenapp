@@ -44,7 +44,7 @@ const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
 const onthouden = {
   zoek: '',
   maxTijd: null as number | null,
-  keuken: null as string | null,
+  keukens: [] as string[],
   dieet: [] as Dieet[],
   alleenBudget: false,
   // Het allergiefilter begint met je allergieën uit Instellingen (null = nog
@@ -75,21 +75,21 @@ export function Ontdekken() {
   const navigeer = useNavigate()
   const [zoek, setZoek] = useState(onthouden.zoek)
   const [maxTijd, setMaxTijd] = useState<number | null>(onthouden.maxTijd)
-  const [keuken, setKeuken] = useState<string | null>(onthouden.keuken)
+  const [keukens, setKeukens] = useState(onthouden.keukens)
   const [dieet, setDieet] = useState(onthouden.dieet)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
   const [zonder, setZonder] = useState(onthouden.zonder)
   const [mijn, setMijn] = useState(onthouden.mijn)
   const [toevoegenOpen, setToevoegenOpen] = useState(false)
   // Welke keuzelijst onderin openstaat: kooktijd, dieet of allergieën.
-  const [open, setOpen] = useState<'tijd' | 'dieet' | 'allergie' | null>(null)
+  const [open, setOpen] = useState<'tijd' | 'keuken' | 'dieet' | 'allergie' | null>(null)
   const allergieen = useAllergieen()
   const zonderAllergenen = zonder ?? allergieen
   const voorkeurKeukens = useVoorkeuren().data?.favoriete_keukens ?? GEEN
 
   const filters: OntdekFilters = useMemo(
-    () => ({ zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen, mijn }),
-    [zoek, maxTijd, keuken, dieet, alleenBudget, zonderAllergenen, mijn],
+    () => ({ zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn }),
+    [zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn],
   )
 
   // Ander filter = andere lijst: dan hoort de oude scrollpositie er niet meer bij.
@@ -97,21 +97,21 @@ export function Ontdekken() {
   useEffect(() => {
     if (vorigeFilters.current === filters) return
     vorigeFilters.current = filters
-    Object.assign(onthouden, { zoek, maxTijd, keuken, dieet, alleenBudget, zonder, mijn, scrollTop: 0 })
+    Object.assign(onthouden, { zoek, maxTijd, keukens, dieet, alleenBudget, zonder, mijn, scrollTop: 0 })
     scroller.current?.scrollTo({ top: 0 })
-  }, [filters, zoek, maxTijd, keuken, dieet, alleenBudget, zonder, mijn])
+  }, [filters, zoek, maxTijd, keukens, dieet, alleenBudget, zonder, mijn])
 
   const resultaten = useOntdek(filters, mijn ? GEEN : voorkeurKeukens)
   const telling = useOntdekTelling(filters)
-  const keukens = useKeukens()
+  const keukenPool = useKeukens()
   // Je voorkeurskeukens vooraan in de rij; daarbinnen blijft de volgorde op aantal.
   const keukenChips = useMemo(() => {
-    const alle = keukens.data ?? []
+    const alle = keukenPool.data ?? []
     return [
       ...alle.filter((k) => voorkeurKeukens.includes(k.keuken)),
       ...alle.filter((k) => !voorkeurKeukens.includes(k.keuken)),
     ]
-  }, [keukens.data, voorkeurKeukens])
+  }, [keukenPool.data, voorkeurKeukens])
   const dezeWeek = useDezeWeek()
   const hartje = useHartje()
   // Geen Map als querydata (zie useAhMapping), maar hier is het afgeleid.
@@ -131,7 +131,7 @@ export function Ontdekken() {
     scroller.current.scrollTop = onthouden.scrollTop
     nogHerstellen.current = false
   }, [recepten.length])
-  const heeftFilter = Boolean(maxTijd || keuken || dieet.length > 0 || alleenBudget)
+  const heeftFilter = Boolean(maxTijd || keukens.length > 0 || dieet.length > 0 || alleenBudget)
   const totaal = telling.data ?? recepten.length
 
   // Vanzelf verder laden zodra je bij de onderkant komt; de knop blijft als
@@ -211,12 +211,15 @@ export function Ontdekken() {
           ))}
         </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
-          <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeuken(null); setDieet([]); setAlleenBudget(false) }}>
+          <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeukens([]); setDieet([]); setAlleenBudget(false) }}>
             Alles
           </Chip>
           <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
           <Chip selected={maxTijd !== null} onClick={() => setOpen('tijd')}>
             {maxTijd ? `Binnen ${maxTijd} min` : 'Kooktijd'} ▾
+          </Chip>
+          <Chip selected={keukens.length > 0} onClick={() => setOpen('keuken')}>
+            {keukens.length > 0 ? keukens.join(' · ') : 'Keuken'} ▾
           </Chip>
           <Chip selected={dieet.length > 0} onClick={() => setOpen('dieet')}>
             {dieet.length > 0 ? DIETEN.filter((d) => dieet.includes(d.id)).map((d) => d.label).join(' · ') : 'Dieet'} ▾
@@ -226,15 +229,6 @@ export function Ontdekken() {
           </Chip>
         </div>
 
-        {keukenChips.length > 0 && (
-          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
-            {keukenChips.map((k) => (
-              <Chip key={k.keuken} selected={keuken === k.keuken} onClick={() => setKeuken(keuken === k.keuken ? null : k.keuken)}>
-                {k.keuken}
-              </Chip>
-            ))}
-          </div>
-        )}
       </div>
 
       <Grens query={resultaten} ladenTekst="Recepten ophalen">
@@ -325,6 +319,20 @@ export function Ontdekken() {
           keuzes={TIJDEN.map((t) => ({ id: String(t.waarde), label: t.label }))}
           gekozen={maxTijd ? [String(maxTijd)] : []}
           onWissel={(id) => setMaxTijd(maxTijd === Number(id) ? null : Number(id))}
+        />
+      </Dialoog>
+
+      <Dialoog
+        open={open === 'keuken'}
+        kop="Keuken"
+        tekst="Vink aan wat je wilt zien; je voorkeurskeukens staan bovenaan."
+        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        onSluit={() => setOpen(null)}
+      >
+        <Keuzelijst
+          keuzes={keukenChips.map((k) => ({ id: k.keuken, label: `${k.keuken} · ${k.aantal}` }))}
+          gekozen={keukens}
+          onWissel={(id) => setKeukens(keukens.includes(id) ? keukens.filter((k) => k !== id) : [...keukens, id])}
         />
       </Dialoog>
 

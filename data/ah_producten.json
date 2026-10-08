@@ -693,6 +693,15 @@
     "eenheid": "ml"
   },
   {
+    "product_id": 62372,
+    "titel": "Lassie Gele Rijst",
+    "inhoud_tekst": "325 g",
+    "prijs": 1.79,
+    "leverbaar": true,
+    "inhoud": 325.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 62414,
     "titel": "AH Schelpjes pasta",
     "inhoud_tekst": "500 g",
@@ -2211,6 +2220,15 @@
     "prijs": 2.99,
     "leverbaar": true,
     "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 193236,
+    "titel": "AH Roomboter ongezouten",
+    "inhoud_tekst": "250 g",
+    "prijs": 2.59,
+    "leverbaar": true,
+    "inhoud": 250.0,
     "eenheid": "g"
   },
   {

@@ -200,7 +200,9 @@ voorraadkast vergelijkt ermee; het product zoeken blijft op de naam
   die twee aan.
 - **Vers en gedroogd blijven apart** (`droogKruid`): gemalen koriander is geen
   bosje koriander en krijgt nooit het verse product.
-- **Boter is roomboter, ongezouten**, tenzij het recept iets anders zegt.
+- **Boter is roomboter, ongezouten**, tenzij het recept iets anders zegt. Let
+  op bij AH: er zijn twee producten "AH Roomboter ongezouten 250 g". 127487
+  is de smeerbare kuip, 193236 het pakje; de mapping hoort op het pakje.
 - **Yoghurt is volle yoghurt**, tenzij het recept iets anders zegt. "Magere
   yoghurt" heeft een eigen mapping-regel; zonder zou die via het woord yoghurt
   alsnog volle worden.
@@ -238,8 +240,8 @@ kiest; `src/lib/jumbo.ts` bouwt de link.
 ## Vega of vlees
 
 Gehakt, rookworst en spekjes gaan standaard vega naar het mandje
-(`src/lib/vega.ts`); onder zo'n regel staat een keuzelijst om terug te gaan
-naar wat het recept vraagt. Andersom ook: vraagt het recept zelf om vega
+(`src/lib/vega.ts`); de keuzelijst staat in de regel zelf, achter de
+hoeveelheid ("800 g [Vegagehakt ▾]"), zodat naam en keuze nooit uiteenlopen. Andersom ook: vraagt het recept zelf om vega
 (vegagehakt, een vega kipschnitzel), dan kies je daar rundergehakt, kipgehakt
 of kipschnitzel. Standaard staat altijd vega. De keuze wordt per ingrediënt
 op het toestel onthouden (`localStorage`, `gehakt-keuze`). Een vleesvariant
@@ -565,8 +567,8 @@ gluten, koemelk, ei, noten, pinda, vis, schaaldieren, soja, sesam.
   (weekmenu-generator, Ontdekken, Vul mijn week). "Mogelijk" blijft
   zichtbaar met "check het etiket". Gluten en koemelk hebben vervangers; die
   gaan standaard naar de lijst, per regel terug te zetten (zoals vega).
-- **Ontdekken:** de filterrij is Alles, Budget, Kooktijd ▾, Dieet ▾, Allergieën ▾;
-  de drie met ▾ openen een lijst onderin. De chip "Allergieën ▾" opent een lijst om aan te vinken, van
+- **Ontdekken:** de filterrij is Alles, Budget, Kooktijd ▾, Keuken ▾, Dieet ▾,
+  Allergieën ▾; die met ▾ openen een lijst onderin. De chip "Allergieën ▾" opent een lijst om aan te vinken, van
   vaak naar zelden (`ALLERGENEN_OP_VOORKOMEN`). Hij begint met je allergieën
   uit Instellingen; wat je daar wijzigt geldt tot een herstart — vaak heeft
   maar één iemand in huis een allergie, of eet er iemand mee.
@@ -603,7 +605,10 @@ Bij Instellingen tik je uit welke keukens je minder graag eet
 (`gebruiker_voorkeuren.favoriete_keukens`). Een lege lijst betekent "alles
 aan" — de standaard. Het is een voorkeur, geen filter: de generator weegt de
 gekozen keukens 3× zwaarder, en Ontdekken toont ze eerst (`useOntdek` haalt
-in twee fasen op: voorkeur, dan de rest) en zet hun chips vooraan.
+in fasen op: voorkeur, dan de rest, en **wat je al kookte achteraan**:
+`gekookteIds`, gekookt of in een eerdere week op je lijst gehad, hooguit
+150 omdat de ids in de URL meegaan) en zet ze bovenaan in de lijst Keuken ▾.
+Daar vink je een of meer keukens aan (`filters.keukens`).
 
 ## Account, privacy en de App Store
 
