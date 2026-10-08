@@ -40,6 +40,13 @@ export default function App() {
   const [status, setStatus] = useState<Status>('bezig')
   const [fout, setFout] = useState('')
   const qc = useQueryClient()
+  // De laadanimatie blijft bij het openen minstens drie seconden staan, ook
+  // als de sessie sneller binnen is: even het logo zien laten pruttelen.
+  const [animatieKlaar, setAnimatieKlaar] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimatieKlaar(true), 3000)
+    return () => clearTimeout(timer)
+  }, [])
 
   const start = useCallback(async () => {
     setStatus('bezig')
@@ -67,7 +74,7 @@ export default function App() {
 
   useEffect(() => { void start() }, [start])
 
-  if (status === 'bezig') return <Laden />
+  if (status === 'bezig' || !animatieKlaar) return <Laden />
   if (status === 'uitgelogd') return <Inloggen onKlaar={() => void start()} />
   if (status === 'fout') {
     return (
