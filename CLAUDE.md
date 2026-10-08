@@ -567,8 +567,9 @@ gluten, koemelk, ei, noten, pinda, vis, schaaldieren, soja, sesam.
   (weekmenu-generator, Ontdekken, Vul mijn week). "Mogelijk" blijft
   zichtbaar met "check het etiket". Gluten en koemelk hebben vervangers; die
   gaan standaard naar de lijst, per regel terug te zetten (zoals vega).
-- **Ontdekken:** de filterrij is Alles, Budget, Kooktijd ▾, Keuken ▾, Dieet ▾,
-  Allergieën ▾; die met ▾ openen een lijst onderin. De chip "Allergieën ▾" opent een lijst om aan te vinken, van
+- **Ontdekken:** de filterrij is Keuken ▾, Dieet ▾, Kooktijd ▾, Budget,
+  Allergieën ▾; die met ▾ openen een lijst onderin. Geen chip "Alles": niets
+  aangevinkt is alles. De chip "Allergieën ▾" opent een lijst om aan te vinken, van
   vaak naar zelden (`ALLERGENEN_OP_VOORKOMEN`). Hij begint met je allergieën
   uit Instellingen; wat je daar wijzigt geldt tot een herstart — vaak heeft
   maar één iemand in huis een allergie, of eet er iemand mee.

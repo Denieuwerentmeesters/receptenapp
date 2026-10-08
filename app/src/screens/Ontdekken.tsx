@@ -211,19 +211,17 @@ export function Ontdekken() {
           ))}
         </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
-          <Chip selected={!heeftFilter} onClick={() => { setMaxTijd(null); setKeukens([]); setDieet([]); setAlleenBudget(false) }}>
-            Alles
-          </Chip>
-          <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
-          <Chip selected={maxTijd !== null} onClick={() => setOpen('tijd')}>
-            {maxTijd ? `Binnen ${maxTijd} min` : 'Kooktijd'} ▾
-          </Chip>
+          {/* Geen chip "Alles": niets aangevinkt ís alles. Volgorde: wat je het vaakst kiest vooraan. */}
           <Chip selected={keukens.length > 0} onClick={() => setOpen('keuken')}>
             {keukens.length > 0 ? keukens.join(' · ') : 'Keuken'} ▾
           </Chip>
           <Chip selected={dieet.length > 0} onClick={() => setOpen('dieet')}>
             {dieet.length > 0 ? DIETEN.filter((d) => dieet.includes(d.id)).map((d) => d.label).join(' · ') : 'Dieet'} ▾
           </Chip>
+          <Chip selected={maxTijd !== null} onClick={() => setOpen('tijd')}>
+            {maxTijd ? `Binnen ${maxTijd} min` : 'Kooktijd'} ▾
+          </Chip>
+          <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
           <Chip selected={zonderAllergenen.length > 0} onClick={() => setOpen('allergie')}>
             {zonderAllergenen.length > 0 ? `Zonder ${opsomming(zonderAllergenen)}` : 'Allergieën'} ▾
           </Chip>
