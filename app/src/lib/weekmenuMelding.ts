@@ -3,14 +3,15 @@ import { LocalNotifications } from '@capacitor/local-notifications'
 import type { Voorkeuren } from './database.types'
 
 /**
- * De wekelijkse melding "Je weekmenu staat klaar", op de dag en tijd uit
- * Instellingen (pushbericht_dag, pushbericht_tijd).
+ * De wekelijkse herinnering om recepten te zoeken voor komende week, op de
+ * dag en tijd uit Instellingen (pushbericht_dag, pushbericht_tijd); de
+ * onboarding vraagt die dag ook.
  *
  * Een lokale melding, geen push: de app plant 'm zelf op het toestel, elke
  * week opnieuw op hetzelfde moment, en iOS laat 'm afgaan, ook als de app
  * dicht is. Daar is geen server en geen Apple-sleutel voor nodig. De tekst
- * is daardoor wel vast: welke recepten er klaarstaan weet de app pas als je
- * 'm opent (genereer_weekmenu). In de browser gebeurt er niets.
+ * is daardoor wel vast: wat er in je week staat weet de app pas als je 'm
+ * opent. In de browser gebeurt er niets.
  *
  * De planning wordt bij elke start en bij elke wijziging van de instelling
  * opnieuw gezet (App.tsx, Poort), zodat de melding de instelling volgt.
@@ -54,8 +55,8 @@ export async function planWeekmenuMelding(v: Pick<Voorkeuren, 'pushbericht_aan' 
     await LocalNotifications.schedule({
       notifications: [{
         id: MELDING_ID,
-        title: 'Je weekmenu staat klaar',
-        body: 'Tien nieuwe recepten voor komende week. Kies wat je gaat koken.',
+        title: 'Zoek weer nieuwe recepten voor komende week',
+        body: 'Open Pinch en zet met het hartje klaar wat je komende week kookt.',
         // `on` zonder datum herhaalt elke week op deze dag en tijd.
         schedule: { on: moment, allowWhileIdle: true },
       }],

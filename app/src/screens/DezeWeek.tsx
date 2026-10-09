@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Chip, Icon, Woordmerk } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
@@ -7,9 +7,10 @@ import { Dialoog } from '../components/Dialoog'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
 import { useActieveWeek, useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
-import { volgendeWeek, weekLabel } from '../lib/week'
+import { volgendeWeek, weekLabel, weekStart } from '../lib/week'
 import { WeekVraag } from '../components/WeekVraag'
 import { useWeekRecepten } from '../lib/weekoverzicht'
+import { useWeekWissel } from '../lib/weekwissel'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusLabel } from '../components/Bonus'
@@ -57,6 +58,10 @@ function isVega(recept: WeekRecept) {
  * voor die week. Het werkt als deze week: op je lijst zetten, bestellen. De
  * recepten blijven daar staan tot deze week gekookt is en de week doorschuift
  * (lib/weekwissel.ts). De boodschappenlijst toont beide weken samen.
+ *
+ * Haal je het laatste recept uit deze week, dan schuift komende week meteen
+ * door: een lege week is niets om naar te kijken. Daarna zoek je met het
+ * hartje nieuwe recepten voor de week erna.
  */
 export function DezeWeek() {
   const week = useActieveWeek()
@@ -64,8 +69,8 @@ export function DezeWeek() {
   const navigeer = useNavigate()
   const vanaf = useLocation().state as { tab?: Tab; doorgeschoven?: boolean } | null
   const start = vanaf?.tab === 'komende' ? 'komende' : 'deze'
-  // Net het laatste bestelde recept gekookt: de week is doorgeschoven.
-  const [doorgeschoven, setDoorgeschoven] = useState(Boolean(vanaf?.doorgeschoven))
+  // Net het laatste bestelde recept gekookt, of de laatste suggestie weggehaald: de week is doorgeschoven.
+  const [doorgeschoven, setDoorgeschoven] = useState<'gekookt' | 'leeg' | null>(vanaf?.doorgeschoven ? 'gekookt' : null)
   const [tab, setTab] = useState<Tab>(start)
   const baan = useRef<HTMLDivElement>(null)
 
@@ -78,6 +83,19 @@ export function DezeWeek() {
   const straks = useLijstActies(komende)
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<{ recept: WeekRecept; tab: Tab } | null>(null)
+
+  // Deze week leeg en komende week niet: doorschuiven, zonder vraag. Alleen
+  // als komende week iets heeft, anders blijft het leeg en schuift het eindeloos
+  // door. Een week die achterloopt op de kalender haalt WeekVraag in.
+  const { haalIn } = useWeekWissel()
+  const geschoven = useRef<string | null>(null)
+  const leeg = dezeWeek.query.isSuccess && !dezeWeek.query.isFetching && dezeWeek.recepten.length === 0
+  const komendeVol = komendeWeek.query.isSuccess && !komendeWeek.query.isFetching && komendeWeek.recepten.length > 0
+  useEffect(() => {
+    if (!leeg || !komendeVol || haalIn.isPending || week < weekStart() || geschoven.current === week) return
+    geschoven.current = week
+    haalIn.mutate(undefined, { onSuccess: () => setDoorgeschoven('leeg') })
+  }, [leeg, komendeVol, week, haalIn])
 
   // Kom je van het hartje ("Bekijk komende week"), dan sta je er meteen, zonder schuiven.
   useLayoutEffect(() => {
@@ -249,11 +267,13 @@ export function DezeWeek() {
       {lijstStraks.dialoog}
       <WeekVraag />
       <Dialoog
-        open={doorgeschoven}
-        kop="Alles gekookt!"
-        tekst="Komende week staat nu in Deze week. Zet op je lijst wat je wilt bestellen."
-        onSluit={() => setDoorgeschoven(false)}
-        acties={[{ label: 'Oké', hoofd: true, onClick: () => setDoorgeschoven(false) }]}
+        open={doorgeschoven !== null}
+        kop={doorgeschoven === 'leeg' ? 'Komende week is nu deze week' : 'Alles gekookt!'}
+        tekst={doorgeschoven === 'leeg'
+          ? 'Deze week was leeg, dus de recepten van komende week staan nu hier. Zoek in Ontdekken met het hartje nieuwe recepten voor komende week.'
+          : 'Komende week staat nu in Deze week. Zet op je lijst wat je wilt bestellen.'}
+        onSluit={() => setDoorgeschoven(null)}
+        acties={[{ label: 'Oké', hoofd: true, onClick: () => setDoorgeschoven(null) }]}
       />
       <Dialoog
         open={Boolean(wegVraag)}

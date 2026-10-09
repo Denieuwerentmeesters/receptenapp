@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import { Button, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
+import { Button, Chip, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
 import { Label, Titel } from '../components/Layout'
 import { Grens, Laden } from '../components/Staten'
 import { AANTAL_UITLEGKAARTEN, Uitleg, UitlegVoorladen } from '../components/Uitleg'
@@ -15,11 +15,12 @@ import { kiesWeek, vegaDoel, vegaMinimumVoor } from '../lib/weekvullen'
 import { weekStart } from '../lib/week'
 import { foutTekst } from '../lib/fouten'
 import { meet } from '../lib/meten'
+import { planWeekmenuMelding } from '../lib/weekmenuMelding'
 import type { Voorkeuren } from '../lib/database.types'
 
 /**
  * De onboarding: één keer na het aanmaken van een account. Eerst de uitleg,
- * dan zes vragen, en daarna sta je op Deze week met een weekmenu dat bij je
+ * dan zeven vragen, en daarna sta je op Deze week met een weekmenu dat bij je
  * huishouden past.
  *
  * - De antwoorden gaan naar dezelfde kolommen als Instellingen
@@ -29,14 +30,20 @@ import type { Voorkeuren } from '../lib/database.types'
  * - Het weekmenu maakt de generator pas na de vragen (haalDezeWeek): hij is
  *   idempotent per week, dus eerder draaien geeft tien suggesties op de
  *   standaardwaarden.
+ * - De vraag over de herinnering plant de melding zelf (lib/weekmenuMelding.ts):
+ *   zo vraagt iOS om toestemming op het moment dat je er net voor koos.
  * - App.tsx stuurt hierheen zolang onboarding_klaar_op leeg is.
  */
 
-const VRAGEN = ['personen', 'kookavonden', 'keukens', 'allergieen', 'voorraad', 'winkel'] as const
+const VRAGEN = ['personen', 'kookavonden', 'keukens', 'allergieen', 'voorraad', 'melding', 'winkel'] as const
 type Vraag = (typeof VRAGEN)[number]
 type Winkel = Voorkeuren['voorkeurswinkel']
 
 const MAX_PERSONEN = 8
+
+/** De dagen van de week zoals de kolom ze telt (0 = zondag), in de volgorde waarin je ze kiest. */
+const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
+const DAG_VOLGORDE = [1, 2, 3, 4, 5, 6, 0]
 
 interface Antwoorden {
   personen: number
@@ -45,6 +52,9 @@ interface Antwoorden {
   vega: number
   keukens: string[]
   allergieen: string[]
+  /** De herinnering om recepten te zoeken: dag (0 = zondag) en tijd 'uu:mm'. */
+  meldingDag: number
+  meldingTijd: string
   winkel: Winkel
 }
 
@@ -56,6 +66,8 @@ function uitVoorkeuren(v: Voorkeuren): Antwoorden {
     vega: vegaDoel({ vega_minimum: v.vega_minimum, kookavonden: avonden }),
     keukens: v.favoriete_keukens ?? [],
     allergieen: v.allergieen ?? [],
+    meldingDag: v.pushbericht_dag,
+    meldingTijd: v.pushbericht_tijd.slice(0, 5),
     winkel: v.voorkeurswinkel,
   }
 }
@@ -178,6 +190,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     keukens: { favoriete_keukens: keukensOpslaan },
     allergieen: { allergieen: antw.allergieen },
     voorraad: {},
+    melding: { pushbericht_aan: true, pushbericht_dag: antw.meldingDag, pushbericht_tijd: `${antw.meldingTijd}:00` },
     winkel: { voorkeurswinkel: antw.winkel },
   }
 
@@ -204,6 +217,8 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     } else {
       opslaan.mutate({ ...wijziging[naam], ...extra })
     }
+    // Meteen plannen, vanuit de tik: dan komt de toestemmingsvraag van iOS nu.
+    if (naam === 'melding') void planWeekmenuMelding(wijziging.melding as Required<Pick<Voorkeuren, 'pushbericht_aan' | 'pushbericht_dag' | 'pushbericht_tijd'>>)
     meet('vraag_beantwoord', { vraag: naam })
     verder(overgeslagen.filter((v) => v !== naam))
   }
@@ -218,6 +233,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
         ...(naam === 'personen' ? { personen: stond.personen }
           : naam === 'kookavonden' ? { avonden: stond.avonden, vega: stond.vega }
           : naam === 'keukens' ? { keukens: stond.keukens }
+          : naam === 'melding' ? { meldingDag: stond.meldingDag, meldingTijd: stond.meldingTijd }
           : { allergieen: stond.allergieen }),
       })
     }
@@ -326,6 +342,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       ['allergieen', antw.allergieen.length > 0 ? `Zonder ${opsomming(antw.allergieen)}` : 'Geen allergieën'],
       ['voorraad', voorraadGekozen.length === 0 ? 'Voorraadkast leeg'
         : `${voorraadGekozen.length} ${voorraadGekozen.length === 1 ? 'product' : 'producten'} in huis`],
+      ['melding', `Herinnering ${DAGEN[antw.meldingDag]} ${antw.meldingTijd}`],
       ['winkel', antw.winkel === 'ah' ? 'Albert Heijn' : 'Jumbo'],
     ]
     return (
@@ -394,6 +411,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     keukens: ['Welke keukens vind je lekker?', 'Kies er zoveel als je wilt. Daarvan krijg je meer in je weekmenu. De rest blijft gewoon te vinden.'],
     allergieen: ['Moet Pinch ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
     voorraad: ['Wat heb je standaard in huis?', 'Dat laat Pinch van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.'],
+    melding: ['Op welke dag wil je een herinnering om recepten te zoeken?', 'Elke week op die dag krijg je een melding op je telefoon: tijd om komende week te vullen.'],
     winkel: ['Waar doe je je boodschappen?', 'Naar deze supermarkt stuurt Pinch je boodschappenlijst.'],
   }
 
@@ -496,6 +514,39 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
                 Droge kruiden staat voor je hele kruidenrek. Die blijven op je lijst staan, maar gaan niet in je mandje.
               </p>
             )}
+          </>
+        )}
+
+        {naam === 'melding' && (
+          <>
+            <div role="radiogroup" aria-label="Dag van de herinnering" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {DAG_VOLGORDE.map((dag) => (
+                <Chip
+                  key={dag} groot selected={antw.meldingDag === dag}
+                  onClick={() => setAntw({ ...antw, meldingDag: dag })}
+                >{DAGEN[dag][0].toUpperCase() + DAGEN[dag].slice(1)}</Chip>
+              ))}
+            </div>
+            <label style={{
+              flex: 'none', marginTop: 6, background: 'var(--c-paper)', borderRadius: 16, padding: '10px 12px 10px 20px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+              fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
+            }}>
+              Hoe laat
+              <input
+                type="time"
+                value={antw.meldingTijd}
+                onChange={(e) => { if (e.target.value) setAntw({ ...antw, meldingTijd: e.target.value }) }}
+                style={{
+                  height: 44, padding: '0 12px', border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 12,
+                  // 16 px of groter: anders zoomt iOS in bij focus.
+                  background: 'var(--c-cream)', fontFamily: 'var(--font-body)', fontSize: 16, color: 'var(--c-ink)',
+                }}
+              />
+            </label>
+            <p style={{ ...kleinStijl, flex: 'none', marginTop: 4 }}>
+              Je telefoon vraagt zo om toestemming voor meldingen. Dag en tijd pas je altijd aan in Instellingen.
+            </p>
           </>
         )}
 

@@ -122,7 +122,7 @@ export function Instellingen() {
                 </Sectie>
 
                 <Sectie naam="Meldingen">
-                  <Rij label="Weekmenu-melding" sub={`${DAGEN[v.pushbericht_dag]} om ${v.pushbericht_tijd.slice(0, 5)} · alleen in de app op je telefoon`}>
+                  <Rij label="Herinnering om recepten te zoeken" sub={`${DAGEN[v.pushbericht_dag]} om ${v.pushbericht_tijd.slice(0, 5)} · alleen in de app op je telefoon`}>
                     <Schakelaar
                       aan={v.pushbericht_aan}
                       onWijzig={() => zet({ pushbericht_aan: !v.pushbericht_aan })}

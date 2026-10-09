@@ -139,11 +139,13 @@ export default function App() {
 function Poort() {
   const voorkeuren = useVoorkeuren()
   const plek = useLocation()
-  // De weekmenu-melding volgt de instelling: bij elke start en elke wijziging opnieuw plannen.
+  // De weekmenu-melding volgt de instelling: bij elke start en elke wijziging
+  // opnieuw plannen. Tijdens de onboarding niet: de vraag over de herinnering
+  // plant 'm zelf, zodat iOS pas dáár om toestemming vraagt.
   const v = voorkeuren.data
   useEffect(() => {
-    if (v) void planWeekmenuMelding(v)
-  }, [v?.pushbericht_aan, v?.pushbericht_dag, v?.pushbericht_tijd]) // eslint-disable-line react-hooks/exhaustive-deps
+    if (v && v.onboarding_klaar_op !== null) void planWeekmenuMelding(v)
+  }, [v?.pushbericht_aan, v?.pushbericht_dag, v?.pushbericht_tijd, v?.onboarding_klaar_op]) // eslint-disable-line react-hooks/exhaustive-deps
   if (voorkeuren.isPending) return <Laden />
   const nieuw = voorkeuren.data?.onboarding_klaar_op === null
   if (nieuw && plek.pathname !== '/welkom') return <Navigate to="/welkom" replace />
