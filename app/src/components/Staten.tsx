@@ -11,7 +11,7 @@ import { foutTekst } from '../lib/fouten'
  */
 
 export function Laden({ tekst }: { tekst?: string }) {
-  // Het logo pruttelt en verdampt (components/Laadanimatie.tsx). Geen
+  // Een snufje zout valt op het logo (components/Laadanimatie.tsx). Geen
   // "Even geduld" meer: de animatie zegt het al.
   return <LaadScherm kleur="rood" tekst={tekst} />
 }
