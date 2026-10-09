@@ -37,6 +37,8 @@ export interface OntdekFilters {
  * geen doordeweeks hoofdgerecht); die staan onder "Mijn recepten".
  */
 const ONTDEK_BRON_TYPES: BronType[] = ['scraper', 'kookboek_foto', 'eigen_input', 'website', 'screenshot', 'instagram']
+/** Wat je zelf toevoegde: geen pool, en geen samengesteld menu (dat staat op het vragenscherm). */
+const EIGEN_BRON_TYPES: BronType[] = ['kookboek_foto', 'eigen_input', 'website', 'screenshot', 'instagram']
 
 const PER_PAGINA = 30
 
@@ -57,8 +59,8 @@ interface Filterbaar {
  */
 function metFilters<T>(vraag: T, filters: OntdekFilters, userId: string | null): T {
   let v = vraag as unknown as Filterbaar
-  // Mijn recepten: alles wat van jou is, ook een samengesteld menu. Anders de pool en je eigen hoofdgerechten.
-  if (filters.mijn && userId) v = v.eq('user_id', userId)
+  // Mijn recepten: alleen wat je zelf toevoegde. Anders de pool en je eigen hoofdgerechten.
+  if (filters.mijn && userId) v = v.eq('user_id', userId).in('bron_type', EIGEN_BRON_TYPES)
   else v = v.in('bron_type', ONTDEK_BRON_TYPES)
   const zoek = filters.zoek.trim()
   if (zoek) {

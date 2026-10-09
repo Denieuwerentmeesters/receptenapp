@@ -59,9 +59,11 @@ function isVega(recept: WeekRecept) {
  * recepten blijven daar staan tot deze week gekookt is en de week doorschuift
  * (lib/weekwissel.ts). De boodschappenlijst toont beide weken samen.
  *
- * Haal je het laatste recept uit deze week, dan schuift komende week meteen
- * door: een lege week is niets om naar te kijken. Daarna zoek je met het
- * hartje nieuwe recepten voor de week erna.
+ * Is deze week leeg en heb je voor komende week iets bewaard, dan schuift
+ * komende week meteen door: een lege week is niets om naar te kijken. Na het
+ * doorschuiven staat er alleen wat je koos, zonder suggesties
+ * (lib/weekwissel.ts). Daarna zoek je met het hartje nieuwe recepten voor de
+ * week erna.
  */
 export function DezeWeek() {
   const week = useActieveWeek()
@@ -84,13 +86,15 @@ export function DezeWeek() {
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<{ recept: WeekRecept; tab: Tab } | null>(null)
 
-  // Deze week leeg en komende week niet: doorschuiven, zonder vraag. Alleen
-  // als komende week iets heeft, anders blijft het leeg en schuift het eindeloos
-  // door. Een week die achterloopt op de kalender haalt WeekVraag in.
+  // Deze week leeg en voor komende week iets bewaard: doorschuiven, zonder
+  // vraag. Alleen bewaarde recepten tellen: de suggesties gaan bij het
+  // doorschuiven weg, dus daarop doorschuiven gaf weer een lege week, en zo
+  // eindeloos door. Een week die achterloopt op de kalender haalt WeekVraag in.
   const { haalIn } = useWeekWissel()
   const geschoven = useRef<string | null>(null)
   const leeg = dezeWeek.query.isSuccess && !dezeWeek.query.isFetching && dezeWeek.recepten.length === 0
-  const komendeVol = komendeWeek.query.isSuccess && !komendeWeek.query.isFetching && komendeWeek.recepten.length > 0
+  const komendeVol = komendeWeek.query.isSuccess && !komendeWeek.query.isFetching
+    && komendeWeek.recepten.some((r) => r.gekozen)
   useEffect(() => {
     if (!leeg || !komendeVol || haalIn.isPending || week < weekStart() || geschoven.current === week) return
     geschoven.current = week
@@ -202,10 +206,10 @@ export function DezeWeek() {
             {recepten.length === 0 ? (
               <Leeg
                 icoon="utensils"
-                kop="Nog geen weekmenu"
-                tekst="We zetten elke week 10 recepten voor je klaar. Je voorkeuren kun je altijd nog aanpassen in Instellingen."
-                knop={dezeWeek.query.isFetching ? 'Even zoeken…' : 'Zet mijn week klaar'}
-                onKnop={() => { if (!dezeWeek.query.isFetching) void dezeWeek.query.refetch() }}
+                kop="Nog niets voor deze week"
+                tekst="Zoek in Ontdekken wat je wilt koken en zet het op je lijst. Met het hartje bewaar je recepten voor komende week."
+                knop="Naar Ontdekken"
+                onKnop={() => navigeer('/ontdekken')}
               />
             ) : (
               <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>

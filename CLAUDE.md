@@ -325,10 +325,15 @@ dus de schuifanimatie is van de browser.
   `components/WeekVraag.tsx` het bij het openen: "Alle recepten van deze week
   gekookt?". Bij nee wijs je aan wat je nog kookt; dat gaat mee als besteld,
   met de datum van nu, dus een week later komt de vraag terug.
-- **Een lege week schuift meteen door** (`DezeWeek.tsx`): haal je het laatste
-  recept uit deze week en staat er in komende week iets, dan wordt komende
-  week deze week, zonder vraag. Staat komende week ook leeg, dan blijft het
-  bij "Nog geen weekmenu": anders schuift het eindeloos door.
+- **Een lege week schuift meteen door** (`DezeWeek.tsx`): is deze week leeg
+  en heb je voor komende week iets bewaard, dan wordt komende week deze
+  week, zonder vraag. Alleen bewaarde recepten tellen, geen suggesties:
+  anders schuift het eindeloos door. Is er niets bewaard, dan staat er
+  "Nog niets voor deze week" met een knop naar Ontdekken.
+- **Na het doorschuiven geen suggesties** (`schuifDoor`): deze week is wat je
+  koos. De generator draait eerst voor de nieuwe week, daarna krijgen alle
+  niet-gekozen suggesties `verborgen_op`. Wat je er zelf bij zet komt gewoon
+  te staan; een verborgen suggestie komt via het hartje terug.
 - **Een week overslaan kost je hartjes:** schuif je pas door als de week erna
   ook al voorbij is, dan blijft wat daar bewaard stond achter (wel favoriet).
 - **Van elke soort gerecht één suggestie per week** (`src/lib/gerechtsoort.ts`):
@@ -362,6 +367,11 @@ titel van de bron komt niet in de database: `titel` en `titel_nl` zijn onze
 eigen omschrijving van het gerecht, zonder namen van makers of merken
 (migratie `20261002100000_eigen_receptnamen.sql`). Komt er een nieuwe lading
 bij, geef die dan meteen een eigen titel.
+
+**Mijn recepten op Ontdekken is alleen wat je zelf toevoegde**
+(`EIGEN_BRON_TYPES` in `src/lib/queries2.ts`): link, screenshots, kookboek,
+eigen tekst. Geen pool en geen samengesteld menu; dat laatste staat op het
+vragenscherm van Zelf samenstellen.
 
 De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
