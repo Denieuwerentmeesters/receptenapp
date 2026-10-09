@@ -16,26 +16,36 @@ export function Laden({ tekst }: { tekst?: string }) {
   return <LaadScherm kleur="rood" tekst={tekst} />
 }
 
-export function Leeg({ icoon, kop, tekst, knop, onKnop }: {
+export function Leeg({ icoon, kop, tekst, knop, onKnop, onIcoon, icoonLabel }: {
   icoon: string
   kop: string
   tekst: string
   knop?: string
   onKnop?: () => void
+  /** Maakt het icoon een knop: een plus in een rondje nodigt uit om erop te tikken. */
+  onIcoon?: () => void
+  icoonLabel?: string
 }) {
   // De onderbalk ligt over de onderkant heen; centreer boven die balk.
   const ruimte = useOnderRuimte()
+  const rondje = {
+    width: 76, height: 76, borderRadius: 'var(--radius-full)', background: 'var(--c-paper)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--c-ink)',
+  } as const
   return (
     <div style={{
       flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
       justifyContent: 'center', gap: 14, padding: `32px 30px ${32 + ruimte}px`, textAlign: 'center',
     }}>
-      <div style={{
-        width: 76, height: 76, borderRadius: 'var(--radius-full)', background: 'var(--c-paper)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <Icon name={icoon} size={30} />
-      </div>
+      {onIcoon ? (
+        <button type="button" onClick={onIcoon} aria-label={icoonLabel} style={{ ...rondje, border: 'none', padding: 0, cursor: 'pointer' }}>
+          <Icon name={icoon} size={30} />
+        </button>
+      ) : (
+        <div style={rondje}>
+          <Icon name={icoon} size={30} />
+        </div>
+      )}
       <h2 style={{
         fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, lineHeight: 1,
         margin: '6px 0 0', textTransform: 'uppercase', color: 'var(--color-ink)',
