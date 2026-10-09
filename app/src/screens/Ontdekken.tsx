@@ -241,6 +241,8 @@ export function Ontdekken() {
               tekst="Zet je eerste recept erbij. Plak een link van Instagram of een website, of kies screenshots."
               knop="Plak een link"
               onKnop={() => navigeer('/toevoegen?route=link')}
+              onIcoon={() => setToevoegenOpen(true)}
+              icoonLabel="Toevoegen"
             />
           ) : (
             <Leeg
