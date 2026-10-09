@@ -125,9 +125,11 @@ is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
   geen push: de app plant 'm zelf op het toestel, elke week op de dag en
   tijd uit Instellingen (`pushbericht_dag`, `pushbericht_tijd`), en zet 'm
   bij elke start en elke wijziging opnieuw (`Poort` in `App.tsx`). Daarom
-  is de tekst vast ("Je weekmenu staat klaar"): welke recepten er zijn weet
-  de app pas als je 'm opent. De eerste keer vraagt iOS om toestemming. In
-  de browser gebeurt er niets. Id 2026; de kookwekker heeft 4711.
+  is de tekst vast ("Zoek weer nieuwe recepten voor komende week"): wat er
+  in je week staat weet de app pas als je 'm opent. De onboarding vraagt de
+  dag en plant de melding zelf, zodat iOS dáár om toestemming vraagt; `Poort`
+  plant pas als `onboarding_klaar_op` gezet is. In de browser gebeurt er
+  niets. Id 2026; de kookwekker heeft 4711.
 - **De deelknop** (`app/ios/App/Delen`, target `Delen`, bundle-id
   `nl.reinoudtencate.receptenapp.delen`): in Instagram of Safari tik je op
   Delen en kies je Pinch. De extension pakt de link, zet 'm in de App Group
@@ -323,6 +325,10 @@ dus de schuifanimatie is van de browser.
   `components/WeekVraag.tsx` het bij het openen: "Alle recepten van deze week
   gekookt?". Bij nee wijs je aan wat je nog kookt; dat gaat mee als besteld,
   met de datum van nu, dus een week later komt de vraag terug.
+- **Een lege week schuift meteen door** (`DezeWeek.tsx`): haal je het laatste
+  recept uit deze week en staat er in komende week iets, dan wordt komende
+  week deze week, zonder vraag. Staat komende week ook leeg, dan blijft het
+  bij "Nog geen weekmenu": anders schuift het eindeloos door.
 - **Een week overslaan kost je hartjes:** schuif je pas door als de week erna
   ook al voorbij is, dan blijft wat daar bewaard stond achter (wel favoriet).
 - **Van elke soort gerecht één suggestie per week** (`src/lib/gerechtsoort.ts`):
@@ -664,7 +670,7 @@ Daar vink je een of meer keukens aan (`filters.keukens`).
 ## Onboarding
 
 Een nieuwe gebruiker ziet na het aanmelden één keer een welkomscherm, zes
-uitlegkaarten en zes vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
+uitlegkaarten en zeven vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
 staat daarna op Deze week.
 
 - **`Poort` in `App.tsx` stuurt naar `/welkom`** zolang
@@ -681,6 +687,9 @@ staat daarna op Deze week.
 - **"Vul mijn week" zet direct recepten op je lijst** (`kiesWeek`, zoveel als
   `kookavonden`), zonder bevestigscherm. Vegetarisch vraag je als "2 van je
   4 avonden"; `vegaMinimumVoor` rekent dat om naar "x van de 10".
+- **De herinneringsvraag** (dag en tijd om recepten te zoeken) schrijft naar
+  `pushbericht_dag`, `pushbericht_tijd` en zet `pushbericht_aan`; overslaan
+  laat de standaard staan (zondag 17:00, aan).
 - **De voorraadvraag schrijft naar `voorraad_item`**, niet naar de
   voorkeuren: dezelfde rijen als het scherm Voorraadkast. Het moet er staan
   vóór "Vul mijn week": wat in huis is komt niet op de lijst.
