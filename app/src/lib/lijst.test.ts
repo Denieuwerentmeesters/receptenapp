@@ -13,6 +13,35 @@ function rij(ingredient_key: string, hoeveelheid: number | null, eenheid: string
 }
 const regel = (...rijen: BoodschapItem[]) => voegSamen(rijen)[0]
 
+describe('voegSamen: een keuze sluit aan bij een regel die er al staat', () => {
+  const keuze = (naam: string, hoeveelheid: number, eenheid: string) =>
+    ({ ...rij(ingredientKey(naam), hoeveelheid, eenheid), naam })
+
+  test('pecorino of parmezaanse kaas hoort bij parmezaanse kaas', () => {
+    const regels = voegSamen([keuze('pecorino of parmezaanse kaas', 150, 'g'), rij('parmezaanse kaas', 60, 'g')])
+    expect(regels).toHaveLength(1)
+    expect(regels[0].naam).toBe('parmezaanse kaas')
+    expect(regels[0].label).toBe('210 g parmezaanse kaas')
+    // De gewone regel geeft het product, niet de keuze.
+    expect(regels[0].voorbeeld.naam).toBe('parmezaanse kaas')
+  })
+
+  test('de keuze mag ook eerst in de lijst staan', () => {
+    const regels = voegSamen([rij('parmezaanse kaas', 60, 'g'), keuze('pecorino of parmezaanse kaas', 150, 'g')])
+    expect(regels.map((r) => r.naam)).toEqual(['parmezaanse kaas'])
+  })
+
+  test('zonder zo\'n regel blijft de keuze staan', () => {
+    const regels = voegSamen([keuze('pecorino of parmezaanse kaas', 150, 'g'), rij('ricotta', 250, 'g')])
+    expect(regels.map((r) => r.naam)).toEqual(['pecorino of parmezaanse kaas', 'ricotta'])
+  })
+
+  test('bij een gedeeld woorddeel telt alleen de laatste', () => {
+    const regels = voegSamen([keuze('kippen- of groentebouillon', 500, 'ml'), rij('kippenbouillon', 1, 'l')])
+    expect(regels).toHaveLength(2)
+  })
+})
+
 describe('aantalVerpakkingen', () => {
   test('blikken uit twee recepten tellen op', () => {
     expect(aantalVerpakkingen(regel(rij('tomatenblokjes', 1, 'blik'), rij('tomatenblokjes', 1, 'blik')))).toBe(2)

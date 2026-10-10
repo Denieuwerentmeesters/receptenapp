@@ -261,6 +261,15 @@
     "eenheid": "g"
   },
   {
+    "product_id": 3996,
+    "titel": "AH Greenfields Runder sukadelappen",
+    "inhoud_tekst": "ca. 700 g",
+    "prijs": 16.49,
+    "leverbaar": true,
+    "inhoud": 700.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 4002,
     "titel": "AH Greenfields Magere runderlappen",
     "inhoud_tekst": "ca. 720 g",
@@ -373,6 +382,15 @@
     "titel": "AH Aubergine",
     "inhoud_tekst": "per stuk",
     "prijs": 1.05,
+    "leverbaar": true,
+    "inhoud": 1,
+    "eenheid": "stuks"
+  },
+  {
+    "product_id": 4183,
+    "titel": "AH Bloemkool",
+    "inhoud_tekst": "per stuk",
+    "prijs": 1.75,
     "leverbaar": true,
     "inhoud": 1,
     "eenheid": "stuks"
@@ -1605,7 +1623,7 @@
     "product_id": 160750,
     "titel": "AH Krabbetjes",
     "inhoud_tekst": "ca. 360 g",
-    "prijs": 3.96,
+    "prijs": 3.6,
     "leverbaar": true,
     "inhoud": 360.0,
     "eenheid": "g"
@@ -1944,6 +1962,15 @@
     "eenheid": null
   },
   {
+    "product_id": 170004,
+    "titel": "AH Doosje met kersen",
+    "inhoud_tekst": "250 g",
+    "prijs": 2.59,
+    "leverbaar": true,
+    "inhoud": 250.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 170094,
     "titel": "AH Knoflook croutons",
     "inhoud_tekst": "40 g",
@@ -2047,6 +2074,15 @@
     "titel": "AH Biologisch Bleekselderij",
     "inhoud_tekst": "per stuk",
     "prijs": 1.99,
+    "leverbaar": true,
+    "inhoud": 1,
+    "eenheid": "stuks"
+  },
+  {
+    "product_id": 186629,
+    "titel": "AH Biologisch Bloemkool",
+    "inhoud_tekst": "per stuk",
+    "prijs": 2.99,
     "leverbaar": true,
     "inhoud": 1,
     "eenheid": "stuks"
@@ -2362,7 +2398,7 @@
     "titel": "AH Scharrel kipdijfilet",
     "inhoud_tekst": "ca. 530 g",
     "prijs": 6.49,
-    "leverbaar": true,
+    "leverbaar": false,
     "inhoud": 530.0,
     "eenheid": "g"
   },
@@ -2637,6 +2673,15 @@
     "eenheid": "g"
   },
   {
+    "product_id": 203861,
+    "titel": "AH Frambozen",
+    "inhoud_tekst": "225 g",
+    "prijs": 4.49,
+    "leverbaar": true,
+    "inhoud": 225.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 207510,
     "titel": "AH Biologisch Tomaten gepeld",
     "inhoud_tekst": "400 g",
@@ -2682,6 +2727,15 @@
     "eenheid": "g"
   },
   {
+    "product_id": 212148,
+    "titel": "AH Bramen",
+    "inhoud_tekst": "150 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "inhoud": 150.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 213356,
     "titel": "Royal Groene pepers",
     "inhoud_tekst": "290 g",
@@ -2701,7 +2755,7 @@
   },
   {
     "product_id": 214162,
-    "titel": "Grolsch Herfstbok",
+    "titel": "Grolsch Herfstbok bier",
     "inhoud_tekst": "0,5 l",
     "prijs": 2.25,
     "leverbaar": true,
@@ -2716,6 +2770,15 @@
     "leverbaar": true,
     "inhoud": 350.0,
     "eenheid": "g"
+  },
+  {
+    "product_id": 216494,
+    "titel": "Heinz Tomato ketchup",
+    "inhoud_tekst": "400 ml",
+    "prijs": 2.69,
+    "leverbaar": true,
+    "inhoud": 400.0,
+    "eenheid": "ml"
   },
   {
     "product_id": 216608,
@@ -3469,7 +3532,7 @@
     "titel": "AH Paprika geel",
     "inhoud_tekst": "per stuk",
     "prijs": 1.19,
-    "leverbaar": true,
+    "leverbaar": false,
     "inhoud": 1,
     "eenheid": "stuks"
   },
@@ -5436,6 +5499,15 @@
     "eenheid": "g"
   },
   {
+    "product_id": 510686,
+    "titel": "Molensteen Havermeel",
+    "inhoud_tekst": "500 g",
+    "prijs": 2.19,
+    "leverbaar": true,
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 511002,
     "titel": "AH Kristalsuiker",
     "inhoud_tekst": "1 kg",
@@ -6237,6 +6309,15 @@
     "eenheid": "g"
   },
   {
+    "product_id": 564897,
+    "titel": "AH Terra Biologische tofu",
+    "inhoud_tekst": "325 g",
+    "prijs": 1.25,
+    "leverbaar": true,
+    "inhoud": 325.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 565765,
     "titel": "AH Terra Plantaardige sojadrink ongezoet",
     "inhoud_tekst": "1 l",
@@ -6321,7 +6402,7 @@
     "product_id": 571286,
     "titel": "AH Bavette",
     "inhoud_tekst": "ca. 700 g",
-    "prijs": 21.99,
+    "prijs": 27.99,
     "leverbaar": true,
     "inhoud": 700.0,
     "eenheid": "g"
@@ -6633,6 +6714,15 @@
     "eenheid": "g"
   },
   {
+    "product_id": 588044,
+    "titel": "Mai Wa Instant Japanese fresh udon",
+    "inhoud_tekst": "200 g",
+    "prijs": 1.09,
+    "leverbaar": true,
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
     "product_id": 588942,
     "titel": "AH Biologisch Oesterzwammen",
     "inhoud_tekst": "250 g",
@@ -6658,6 +6748,15 @@
     "leverbaar": true,
     "inhoud": 1,
     "eenheid": "stuks"
+  },
+  {
+    "product_id": 589859,
+    "titel": "Mill & Mortar Sumak poeder",
+    "inhoud_tekst": "50 g",
+    "prijs": 6.69,
+    "leverbaar": true,
+    "inhoud": 50.0,
+    "eenheid": "g"
   },
   {
     "product_id": 590094,
@@ -7125,6 +7224,15 @@
     "prijs": 0.95,
     "leverbaar": true,
     "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 626382,
+    "titel": "AH Scharrel kipdijfilet",
+    "inhoud_tekst": "530 g",
+    "prijs": 6.49,
+    "leverbaar": true,
+    "inhoud": 530.0,
     "eenheid": "g"
   },
   {
