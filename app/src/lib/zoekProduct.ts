@@ -102,11 +102,15 @@ export function zoekProduct<P>(
  *    cheddar, cheddar, geraspte jong belegen, jong belegen. De bereiding vóór
  *    de haakjes gaat mee, het soortwoord ("kaas") valt weg. "Grana Padano (of
  *    Parmezaanse kaas)" → eerst grana padano zelf, dan parmezaanse kaas: wat
- *    na "of" staat is het alternatief. Staat geen van de keuzes in de mapping,
- *    dan zoekt zoekProduct alsnog op de hele naam.
+ *    na "of" staat is het alternatief. "Halfzachte kaas (bv. gruyère,
+ *    cheddar)" → halfzachte gruyere, gruyere, halfzachte cheddar, cheddar.
+ *    Staat geen van de keuzes in de mapping, dan zoekt zoekProduct alsnog
+ *    op de hele naam.
  */
 function keuzes(naam: string): string[] {
-  const haakjes = naam.match(/^([^(]*)\(([^)]*\bof\b[^)]*)\)/)
+  // Ook "halfzachte kaas (bv. gruyère, cheddar)": een opsomming of een
+  // voorbeeld tussen haakjes is net zo goed een keuze als "of".
+  const haakjes = naam.match(/^([^(]*)\(([^)]*(?:\bof\b|,|\b(?:zoals|bijv|bijvoorbeeld|bv)\b)[^)]*)\)/)
   if (haakjes) return keuzesTussenHaakjes(haakjes[1], haakjes[2], naam)
   const key = ingredientKey(naam)
   if (key.indexOf(' of ') <= 0) return []
@@ -161,6 +165,7 @@ const ONSCHULDIG = new Set(`
   volle halfvolle naturel milde bevroren diepvries gekookt gekookte voorgekookte ongekookt ongekookte
   kaas pasta sla zout zeezout water olie erover jus uit blik blikje pot
   jong julienne wilde trosrijpe mini gedopte dubbel
+  handje handjes virgin
 `.split(/\s+/).filter(Boolean))
 
 /**

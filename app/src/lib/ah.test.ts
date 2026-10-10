@@ -55,6 +55,7 @@ describe('de deelmatch laat alleen vallen wat het product niet verandert', () =>
     'witte wijn': 'Witte wijn', 'witte wijnazijn': 'Witte wijnazijn', kikkererwten: 'Kikkererwten', tomaten: 'Tomaten',
     tomatenpuree: 'Tomatenpuree', cashewnoten: 'Cashewnoten', paprika: 'Paprika', guacamole: 'Guacamole',
     'zure room': 'Sour cream', sojasaus: 'Sojasaus', tijm: 'Tijm', zalmfilet: 'Zalmfilet',
+    basilicum: 'Basilicum', bladpeterselie: 'Platte peterselie', kokosolie: 'Kokosolie',
   }
   const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, M)
 
@@ -66,6 +67,10 @@ describe('de deelmatch laat alleen vallen wat het product niet verandert', () =>
     ['klein blikje tomatenpuree (70 g)', 'Tomatenpuree'], ['geroosterde cashewnoten', 'Cashewnoten'],
     ['zalmfilet, zonder huid', 'Zalmfilet'], ['tijm, blad gehakt', 'Tijm'],
     ['guacamole, zure room of tomatensalsa (optioneel)', 'Guacamole'], ['tamari of sojasaus', 'Sojasaus'],
+    // Een handje of een bosje is een portie; "verse" haalt ingredientKey al weg.
+    ['handje verse basilicum', 'Basilicum'], ['virgin kokosolie', 'Kokosolie'],
+    // Twee producten op één regel kunnen niet in het mandje: dat moeten twee regels zijn.
+    ['handje verse basilicum en bladpeterselie', undefined],
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
 })
 
@@ -76,6 +81,7 @@ describe('keuze tussen haakjes: de eerste telt, met de bereiding ervoor', () => 
     fusilli: 'Fusilli', penne: 'Penne', snijbiet: 'Snijbiet',
     rundergehakt: 'Rundergehakt', 'vegetarisch gehakt': 'Vegagehakt', vegagehakt: 'Vegagehakt',
     mais: 'Mais', tortilla: 'Tortilla', rucola: 'Rucola', 'gemengde sla': 'Gemengde sla',
+    gruyere: 'Gruyère', tomatenpuree: 'Tomatenpuree',
   }
   const kies = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, HAAKJES)
 
@@ -83,7 +89,9 @@ describe('keuze tussen haakjes: de eerste telt, met de bereiding ervoor', () => 
     ['geraspte kaas (cheddar of jong belegen)', 'Geraspte cheddar'],
     ['grof geraspte kaas (cheddar of belegen)', 'Geraspte cheddar'],
     // Geen van de keuzes bekend: dan de hele naam.
-    ['geraspte kaas (zoals Appenzeller, Gruyère of Emmentaler)', 'Geraspte kaas'],
+    ['geraspte kaas (zoals Appenzeller of Emmentaler)', 'Geraspte kaas'],
+    // Een stuk gruyère om zelf te raspen is goed, net als cheddar hierboven.
+    ['geraspte kaas (zoals Appenzeller, Gruyère of Emmentaler)', 'Gruyère'],
     ['paprika (rood of groen)', 'Paprika'],
     // Het soortwoord valt weg: niet "blauwe stilton".
     ['blauwe kaas (stilton of roquefort)', 'Stilton'],
@@ -97,6 +105,11 @@ describe('keuze tussen haakjes: de eerste telt, met de bereiding ervoor', () => 
     ["kleine zachte tortilla's (mais of tarwe)", 'Tortilla'],
     // Een mix is geen keuze.
     ['gemengde sla (rucola, mosterdblad, bietenblad of veldsla)', 'Gemengde sla'],
+    // Een opsomming of een voorbeeld tussen haakjes is ook een keuze.
+    ['halfzachte kaas (bv. gruyère, cheddar)', 'Gruyère'],
+    ['kaas (bijv. cheddar)', 'Cheddar plakken'],
+    // Een hoeveelheid tussen haakjes is geen keuze.
+    ['klein blikje tomatenpuree (70 g)', 'Tomatenpuree'],
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
 })
 

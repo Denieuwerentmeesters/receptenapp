@@ -60,6 +60,7 @@ Regels:
 - Verzin niets. Staat een hoeveelheid er niet, laat die dan null. Is een deel onleesbaar of niet uitgesproken, laat het weg.
 - Schrijf de bereiding in je eigen, beknopte woorden als losse stappen. Nooit letterlijk overnemen uit de bron.
 - Gebruik voor een ingrediënt precies een naam uit de lijst "Ingrediëntnamen met een productnummer" als die het product dekt (schrijf dan "ui", niet "uien" of "gesnipperde ui"). Staat het product er niet in, gebruik dan de gangbare Nederlandse naam. Een bereiding ("in blokjes") hoort niet in de naam.
+- Eén product per ingrediënt. "Basilicum en peterselie" zijn twee ingrediënten, elk met een eigen hoeveelheid; één regel met "en" krijgt geen productnummer.
 - Zout, peper en water zijn ook ingrediënten als het recept ze noemt; laat ze niet weg.
 - Bij een foto of screenshot: lees alleen wat er staat. Staan er meerdere delen, dan horen die bij één recept.
 - Bij gesproken tekst (transcript): die is automatisch uitgeschreven en kan fouten bevatten; gebruik het onderschrift en het beeld om namen en hoeveelheden te controleren.

@@ -458,8 +458,8 @@
  {
   "key": "bloemkool",
   "naam": "ah bloemkool",
-  "standaard": 4165,
-  "bio": 185203
+  "standaard": 4183,
+  "bio": 186629
  },
  {
   "key": "bloemkoolrijst",
@@ -589,8 +589,8 @@
  },
  {
   "key": "bramen",
-  "naam": "ah bramen",
-  "standaard": 416489,
+  "naam": "ah bramen 150 g",
+  "standaard": 212148,
   "bio": null
  },
  {
@@ -878,8 +878,8 @@
  },
  {
   "key": "ciabatta",
-  "naam": "ah ciabatta",
-  "standaard": 31584,
+  "naam": "ah ciabatta 300 g",
+  "standaard": 627079,
   "bio": 523366
  },
  {
@@ -904,7 +904,7 @@
   "key": "citroengras",
   "naam": "ah citroengras",
   "standaard": 410261,
-  "bio": 508323
+  "bio": null
  },
  {
   "key": "citroensap",
@@ -1061,13 +1061,13 @@
   "key": "doperwt",
   "naam": "ah doperwten 0 zout",
   "standaard": 492395,
-  "bio": 66112
+  "bio": 66113
  },
  {
   "key": "doperwten",
   "naam": "ah doperwten 0 zout",
   "standaard": 492395,
-  "bio": 66112
+  "bio": 66113
  },
  {
   "key": "doperwtje",
@@ -1251,8 +1251,8 @@
  },
  {
   "key": "flatbreads",
-  "naam": "nairn s sourdough flatbreads gluten free",
-  "standaard": 581458,
+  "naam": "ah flatbread 210 g",
+  "standaard": 498340,
   "bio": null
  },
  {
@@ -1269,8 +1269,8 @@
  },
  {
   "key": "frambozen",
-  "naam": "ah nederlandse frambozen",
-  "standaard": 396952,
+  "naam": "ah frambozen 225 g",
+  "standaard": 203861,
   "bio": null
  },
  {
@@ -1288,7 +1288,7 @@
  {
   "key": "gamba",
   "naam": "ah gamba s gekookt en ongepeld",
-  "standaard": 484404,
+  "standaard": null,
   "bio": null
  },
  {
@@ -1370,6 +1370,12 @@
   "bio": null
  },
  {
+  "key": "gele courgette",
+  "naam": "ah courgette",
+  "standaard": 4164,
+  "bio": 185202
+ },
+ {
   "key": "gele curry kruidenpasta",
   "naam": "fairtrade original kruidenpasta gele curry",
   "standaard": 368566,
@@ -1383,8 +1389,8 @@
  },
  {
   "key": "gele paprika",
-  "naam": "ah paprika geel",
-  "standaard": 368705,
+  "naam": "ah paprika rood",
+  "standaard": 4117,
   "bio": null
  },
  {
@@ -1520,10 +1526,22 @@
   "bio": null
  },
  {
+  "key": "gerookt spek",
+  "naam": "ah spekreepjes gerookt 250 g",
+  "standaard": 130250,
+  "bio": 130257
+ },
+ {
   "key": "gerookte amandelen",
   "naam": "ah amandelen met rooksmaak gezouten",
   "standaard": 375962,
   "bio": null
+ },
+ {
+  "key": "gerookte spek",
+  "naam": "ah spekreepjes gerookt 250 g",
+  "standaard": 130250,
+  "bio": 130257
  },
  {
   "key": "gerookte spekreepje",
@@ -1877,8 +1895,8 @@
  },
  {
   "key": "havermeel",
-  "naam": "ah glutenvrij havermeel",
-  "standaard": 587622,
+  "naam": "molensteen havermeel 500 g",
+  "standaard": 510686,
   "bio": null
  },
  {
@@ -2069,8 +2087,8 @@
  },
  {
   "key": "kalamata olijven",
-  "naam": "ah excellent kalamata feta citroen olijven",
-  "standaard": 605189,
+  "naam": "ah excellent biologische kalamata olijf zonder pit 240 g",
+  "standaard": 199922,
   "bio": 605277
  },
  {
@@ -2108,6 +2126,18 @@
   "key": "kant en klaar hartig taartdeeg",
   "naam": "ah quiche & taartdeeg 230 g",
   "standaard": 419093,
+  "bio": null
+ },
+ {
+  "key": "kant en klare noedel",
+  "naam": "mai wa instant japanese fresh udon",
+  "standaard": 588044,
+  "bio": null
+ },
+ {
+  "key": "kant en klare noodle",
+  "naam": "mai wa instant japanese fresh udon",
+  "standaard": 588044,
   "bio": null
  },
  {
@@ -2184,8 +2214,8 @@
  },
  {
   "key": "kersen",
-  "naam": "ah nederlandse kersen",
-  "standaard": 577882,
+  "naam": "ah doosje met kersen 250 g",
+  "standaard": 170004,
   "bio": null
  },
  {
@@ -2214,8 +2244,8 @@
  },
  {
   "key": "ketchup",
-  "naam": "heinz tomato ketchup",
-  "standaard": 465768,
+  "naam": "heinz tomato ketchup 400 ml",
+  "standaard": 216494,
   "bio": null,
   "huismerk": 403602
  },
@@ -2359,8 +2389,8 @@
  },
  {
   "key": "kippendijen of bot",
-  "naam": "ah scharrel kipdijfilet ca. 530 g",
-  "standaard": 197231,
+  "naam": "ah scharrel kipdijfilet 530 g",
+  "standaard": 626382,
   "bio": null
  },
  {
@@ -2523,7 +2553,7 @@
   "key": "koriander",
   "naam": "ah koriander",
   "standaard": 238968,
-  "bio": 230802
+  "bio": null
  },
  {
   "key": "korianderblaadje",
@@ -2587,8 +2617,8 @@
  },
  {
   "key": "kroepoek",
-  "naam": "itsu thai sweet chili kroepoek",
-  "standaard": 606845,
+  "naam": "ah kroepoek naturel 100 g",
+  "standaard": 490540,
   "bio": null,
   "huismerk": 490540
  },
@@ -2858,8 +2888,8 @@
  },
  {
   "key": "mager kipgehakt",
-  "naam": "ah kipgehakt minder vet",
-  "standaard": 603444,
+  "naam": "ah kipgehakt naturel 300 g",
+  "standaard": 436917,
   "bio": 114817
  },
  {
@@ -3141,8 +3171,8 @@
  {
   "key": "nectarine",
   "naam": "ah nectarines schaal",
-  "standaard": 100860,
-  "bio": 618391
+  "standaard": null,
+  "bio": null
  },
  {
   "key": "noedel",
@@ -3479,7 +3509,7 @@
  {
   "key": "perziken",
   "naam": "ah perziken",
-  "standaard": 504988,
+  "standaard": null,
   "bio": null
  },
  {
@@ -3492,7 +3522,7 @@
   "key": "peterselie",
   "naam": "ah platte peterselie",
   "standaard": 238971,
-  "bio": 197308
+  "bio": null
  },
  {
   "key": "peterselieblad",
@@ -3580,8 +3610,8 @@
  },
  {
   "key": "pitloze rode druiven",
-  "naam": "ah cotton sweet pitloze rode druiven",
-  "standaard": 505699,
+  "naam": "ah pitloze rode druiven 500 g",
+  "standaard": 100232,
   "bio": null
  },
  {
@@ -3792,8 +3822,8 @@
  {
   "key": "rauwe bietje",
   "naam": "ah biologisch rode bieten los",
-  "standaard": 203002,
-  "bio": 203002
+  "standaard": null,
+  "bio": null
  },
  {
   "key": "rauwe gepelde garnalen",
@@ -3944,7 +3974,7 @@
   "key": "rode druiven",
   "naam": "ah rode druiven pitloos",
   "standaard": 100232,
-  "bio": 600529
+  "bio": null
  },
  {
   "key": "rode grapefruits",
@@ -4056,14 +4086,14 @@
  },
  {
   "key": "roma tomaat",
-  "naam": "ah roma tomaten 750 g",
-  "standaard": 67874,
+  "naam": "ah tomaten 500 g",
+  "standaard": 4088,
   "bio": null
  },
  {
   "key": "roma tomaten",
-  "naam": "ah roma tomaten 750 g",
-  "standaard": 67874,
+  "naam": "ah tomaten 500 g",
+  "standaard": 4088,
   "bio": null
  },
  {
@@ -4080,14 +4110,14 @@
  },
  {
   "key": "romatomaat",
-  "naam": "ah roma tomaten 750 g",
-  "standaard": 67874,
+  "naam": "ah tomaten 500 g",
+  "standaard": 4088,
   "bio": null
  },
  {
   "key": "romatomaten",
-  "naam": "ah roma tomaten 750 g",
-  "standaard": 67874,
+  "naam": "ah tomaten 500 g",
+  "standaard": 4088,
   "bio": null
  },
  {
@@ -4566,8 +4596,8 @@
  },
  {
   "key": "stevige tofu",
-  "naam": "vivera stevige tofu a la minute",
-  "standaard": 587278,
+  "naam": "ah terra biologische tofu 325 g",
+  "standaard": 564897,
   "bio": null
  },
  {
@@ -4608,14 +4638,14 @@
  },
  {
   "key": "sukade",
-  "naam": "ah voor in de oven runder sukade",
-  "standaard": 483924,
+  "naam": "ah greenfields runder sukadelappen",
+  "standaard": 3996,
   "bio": null
  },
  {
   "key": "sumak",
-  "naam": "verstegen sumak gemalen",
-  "standaard": 518874,
+  "naam": "mill & mortar sumak poeder 50 g",
+  "standaard": 589859,
   "bio": null
  },
  {
@@ -5011,7 +5041,7 @@
  {
   "key": "varkensnek",
   "naam": "ah vakslager varkensnek",
-  "standaard": 574775,
+  "standaard": null,
   "bio": null
  },
  {
@@ -5247,7 +5277,7 @@
   "key": "witte asperge",
   "naam": "ah witte asperges",
   "standaard": 143322,
-  "bio": 66112
+  "bio": null
  },
  {
   "key": "witte basterdsuiker",
