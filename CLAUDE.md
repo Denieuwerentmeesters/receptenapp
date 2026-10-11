@@ -539,15 +539,13 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 
 ## Laadanimatie
 
-Een snufje zout: een paar korrels vallen boven de i, ketsen van de letters
-af en verdwijnen, en één korrel blijft liggen als de punt op de i; na zes
-seconden opnieuw (`components/Laadanimatie.tsx`, naar "Pinch Zout" uit
-Claude Design). `Snufje` is de SVG: het woordmerk uit `ds/Logo.tsx` zonder
-korrel, de val van de korrels één keer doorgerekend met een vaste seed en
-per frame getekend op een requestAnimationFrame-klok. `bovenkant` geeft per
-x de bovenkant van de letters, afgeleid uit de paden in `ds/Logo.tsx`:
-verandert het woordmerk, dan die ook. `LaadScherm` zet 'm op een rood of
-paars scherm. `Laden` in `Staten.tsx` (bij het openen van de app,
+Het woordmerk pruttelt en verdampt letter voor letter
+(`components/Laadanimatie.tsx`, naar "Pinch Loader" uit Claude Design,
+variant gekookt). `Pruttel` is de SVG, per letter een groep met een eigen
+blur-filter op een requestAnimationFrame-klok; `LaadScherm` zet 'm op een
+rood of paars scherm. De variant "Pinch Zout" (vallende korrels, PR #111)
+is geprobeerd en weer teruggedraaid: Reinoud vond het pruttelen leuker.
+`Laden` in `Staten.tsx` (bij het openen van de app,
 `Grens`, de onboarding) is rood en toont alleen een tekst als een scherm er
 een meegeeft: bij het openen van de app staat er niets. Het toevoegscherm
 gebruikt paars met de stap ("Video uitschrijven"). Bij "verminder beweging"
