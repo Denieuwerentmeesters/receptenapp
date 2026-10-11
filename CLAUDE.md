@@ -194,6 +194,16 @@ volgende lijst 'm kent. In de Capacitor-app kan dat via native HTTP
 Zolang dat er niet is, moet elk nieuw recept handmatig gemapt worden of blijft
 het bij zoeklinks.
 
+**AH hernummert en schrapt producten, en dat merk je niet.** Een nummer dat
+uit het assortiment is voegt ah.nl stilletjes niet toe aan het mandje; de app
+telt het wel mee. Draai daarom af en toe `python3 scripts/ah_verpakkingen.py`:
+die meldt wat "niet (meer) te koop" is. Herstel die regels in een migratie
+(nieuw nummer, of null voor een zoeklink; een weggevallen bio-nummer op null,
+anders trekt dat de standaard mee het mandje uit) en in `data/ah_mapping.json`.
+Zie `20261010120000_ah_niet_leverbaar_hersteld.sql`. De API-status die telt is
+`orderAvailabilityStatus = IN_ASSORTMENT`; `NO_LONGER_IN_ASSORTMENT` met
+`availableOnline: true` is óók weg (alleen in de winkel).
+
 **Huismerk-voorkeur** (`gebruiker_voorkeuren.huismerk_voorkeur`): naast bio heeft
 een mapping-regel een optionele huismerkvariant (`huismerk_product_id`,
 `huismerk_sku`). Die staat alleen ingevuld waar de standaard een A-merk is en
@@ -543,15 +553,13 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 
 ## Laadanimatie
 
-Een snufje zout: een paar korrels vallen boven de i, ketsen van de letters
-af en verdwijnen, en één korrel blijft liggen als de punt op de i; na zes
-seconden opnieuw (`components/Laadanimatie.tsx`, naar "Pinch Zout" uit
-Claude Design). `Snufje` is de SVG: het woordmerk uit `ds/Logo.tsx` zonder
-korrel, de val van de korrels één keer doorgerekend met een vaste seed en
-per frame getekend op een requestAnimationFrame-klok. `bovenkant` geeft per
-x de bovenkant van de letters, afgeleid uit de paden in `ds/Logo.tsx`:
-verandert het woordmerk, dan die ook. `LaadScherm` zet 'm op een rood of
-paars scherm. `Laden` in `Staten.tsx` (bij het openen van de app,
+Het woordmerk pruttelt en verdampt letter voor letter
+(`components/Laadanimatie.tsx`, naar "Pinch Loader" uit Claude Design,
+variant gekookt). `Pruttel` is de SVG, per letter een groep met een eigen
+blur-filter op een requestAnimationFrame-klok; `LaadScherm` zet 'm op een
+rood of paars scherm. De variant "Pinch Zout" (vallende korrels, PR #111)
+is geprobeerd en weer teruggedraaid: Reinoud vond het pruttelen leuker.
+`Laden` in `Staten.tsx` (bij het openen van de app,
 `Grens`, de onboarding) is rood en toont alleen een tekst als een scherm er
 een meegeeft: bij het openen van de app staat er niets. Het toevoegscherm
 gebruikt paars met de stap ("Video uitschrijven"). Bij "verminder beweging"
