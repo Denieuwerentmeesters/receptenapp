@@ -1328,6 +1328,12 @@
   "bio": null
  },
  {
+  "key": "gehakt",
+  "naam": "ah rundergehakt",
+  "standaard": 4004,
+  "bio": null
+ },
+ {
   "key": "geitenkaas",
   "naam": "ah verse geitenkaas naturel 48+ 125 g",
   "standaard": 195373,
@@ -1422,6 +1428,12 @@
   "naam": "ah biologisch gember",
   "standaard": 104818,
   "bio": 104818
+ },
+ {
+  "key": "gemengd gehakt",
+  "naam": "ah gemengd gehakt 500 g",
+  "standaard": 561333,
+  "bio": null
  },
  {
   "key": "gemengde bonen",
@@ -1849,6 +1861,18 @@
   "key": "gyroskruiden",
   "naam": "ah kruidenmix voor gyros",
   "standaard": 570445,
+  "bio": null
+ },
+ {
+  "key": "half om half gehakt",
+  "naam": "ah gemengd gehakt 500 g",
+  "standaard": 561333,
+  "bio": null
+ },
+ {
+  "key": "half om halfgehakt",
+  "naam": "ah gemengd gehakt 500 g",
+  "standaard": 561333,
   "bio": null
  },
  {

@@ -47,6 +47,15 @@ export function droogKruid(key: string, naam: string): string | null {
 }
 
 /**
+ * Gehakt als product: "gehakt", "rundergehakt", "mager kipgehakt", "gemengd
+ * gehakt", "half om half gehakt", "vegetarisch gehakt". Niet "knoflook
+ * gehakt": daar is gehakt een bereiding, en die haalt BEREIDING weg. Gedeeld
+ * met vega.ts, zodat lijst en vega-keuze hetzelfde vinden; "vegagehakt" aan
+ * elkaar valt er bewust buiten (dat is al vega).
+ */
+export const GEHAKT_PRODUCT = /^(?:(?:.* )?(?:runder|rund|kip|kalfs|varkens|lams|half)gehakt|(?:(?:.* )?(?:gemengd|mager|rul|vega|vegan|vegetarische?|plantaardige?|half om half) )?gehakt)$/
+
+/**
  * Hoe het recept het wil hebben, achter de naam: "ui gesnipperd", "boter op
  * kamertemperatuur", "olie om in te bakken". Dat blijft hetzelfde product.
  * "In blik" en "in pot" niet: tomaten uit blik zijn iets anders dan tomaten.
@@ -84,6 +93,7 @@ const ANDERS_GESPELD: Record<string, string> = {
   'lente ui': 'bosui', 'lenteui': 'bosui', 'lente uitje': 'bosui',
   // Een ui is een gele ui; rode ui en sjalot blijven apart.
   'gele ui': 'ui', 'witte ui': 'ui',
+  'half om halfgehakt': 'half om half gehakt', 'half om half': 'half om half gehakt',
   'parmezaan': 'parmezaanse kaas', 'parmigiano reggiano': 'parmezaanse kaas',
   // Boter is roomboter, ongezouten, tenzij het recept iets anders zegt.
   'boter': 'roomboter', 'ongezouten boter': 'roomboter', 'ongezouten roomboter': 'roomboter',
@@ -138,7 +148,9 @@ export function lijstSleutel(item: { ingredient_key: string; naam: string }): st
   let key = canoniek(ingredientKey(kort) || item.ingredient_key)
   const droog = droogKruid(key, item.naam)
   if (droog) return droog
-  key = key.replace(BEREIDING, '').replace(VOORAAN, '')
+  // Bij gehakt als product blijft "gehakt" staan; anders werd "half om half
+  // gehakt" via de om-regel "half".
+  if (!GEHAKT_PRODUCT.test(key)) key = key.replace(BEREIDING, '').replace(VOORAAN, '')
   key = ANDERS_GESPELD[key] ?? key
   key = eenVorm(key)
   return (ANDERS_GESPELD[key] ?? key) || canoniek(item.ingredient_key)

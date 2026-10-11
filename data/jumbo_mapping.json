@@ -1971,6 +1971,15 @@
   "huismerk_naam": null
  },
  {
+  "key": "gehakt",
+  "naam": "Jumbo Rundergehakt 500 g",
+  "standaard": "131278BAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
   "key": "geitenkaas",
   "naam": "Jumbo Geitenkaas Schijfjes Naturel 125 g",
   "standaard": "712030DS",
@@ -2111,6 +2120,15 @@
   "standaard": "485371BAK",
   "bio": "485371BAK",
   "bio_naam": "Jumbo Biologische Verse Gember",
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gemengd gehakt",
+  "naam": "Jumbo Half-om-Half Gehakt Varken-Rund 500 g",
+  "standaard": "785730BAK",
+  "bio": null,
+  "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
  },
@@ -2721,6 +2739,24 @@
   "key": "gyroskruiden",
   "naam": "Verstegen Mix voor Gyros 30 g",
   "standaard": "203750ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "half om half gehakt",
+  "naam": "Jumbo Half-om-Half Gehakt Varken-Rund 500 g",
+  "standaard": "785730BAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "half om halfgehakt",
+  "naam": "Jumbo Half-om-Half Gehakt Varken-Rund 500 g",
+  "standaard": "785730BAK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,

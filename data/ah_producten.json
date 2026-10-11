@@ -7324,5 +7324,14 @@
     "leverbaar": true,
     "inhoud": 300.0,
     "eenheid": "g"
+  },
+  {
+    "product_id": 561333,
+    "titel": "AH Gemengd gehakt",
+    "inhoud_tekst": "500 g",
+    "prijs": 4.59,
+    "leverbaar": true,
+    "inhoud": 500.0,
+    "eenheid": "g"
   }
 ]

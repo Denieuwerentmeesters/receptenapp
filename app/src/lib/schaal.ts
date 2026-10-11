@@ -88,7 +88,7 @@ export function ingredientKey(naam: string): string {
     .replace(/'s\b/g, ' ')
     .replace(/\([^)]*\)/g, ' ')
     .replace(
-      /\b(verse?|vers|gedroogde?|gemalen|geraspte?|fijngesneden|grofgesneden|gesneden|gehakte?|geschilde|biologische?|bio|kleine?|grote?|halve|hele|extra|vergine|zonder vel|naar smaak|om te frituren|optioneel)\b/g,
+      /\b(verse?|vers|gedroogde?|gemalen|geraspte?|fijngesneden|grofgesneden|gesneden|gehakte|geschilde|biologische?|bio|kleine?|grote?|halve|hele|extra|vergine|zonder vel|naar smaak|om te frituren|optioneel)\b/g,
       ' ',
     )
     .replace(/[^a-z ]/g, ' ')
@@ -96,6 +96,9 @@ export function ingredientKey(naam: string): string {
     .replace(/\s+/g, ' ')
     .trim()
 
+  // "gehakte" (peterselie) is een bereiding, "gehakt" een product: dat woord
+  // blijft staan. Een "gehakt" achteraan ("knoflook, gehakt") haalt lijstSleutel
+  // weg (BEREIDING), en zoekProduct telt het als onschuldig (BEREID).
   // Meervouds-s alleen weghalen waar het Nederlands 'm ook echt plakt: achter
   // -el, -er, -em, -en, -ie, -je of -e (aardappels, bosuitjes, wortels). Achter
   // een gewone klinker gebruikt het Nederlands een apostrof, en die is hierboven

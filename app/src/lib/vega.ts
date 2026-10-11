@@ -1,3 +1,4 @@
+import { GEHAKT_PRODUCT } from './synoniemen'
 import type { BoodschapItem } from './database.types'
 
 /**
@@ -31,17 +32,16 @@ const SPEKBLOKJES: Variant = { key: 'spekblokje', naam: 'spekblokjes', label: 'S
 const KIPSCHNITZEL: Variant = { key: 'kipschnitzel', naam: 'kipschnitzel', label: 'Kipschnitzel' }
 
 /**
- * Vlees-gehakt uit een recept: "rundergehakt", "mager kipgehakt",
- * "half om halfgehakt". Niet "knoflook fijngehakt" — daar is gehakt een
- * bereiding, geen product.
+ * Vlees-gehakt uit een recept: "gehakt", "rundergehakt", "mager kipgehakt",
+ * "half om halfgehakt". Niet "knoflook, gehakt" of "knoflook fijngehakt" —
+ * daar is gehakt een bereiding, geen product (GEHAKT_PRODUCT).
  *
- * Een los woord "gehakt" haalt ingredientKey weg (het staat bij de
- * bereidingswoorden), dus "half om half gehakt" komt hier aan als "half om half".
+ * "half om half" zonder gehakt: zo maakte ingredientKey de sleutel tot
+ * 11 oktober 2026 (gehakt stond bij de bereidingswoorden); oude lijstregels
+ * dragen die nog.
  */
 export function isGehakt(key: string): boolean {
-  if (key === 'half om half') return true
-  const laatste = key.split(' ').pop() ?? ''
-  return /^(runder|rund|kip|kalfs|varkens|lams|half)?gehakt$/.test(laatste)
+  return key === 'half om half' || GEHAKT_PRODUCT.test(key)
 }
 
 /** Rookworst en rundrookworst, niet een rookworst die al vega is. */

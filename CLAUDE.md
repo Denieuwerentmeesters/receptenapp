@@ -96,7 +96,8 @@ jumbo.com zijn toegestaan als doel.
 en `scripts/ah_mapping.py`. Wijk je op één plek af, dan matcht de AH-mapping
 stilletjes niet meer. Let op accenten (crème fraîche → creme fraiche), de
 meervouds-s (sojasaus blijft sojasaus, aardappels wordt aardappel) en apostrofs
-(paprika's → paprika).
+(paprika's → paprika). "Gehakte" valt weg als bereiding, "gehakt" niet: dat is een
+product (migratie `20261011200000`).
 
 **ah.nl blokkeert kale HTTP-verzoeken met 403.** Scrapen lukt alleen vanuit een
 echte browser. Vandaar dat `scripts/ah_mapping.py` in de praktijk niet werkt en
