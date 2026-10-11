@@ -2179,8 +2179,17 @@
  },
  {
   "key": "gepelde tomaten",
-  "naam": "Jumbo Tomaten Gepeld 400 g",
-  "standaard": "760811BLK",
+  "naam": "Jumbo Biologisch Tomaten Gepeld 400 g",
+  "standaard": "164091BLK",
+  "bio": "164091BLK",
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gepelde tomaten uit blik",
+  "naam": "Jumbo Biologisch Tomaten Gepeld 400 g",
+  "standaard": "164091BLK",
   "bio": "164091BLK",
   "bio_naam": null,
   "huismerk": null,
@@ -2683,8 +2692,8 @@
  },
  {
   "key": "gyoza",
-  "naam": "Duca Gyoza's Groente 12 Stuks 240 g",
-  "standaard": "699691DS",
+  "naam": "Bibigo Gyoza Vegan Korean Style BBQ 300 g",
+  "standaard": "595073ZK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -2692,6 +2701,15 @@
  },
  {
   "key": "gyoza vellen",
+  "naam": "Happy Belly Gyoza Vellen 300g",
+  "standaard": "697735ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gyoza velletje",
   "naam": "Happy Belly Gyoza Vellen 300g",
   "standaard": "697735ZK",
   "bio": null,
@@ -2991,6 +3009,15 @@
   "key": "jeneverbessen",
   "naam": "Verstegen Jeneverbessen 24 g",
   "standaard": "142997POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "jong belegen kaas in plakken",
+  "naam": "Jumbo Jong Belegen Kaas 48+ Plakken Voordeelverpakking 400 g",
+  "standaard": "203773STK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -4177,9 +4204,9 @@
  },
  {
   "key": "mais",
-  "naam": "Jumbo Maïskorrels 330 g",
-  "standaard": "580552BLK",
-  "bio": null,
+  "naam": "Jumbo Biologische Maïskorrels 200 g",
+  "standaard": "692596PAK",
+  "bio": "692596PAK",
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
@@ -4798,8 +4825,8 @@
  },
  {
   "key": "oude kaas",
-  "naam": "Jumbo Oude Kaas 48+ Plakken 190 g",
-  "standaard": "554728TRA",
+  "naam": "Jumbo Geraspt Kaas Oud 48+ 175 g",
+  "standaard": "395039ZK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -4861,10 +4888,10 @@
  },
  {
   "key": "pandanrijst",
-  "naam": "Jumbo Pandanrijst 4,5 kg",
-  "standaard": "376474ZK",
+  "naam": "Jumbo Geurige Pandanrijst 400 g",
+  "standaard": "391687STK",
   "bio": "491953DS",
-  "bio_naam": "Fairtrade Original Biologische Pandanrijst 400 g",
+  "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
  },
@@ -6508,10 +6535,10 @@
  },
  {
   "key": "spek",
-  "naam": "Jumbo Ontbijtspek 140 g",
-  "standaard": "655491STK",
-  "bio": "641018KGR",
-  "bio_naam": "Jumbo Biologisch Ontbijtspek ca. 100 g",
+  "naam": "Jumbo Gerookte Spek Reepjes 250 g",
+  "standaard": "679081TRA",
+  "bio": null,
+  "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
  },
@@ -6670,8 +6697,8 @@
  },
  {
   "key": "stokbrood",
-  "naam": "Jumbo - Stokbrood Kruidenboter - 2 Stuks",
-  "standaard": "756947PAK",
+  "naam": "Jumbo Frans Stokbrood Wit 220 g",
+  "standaard": "660528STK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -6985,8 +7012,8 @@
  },
  {
   "key": "toast",
-  "naam": "Van der Meulen Melba Toast Naturel 120 g",
-  "standaard": "203972STK",
+  "naam": "Jumbo Knapperige Toast 100 g",
+  "standaard": "478040ZK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -6994,8 +7021,8 @@
  },
  {
   "key": "toast om te serveren",
-  "naam": "Van der Meulen Melba Toast Naturel 120 g",
-  "standaard": "203972STK",
+  "naam": "Jumbo Knapperige Toast 100 g",
+  "standaard": "478040ZK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -7030,17 +7057,17 @@
  },
  {
   "key": "tomaat uit blik",
-  "naam": "Jumbo Tomaten 500 g",
-  "standaard": "415609BAK",
-  "bio": null,
+  "naam": "Jumbo Biologisch Tomaten Gepeld 400 g",
+  "standaard": "164091BLK",
+  "bio": "164091BLK",
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
  },
  {
   "key": "tomaatjes uit blik",
-  "naam": "Jumbo Cherry Tomaten 250 g",
-  "standaard": "302232BAK",
+  "naam": "Mutti Cherry Tomaten 400g",
+  "standaard": "648083BLK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,
@@ -8004,6 +8031,15 @@
   "key": "zalmfilet",
   "naam": "Jumbo Wilde Zalmfilet 2 x 125 g",
   "standaard": "76159PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zalmfilet met vel",
+  "naam": "Jumbo Zalmfilet met Huid Naturel ca. 270 g",
+  "standaard": "715172STK",
   "bio": null,
   "bio_naam": null,
   "huismerk": null,

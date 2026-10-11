@@ -7252,5 +7252,77 @@
     "leverbaar": true,
     "inhoud": 200.0,
     "eenheid": "g"
+  },
+  {
+    "product_id": 62024,
+    "titel": "AH Tagliatelle",
+    "inhoud_tekst": "500 g",
+    "prijs": 1.95,
+    "leverbaar": true,
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 132045,
+    "titel": "AH Zalmfilet op huid",
+    "inhoud_tekst": "ca. 300 g",
+    "prijs": 7.59,
+    "leverbaar": true,
+    "inhoud": 300.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 165583,
+    "titel": "AH Sweet cherry cherrytomaten",
+    "inhoud_tekst": "250 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "inhoud": 250.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 197227,
+    "titel": "De Zaanse Hoeve Jong belegen 48+ plakken voordeelpak",
+    "inhoud_tekst": "400 g",
+    "prijs": 4.15,
+    "leverbaar": true,
+    "inhoud": 400.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 234870,
+    "titel": "Mutti Tomates cerises",
+    "inhoud_tekst": "400 g",
+    "prijs": 2.49,
+    "leverbaar": true,
+    "inhoud": 400.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 480505,
+    "titel": "AH Borreltoast zeezout",
+    "inhoud_tekst": "125 g",
+    "prijs": 2.39,
+    "leverbaar": true,
+    "inhoud": 125.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 543590,
+    "titel": "AH Penne",
+    "inhoud_tekst": "500 g",
+    "prijs": 0.79,
+    "leverbaar": true,
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 565212,
+    "titel": "Bibigo Gyoza vegan korean style BBQ",
+    "inhoud_tekst": "300 g",
+    "prijs": 4.49,
+    "leverbaar": true,
+    "inhoud": 300.0,
+    "eenheid": "g"
   }
 ]

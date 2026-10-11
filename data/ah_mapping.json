@@ -475,9 +475,9 @@
  },
  {
   "key": "blokjes diepvriesspinazie",
-  "naam": "ah bladspinazie grof gesneden 450 g (diepvries)",
-  "standaard": 67746,
-  "bio": null
+  "naam": "ah biologisch bladspinazie deelblokjes 450 g (diepvries)",
+  "standaard": 409997,
+  "bio": 409997
  },
  {
   "key": "boekweitnoedel",
@@ -1011,9 +1011,9 @@
  },
  {
   "key": "diepvriesspinazie",
-  "naam": "ah bladspinazie grof gesneden 450 g (diepvries)",
-  "standaard": 67746,
-  "bio": null
+  "naam": "ah biologisch bladspinazie deelblokjes 450 g (diepvries)",
+  "standaard": 409997,
+  "bio": 409997
  },
  {
   "key": "dijonmosterd",
@@ -1467,8 +1467,14 @@
  },
  {
   "key": "gepelde tomaten",
-  "naam": "ah tomaten gepeld",
-  "standaard": 803,
+  "naam": "ah biologisch tomaten gepeld 400 g",
+  "standaard": 207510,
+  "bio": 207510
+ },
+ {
+  "key": "gepelde tomaten uit blik",
+  "naam": "ah biologisch tomaten gepeld 400 g",
+  "standaard": 207510,
   "bio": 207510
  },
  {
@@ -1823,13 +1829,19 @@
  },
  {
   "key": "gyoza",
-  "naam": "ah gyoza kip",
-  "standaard": 585152,
+  "naam": "bibigo gyoza vegan korean style bbq 300 g",
+  "standaard": 565212,
   "bio": null
  },
  {
   "key": "gyoza vellen",
   "naam": "happy belly gyoza vellen",
+  "standaard": 234565,
+  "bio": null
+ },
+ {
+  "key": "gyoza velletje",
+  "naam": "happy belly gyoza vellen 300 g",
   "standaard": 234565,
   "bio": null
  },
@@ -2035,6 +2047,12 @@
   "key": "jeneverbessen",
   "naam": "verstegen jeneverbessen",
   "standaard": 216630,
+  "bio": null
+ },
+ {
+  "key": "jong belegen kaas in plakken",
+  "naam": "de zaanse hoeve jong belegen 48+ plakken voordeelpak 400 g",
+  "standaard": 197227,
   "bio": null
  },
  {
@@ -2900,9 +2918,9 @@
  },
  {
   "key": "mais",
-  "naam": "ah mais",
-  "standaard": 66113,
-  "bio": null
+  "naam": "ah biologisch maiskorrels 0% zout toegevoegd 150 g",
+  "standaard": 583799,
+  "bio": 583799
  },
  {
   "key": "maiskolf",
@@ -3321,9 +3339,9 @@
  },
  {
   "key": "oude kaas",
-  "naam": "ah goudse oud 48 plakken",
-  "standaard": 2606,
-  "bio": 398270
+  "naam": "ah goudse oud 48+ geraspt",
+  "standaard": 3853,
+  "bio": null
  },
  {
   "key": "paddenstoelen",
@@ -3369,8 +3387,8 @@
  },
  {
   "key": "pandanrijst",
-  "naam": "ah kant en klaar pandanrijst",
-  "standaard": 613348,
+  "naam": "ah biologisch pandan rijst 400 g",
+  "standaard": 525395,
   "bio": 525395
  },
  {
@@ -3496,8 +3514,8 @@
  },
  {
   "key": "penne",
-  "naam": "ah mini penne volkoren",
-  "standaard": 543604,
+  "naam": "ah penne 500 g",
+  "standaard": 543590,
   "bio": null
  },
  {
@@ -4494,8 +4512,8 @@
  },
  {
   "key": "spek",
-  "naam": "ah ontbijtspek",
-  "standaard": 1565,
+  "naam": "ah biologisch spekreepjes gerookt 200 g",
+  "standaard": 130257,
   "bio": 130257
  },
  {
@@ -4602,8 +4620,8 @@
  },
  {
   "key": "stokbrood",
-  "naam": "ah stokbrood kruidenboter",
-  "standaard": 451996,
+  "naam": "ah biologisch frans stokbrood wit",
+  "standaard": 600958,
   "bio": 600958
  },
  {
@@ -4674,8 +4692,8 @@
  },
  {
   "key": "tagliatelle",
-  "naam": "ah tagliatelle volkoren",
-  "standaard": 543564,
+  "naam": "ah tagliatelle 500 g",
+  "standaard": 62024,
   "bio": null
  },
  {
@@ -4782,14 +4800,14 @@
  },
  {
   "key": "toast",
-  "naam": "ah melba toast naturel 240 g",
-  "standaard": 483940,
+  "naam": "ah borreltoast zeezout 125 g",
+  "standaard": 480505,
   "bio": null
  },
  {
   "key": "toast om te serveren",
-  "naam": "ah melba toast naturel 240 g",
-  "standaard": 483940,
+  "naam": "ah borreltoast zeezout 125 g",
+  "standaard": 480505,
   "bio": null
  },
  {
@@ -4812,14 +4830,14 @@
  },
  {
   "key": "tomaat uit blik",
-  "naam": "ah tomaten 500 g",
-  "standaard": 4088,
-  "bio": null
+  "naam": "ah biologisch tomaten gepeld 400 g",
+  "standaard": 207510,
+  "bio": 207510
  },
  {
   "key": "tomaatjes uit blik",
-  "naam": "ah cherrytomaten 250 g",
-  "standaard": 4137,
+  "naam": "mutti tomates cerises 400 g",
+  "standaard": 234870,
   "bio": null
  },
  {
@@ -5492,6 +5510,12 @@
   "bio": null
  },
  {
+  "key": "zalmfilet met vel",
+  "naam": "ah zalmfilet op huid",
+  "standaard": 132045,
+  "bio": null
+ },
+ {
   "key": "zalmfilets met huid",
   "naam": "ah zalmfilet 250 g",
   "standaard": 135757,
@@ -5583,8 +5607,8 @@
  },
  {
   "key": "zoete cherrytomaatjes aan tak",
-  "naam": "ah cherrytomaten 250 g",
-  "standaard": 4137,
+  "naam": "ah sweet cherry cherrytomaten 250 g",
+  "standaard": 165583,
   "bio": null
  },
  {

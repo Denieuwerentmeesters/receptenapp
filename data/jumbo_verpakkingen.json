@@ -2824,5 +2824,53 @@
     "inhoud": 225.0,
     "eenheid": "g",
     "naam": "Easy Bakery Filo Bladerdeeg 10 x 22,5 g"
+  },
+  {
+    "sku": "164091BLK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Biologisch Tomaten Gepeld 400 g"
+  },
+  {
+    "sku": "648083BLK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Mutti Cherry Tomaten 400g"
+  },
+  {
+    "sku": "203773STK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Jong Belegen Kaas 48+ Plakken Voordeelverpakking 400 g"
+  },
+  {
+    "sku": "715172STK",
+    "inhoud": 270.0,
+    "eenheid": "g",
+    "naam": "Jumbo Zalmfilet met Huid Naturel ca. 270 g"
+  },
+  {
+    "sku": "660528STK",
+    "inhoud": 220.0,
+    "eenheid": "g",
+    "naam": "Jumbo Frans Stokbrood Wit 220 g"
+  },
+  {
+    "sku": "478040ZK",
+    "inhoud": 100.0,
+    "eenheid": "g",
+    "naam": "Jumbo Knapperige Toast 100 g"
+  },
+  {
+    "sku": "391687STK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Geurige Pandanrijst 400 g"
+  },
+  {
+    "sku": "595073ZK",
+    "inhoud": 300.0,
+    "eenheid": "g",
+    "naam": "Bibigo Gyoza Vegan Korean Style BBQ 300 g"
   }
 ]
