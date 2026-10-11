@@ -33,7 +33,7 @@ ZOEK_URL = "https://www.ah.nl/zoeken?query={}"
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Receptenapp-mapping/1.0"
 
 BEREIDINGSWOORDEN = re.compile(
-    r"\b(verse?|vers|gedroogde?|gemalen|geraspte?|fijngesneden|grofgesneden|gesneden|gehakte?"
+    r"\b(verse?|vers|gedroogde?|gemalen|geraspte?|fijngesneden|grofgesneden|gesneden|gehakte"
     r"|geschilde|biologische?|bio|kleine?|grote?|halve|hele|extra|vergine|zonder vel"
     r"|naar smaak|om te frituren|optioneel)\b"
 )

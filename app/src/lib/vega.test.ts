@@ -8,6 +8,12 @@ describe('vlees wordt standaard vega', () => {
   test('gehakt, rookworst en spekjes hebben een vega-versie', () => {
     expect(vegaVervanger('rundergehakt')?.key).toBe('vegagehakt')
     expect(vegaVervanger('half om half')?.key).toBe('vegagehakt')
+    expect(vegaVervanger('gehakt')?.key).toBe('vegagehakt')
+    expect(vegaVervanger('half om half gehakt')?.key).toBe('vegagehakt')
+    expect(vegaVervanger('gemengd gehakt')?.key).toBe('vegagehakt')
+    // "knoflook, gehakt": gehakt als bereiding, geen vlees.
+    expect(vegaVervanger('knoflook gehakt')).toBeUndefined()
+    expect(vegaVervanger('peterselie grof gehakt')).toBeUndefined()
     expect(vegaVervanger('rookworst')?.key).toBe('vega rookworst')
     expect(vegaVervanger('gerookte spekreepje')?.key).toBe('vega spekjes')
     expect(vegaVervanger('kipfilet')).toBeUndefined()

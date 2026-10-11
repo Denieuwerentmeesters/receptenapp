@@ -260,6 +260,13 @@ describe('één product, één regel', () => {
     expect(labels('yoghurt', 'volle yoghurt', 'naturel yoghurt')).toHaveLength(1)
   })
 
+  test('gehakt is een product, gehakt achter de komma een bereiding', () => {
+    expect(labels('gehakt', 'gehakt (rund of vega)')).toEqual(['2 gehakt'])
+    expect(labels('half-om-halfgehakt', 'half om half gehakt')).toHaveLength(1)
+    expect(labels('knoflook', 'knoflook, gehakt', 'knoflook, grof gehakt')).toHaveLength(1)
+    expect(labels('gehakt', 'rundergehakt', 'knoflook, gehakt')).toHaveLength(3)
+  })
+
   test('wat echt iets anders is blijft apart', () => {
     expect(labels('ui', 'rode ui', 'bosui')).toHaveLength(3)
     expect(labels('tomaten', 'tomaten uit blik', 'zongedroogde tomaten')).toHaveLength(3)
