@@ -9,3 +9,7 @@ __pycache__/
 
 # Uitvoer van npm run zoekgaten
 zoekgaten.md
+
+# Uitvoer van npm run ingredienten en scripts/ingredienten_excel.py
+ingredienten_overzicht.json
+ingredienten.xlsx

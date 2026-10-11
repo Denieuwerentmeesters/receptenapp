@@ -25,7 +25,11 @@ app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
 db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
 scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
                      jumbo_mapping, jumbo_prijzen, jumbo_verpakkingen, ah_verpakkingen,
-                     genereer_afbeeldingen (TypeScript, via `npm run afbeeldingen`)
+                     genereer_afbeeldingen (TypeScript, via `npm run afbeeldingen`),
+                     zoekgaten en ingredienten_overzicht + ingredienten_excel.py
+                     (`npm run ingredienten -- --offline`, dan het Python-script:
+                     Excel van alle ingrediënten met wat de app ermee doet en
+                     voorstellen om namen samen te voegen)
 data/recepten.json   581 gescrapete recepten (archief na import; `titel_bron` is de
                      oorspronkelijke titel, `titel`/`titel_nl` onze eigen naam)
 data/ah_mapping.json ingrediënt → AH-productnummer
