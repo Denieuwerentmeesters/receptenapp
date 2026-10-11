@@ -2,6 +2,7 @@ import { enkelvoudVormen } from './ah'
 import type { BoodschapItem } from './database.types'
 import { isKruid } from './kruiden'
 import { naarEenheid, stukgewicht, type Verpakking } from './eenheden'
+import { ingredientKey } from './schaal'
 import { canoniek, droogKruid, lijstSleutel, TENEN } from './synoniemen'
 import { LOOPROUTE, schapVoor, type Schap } from './winkelindeling'
 
@@ -38,6 +39,20 @@ export function voegSamen(items: BoodschapItem[]): LijstRegel[] {
     perKey.set(key, rij)
   }
 
+  // Een keuze ("pecorino of parmezaanse kaas") sluit aan bij een regel die
+  // er al staat: staat parmezaanse kaas op de lijst, dan hoort de keuze
+  // daarbij en niet op een eigen regel met een tweede stuk kaas. Zonder zo'n
+  // regel blijft de keuze staan; zoekProduct kiest dan de eerste met een product.
+  for (const [key, rij] of [...perKey]) {
+    const doel = keuzeOpties(key, rij[0].naam)
+      .map((optie) => lijstSleutel({ naam: optie, ingredient_key: ingredientKey(optie) }))
+      .find((optie) => optie !== key && perKey.has(optie))
+    if (!doel) continue
+    // De gewone regel eerst: die geeft de naam en het product (voorbeeld).
+    perKey.set(doel, [...perKey.get(doel)!, ...rij])
+    perKey.delete(key)
+  }
+
   return [...perKey].map(([key, rij]) => {
     // Een rij die zelf zo heet geeft de naam. Anders: bij een synoniem de
     // gewone naam ("knoflook", niet "knoflooktenen"), en bij alleen een andere
@@ -61,6 +76,17 @@ export function voegSamen(items: BoodschapItem[]): LijstRegel[] {
       voorbeeld: rij[0],
     }
   })
+}
+
+/**
+ * De mogelijkheden uit een keuze in de sleutel: "pecorino of parmezaanse
+ * kaas" → pecorino, parmezaanse kaas. Bij een gedeeld woorddeel ("kippen- of
+ * groentebouillon") is alleen de laatste een heel woord, zoals in zoekProduct.
+ */
+function keuzeOpties(key: string, naam: string): string[] {
+  if (key.indexOf(' of ') <= 0) return []
+  const delen = key.split(' of ').map((k) => k.trim()).filter(Boolean)
+  return /-\s+of\s/.test(naam) ? delen.slice(-1) : delen
 }
 
 /**

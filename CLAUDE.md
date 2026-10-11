@@ -190,6 +190,16 @@ volgende lijst 'm kent. In de Capacitor-app kan dat via native HTTP
 Zolang dat er niet is, moet elk nieuw recept handmatig gemapt worden of blijft
 het bij zoeklinks.
 
+**AH hernummert en schrapt producten, en dat merk je niet.** Een nummer dat
+uit het assortiment is voegt ah.nl stilletjes niet toe aan het mandje; de app
+telt het wel mee. Draai daarom af en toe `python3 scripts/ah_verpakkingen.py`:
+die meldt wat "niet (meer) te koop" is. Herstel die regels in een migratie
+(nieuw nummer, of null voor een zoeklink; een weggevallen bio-nummer op null,
+anders trekt dat de standaard mee het mandje uit) en in `data/ah_mapping.json`.
+Zie `20261010120000_ah_niet_leverbaar_hersteld.sql`. De API-status die telt is
+`orderAvailabilityStatus = IN_ASSORTMENT`; `NO_LONGER_IN_ASSORTMENT` met
+`availableOnline: true` is óók weg (alleen in de winkel).
+
 **Huismerk-voorkeur** (`gebruiker_voorkeuren.huismerk_voorkeur`): naast bio heeft
 een mapping-regel een optionele huismerkvariant (`huismerk_product_id`,
 `huismerk_sku`). Die staat alleen ingevuld waar de standaard een A-merk is en
