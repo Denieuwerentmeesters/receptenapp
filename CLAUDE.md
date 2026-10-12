@@ -388,6 +388,11 @@ bij, geef die dan meteen een eigen titel.
 eigen tekst. Geen pool en geen samengesteld menu; dat laatste staat op het
 vragenscherm van Zelf samenstellen.
 
+**Recepten in bulk voor iedereen gaan de pool in**, niet op je eigen account:
+`user_id` null, `bron_type = 'scraper'`, `deel_status = 'goedgekeurd'`. Wat als
+`eigen_input` op het account van een admin stond is zo verplaatst (migratie
+`20261012100000`); anders staat het bij die admin onder Mijn recepten.
+
 De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
 ziet `/beoordelen` met de aangemelde recepten van anderen.
