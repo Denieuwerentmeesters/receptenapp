@@ -31,6 +31,8 @@ def main() -> None:
         sys.exit(f"Geen migraties gevonden in {MAP}")
 
     with psycopg.connect(verbinding_url, autocommit=True) as verbinding:
+        # Wat een migratie meldt (raise notice) hoort in het log: zo zie je wat hij deed.
+        verbinding.add_notice_handler(lambda melding: print(f"  melding    {melding.message_primary}"))
         verbinding.execute(
             "create table if not exists schema_migraties ("
             "  naam text primary key,"
