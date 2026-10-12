@@ -389,9 +389,11 @@ eigen tekst. Geen pool en geen samengesteld menu; dat laatste staat op het
 vragenscherm van Zelf samenstellen.
 
 **Recepten in bulk voor iedereen gaan de pool in**, niet op je eigen account:
-`user_id` null, `bron_type = 'scraper'`, `deel_status = 'goedgekeurd'`. Wat als
-`eigen_input` op het account van een admin stond is zo verplaatst (migratie
-`20261012100000`); anders staat het bij die admin onder Mijn recepten.
+`user_id` null, `bron_type = 'scraper'`, `deel_status = 'goedgekeurd'`. De
+eerste lading stond als `eigen_input` en `kookboek_foto` op het account van een
+admin en is zo verplaatst (migratie `20261012100000`); anders staat het bij die
+admin onder Mijn recepten. Dat daar kookboekrecepten bij zaten is een eenmalige
+uitzondering (Reinoud, 12 okt 2026): de regel hierboven geldt verder gewoon.
 
 De adminrol (`gebruiker.is_admin`) zet je met de hand in de database; er is
 bewust geen UI voor, en een trigger houdt tegen dat de app 'm zet. Een admin
