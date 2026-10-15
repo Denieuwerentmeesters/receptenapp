@@ -195,7 +195,6 @@ export function useMenuOpslaan() {
       return ids
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['mijn-recepten'] })
       void qc.invalidateQueries({ queryKey: ['samengestelde-recepten'] })
     },
   })
