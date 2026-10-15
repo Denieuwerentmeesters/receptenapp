@@ -55,7 +55,7 @@ const KAARTEN: Kaart[] = [
     kop: 'Te koken',
     tekst: 'Na het bestellen staan je recepten bij Te koken. Gekookt? Tik op het kruisje, dan vind je het terug onderaan Nog bestellen.',
     beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met de knoppen Te koken en Nog bestellen uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.046, y: 0.139, b: 0.785, h: 0.05 }, rond: 999,
+    verhouding: 1688 / 780, licht: { x: 0.046, y: 0.139, b: 0.546, h: 0.05 }, rond: 999,
   },
   {
     kop: 'Voorraadkast',
