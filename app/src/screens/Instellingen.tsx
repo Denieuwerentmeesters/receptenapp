@@ -8,6 +8,7 @@ import { BonusBron } from '../components/Bonus'
 import { AllergieKeuze, KeukenKeuze } from '../components/voorkeuren'
 import { HuishoudenBlok } from '../components/Huishouden'
 import { useKeukens } from '../lib/queries2'
+import { vegaDoel, vegaMinimumVoor } from '../lib/weekvullen'
 
 const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
 
@@ -23,6 +24,7 @@ export function Instellingen() {
       <Grens query={voorkeuren} ladenTekst="Instellingen ophalen">
         {voorkeuren.data && (() => {
           const v = voorkeuren.data
+          const avonden = v.kookavonden ?? 4
           return (
             <>
               <Kop kleur="var(--c-green)" style={{ padding: 'calc(env(safe-area-inset-top) + 20px) 22px 22px' }}>
@@ -43,10 +45,17 @@ export function Instellingen() {
                     waarde={v.aantal_personen} min={1} max={12}
                     onWijzig={(n) => zet({ aantal_personen: n })}
                   />
+                  {/* Een richtlijn voor Vul mijn week, geen grens: je bestelt zoveel als je wilt. */}
                   <Stapper
-                    label="Vega-minimum" sub="Van de 10 recepten per week"
-                    waarde={v.vega_minimum} min={0} max={10}
-                    onWijzig={(n) => zet({ vega_minimum: n })}
+                    label="Hoe vaak kook je?" sub="Meestal, per week. Voor Vul mijn week"
+                    waarde={avonden} min={1} max={7}
+                    weergave={avonden === 7 ? 'elke avond' : `${avonden}×`}
+                    onWijzig={(n) => zet({ kookavonden: n })}
+                  />
+                  <Stapper
+                    label="Hoeveel daarvan vegetarisch?" sub={`Van je ${avonden} ${avonden === 1 ? 'avond' : 'avonden'}`}
+                    waarde={vegaDoel({ vega_minimum: v.vega_minimum, kookavonden: avonden })} min={0} max={avonden}
+                    onWijzig={(n) => zet({ vega_minimum: vegaMinimumVoor(n, avonden) })}
                   />
                   <Stapper
                     label="Max bereidingstijd" sub="Langere recepten laten we weg"

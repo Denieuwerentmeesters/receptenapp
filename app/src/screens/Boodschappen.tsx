@@ -6,7 +6,7 @@ import { Fout, Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { volgendeWeek } from '../lib/week'
 import { useActieveWeek, useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
-import { useBestellingen, useBestellingVastleggen, useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from '../lib/queries2'
+import { useBestellingen, useBestellingVastleggen, useBoodschappenGedaan, useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from '../lib/queries2'
 import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
 import type { Bestelling, BoodschapItem } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isBijzonderKruid, isDroogKruid } from '../lib/kruiden'
@@ -82,7 +82,19 @@ export function Boodschappen() {
   const [bezorgVraag, setBezorgVraag] = useState(false)
   const bestellingen = useBestellingen()
   const vastleggen = useBestellingVastleggen(week)
+  const gedaan = useBoodschappenGedaan(week)
   const { afvinken, toevoegen, verwijderen, opruimen, allesWissen } = useBoodschapMuteren(week)
+
+  /**
+   * De boodschappen zijn in huis, zonder bestelling (zelf gehaald, of alles
+   * afgevinkt): de recepten op je lijst gaan naar Te koken, de lijst wordt
+   * leeg. Eerst markeren: na het opruimen weet de lijst niet meer welke
+   * recepten erop stonden.
+   */
+  function boodschappenGedaan() {
+    const ids = [...new Set(items.flatMap((i) => (i.bron_recept_id ? [i.bron_recept_id] : [])))]
+    gedaan.mutate(ids, { onSettled: () => opruimen.mutate(regels.flatMap((r) => r.ids)) })
+  }
 
   const [nieuw, setNieuw] = useState('')
   const [mandjeFout, setMandjeFout] = useState<string | null>(null)
@@ -283,8 +295,8 @@ export function Boodschappen() {
             icoon="cart"
             kop="Je lijst is leeg"
             tekst="Zet een recept op je lijst, dan komen de ingrediënten hier vanzelf te staan."
-            knop="Naar deze week"
-            onKnop={() => navigeer('/deze-week')}
+            knop="Naar Mijn recepten"
+            onKnop={() => navigeer('/mijn-recepten', { state: { tab: 'bestellen' } })}
           />
         ) : (
           <Inhoud style={{ gap: 18 }}>
@@ -493,9 +505,9 @@ export function Boodschappen() {
               // Alles afgevinkt (of alleen kruiden over): je bent klaar. Dan mag de lijst leeg.
               <Button
                 tone="green"
-                onClick={() => opruimen.mutate(regels.flatMap((r) => r.ids))}
+                onClick={boodschappenGedaan}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-              >Klaar met boodschappen</Button>
+              >Boodschappen gedaan</Button>
             ) : (
               <>
               {!bonus.peildatum.zelfHalen && (metBonus.length > 0 || verloopt.length > 0) && (
@@ -537,6 +549,14 @@ export function Boodschappen() {
                 onClick={() => { void naarMandje() }}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
               >{`Naar ${winkel.kort}-mandje (${naarWinkel.length - nietGevonden.length})`}</Button>
+              {/* Wie zelf haalt bestelt niet: dan zeg je hier dat de boodschappen in huis zijn. */}
+              {voorkeuren.data?.zelf_halen && (
+                <Button
+                  variant="secondary" tone="green"
+                  onClick={boodschappenGedaan}
+                  style={{ width: '100%', padding: '15px 24px', fontSize: 15, marginTop: 8 }}
+                >Boodschappen gedaan</Button>
+              )}
               </>
             )}
             <p style={{
@@ -544,7 +564,7 @@ export function Boodschappen() {
               textAlign: 'center', color: 'rgba(20,20,20,0.6)',
             }}>
               {naarWinkel.length === 0
-                ? 'Je lijst wordt leeggemaakt. Je recepten blijven in Deze week staan.'
+                ? 'Je lijst wordt leeggemaakt. Je recepten gaan naar Te koken.'
                 : thuisOpen > 0
                   ? 'Afgevinkte producten en wat je in huis hebt laten we uit je mandje. Check wel even je kruidenrek.'
                   : 'Afgevinkte producten laten we uit je mandje.'}

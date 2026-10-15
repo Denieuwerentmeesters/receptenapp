@@ -527,12 +527,14 @@ export function useReceptOpslaan() {
   })
 }
 
-/** Je eigen toegevoegde recepten. */
+/** Je eigen toegevoegde recepten: geïmporteerd, kookboek, eigen tekst en samengesteld. */
 export function useMijnRecepten() {
   return useQuery({
     queryKey: ['mijn-recepten'],
     queryFn: async (): Promise<Recept[]> => {
+      // Alleen je eigen: een goedgekeurd gedeeld recept van een ander is ook leesbaar.
       const { data, error } = await db.from('recepten').select('*')
+        .eq('user_id', await huidigeUserId())
         .neq('bron_type', 'scraper').order('aangemaakt_op', { ascending: false })
       if (error) throw error
       return data as Recept[]
@@ -646,6 +648,40 @@ export function useBestellingen() {
   })
 }
 
+/**
+ * De recepten zijn besteld: ze gaan in Mijn recepten naar Te koken, en de week
+ * blijft staan tot ze gekookt zijn — ook als het intussen maandag wordt.
+ * Ook wat in komende week op de lijst stond: dat blijft daar staan, als besteld.
+ */
+async function markeerBesteld(week: string, ids: string[]): Promise<void> {
+  if (ids.length === 0) return
+  const nu = new Date().toISOString()
+  const besteld = await (await gedeeld('weekmenu_gekozen')).update({ besteld_op: nu })
+    .in('week_start_datum', [week, volgendeWeek(week)]).in('recept_id', ids).is('besteld_op', null)
+  if (besteld.error) throw besteld.error
+  const vast = await (await gedeeld('gebruiker_voorkeuren')).update({ actieve_week: week })
+    .eq('user_id', await effectieveUserId())
+  if (vast.error) throw vast.error
+}
+
+/**
+ * "Boodschappen gedaan", voor wie zelf haalt: er is geen bestelling, maar de
+ * recepten op je lijst gaan net zo naar Te koken. Telt niet mee voor
+ * Bespaard!: daar is een mandje met bedragen voor nodig.
+ */
+export function useBoodschappenGedaan(gevraagd?: string) {
+  const actief = useActieveWeek()
+  const week = gevraagd ?? actief
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (receptIds: string[]) => markeerBesteld(week, receptIds),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: sleutels.voorkeuren })
+      void qc.invalidateQueries({ queryKey: ['deze-week'] })
+    },
+  })
+}
+
 export interface BestellingInvoer {
   winkel: 'ah' | 'jumbo'
   personen: number
@@ -693,19 +729,7 @@ export function useBestellingVastleggen(gevraagd?: string) {
       }).select().single()
       if (error) throw error
 
-      // De recepten zijn besteld: Deze week toont vanaf nu wat je gaat koken, en
-      // blijft deze week tot dat gebeurd is — ook als het intussen maandag wordt.
-      const ids = Object.keys(invoer.recepten)
-      if (ids.length > 0) {
-        const nu = new Date().toISOString()
-        // Ook wat in komende week op de lijst stond: dat blijft daar staan, als besteld.
-        const besteld = await (await gedeeld('weekmenu_gekozen')).update({ besteld_op: nu })
-          .in('week_start_datum', [week, volgendeWeek(week)]).in('recept_id', ids).is('besteld_op', null)
-        if (besteld.error) throw besteld.error
-        const vast = await (await gedeeld('gebruiker_voorkeuren')).update({ actieve_week: week })
-          .eq('user_id', await effectieveUserId())
-        if (vast.error) throw vast.error
-      }
+      await markeerBesteld(week, Object.keys(invoer.recepten))
 
       const b = data as Bestelling
       return { ...b, mandje_kosten: Number(b.mandje_kosten), maaltijdbox_kosten: Number(b.maaltijdbox_kosten), bonus_voordeel: Number(b.bonus_voordeel ?? 0) }

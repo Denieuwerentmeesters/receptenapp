@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { effectieveUserId, gedeeld } from './huishouden'
-import { db } from './db'
 import { useActieveWeek } from './queries'
 import { volgendeWeek, weekStart } from './week'
 
@@ -12,9 +11,8 @@ import { volgendeWeek, weekStart } from './week'
  * door: `gebruiker_voorkeuren.actieve_week` wijst de nieuwe week aan. Wat je
  * nog wilt koken gaat mee, en wat nog op je lijst stond ook.
  *
- * De suggesties van de nieuwe week gaan niet mee: deze week is wat jij koos
- * (met het hartje, of op je lijst), geen tips erbij. Wat je er zelf nog bij
- * zet komt gewoon te staan.
+ * Wat je koos maar nog niet bestelde gaat ook mee: dat staat bij Nog
+ * bestellen (lib/fases.ts) en mag niet verdwijnen omdat de week verschuift.
  */
 
 /** Een rij uit weekmenu_gekozen, voor zover het doorschuiven ernaar kijkt. */
@@ -34,11 +32,13 @@ export function doelWeek(week: string, vandaag = new Date()): string {
 }
 
 /**
- * Wat meegaat naar de volgende week: wat nog op je lijst staat (dat moet je
- * nog kopen), en van wat besteld is alleen wat je aanwees. Gekookt gaat nooit mee.
+ * Wat meegaat naar de volgende week: wat nog niet besteld is (Nog bestellen),
+ * wat nog op je lijst staat (dat moet je nog kopen), en van wat besteld is
+ * alleen wat je aanwees. Gekookt gaat nooit mee.
  */
 export function watGaatMee(keuzes: Keuze[], meenemen: readonly string[]): Keuze[] {
-  return keuzes.filter((k) => !k.gekookt_op && (k.van_lijst_op === null || meenemen.includes(k.recept_id)))
+  return keuzes.filter((k) => !k.gekookt_op
+    && (!k.besteld_op || k.van_lijst_op === null || meenemen.includes(k.recept_id)))
 }
 
 /** Besteld en nog niet gekookt: daar wacht de week op. */
@@ -79,19 +79,6 @@ async function schuifDoor(week: string, meenemen: readonly string[]): Promise<vo
     })), { onConflict: 'user_id,week_start_datum,recept_id' })
     if (error) throw error
   }
-
-  // Deze week is alleen wat je koos: de suggesties van de nieuwe week gaan
-  // weg. Eerst de generator, zodat die ze straks niet alsnog neerzet.
-  const generator = await db.rpc('genereer_weekmenu', { p_user_id: id, p_week_start: doel })
-  if (generator.error) throw generator.error
-  const gekozen = await (await gedeeld('weekmenu_gekozen')).select('recept_id').eq('week_start_datum', doel)
-  if (gekozen.error) throw gekozen.error
-  const gekozenIds = (gekozen.data as { recept_id: string }[]).map((k) => k.recept_id)
-  let verberg = (await gedeeld('weekmenu_getoond')).update({ verborgen_op: nu })
-    .eq('week_start_datum', doel).is('verborgen_op', null)
-  if (gekozenIds.length > 0) verberg = verberg.not('recept_id', 'in', `(${gekozenIds.join(',')})`)
-  const verborgen = await verberg
-  if (verborgen.error) throw verborgen.error
 
   // De lijst verhuist mee; wat bij een recept hoort dat achterblijft gaat eraf.
   const blijft = mee.filter((k) => k.van_lijst_op === null).map((k) => k.recept_id)

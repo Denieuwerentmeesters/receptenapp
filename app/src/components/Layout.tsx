@@ -5,8 +5,8 @@ import {
 import { createPortal } from 'react-dom'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
-import { useActieveWeek, useBoodschappen } from '../lib/queries'
-import { useWeekRecepten } from '../lib/weekoverzicht'
+import { useBoodschappen } from '../lib/queries'
+import { useFases } from '../lib/fases'
 import { voegSamen } from '../lib/lijst'
 
 /**
@@ -231,14 +231,14 @@ export function Voet({ children, meeschuiven = false }: { children: ReactNode; m
 
 /** De vier tabs uit het design system: home, ontdekken, lijst, profiel. */
 const TABS = [
-  { pad: '/deze-week', icoon: 'house', label: 'Deze week' },
+  { pad: '/mijn-recepten', icoon: 'house', label: 'Mijn recepten' },
   { pad: '/ontdekken', icoon: 'grid', label: 'Ontdekken' },
   { pad: '/boodschappen', icoon: 'cart', label: 'Lijst' },
   { pad: '/profiel', icoon: 'user', label: 'Profiel' },
 ] as const
 
 /**
- * Iets erbij moet je zien gebeuren: het cijfer op "Deze week" of "Lijst"
+ * Iets erbij moet je zien gebeuren: het cijfer op "Mijn recepten" of "Lijst"
  * zwelt even op. Bij het openen van een scherm niet — alleen als het aantal
  * stijgt terwijl je kijkt.
  */
@@ -275,8 +275,8 @@ function Teller({ aantal, label }: { aantal: number; label: string }) {
 
 export function OnderBalk() {
   const { balkPlek } = useContext(OnderkantContext)
-  // Zelfde telling als het scherm Deze week: na het bestellen alleen wat je koos.
-  const dezeWeek = useWeekRecepten(useActieveWeek())
+  // Alleen wat je nog moet koken: dat is waar het cijfer je aan herinnert.
+  const { teKoken } = useFases()
   const boodschappen = useBoodschappen()
   // Zelfde telling als het Boodschappen-scherm: samengevoegde regels, nog niet afgevinkt.
   const producten = useMemo(
@@ -284,7 +284,7 @@ export function OnderBalk() {
     [boodschappen.data],
   )
   const tellers: Record<string, { aantal: number; label: string }> = {
-    '/deze-week': { aantal: dezeWeek.recepten.length, label: 'recepten deze week' },
+    '/mijn-recepten': { aantal: teKoken.length, label: 'recepten te koken' },
     '/boodschappen': { aantal: producten, label: 'producten op je lijst' },
   }
 

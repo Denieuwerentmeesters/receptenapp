@@ -3,10 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
 import { Scherm } from '../components/Layout'
 import { Grens } from '../components/Staten'
-import { useActieveWeek, useDezeWeek, useRecept, useVoorkeuren } from '../lib/queries'
-import { volgendeWeek } from '../lib/week'
+import { useRecept, useVoorkeuren } from '../lib/queries'
+import { useFases } from '../lib/fases'
 import { useWeekWissel } from '../lib/weekwissel'
-import { Dialoog } from '../components/Dialoog'
 import { schaalIngredienten } from '../lib/schaal'
 import { formatteerDuur, tijdenUitStap } from '../lib/kookmodus'
 import { bereidGeluidVoor, houdSchermAan, planWekker, trekWekkerIn, wekkerAfgelopen } from '../lib/kookwekker'
@@ -41,28 +40,20 @@ export function Kookmodus() {
   const navigeer = useNavigate()
   const recept = useRecept(id)
   const voorkeuren = useVoorkeuren()
-  const actief = useActieveWeek()
-  const komende = volgendeWeek(actief)
-  const dezeWeek = useDezeWeek(actief)
-  const komendeWeek = useDezeWeek(komende)
+  // Staat het bij Te koken of Nog bestellen, dan kan het na het koken weg met één tik.
+  const { teKoken, nogBestellen } = useFases()
+  const inFase = [...teKoken, ...nogBestellen].find((r) => r.id === id)
   const { gekookt } = useWeekWissel()
-  // Na de laatste stap: gekookt, en mag het van je lijst? Alleen voor een recept uit je week.
-  const [klaarVraag, setKlaarVraag] = useState(false)
-  const staatIn = (recepten?: { id: string; gekozen: boolean }[]) => Boolean(recepten?.some((r) => r.id === id && r.gekozen))
-  const receptWeek = staatIn(dezeWeek.data) ? actief : staatIn(komendeWeek.data) ? komende : null
-  const inWeek = receptWeek !== null
 
-  /** Legt vast dat je kookte en gaat terug naar je week; schoof die door, dan zegt Deze week dat. */
-  async function rondAf(opruimen: boolean) {
-    setKlaarVraag(false)
-    if (!id) return
+  /** Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Bewaard onder Eerder gekookt. */
+  async function rondAf() {
+    if (!id || !inFase) return
     try {
-      const { doorgeschoven } = await gekookt.mutateAsync({ receptId: id, opruimen, inWeek: receptWeek ?? undefined })
-      navigeer('/deze-week', { state: doorgeschoven ? { doorgeschoven: true } : null })
+      await gekookt.mutateAsync({ receptId: id, opruimen: true, inWeek: inFase.week })
     } catch {
-      // Je eten staat klaar; het vinkje komt de volgende keer wel.
-      navigeer('/deze-week')
+      // Je eten staat klaar; het vinkje zet je straks op de kaart.
     }
+    navigeer('/mijn-recepten')
   }
 
   const [stap, setStap] = useState(0)
@@ -281,31 +272,21 @@ export function Kookmodus() {
                 <button
                   onClick={() => {
                     if (!laatste) { setStap(stap + 1); return }
-                    if (inWeek) setKlaarVraag(true)
-                    else navigeer('/deze-week')
+                    if (inFase) void rondAf()
+                    else navigeer('/mijn-recepten')
                   }}
+                  disabled={gekookt.isPending}
                   style={{
                     flex: 1, height: 56, borderRadius: 'var(--radius-full)', border: 'none',
                     background: 'var(--c-yellow)', color: 'var(--c-ink)',
                     fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700, cursor: 'pointer',
                   }}
-                >{laatste ? 'Klaar — eet smakelijk' : 'Volgende stap'}</button>
+                >{!laatste ? 'Volgende stap' : inFase ? 'Gekookt' : 'Klaar — eet smakelijk'}</button>
               </div>
             </div>
           )
         })()}
       </Grens>
-      <Dialoog
-        open={klaarVraag}
-        kop="Gekookt?"
-        tekst={`Kan ${titel} van je lijst? Dan staat het niet meer in je week; je vindt het terug in je geschiedenis.`}
-        onSluit={() => setKlaarVraag(false)}
-        acties={[
-          { label: 'Ja, gekookt en van mijn lijst', hoofd: true, onClick: () => void rondAf(true) },
-          { label: 'Gekookt, maar laat staan', onClick: () => void rondAf(false) },
-          { label: 'Nog niet gekookt', onClick: () => { setKlaarVraag(false); navigeer('/deze-week') } },
-        ]}
-      />
     </Scherm>
   )
 }

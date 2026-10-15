@@ -12,7 +12,7 @@ export interface DialoogActie {
  * groot genoeg voor een duim, ook met natte handen in de keuken.
  * Tik naast de vraag om 'm te sluiten zonder iets te doen.
  */
-export function Dialoog({ open, kop, tekst, acties, onSluit, children }: {
+export function Dialoog({ open, kop, tekst, acties, onSluit, sluitTekst, children }: {
   open: boolean
   kop: string
   tekst?: string
@@ -20,6 +20,8 @@ export function Dialoog({ open, kop, tekst, acties, onSluit, children }: {
   children?: React.ReactNode
   acties: DialoogActie[]
   onSluit: () => void
+  /** Een gewone tekstlink onderaan die alleen sluit, zoals "Annuleer". */
+  sluitTekst?: string
 }) {
   if (!open) return null
   return (
@@ -64,6 +66,15 @@ export function Dialoog({ open, kop, tekst, acties, onSluit, children }: {
             style={{ width: '100%', padding: '15px 24px' }}
           >{actie.label}</Button>
         ))}
+        {sluitTekst && (
+          <button
+            onClick={onSluit}
+            style={{
+              alignSelf: 'center', background: 'none', border: 'none', padding: '8px 16px', cursor: 'pointer',
+              fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'rgba(20,20,20,0.6)',
+            }}
+          >{sluitTekst}</button>
+        )}
       </div>
     </div>
   )

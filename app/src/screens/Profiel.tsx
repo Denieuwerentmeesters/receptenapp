@@ -24,8 +24,8 @@ export function Profiel() {
   const bespaard = bestellingen.data ?? []
 
   // Instellingen bovenaan: daar kom je het vaakst. Ontdekken zit al in de
-  // onderbalk. Het hartje bewaart een recept voor komende week én als favoriet;
-  // een favoriet weer weghalen kan alleen op het scherm Favorieten.
+  // onderbalk. Het hartje maakt een recept favoriet; favorieten staan ook in
+  // Mijn recepten → Bewaard.
   const rijen = [
     { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
     {

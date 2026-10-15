@@ -20,7 +20,7 @@ lib/afbeeldingen/    Prompt-opbouw en generatie van receptafbeeldingen (gedeeld 
                      api/afbeeldingen.ts en scripts/genereer_afbeeldingen.ts)
 app/                 React 19 + Vite + TypeScript + Capacitor 8 (iOS)
   src/ds/            Design system uit Claude Design: tokens + componenten
-  src/screens/       Weekmenu, Recept, Boodschappen, Instellingen, Inloggen, Onboarding
+  src/screens/       Mijn recepten, Recept, Boodschappen, Instellingen, Inloggen, Onboarding
   src/lib/           auth, db, queries, schaal, ah, week, config, fouten
 db/migrations/       SQL, op volgorde, gedraaid via scripts/migrate.py
 scripts/             migrate, import_recepten, ah_mapping, laad_ah_mapping,
@@ -303,54 +303,61 @@ vragen, gedeeld door de inhoud van de verpakking.
 - **El, tl, takjes en tenen tellen niet mee:** dat is nooit meer dan één
   verpakking.
 
-## Deze week en komende week
+## Mijn recepten: Te koken, Nog bestellen, Bewaard
 
-Het startscherm (`src/screens/DezeWeek.tsx`) heeft twee weken naast elkaar,
-met twee chips erboven. Vegen of tikken: de baan is een scroll-snap-container,
-dus de schuifanimatie is van de browser.
+De eerste tab (`src/screens/MijnRecepten.tsx`, route `/mijn-recepten`; het
+oude `/deze-week` stuurt door) deelt recepten in naar fase, niet naar
+kalenderweek. Drie chips erboven; vegen of tikken, de baan is een
+scroll-snap-container.
 
-- **Deze week volgt je bestelling, niet de kalender.** `useActieveWeek`
+- **De fases komen uit bestaande kolommen** (`src/lib/fases.ts`,
+  `verdeelFases`), er is geen statuskolom. Te koken = `besteld_op` gezet,
+  niet gekookt of opgeruimd. Nog bestellen = gekozen, niet besteld. Gekookt
+  = `gekookt_op`, en staat bij Bewaard onder Eerder gekookt. De badge op de
+  tab telt alleen Te koken.
+- **Onder de motorkap blijven er twee weken.** De generator maakt per week
+  suggesties, de lijst loopt over deze en komende week (`lijstWeken`), en
+  `weekmenu_gekozen` heeft een `week_start_datum`. De fases lopen over die
+  twee weken heen: besteld op zaterdag, gekookt op dinsdag, blijft bij Te
+  koken. Elke `FaseRecept` weet in welke week de rij staat; acties (op je
+  lijst, weghalen, gekookt) gaan naar die week.
+- **De actieve week volgt je bestelling, niet de kalender.** `useActieveWeek`
   (`src/lib/queries.ts`) geeft `gebruiker_voorkeuren.actieve_week`, of de
-  kalenderweek als die null is. Gebruik in een scherm nooit `weekStart()` voor
-  "deze week": dan kijk je na het doorschuiven naar de verkeerde lijst. Buiten
-  een component: `haalActieveWeek`.
-- **Komende week is de week erna** (`volgendeWeek`). De generator draait er
-  ook voor; die slaat over wat de afgelopen vier weken getoond is, dus de
-  suggesties verschillen van deze week.
-- **Het hartje bewaart voor komende week én als favoriet**
-  (`components/Hartje.tsx`), in Ontdekken en op het receptscherm. Nog een tik
-  haalt het uit komende week; favoriet blijft het (weghalen bij Favorieten).
-  De eerste keer komt er uitleg (`pinch-komende-week-uitleg` in `localStorage`).
-- **Er is één boodschappenlijst, over beide weken** (`lijstWeken` in
-  `src/lib/queries.ts`). "Zet op je lijst" in komende week laat het recept
-  daar staan, ook na het bestellen; het komt pas in deze week als de week
-  doorschuift. Het receptscherm en de kookmodus werken op de week waar het
-  recept in staat.
-- **Besteld = `weekmenu_gekozen.besteld_op`**, gezet als je bevestigt dat het
-  mandje aankwam (`useBestellingVastleggen`); dat zet ook `actieve_week` vast,
-  zodat je recepten op maandag niet verdwijnen. Deze week toont dan alleen nog
-  wat je koos, en de knop onder een gekocht recept wordt "Koken"
-  (`useWeekRecepten` in `src/lib/weekoverzicht.ts`; de onderbalk telt hetzelfde).
-- **Na het koken** vraagt de kookmodus "Gekookt? Kan deze van je lijst?". Ja
-  zet `gekookt_op` en `opgeruimd_op`: het recept is weg uit Deze week, niet
-  uit je geschiedenis.
-- **Doorschuiven** (`src/lib/weekwissel.ts`): is alles wat besteld was
-  gekookt, dan wordt komende week deze week. Wat nog op je lijst stond gaat
-  mee, met de lijst zelf. Een week na het bestellen vraagt
-  `components/WeekVraag.tsx` het bij het openen: "Alle recepten van deze week
-  gekookt?". Bij nee wijs je aan wat je nog kookt; dat gaat mee als besteld,
-  met de datum van nu, dus een week later komt de vraag terug.
-- **Een lege week schuift meteen door** (`DezeWeek.tsx`): is deze week leeg
-  en heb je voor komende week iets bewaard, dan wordt komende week deze
-  week, zonder vraag. Alleen bewaarde recepten tellen, geen suggesties:
-  anders schuift het eindeloos door. Is er niets bewaard, dan staat er
-  "Nog niets voor deze week" met een knop naar Ontdekken.
-- **Na het doorschuiven geen suggesties** (`schuifDoor`): deze week is wat je
-  koos. De generator draait eerst voor de nieuwe week, daarna krijgen alle
-  niet-gekozen suggesties `verborgen_op`. Wat je er zelf bij zet komt gewoon
-  te staan; een verborgen suggestie komt via het hartje terug.
-- **Een week overslaan kost je hartjes:** schuif je pas door als de week erna
-  ook al voorbij is, dan blijft wat daar bewaard stond achter (wel favoriet).
+  kalenderweek als die null is. Gebruik in een scherm nooit `weekStart()`;
+  buiten een component: `haalActieveWeek`.
+- **Nieuwe keuzes gaan naar de bestelweek** (`bestelWeek`): deze week, of
+  komende als er in deze week al besteld is. De suggesties onder Nog
+  bestellen komen uit die week.
+- **Besteld** wordt een recept als je bevestigt dat het mandje aankwam
+  (`useBestellingVastleggen`), of met "Boodschappen gedaan" op de lijst
+  (`useBoodschappenGedaan`): die knop staat er voor wie zelf haalt, en
+  vervangt "Klaar met boodschappen" als alles afgevinkt is. Zonder
+  bestelling telt het niet mee voor Bespaard!. Beide zetten ook
+  `actieve_week` vast.
+- **Gekookt:** het kruisje bij Te koken opent "Gekookt?" met Gekookt en
+  Annuleer, en de laatste stap van de kookmodus heeft de knop Gekookt. Er is
+  geen "niet gekookt, haal weg": wie iets niet kookte tikt ook op Gekookt.
+  Gaat Eerder gekookt later meetellen (beoordelingen, cooldown van de
+  generator), kijk daar dan opnieuw naar.
+- **Het hartje is favoriet** (`components/Hartje.tsx`), in Ontdekken en op
+  het receptscherm. Op je lijst zetten is het plusje ernaast.
+- **Bewaard:** favorieten, eigen recepten (`useMijnRecepten`: alles met jouw
+  `user_id` behalve de pool, dus ook samengesteld) en eerder gekookt, met een
+  chip ertussen. Van daaruit zet je iets opnieuw op je lijst.
+- **Vul mijn week** (`vulAan` in `src/lib/weekvullen.ts`) staat boven Nog
+  bestellen: aanvullen tot je kookavonden, met de vega-verhouding; wat al bij
+  Nog bestellen staat telt mee. Zit je er al op, dan een nieuwe ronde. Nooit
+  meer dan tien tegelijk. Kookavonden zijn een richtlijn (onboarding en
+  Instellingen): nergens houdt de app je eraan.
+- **Doorschuiven** (`src/lib/weekwissel.ts`): is alles wat in de actieve
+  week besteld was gekookt, dan wordt komende week de actieve. Wat nog niet
+  besteld is en wat nog op je lijst stond gaat mee. Een week na het
+  bestellen vraagt `components/WeekVraag.tsx` "Alles van je bestelling
+  gekookt?", voor wie de kaarten niet afvinkt. Bij nee wijs je aan wat je
+  nog kookt; dat gaat mee als besteld, met de datum van nu.
+- **Een week overslaan:** schuift de week pas door als de week erna ook al
+  voorbij is, dan blijft wat daar bij Nog bestellen stond achter (wel
+  favoriet als het dat was).
 - **Van elke soort gerecht één suggestie per week** (`src/lib/gerechtsoort.ts`):
   de soort komt uit de titel, want er is geen kolom voor. Twee keer wraps? Vul
   die lijst aan. Wat je zelf koos blijft altijd staan.
@@ -646,7 +653,7 @@ gluten, koemelk, ei, noten, pinda, vis, schaaldieren, soja, sesam.
 
 ## Dieetfilters
 
-Ontdekken en Deze week filteren op vegetarisch, vegan, pescotarisch,
+Ontdekken filtert op vegetarisch, vegan, pescotarisch,
 koolhydraatarm en keto (`src/lib/dieet.ts`). Vegetarisch is de tag; de andere
 vier zet een trigger in `recepten.dieet`, afgeleid uit de ingrediënten.
 
@@ -702,7 +709,7 @@ Daar vink je een of meer keukens aan (`filters.keukens`).
 
 Een nieuwe gebruiker ziet na het aanmelden één keer een welkomscherm, zes
 uitlegkaarten en zeven vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
-staat daarna op Deze week.
+staat daarna op Mijn recepten.
 
 - **`Poort` in `App.tsx` stuurt naar `/welkom`** zolang
   `gebruiker_voorkeuren.onboarding_klaar_op` null is. Alleen null telt:
@@ -713,7 +720,7 @@ staat daarna op Deze week.
   staan in `src/components/voorkeuren/` en worden door beide gebruikt.
 - **Het weekmenu wordt pas na de vragen gemaakt.** `genereer_weekmenu` is
   idempotent per week; draait hij eerder, dan zijn de tien suggesties op de
-  standaardwaarden gemaakt. De poort moet dus vóór Deze week blijven, en de
+  standaardwaarden gemaakt. De poort moet dus vóór Mijn recepten blijven, en de
   onboarding roept `haalDezeWeek` pas aan bij "Vul mijn week".
 - **"Vul mijn week" zet direct recepten op je lijst** (`kiesWeek`, zoveel als
   `kookavonden`), zonder bevestigscherm. Vegetarisch vraag je als "2 van je
@@ -742,7 +749,7 @@ staat daarna op Deze week.
   alleen de kaarten.
 - **De uitlegkaarten zijn schermafbeeldingen van de app zelf** met één ding
   uitgelicht (`components/Uitleg.tsx`, `src/assets/uitleg/`), geen
-  nagetekende schermen. Verandert Ontdekken, Deze week, de Voorraadkast of
+  nagetekende schermen. Verandert Ontdekken, Mijn recepten, de Voorraadkast of
   de Lijst zichtbaar, maak dan een nieuwe afbeelding (780 × 1688 px, een
   telefoon van 390 breed) en zet het uitgelichte vlak opnieuw.
 - **Nog niet gebouwd:** wie via een uitnodiging bij een huishouden komt

@@ -4,7 +4,9 @@ import { Chip, Icon } from '../ds'
 import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../lib/queries2'
-import { useDezeWeek, type WeekRecept } from '../lib/queries'
+import { useFases, type FaseRecept } from '../lib/fases'
+import { useOpLijst } from '../components/OpLijst'
+import { volgendeWeek } from '../lib/week'
 import { useHartje } from '../components/Hartje'
 import type { Recept } from '../lib/database.types'
 import { isBudget } from '../lib/prijsschatting'
@@ -69,7 +71,7 @@ const TOEVOEGEN = [
 /**
  * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en dieet —
  * precies de dingen waarop je een doordeweekse avond selecteert. Het hartje
- * bewaart een recept voor "Komende week" (components/Hartje.tsx).
+ * maakt een recept favoriet (components/Hartje.tsx), het plusje zet 't op je lijst.
  */
 export function Ontdekken() {
   const navigeer = useNavigate()
@@ -112,13 +114,26 @@ export function Ontdekken() {
       ...alle.filter((k) => !voorkeurKeukens.includes(k.keuken)),
     ]
   }, [keukenPool.data, voorkeurKeukens])
-  const dezeWeek = useDezeWeek()
   const hartje = useHartje()
+  // Het plusje zet een recept op je lijst, in de week waar het al staat of
+  // anders de week waarin je nu bestelt (lib/fases.ts).
+  const fases = useFases()
+  const lijstDeze = useOpLijst(fases.week)
+  const lijstKomende = useOpLijst(volgendeWeek(fases.week))
   // Geen Map als querydata (zie useAhMapping), maar hier is het afgeleid.
-  const inWeek = useMemo(
-    () => new Map((dezeWeek.data ?? []).map((r) => [r.id, r])),
-    [dezeWeek.data],
+  const inFase = useMemo(
+    () => new Map([...fases.teKoken, ...fases.nogBestellen].map((r) => [r.id, r])),
+    [fases.teKoken, fases.nogBestellen],
   )
+  function zetOpLijst(r: Recept) {
+    const fase = inFase.get(r.id)
+    const week = fase?.week ?? fases.bestelWeek
+    const lijst = week === fases.week ? lijstDeze : lijstKomende
+    lijst.voegToe({
+      id: r.id, titel: r.titel_nl ?? r.titel,
+      gekozen: Boolean(fase), opLijst: fase?.opLijst ?? false, aantal: fase?.aantal ?? 0,
+    })
+  }
 
   const recepten = resultaten.data?.pages.flatMap((p) => p.recepten) ?? []
 
@@ -274,7 +289,8 @@ export function Ontdekken() {
                   key={r.id}
                   recept={r}
                   index={i}
-                  week={inWeek.get(r.id)}
+                  fase={inFase.get(r.id)}
+                  onPlus={() => zetOpLijst(r)}
                   bevat={vastVoorJou(r, allergieen)}
                   onOpen={() => navigeer(`/recept/${r.id}`)}
                   bewaard={hartje.bewaard.has(r.id)}
@@ -366,7 +382,8 @@ export function Ontdekken() {
         />
       </Dialoog>
 
-      {hartje.dialoog}
+      {lijstDeze.dialoog}
+      {lijstKomende.dialoog}
       <OnderBalk />
     </Scherm>
   )
@@ -400,20 +417,21 @@ function Keuzelijst({ keuzes, gekozen, onWissel }: {
 }
 
 /**
- * Een recept als foto met de tekst eronder. Het hartje rechtsboven bewaart 'm
- * voor "Komende week" (of haalt 'm eruit); staat 'ie op je lijst, dan de gele rand.
+ * Een recept als foto met de tekst eronder. Rechtsboven het hartje (favoriet)
+ * en het plusje (op je lijst); staat 'ie op je lijst, dan de gele rand.
  */
-function FotoKaart({ recept, index, week, bewaard, bevat, onOpen, onHartje }: {
+function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje, onPlus }: {
   recept: Recept
   index: number
-  /** Hoe het recept in deze week staat: voor de gele rand. */
-  week: WeekRecept | undefined
-  /** Staat in komende week: het hartje is gevuld. */
+  /** Staat het bij Te koken of Nog bestellen: voor de gele rand en de regel eronder. */
+  fase: FaseRecept | undefined
+  /** Favoriet: het hartje is gevuld. */
   bewaard: boolean
   /** Jouw allergenen die erin zitten, zonder vervanger. Alleen als het filter uit staat. */
   bevat: string[]
   onOpen: () => void
   onHartje: () => void
+  onPlus: () => void
 }) {
   // Eén label houdt de regel kort: vegan of vegetarisch gaat voor de keuken.
   const [label] = dieetLabels(recept)
@@ -421,7 +439,7 @@ function FotoKaart({ recept, index, week, bewaard, bevat, onOpen, onHartje }: {
     recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
     label === 'vegan' || label === 'vegetarisch' ? label : recept.keuken,
   ].filter(Boolean).join(' · ')
-  const status = week?.opLijst ? 'Op je lijst' : bewaard ? "In 'Komende week'" : null
+  const status = fase?.besteldOp ? 'Te koken' : fase?.opLijst ? 'Op je lijst' : fase ? 'Nog bestellen' : null
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   const bonusData = useBonus().data
   const bonus = useMemo(() => receptBonusProducten(recept.ingredienten, bonusData), [recept.ingredienten, bonusData])
@@ -430,7 +448,7 @@ function FotoKaart({ recept, index, week, bewaard, bevat, onOpen, onHartje }: {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
       <div style={{
         position: 'relative', borderRadius: 'calc(var(--radius-md) + 4px)', padding: 4,
-        margin: -4, background: week?.opLijst ? 'var(--c-yellow)' : 'transparent',
+        margin: -4, background: fase?.opLijst ? 'var(--c-yellow)' : 'transparent',
         transition: 'background var(--motion-base) var(--ease)',
       }}>
         <button
@@ -449,20 +467,19 @@ function FotoKaart({ recept, index, week, bewaard, bevat, onOpen, onHartje }: {
         {toko && <TokoLabel />}
         <BonusLabel producten={bonus} />
 
-        <button
-          onClick={onHartje}
-          aria-label={bewaard ? 'Uit komende week halen' : 'Bewaren voor komende week'}
-          aria-pressed={bewaard}
-          style={{
-            position: 'absolute', top: 12, right: 12, width: 38, height: 38,
-            borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: bewaard ? 'var(--c-red)' : 'rgba(255,255,255,0.92)',
-            color: bewaard ? 'var(--c-cream)' : 'var(--c-red)',
-            boxShadow: '0 2px 8px rgba(20,20,20,0.18)',
-            transition: 'background var(--motion-fast) var(--ease)',
-          }}
-        ><Icon name="heart" size={18} /></button>
+        <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button
+            onClick={onHartje}
+            aria-label={bewaard ? 'Geen favoriet meer' : 'Favoriet'}
+            aria-pressed={bewaard}
+            style={{ ...rondje, ...(bewaard ? aan : {}) }}
+          ><Icon name="heart" size={18} /></button>
+          <button
+            onClick={onPlus}
+            aria-label={fase?.opLijst ? 'Staat op je lijst' : 'Zet op je lijst'}
+            style={{ ...rondje, ...(fase?.opLijst ? aan : {}) }}
+          ><Icon name={fase?.opLijst ? 'check' : 'plus'} size={18} /></button>
+        </div>
       </div>
 
       <button
@@ -495,6 +512,15 @@ function FotoKaart({ recept, index, week, bewaard, bevat, onOpen, onHartje }: {
     </div>
   )
 }
+
+const rondje: React.CSSProperties = {
+  width: 38, height: 38, borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  background: 'rgba(255,255,255,0.92)', color: 'var(--c-red)',
+  boxShadow: '0 2px 8px rgba(20,20,20,0.18)',
+  transition: 'background var(--motion-fast) var(--ease)',
+}
+const aan: React.CSSProperties = { background: 'var(--c-red)', color: 'var(--c-cream)' }
 
 /** Klein groen "budget" achter de meta: tot €2,50 per persoon (geschat). */
 export function BudgetLabel() {

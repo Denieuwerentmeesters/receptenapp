@@ -277,7 +277,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       await opslaan.mutateAsync({ onboarding_klaar_op: new Date().toISOString() })
       if (vullen) meet('week_gevuld_onboarding', { recepten: aantal })
       bewaarVoortgang(null)
-      navigeer(vullen ? '/deze-week' : '/ontdekken', { replace: true })
+      navigeer(vullen ? '/mijn-recepten' : '/ontdekken', { replace: true })
     } catch (e) {
       setFout(foutTekst(e))
       setBezig(false)
@@ -407,7 +407,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
 
   const kop: Record<Vraag, [string, string]> = {
     personen: ['Voor hoeveel mensen kook je meestal?', 'Dan kloppen de hoeveelheden meteen.'],
-    kookavonden: ['Hoeveel avonden wil je koken?', 'Per week. De rest laat je vrij.'],
+    kookavonden: ['Hoe vaak kook je meestal per week?', 'Een richtlijn voor Vul mijn week. Je bestelt zoveel recepten als je wilt.'],
     keukens: ['Welke keukens vind je lekker?', 'Kies er zoveel als je wilt. Daarvan krijg je meer in je weekmenu. De rest blijft gewoon te vinden.'],
     allergieen: ['Moet Pinch ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
     voorraad: ['Wat heb je standaard in huis?', 'Dat laat Pinch van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.'],
@@ -470,7 +470,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
               ))}
             </div>
             <TellerRij
-              label="Waarvan vegetarisch" eenheid="vegetarische avonden"
+              label="Hoeveel daarvan vegetarisch?" eenheid="vegetarische avonden"
               waarde={antw.vega} min={0} max={antw.avonden}
               onWijzig={(n) => setAntw({ ...antw, vega: n })}
             />
