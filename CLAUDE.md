@@ -345,7 +345,10 @@ scroll-snap-container.
   suggesties en onderaan eerder gekookt. Elk recept staat er één keer, in het
   bovenste blok waar het in past. Eigen recepten staan alleen in Ontdekken
   (Mijn recepten). Er was een derde onderdeel Bewaard; dat was verwarrend en
-  is weg (Reinoud, 15 okt 2026).
+  is weg (Reinoud, 15 okt 2026). Elke kaart heeft een kruisje: bij wat je koos
+  en de suggesties weghalen uit de week, bij een favoriet "Geen favoriet
+  meer?", bij eerder gekookt weg uit dat blok, alleen op het toestel
+  (`localStorage`, `pinch-weg-gekookt`); de geschiedenis blijft.
 - **De onderbalk schuift weg bij omlaag scrollen** (`Scherm` in
   `components/Layout.tsx`) en moet altijd terug kunnen komen. Valt er in het
   vlak waarin je scrolde niets meer te scrollen, of veeg je naar een ander

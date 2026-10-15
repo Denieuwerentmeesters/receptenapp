@@ -7,7 +7,7 @@ import { Dialoog } from '../components/Dialoog'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
 import { useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
-import { useFavorieten, useGeschiedenis, useVoorraad } from '../lib/queries2'
+import { useFavorieten, useFavorietToggle, useGeschiedenis, useVoorraad } from '../lib/queries2'
 import { volgendeWeek } from '../lib/week'
 import { WeekVraag } from '../components/WeekVraag'
 import { useFases, type FaseRecept } from '../lib/fases'
@@ -26,6 +26,28 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'koken', label: 'Te koken' },
   { id: 'bestellen', label: 'Nog bestellen' },
 ]
+
+/**
+ * Eerder gekookt dat je wegtikte. Alleen op dit toestel: het recept blijft in
+ * je geschiedenis (Profiel → Geschiedenis), het hoeft hier alleen niet meer te staan.
+ */
+const WEG_GEKOOKT = 'pinch-weg-gekookt'
+
+function leesWegGekookt(): Set<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(WEG_GEKOOKT) ?? '[]') as string[])
+  } catch {
+    return new Set()
+  }
+}
+
+function bewaarWegGekookt(ids: Set<string>): void {
+  try {
+    localStorage.setItem(WEG_GEKOOKT, JSON.stringify([...ids]))
+  } catch {
+    // Privémodus of geblokkeerde opslag: dan is het alleen deze sessie weg.
+  }
+}
 
 /** De kaarten wisselen af tussen de twee roodtinten — het merkritme uit de designs. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
@@ -97,6 +119,7 @@ export function MijnRecepten() {
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<FaseRecept | null>(null)
   const [gekooktVraag, setGekooktVraag] = useState<FaseRecept | null>(null)
+  const [favorietVraag, setFavorietVraag] = useState<Recept | null>(null)
 
   const plek = (doel: Tab) => TABS.findIndex((t) => t.id === doel)
 
@@ -127,7 +150,14 @@ export function MijnRecepten() {
   /* ------------------------------------- favorieten en eerder gekookt */
 
   const favorietenQuery = useFavorieten()
+  const favorietToggle = useFavorietToggle()
   const geschiedenis = useGeschiedenis()
+  const [wegGekookt, setWegGekookt] = useState(leesWegGekookt)
+  function haalGekooktWeg(id: string) {
+    const nieuw = new Set(wegGekookt).add(id)
+    bewaarWegGekookt(nieuw)
+    setWegGekookt(nieuw)
+  }
   const { favorieten, eerderGekookt } = useMemo(() => {
     // Wat al bij Te koken, Nog bestellen of de suggesties staat, staat daar: niet nog eens.
     const gezien = new Set([...teKoken, ...nogBestellen, ...suggesties].map((r) => r.id))
@@ -136,8 +166,9 @@ export function MijnRecepten() {
     // Eerder gekookt: het laatst gekookte eerst.
     const rijen = (geschiedenis.data ?? []).flatMap((w) => w.gekozen).filter((g) => g.gekooktOp)
     rijen.sort((a, b) => b.gekooktOp!.localeCompare(a.gekooktOp!))
-    return { favorieten, eerderGekookt: rijen.map((g) => g.recept).filter(eenKeer) }
-  }, [teKoken, nogBestellen, suggesties, favorietenQuery.data, geschiedenis.data])
+    const eerderGekookt = rijen.map((g) => g.recept).filter((r) => !wegGekookt.has(r.id)).filter(eenKeer)
+    return { favorieten, eerderGekookt }
+  }, [teKoken, nogBestellen, suggesties, favorietenQuery.data, geschiedenis.data, wegGekookt])
 
   const bonus = useBonus()
   const bonusPerRecept = useMemo(
@@ -202,8 +233,12 @@ export function MijnRecepten() {
     />
   )
 
-  /** Een favoriet of eerder gekookt recept: staat nog nergens, dus het plusje zet het op je lijst. */
-  const kaartBewaard = (recept: Recept, i: number) => {
+  /**
+   * Een favoriet of eerder gekookt recept: staat nog nergens, dus het plusje
+   * zet het op je lijst. Het kruisje haalt een favoriet uit je favorieten, en
+   * eerder gekookt uit dit blok.
+   */
+  const kaartBewaard = (soort: 'favoriet' | 'gekookt') => (recept: Recept, i: number) => {
     const kaart = alsKaart(recept, undefined)
     return (
       <ReceptKaart
@@ -215,6 +250,9 @@ export function MijnRecepten() {
         knop={{ tekst: knopTekst(kaart), icoon: 'plus' }}
         onOpen={() => navigeer(`/recept/${recept.id}`)}
         onKnop={() => opLijstVoorNieuw.voegToe({ ...kaart, titel: recept.titel_nl ?? recept.titel })}
+        weg={soort === 'favoriet'
+          ? { label: 'Geen favoriet meer', onClick: () => setFavorietVraag(recept) }
+          : { label: 'Weghalen', onClick: () => haalGekooktWeg(recept.id) }}
       />
     )
   }
@@ -334,7 +372,7 @@ export function MijnRecepten() {
                 {favorieten.length > 0 && (
                   <>
                     <span style={{ ...KOPJE, paddingBottom: 10 }}>Favorieten · {favorieten.length}</span>
-                    <div style={{ ...ROOSTER, paddingBottom: 18 }}>{favorieten.map(kaartBewaard)}</div>
+                    <div style={{ ...ROOSTER, paddingBottom: 18 }}>{favorieten.map(kaartBewaard('favoriet'))}</div>
                   </>
                 )}
                 {suggesties.length > 0 && (
@@ -346,7 +384,7 @@ export function MijnRecepten() {
                 {eerderGekookt.length > 0 && (
                   <>
                     <span style={{ ...KOPJE, paddingBottom: 10 }}>Eerder gekookt · {eerderGekookt.length}</span>
-                    <div style={ROOSTER}>{eerderGekookt.map(kaartBewaard)}</div>
+                    <div style={ROOSTER}>{eerderGekookt.map(kaartBewaard('gekookt'))}</div>
                   </>
                 )}
               </Inhoud>
@@ -375,6 +413,24 @@ export function MijnRecepten() {
             setGekooktVraag(null)
           },
         }]}
+      />
+      <Dialoog
+        open={Boolean(favorietVraag)}
+        kop="Geen favoriet meer?"
+        tekst={favorietVraag
+          ? `Dan haal je ${favorietVraag.titel_nl ?? favorietVraag.titel} uit je favorieten. In Ontdekken kun je het altijd weer terugzetten met het hartje.`
+          : undefined}
+        onSluit={() => setFavorietVraag(null)}
+        acties={[
+          {
+            label: 'Ja, haal weg', hoofd: true,
+            onClick: () => {
+              if (favorietVraag) favorietToggle.mutate({ receptId: favorietVraag.id, favoriet: false })
+              setFavorietVraag(null)
+            },
+          },
+          { label: 'Laat maar', onClick: () => setFavorietVraag(null) },
+        ]}
       />
       <Dialoog
         open={Boolean(wegVraag)}
