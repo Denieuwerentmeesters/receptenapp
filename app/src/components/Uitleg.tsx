@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button, IconButton } from '../ds'
 import ontdekken from '../assets/uitleg/ontdekken.webp'
-import dezeWeek from '../assets/uitleg/deze-week.webp'
+import mijnRecepten from '../assets/uitleg/mijn-recepten.webp'
 import voorraadkast from '../assets/uitleg/voorraadkast.webp'
 import lijst from '../assets/uitleg/lijst.webp'
 
@@ -37,25 +37,25 @@ const KAARTEN: Kaart[] = [
     kop: 'Zoek',
     tekst: 'Honderden recepten. Zoek op gerecht of ingrediënt, of filter op keuken, tijd, budget en dieet.',
     beeld: ontdekken, alt: 'Het scherm Ontdekken, met de zoekbalk en de filters uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.03, y: 0.068, b: 0.94, h: 0.21 }, rond: 18,
+    verhouding: 1688 / 780, licht: { x: 0.031, y: 0.069, b: 0.938, h: 0.217 }, rond: 18,
   },
   {
     kop: 'Bewaar',
     tekst: 'Tik op het hartje en het recept staat bij je favorieten. Met het plusje zet je het op je lijst.',
-    beeld: ontdekken, alt: 'Een receptkaart in Ontdekken, met het hartje uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.352, y: 0.331, b: 0.124, h: 0.0575 }, rond: 999,
+    beeld: ontdekken, alt: 'Een receptkaart in Ontdekken, met het hartje en het plusje uitgelicht.',
+    verhouding: 1688 / 780, licht: { x: 0.354, y: 0.338, b: 0.123, h: 0.111 }, rond: 999,
   },
   {
     kop: 'Zet op je lijst',
     tekst: 'Kies je recepten bij Nog bestellen. Pinch zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
-    beeld: dezeWeek, alt: 'Het scherm Mijn recepten, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
-    verhouding: 1688 / 780, licht: { x: 0.05, y: 0.249, b: 0.44, h: 0.293 }, rond: 26,
+    beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
+    verhouding: 1688 / 780, licht: { x: 0.049, y: 0.303, b: 0.444, h: 0.294 }, rond: 26,
   },
   {
     kop: 'Te koken',
     tekst: 'Na het bestellen staan je recepten bij Te koken. Gekookt? Tik op het kruisje, dan vind je het terug bij Bewaard.',
-    beeld: dezeWeek, alt: 'Het scherm Mijn recepten, met de knoppen bovenaan uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.04, y: 0.16, b: 0.61, h: 0.055 }, rond: 999,
+    beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met de knoppen Te koken, Nog bestellen en Bewaard uitgelicht.',
+    verhouding: 1688 / 780, licht: { x: 0.046, y: 0.139, b: 0.785, h: 0.05 }, rond: 999,
   },
   {
     kop: 'Voorraadkast',
