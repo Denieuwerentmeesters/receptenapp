@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { kiesWeek, vegaDoel, vegaMinimumVoor, type Kandidaat } from './weekvullen'
+import { kiesWeek, vegaDoel, vegaMinimumVoor, vulAan, type Kandidaat } from './weekvullen'
 
 let n = 0
 function recept(deel: Partial<Kandidaat> & { ingr?: string[] } = {}): Kandidaat {
@@ -101,3 +101,22 @@ describe('kiesWeek', () => {
     expect(kiesWeek([recept({ id: 'a' })], { vega_minimum: 0, kookavonden: 5 }, [])).toEqual(['a'])
   })
 })
+
+describe('vulAan', () => {
+  const twaalf = () => Array.from({ length: 12 }, (_, i) => recept({ id: `s${i}`, positie: i + 1 }))
+
+  test('vult aan tot je kookavonden; wat al bij Nog bestellen staat telt mee', () => {
+    expect(vulAan(twaalf(), { vega_minimum: 0, kookavonden: 4 }, [recept(), recept()])).toHaveLength(2)
+  })
+
+  test('zit je al op je kookavonden, dan komt er een nieuwe ronde bij', () => {
+    const al = [recept(), recept(), recept()]
+    expect(vulAan(twaalf(), { vega_minimum: 0, kookavonden: 3 }, al)).toHaveLength(3)
+  })
+
+  test('nooit meer dan tien nieuwe in één keer', () => {
+    expect(vulAan(twaalf(), { vega_minimum: 0, kookavonden: 7 }, [])).toHaveLength(7)
+    expect(vulAan([...twaalf(), ...twaalf()], { vega_minimum: 0, kookavonden: 14 }, [])).toHaveLength(10)
+  })
+})
+

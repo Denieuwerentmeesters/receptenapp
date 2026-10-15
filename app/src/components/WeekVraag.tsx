@@ -13,9 +13,10 @@ function uitgesteld(): boolean {
 }
 
 /**
- * Een week na het bestellen, bij het openen van de app: "Alle recepten van
- * deze week gekookt?". Bij ja schuift komende week door. Bij nee wijs je aan
- * wat je nog gaat koken; dat gaat mee naar de nieuwe week.
+ * Een week na het bestellen, bij het openen van de app: "Alles van je
+ * bestelling gekookt?" — voor wie de kaarten bij Te koken niet afvinkt. Bij ja
+ * schuift de week door. Bij nee wijs je aan wat je nog gaat koken; dat blijft
+ * bij Te koken staan.
  *
  * Zolang je niet antwoordt blijft de week staan. "Vraag het later" geeft een dag rust.
  *
@@ -63,8 +64,8 @@ export function WeekVraag() {
     return (
       <Dialoog
         open
-        kop="Alle recepten van deze week gekookt?"
-        tekst="Dan zetten we komende week klaar als je nieuwe week."
+        kop="Alles van je bestelling gekookt?"
+        tekst="Dan halen we het weg bij Te koken. Je vindt het terug bij Bewaard, onder Eerder gekookt."
         onSluit={later}
         acties={[
           { label: 'Ja, alles gekookt', hoofd: true, onClick: () => { rondAf.mutate([]); setStap('dicht') } },
@@ -78,7 +79,7 @@ export function WeekVraag() {
     <Dialoog
       open
       kop="Wat ga je nog koken?"
-      tekst="Dat blijft in Deze week staan, en de recepten van komende week komen erbij."
+      tekst="Dat blijft bij Te koken staan. De rest zetten we bij Eerder gekookt."
       onSluit={later}
       acties={[
         { label: 'Verder', hoofd: true, onClick: () => { rondAf.mutate(gekozen); setStap('dicht') } },

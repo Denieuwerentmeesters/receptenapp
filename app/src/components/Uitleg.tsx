@@ -41,20 +41,20 @@ const KAARTEN: Kaart[] = [
   },
   {
     kop: 'Bewaar',
-    tekst: 'Tik op het hartje en het recept staat klaar voor komende week, en bij je favorieten.',
+    tekst: 'Tik op het hartje en het recept staat bij je favorieten. Met het plusje zet je het op je lijst.',
     beeld: ontdekken, alt: 'Een receptkaart in Ontdekken, met het hartje uitgelicht.',
     verhouding: 1688 / 780, licht: { x: 0.352, y: 0.331, b: 0.124, h: 0.0575 }, rond: 999,
   },
   {
     kop: 'Zet op je lijst',
-    tekst: 'Kies je recepten voor deze week. Pinch zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
-    beeld: dezeWeek, alt: 'Het scherm Deze week, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
+    tekst: 'Kies je recepten bij Nog bestellen. Pinch zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
+    beeld: dezeWeek, alt: 'Het scherm Mijn recepten, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
     verhouding: 1688 / 780, licht: { x: 0.05, y: 0.249, b: 0.44, h: 0.293 }, rond: 26,
   },
   {
-    kop: 'Komende week',
-    tekst: 'Zet alvast recepten klaar voor komende week en bestel ze mee. Heb je een recept gekookt, dan verdwijnt het uit je week. Wegklikken kan ook.',
-    beeld: dezeWeek, alt: 'Het scherm Deze week, met de twee knoppen Deze week en Komende week uitgelicht.',
+    kop: 'Te koken',
+    tekst: 'Na het bestellen staan je recepten bij Te koken. Gekookt? Tik op het kruisje, dan vind je het terug bij Bewaard.',
+    beeld: dezeWeek, alt: 'Het scherm Mijn recepten, met de knoppen bovenaan uitgelicht.',
     verhouding: 1688 / 780, licht: { x: 0.04, y: 0.16, b: 0.61, h: 0.055 }, rond: 999,
   },
   {

@@ -31,7 +31,7 @@ export function Geschiedenis() {
             kop="Nog niets gekookt"
             tekst="Zodra je recepten kiest en kookt, bouwt zich hier je geschiedenis op."
             knop="Naar mijn weekmenu"
-            onKnop={() => navigeer('/deze-week')}
+            onKnop={() => navigeer('/mijn-recepten')}
           />
         ) : (
           <Inhoud style={{ gap: 20 }}>

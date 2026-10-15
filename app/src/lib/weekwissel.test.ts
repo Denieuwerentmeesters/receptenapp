@@ -16,14 +16,16 @@ describe('doelWeek', () => {
 })
 
 describe('watGaatMee', () => {
-  it('neemt mee wat je aanwees en wat nog op je lijst staat, nooit wat gekookt is', () => {
+  it('neemt mee wat je aanwees, wat nog op je lijst staat en wat nog niet besteld is, nooit wat gekookt is', () => {
     const keuzes = [
       keuze('aangewezen'),
       keuze('niet-aangewezen'),
       keuze('op-lijst', { van_lijst_op: null, besteld_op: null }),
+      keuze('nog-bestellen', { besteld_op: null }),
       keuze('gekookt', { gekookt_op: '2026-10-04T18:00:00Z' }),
     ]
-    expect(watGaatMee(keuzes, ['aangewezen', 'gekookt']).map((k) => k.recept_id)).toEqual(['aangewezen', 'op-lijst'])
+    expect(watGaatMee(keuzes, ['aangewezen', 'gekookt']).map((k) => k.recept_id))
+      .toEqual(['aangewezen', 'op-lijst', 'nog-bestellen'])
   })
 })
 

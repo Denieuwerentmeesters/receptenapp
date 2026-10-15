@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core'
 import { App as CapacitorApp } from '@capacitor/app'
 import { haalGedeeldeLink, linkUitSchema, toevoegPad } from './lib/deelknop'
 import { planWeekmenuMelding } from './lib/weekmenuMelding'
-import { DezeWeek } from './screens/DezeWeek'
+import { MijnRecepten } from './screens/MijnRecepten'
 import { Kookmodus } from './screens/Kookmodus'
 import { Ontdekken } from './screens/Ontdekken'
 import { Samenstellen } from './screens/Samenstellen'
@@ -101,11 +101,12 @@ export default function App() {
         <Route element={<Poort />}>
         <Route path="/welkom" element={<Onboarding />} />
         <Route path="/uitleg" element={<UitlegTerugkijken />} />
-        <Route path="/" element={<Navigate to="/deze-week" replace />} />
-        <Route path="/deze-week" element={<DezeWeek />} />
+        <Route path="/" element={<Navigate to="/mijn-recepten" replace />} />
+        <Route path="/mijn-recepten" element={<MijnRecepten />} />
+        <Route path="/deze-week" element={<Navigate to="/mijn-recepten" replace />} />
         {/* Oude paden: Vandaag en Weekmenu zijn samen "Deze week" geworden. */}
-        <Route path="/vandaag" element={<Navigate to="/deze-week" replace />} />
-        <Route path="/weekmenu" element={<Navigate to="/deze-week" replace />} />
+        <Route path="/vandaag" element={<Navigate to="/mijn-recepten" replace />} />
+        <Route path="/weekmenu" element={<Navigate to="/mijn-recepten" replace />} />
         <Route path="/ontdekken" element={<Ontdekken />} />
         <Route path="/samenstellen" element={<Samenstellen />} />
         <Route path="/recept/:id" element={<Recept />} />
@@ -120,7 +121,7 @@ export default function App() {
         <Route path="/beoordelen" element={<Beoordelen />} />
         <Route path="/instellingen" element={<Instellingen />} />
         <Route path="/account" element={<Account />} />
-        <Route path="*" element={<Navigate to="/deze-week" replace />} />
+        <Route path="*" element={<Navigate to="/mijn-recepten" replace />} />
         </Route>
       </Routes>
     </Router>

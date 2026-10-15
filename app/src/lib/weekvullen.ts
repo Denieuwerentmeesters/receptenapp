@@ -119,3 +119,25 @@ export function kiesWeek(
 
   return uitkomst
 }
+
+/** Nooit meer dan zoveel nieuwe recepten in één tik op Vul mijn week. */
+export const MAX_NIEUW = 10
+
+/**
+ * Vul mijn week op Mijn recepten → Nog bestellen. Je kookavonden zijn een
+ * richtlijn, geen grens: wat al bij Nog bestellen staat telt mee, en het
+ * vult aan tot je kookavonden. Zit je daar al, dan komt er een nieuwe ronde
+ * van zoveel avonden bij — de knop doet altijd iets. Nooit meer dan
+ * MAX_NIEUW tegelijk.
+ */
+export function vulAan(
+  suggesties: Kandidaat[],
+  voorkeuren: WeekVoorkeuren,
+  alGekozen: Kandidaat[],
+  inHuis: ReadonlySet<string> = new Set(),
+): string[] {
+  const avonden = Math.max(1, voorkeuren.kookavonden)
+  if (alGekozen.length < avonden) return kiesWeek(suggesties, voorkeuren, alGekozen, inHuis).slice(0, MAX_NIEUW)
+  // Een nieuwe ronde: de vega-verhouding geldt voor die ronde, los van wat er al staat.
+  return kiesWeek(suggesties, { ...voorkeuren, kookavonden: avonden }, [], inHuis).slice(0, MAX_NIEUW)
+}
