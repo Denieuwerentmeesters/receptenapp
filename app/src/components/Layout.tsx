@@ -40,13 +40,43 @@ function useVerbergBijScrollen() {
   const vorige = useRef(0)
   /** Afgelegde afstand in de huidige richting; positief = omlaag. */
   const afstand = useRef(0)
+  /** Het scrollvlak waarin je omlaag scrolde: alleen daarin kun je de balk terughalen. */
+  const vlak = useRef<HTMLElement | null>(null)
+
+  // Weg is weg tot je omhoog scrolt, en dat moet dan ook kunnen. Valt er in
+  // dat vlak niets meer te scrollen (de recepten zijn op, je veegde naar een
+  // leeg onderdeel), of is het uit beeld of weg, dan komt de balk vanzelf
+  // terug. Anders zit je zonder onderbalk en moet je de app afsluiten.
+  useEffect(() => {
+    if (!verborgen) return
+    const kijk = setInterval(() => {
+      const el = vlak.current
+      const rand = el?.getBoundingClientRect()
+      const inBeeld = rand && rand.width > 0 && rand.right > 1 && rand.left < window.innerWidth - 1
+      if (!el || !el.isConnected || !inBeeld || el.scrollHeight - el.clientHeight <= 0 || el.scrollTop < 40) {
+        afstand.current = 0
+        setVerborgen(false)
+      }
+    }, 300)
+    return () => clearInterval(kijk)
+  }, [verborgen])
 
   function onScroll(e: UIEvent<HTMLElement>) {
     const el = e.target
     if (!(el instanceof HTMLElement)) return
     const max = el.scrollHeight - el.clientHeight
-    // Horizontale chiprijen en korte lijsten: niets te verbergen.
-    if (max <= 0) return
+    // Horizontaal (chiprijen, de baan van Mijn recepten) of een korte lijst:
+    // niets te verbergen. Ben je aan het wisselen, dan hoort de balk erbij.
+    if (max <= 0) {
+      if (verborgen && el !== vlak.current) setVerborgen(false)
+      return
+    }
+    if (el !== vlak.current) {
+      // Een ander scrollvlak: opnieuw tellen vanaf waar dat staat.
+      vlak.current = el
+      vorige.current = el.scrollTop
+      afstand.current = 0
+    }
     const top = el.scrollTop
 
     // Het nadeinen van iOS voorbij de randen is geen scrollbeweging van jou.

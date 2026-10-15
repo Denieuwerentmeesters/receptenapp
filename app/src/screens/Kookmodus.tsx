@@ -45,7 +45,7 @@ export function Kookmodus() {
   const inFase = [...teKoken, ...nogBestellen].find((r) => r.id === id)
   const { gekookt } = useWeekWissel()
 
-  /** Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Bewaard onder Eerder gekookt. */
+  /** Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Nog bestellen onder Eerder gekookt. */
   async function rondAf() {
     if (!id || !inFase) return
     try {

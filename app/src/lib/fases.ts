@@ -10,7 +10,7 @@ import { volgendeWeek } from './week'
  *
  * - Te koken: op een bevestigde bestelling (`besteld_op`), nog niet gekookt.
  * - Nog bestellen: gekozen, nog niet besteld.
- * - Gekookt: `gekookt_op`; dat staat bij Bewaard onder Eerder gekookt.
+ * - Gekookt: `gekookt_op`; dat staat bij Nog bestellen onder Eerder gekookt.
  *
  * Er is geen statuskolom: `weekmenu_gekozen` had `besteld_op`, `gekookt_op` en
  * `opgeruimd_op` al. Onder de motorkap blijven er weken (de generator maakt

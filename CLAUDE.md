@@ -303,17 +303,17 @@ vragen, gedeeld door de inhoud van de verpakking.
 - **El, tl, takjes en tenen tellen niet mee:** dat is nooit meer dan één
   verpakking.
 
-## Mijn recepten: Te koken, Nog bestellen, Bewaard
+## Mijn recepten: Te koken en Nog bestellen
 
 De eerste tab (`src/screens/MijnRecepten.tsx`, route `/mijn-recepten`; het
 oude `/deze-week` stuurt door) deelt recepten in naar fase, niet naar
-kalenderweek. Drie chips erboven; vegen of tikken, de baan is een
+kalenderweek. Twee chips erboven; vegen of tikken, de baan is een
 scroll-snap-container.
 
 - **De fases komen uit bestaande kolommen** (`src/lib/fases.ts`,
   `verdeelFases`), er is geen statuskolom. Te koken = `besteld_op` gezet,
   niet gekookt of opgeruimd. Nog bestellen = gekozen, niet besteld. Gekookt
-  = `gekookt_op`, en staat bij Bewaard onder Eerder gekookt. De badge op de
+  = `gekookt_op`, en staat onderaan Nog bestellen onder Eerder gekookt. De badge op de
   tab telt alleen Te koken.
 - **Onder de motorkap blijven er twee weken.** De generator maakt per week
   suggesties, de lijst loopt over deze en komende week (`lijstWeken`), en
@@ -341,9 +341,16 @@ scroll-snap-container.
   generator), kijk daar dan opnieuw naar.
 - **Het hartje is favoriet** (`components/Hartje.tsx`), in Ontdekken en op
   het receptscherm. Op je lijst zetten is het plusje ernaast.
-- **Bewaard:** favorieten, eigen recepten (`useMijnRecepten`: alles met jouw
-  `user_id` behalve de pool, dus ook samengesteld) en eerder gekookt, met een
-  chip ertussen. Van daaruit zet je iets opnieuw op je lijst.
+- **Nog bestellen** heeft vier blokken: wat je koos, je favorieten, de
+  suggesties en onderaan eerder gekookt. Elk recept staat er één keer, in het
+  bovenste blok waar het in past. Eigen recepten staan alleen in Ontdekken
+  (Mijn recepten). Er was een derde onderdeel Bewaard; dat was verwarrend en
+  is weg (Reinoud, 15 okt 2026).
+- **De onderbalk schuift weg bij omlaag scrollen** (`Scherm` in
+  `components/Layout.tsx`) en moet altijd terug kunnen komen. Valt er in het
+  vlak waarin je scrolde niets meer te scrollen, of veeg je naar een ander
+  onderdeel, dan komt hij vanzelf terug. Zonder dat zat je bij een leeg Te
+  koken zonder balk en moest je de app afsluiten.
 - **Vul mijn week** (`vulAan` in `src/lib/weekvullen.ts`) staat boven Nog
   bestellen: aanvullen tot je kookavonden, met de vega-verhouding; wat al bij
   Nog bestellen staat telt mee. Zit je er al op, dan een nieuwe ronde. Nooit

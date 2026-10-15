@@ -41,7 +41,7 @@ const KAARTEN: Kaart[] = [
   },
   {
     kop: 'Bewaar',
-    tekst: 'Tik op het hartje en het recept staat bij je favorieten. Met het plusje zet je het op je lijst.',
+    tekst: 'Tik op het hartje en het recept staat bij je favorieten, in Nog bestellen. Met het plusje zet je het op je lijst.',
     beeld: ontdekken, alt: 'Een receptkaart in Ontdekken, met het hartje en het plusje uitgelicht.',
     verhouding: 1688 / 780, licht: { x: 0.354, y: 0.338, b: 0.123, h: 0.111 }, rond: 999,
   },
@@ -53,8 +53,8 @@ const KAARTEN: Kaart[] = [
   },
   {
     kop: 'Te koken',
-    tekst: 'Na het bestellen staan je recepten bij Te koken. Gekookt? Tik op het kruisje, dan vind je het terug bij Bewaard.',
-    beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met de knoppen Te koken, Nog bestellen en Bewaard uitgelicht.',
+    tekst: 'Na het bestellen staan je recepten bij Te koken. Gekookt? Tik op het kruisje, dan vind je het terug onderaan Nog bestellen.',
+    beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met de knoppen Te koken en Nog bestellen uitgelicht.',
     verhouding: 1688 / 780, licht: { x: 0.046, y: 0.139, b: 0.785, h: 0.05 }, rond: 999,
   },
   {

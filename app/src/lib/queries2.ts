@@ -522,22 +522,6 @@ export function useReceptOpslaan() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['ontdek'] })
       void qc.invalidateQueries({ queryKey: ['ontdek-telling'] })
-      void qc.invalidateQueries({ queryKey: ['mijn-recepten'] })
-    },
-  })
-}
-
-/** Je eigen toegevoegde recepten: geïmporteerd, kookboek, eigen tekst en samengesteld. */
-export function useMijnRecepten() {
-  return useQuery({
-    queryKey: ['mijn-recepten'],
-    queryFn: async (): Promise<Recept[]> => {
-      // Alleen je eigen: een goedgekeurd gedeeld recept van een ander is ook leesbaar.
-      const { data, error } = await db.from('recepten').select('*')
-        .eq('user_id', await huidigeUserId())
-        .neq('bron_type', 'scraper').order('aangemaakt_op', { ascending: false })
-      if (error) throw error
-      return data as Recept[]
     },
   })
 }

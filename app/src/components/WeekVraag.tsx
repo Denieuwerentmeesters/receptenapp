@@ -65,7 +65,7 @@ export function WeekVraag() {
       <Dialoog
         open
         kop="Alles van je bestelling gekookt?"
-        tekst="Dan halen we het weg bij Te koken. Je vindt het terug bij Bewaard, onder Eerder gekookt."
+        tekst="Dan halen we het weg bij Te koken. Je vindt het terug bij Nog bestellen, onder Eerder gekookt."
         onSluit={later}
         acties={[
           { label: 'Ja, alles gekookt', hoofd: true, onClick: () => { rondAf.mutate([]); setStap('dicht') } },
