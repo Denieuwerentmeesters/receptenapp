@@ -5,8 +5,6 @@ import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../lib/queries2'
 import { useFases, type FaseRecept } from '../lib/fases'
-import { useOpLijst } from '../components/OpLijst'
-import { volgendeWeek } from '../lib/week'
 import { useHartje } from '../components/Hartje'
 import type { Recept } from '../lib/database.types'
 import { isBudget } from '../lib/prijsschatting'
@@ -71,7 +69,8 @@ const TOEVOEGEN = [
 /**
  * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en dieet —
  * precies de dingen waarop je een doordeweekse avond selecteert. Het hartje
- * maakt een recept favoriet (components/Hartje.tsx), het plusje zet 't op je lijst.
+ * zet een recept bij Nog bestellen (components/Hartje.tsx); op je lijst zetten
+ * doe je daar, niet hier.
  */
 export function Ontdekken() {
   const navigeer = useNavigate()
@@ -115,25 +114,13 @@ export function Ontdekken() {
     ]
   }, [keukenPool.data, voorkeurKeukens])
   const hartje = useHartje()
-  // Het plusje zet een recept op je lijst, in de week waar het al staat of
-  // anders de week waarin je nu bestelt (lib/fases.ts).
+  // Voor de gele rand en de regel onder een kaart.
   const fases = useFases()
-  const lijstDeze = useOpLijst(fases.week)
-  const lijstKomende = useOpLijst(volgendeWeek(fases.week))
   // Geen Map als querydata (zie useAhMapping), maar hier is het afgeleid.
   const inFase = useMemo(
     () => new Map([...fases.teKoken, ...fases.nogBestellen].map((r) => [r.id, r])),
     [fases.teKoken, fases.nogBestellen],
   )
-  function zetOpLijst(r: Recept) {
-    const fase = inFase.get(r.id)
-    const week = fase?.week ?? fases.bestelWeek
-    const lijst = week === fases.week ? lijstDeze : lijstKomende
-    lijst.voegToe({
-      id: r.id, titel: r.titel_nl ?? r.titel,
-      gekozen: Boolean(fase), opLijst: fase?.opLijst ?? false, aantal: fase?.aantal ?? 0,
-    })
-  }
 
   const recepten = resultaten.data?.pages.flatMap((p) => p.recepten) ?? []
 
@@ -290,7 +277,6 @@ export function Ontdekken() {
                   recept={r}
                   index={i}
                   fase={inFase.get(r.id)}
-                  onPlus={() => zetOpLijst(r)}
                   bevat={vastVoorJou(r, allergieen)}
                   onOpen={() => navigeer(`/recept/${r.id}`)}
                   bewaard={hartje.bewaard.has(r.id)}
@@ -382,8 +368,6 @@ export function Ontdekken() {
         />
       </Dialoog>
 
-      {lijstDeze.dialoog}
-      {lijstKomende.dialoog}
       <OnderBalk />
     </Scherm>
   )
@@ -417,21 +401,20 @@ function Keuzelijst({ keuzes, gekozen, onWissel }: {
 }
 
 /**
- * Een recept als foto met de tekst eronder. Rechtsboven het hartje (favoriet)
- * en het plusje (op je lijst); staat 'ie op je lijst, dan de gele rand.
+ * Een recept als foto met de tekst eronder. Rechtsboven het hartje (naar Nog
+ * bestellen); staat 'ie op je lijst, dan de gele rand.
  */
-function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje, onPlus }: {
+function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje }: {
   recept: Recept
   index: number
   /** Staat het bij Te koken of Nog bestellen: voor de gele rand en de regel eronder. */
   fase: FaseRecept | undefined
-  /** Favoriet: het hartje is gevuld. */
+  /** Staat bij Te koken of Nog bestellen: het hartje is gevuld. */
   bewaard: boolean
   /** Jouw allergenen die erin zitten, zonder vervanger. Alleen als het filter uit staat. */
   bevat: string[]
   onOpen: () => void
   onHartje: () => void
-  onPlus: () => void
 }) {
   // Eén label houdt de regel kort: vegan of vegetarisch gaat voor de keuken.
   const [label] = dieetLabels(recept)
@@ -470,15 +453,10 @@ function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje, onPl
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <button
             onClick={onHartje}
-            aria-label={bewaard ? 'Geen favoriet meer' : 'Favoriet'}
+            aria-label={bewaard ? 'Haal uit Nog bestellen' : 'Zet bij Nog bestellen'}
             aria-pressed={bewaard}
             style={{ ...rondje, ...(bewaard ? aan : {}) }}
           ><Icon name="heart" size={18} /></button>
-          <button
-            onClick={onPlus}
-            aria-label={fase?.opLijst ? 'Staat op je lijst' : 'Zet op je lijst'}
-            style={{ ...rondje, ...(fase?.opLijst ? aan : {}) }}
-          ><Icon name={fase?.opLijst ? 'check' : 'plus'} size={18} /></button>
         </div>
       </div>
 

@@ -339,16 +339,24 @@ scroll-snap-container.
   geen "niet gekookt, haal weg": wie iets niet kookte tikt ook op Gekookt.
   Gaat Eerder gekookt later meetellen (beoordelingen, cooldown van de
   generator), kijk daar dan opnieuw naar.
-- **Het hartje is favoriet** (`components/Hartje.tsx`), in Ontdekken en op
-  het receptscherm. Op je lijst zetten is het plusje ernaast.
-- **Nog bestellen** heeft vier blokken: wat je koos, je favorieten, de
-  suggesties en onderaan eerder gekookt. Elk recept staat er één keer, in het
-  bovenste blok waar het in past. Eigen recepten staan alleen in Ontdekken
-  (Mijn recepten). Er was een derde onderdeel Bewaard; dat was verwarrend en
-  is weg (Reinoud, 15 okt 2026). Elke kaart heeft een kruisje: bij wat je koos
-  en de suggesties weghalen uit de week, bij een favoriet "Geen favoriet
-  meer?", bij eerder gekookt weg uit dat blok, alleen op het toestel
-  (`localStorage`, `pinch-weg-gekookt`); de geschiedenis blijft.
+- **Het hartje zet een recept bij Nog bestellen** (`components/Hartje.tsx`),
+  in Ontdekken en op het receptscherm: als keuze in de bestelweek
+  (`zetInWeek`), nog niet op je lijst. Nog een tik haalt het uit je week;
+  wat besteld is blijft staan. Ontdekken heeft geen plusje meer: direct op
+  je lijst zetten vanaf daar was gek (Reinoud, 16 okt 2026). Op je lijst zet
+  je het bij Nog bestellen. De tabel `favoriet` en het scherm Favorieten
+  (Mijn keuken) bestaan nog, maar het hartje vult ze niet meer.
+- **Nog bestellen** heeft drie blokken: wat je koos (ook met het hartje),
+  de suggesties en onderaan eerder gekookt. Elk recept staat er één keer, in
+  het bovenste blok waar het in past. Eigen recepten staan alleen in
+  Ontdekken (Mijn recepten). Bewaard en Favorieten waren aparte blokken; die
+  zijn weg (Reinoud, 15 en 16 okt 2026). Elke kaart heeft een kruisje: bij
+  wat je koos en de suggesties weghalen uit de week, bij eerder gekookt weg
+  uit dat blok, alleen op het toestel (`localStorage`, `pinch-weg-gekookt`);
+  de geschiedenis blijft.
+- **Terug van een recept** brengt je in het onderdeel waar je het opende:
+  `open` in `MijnRecepten.tsx` zet de tab eerst in de state van de huidige
+  pagina (`replace`), dan pas naar het recept.
 - **De onderbalk schuift weg bij omlaag scrollen** (`Scherm` in
   `components/Layout.tsx`) en moet altijd terug kunnen komen. Valt er in het
   vlak waarin je scrolde niets meer te scrollen, of veeg je naar een ander

@@ -37,7 +37,7 @@ export function Recept() {
   const inFase = [...fases.teKoken, ...fases.nogBestellen].find((r) => r.id === id)
   const week = inFase?.week ?? fases.bestelWeek
   const { voegToe, dialoog, bezig } = useOpLijst(week)
-  // Het hartje werkt hier net als in Ontdekken: favoriet.
+  // Het hartje werkt hier net als in Ontdekken: naar Nog bestellen.
   const hartje = useHartje()
   const allergieen = useAllergieen()
   const regels = useAllergeenRegels(allergieen.length > 0)
@@ -145,7 +145,7 @@ export function Recept() {
                       />
                       <IconButton
                         icon="heart" size={42}
-                        label={bewaard ? 'Geen favoriet meer' : 'Favoriet'}
+                        label={bewaard ? 'Haal uit Nog bestellen' : 'Zet bij Nog bestellen'}
                         onClick={() => hartje.tik(r)}
                         style={{
                           background: bewaard ? 'var(--c-red-bright)' : 'rgba(20,20,20,0.5)',
