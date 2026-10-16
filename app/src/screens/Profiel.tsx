@@ -24,8 +24,8 @@ export function Profiel() {
   const bespaard = bestellingen.data ?? []
 
   // Instellingen bovenaan: daar kom je het vaakst. Ontdekken zit al in de
-  // onderbalk. Het hartje maakt een recept favoriet; favorieten staan ook in
-  // Mijn recepten → Nog bestellen.
+  // onderbalk. Het hartje zet een recept bij Nog bestellen; Favorieten hier
+  // zijn de oude favorieten, het hartje vult ze niet meer aan.
   const rijen = [
     { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
     {

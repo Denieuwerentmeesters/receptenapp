@@ -7,7 +7,7 @@ import { Dialoog } from '../components/Dialoog'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
 import { useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
-import { useFavorieten, useFavorietToggle, useGeschiedenis, useVoorraad } from '../lib/queries2'
+import { useGeschiedenis, useVoorraad } from '../lib/queries2'
 import { volgendeWeek } from '../lib/week'
 import { WeekVraag } from '../components/WeekVraag'
 import { useFases, type FaseRecept } from '../lib/fases'
@@ -69,7 +69,7 @@ function datumLabel(iso: string): string {
   return new Date(iso).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' }).replace('.', '')
 }
 
-/** Een recept van elders (favoriet, eerder gekookt) in de vorm van een kaart. */
+/** Een recept van elders (eerder gekookt) in de vorm van een kaart. */
 function alsKaart(recept: Recept, status: FaseRecept | undefined): WeekRecept {
   return status ?? {
     ...recept, positie: null, gekozen: false, aantal: 0, opLijst: false,
@@ -84,7 +84,7 @@ function alsKaart(recept: Recept, status: FaseRecept | undefined): WeekRecept {
  *
  * - Te koken: wat op een bevestigde bestelling stond. De knop kookt; het
  *   kruisje vraagt "Gekookt?" en zet het dan bij Eerder gekookt.
- * - Nog bestellen: wat je koos, je favorieten, de suggesties van het
+ * - Nog bestellen: wat je koos (ook met het hartje), de suggesties van het
  *   weekmenu en onderaan wat je eerder kookte. Elk recept staat er één keer,
  *   in het bovenste blok waar het in hoort. Vul mijn week vult aan tot je
  *   kookavonden (lib/weekvullen.ts), alleen uit de suggesties.
@@ -119,7 +119,6 @@ export function MijnRecepten() {
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<FaseRecept | null>(null)
   const [gekooktVraag, setGekooktVraag] = useState<FaseRecept | null>(null)
-  const [favorietVraag, setFavorietVraag] = useState<Recept | null>(null)
 
   const plek = (doel: Tab) => TABS.findIndex((t) => t.id === doel)
 
@@ -147,10 +146,15 @@ export function MijnRecepten() {
     el.scrollTo({ left: plek(doel) * el.clientWidth, behavior: rustig ? 'auto' : 'smooth' })
   }
 
-  /* ------------------------------------- favorieten en eerder gekookt */
+  // Terug van een recept moet je weer in hetzelfde onderdeel staan, niet bij
+  // Te koken: dat onthoudt deze pagina in haar eigen geschiedenis.
+  function open(receptId: string) {
+    navigeer('/mijn-recepten', { replace: true, state: { tab } })
+    navigeer(`/recept/${receptId}`)
+  }
 
-  const favorietenQuery = useFavorieten()
-  const favorietToggle = useFavorietToggle()
+  /* ------------------------------------------------- eerder gekookt */
+
   const geschiedenis = useGeschiedenis()
   const [wegGekookt, setWegGekookt] = useState(leesWegGekookt)
   function haalGekooktWeg(id: string) {
@@ -158,23 +162,21 @@ export function MijnRecepten() {
     bewaarWegGekookt(nieuw)
     setWegGekookt(nieuw)
   }
-  const { favorieten, eerderGekookt } = useMemo(() => {
+  const eerderGekookt = useMemo(() => {
     // Wat al bij Te koken, Nog bestellen of de suggesties staat, staat daar: niet nog eens.
     const gezien = new Set([...teKoken, ...nogBestellen, ...suggesties].map((r) => r.id))
     const eenKeer = (r: Recept) => !gezien.has(r.id) && Boolean(gezien.add(r.id))
-    const favorieten = (favorietenQuery.data ?? []).filter(eenKeer)
     // Eerder gekookt: het laatst gekookte eerst.
     const rijen = (geschiedenis.data ?? []).flatMap((w) => w.gekozen).filter((g) => g.gekooktOp)
     rijen.sort((a, b) => b.gekooktOp!.localeCompare(a.gekooktOp!))
-    const eerderGekookt = rijen.map((g) => g.recept).filter((r) => !wegGekookt.has(r.id)).filter(eenKeer)
-    return { favorieten, eerderGekookt }
-  }, [teKoken, nogBestellen, suggesties, favorietenQuery.data, geschiedenis.data, wegGekookt])
+    return rijen.map((g) => g.recept).filter((r) => !wegGekookt.has(r.id)).filter(eenKeer)
+  }, [teKoken, nogBestellen, suggesties, geschiedenis.data, wegGekookt])
 
   const bonus = useBonus()
   const bonusPerRecept = useMemo(
-    () => new Map([...nogBestellen, ...favorieten, ...suggesties, ...eerderGekookt]
+    () => new Map([...nogBestellen, ...suggesties, ...eerderGekookt]
       .map((r) => [r.id, receptBonusProducten(r.ingredienten, bonus.data)])),
-    [nogBestellen, favorieten, suggesties, eerderGekookt, bonus.data],
+    [nogBestellen, suggesties, eerderGekookt, bonus.data],
   )
 
   /* ------------------------------------------------------- Vul mijn week */
@@ -210,7 +212,7 @@ export function MijnRecepten() {
       vlak={VLAKKEN[i % VLAKKEN.length]}
       personen={standaardPersonen(recept, personen)}
       knop={{ tekst: 'Koken', icoon: 'chefHat' }}
-      onOpen={() => navigeer(`/recept/${recept.id}`)}
+      onOpen={() => open(recept.id)}
       onKnop={() => navigeer(`/koken/${recept.id}`)}
       weg={{ label: 'Gekookt?', onClick: () => setGekooktVraag(recept) }}
     />
@@ -224,7 +226,7 @@ export function MijnRecepten() {
       bonus={bonusPerRecept.get(recept.id) ?? []}
       personen={standaardPersonen(recept, personen)}
       knop={{ tekst: knopTekst(recept), icoon: recept.opLijst ? 'check' : 'plus' }}
-      onOpen={() => navigeer(`/recept/${recept.id}`)}
+      onOpen={() => open(recept.id)}
       onKnop={() => lijst(recept).voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
       weg={{
         label: 'Weghalen',
@@ -234,11 +236,10 @@ export function MijnRecepten() {
   )
 
   /**
-   * Een favoriet of eerder gekookt recept: staat nog nergens, dus het plusje
-   * zet het op je lijst. Het kruisje haalt een favoriet uit je favorieten, en
-   * eerder gekookt uit dit blok.
+   * Een eerder gekookt recept: staat nog nergens, dus het plusje zet het op je
+   * lijst. Het kruisje haalt het uit dit blok.
    */
-  const kaartBewaard = (soort: 'favoriet' | 'gekookt') => (recept: Recept, i: number) => {
+  const kaartGekookt = (recept: Recept, i: number) => {
     const kaart = alsKaart(recept, undefined)
     return (
       <ReceptKaart
@@ -248,11 +249,9 @@ export function MijnRecepten() {
         bonus={bonusPerRecept.get(recept.id) ?? []}
         personen={standaardPersonen(recept, personen)}
         knop={{ tekst: knopTekst(kaart), icoon: 'plus' }}
-        onOpen={() => navigeer(`/recept/${recept.id}`)}
+        onOpen={() => open(recept.id)}
         onKnop={() => opLijstVoorNieuw.voegToe({ ...kaart, titel: recept.titel_nl ?? recept.titel })}
-        weg={soort === 'favoriet'
-          ? { label: 'Geen favoriet meer', onClick: () => setFavorietVraag(recept) }
-          : { label: 'Weghalen', onClick: () => haalGekooktWeg(recept.id) }}
+        weg={{ label: 'Weghalen', onClick: () => haalGekooktWeg(recept.id) }}
       />
     )
   }
@@ -339,11 +338,11 @@ export function MijnRecepten() {
                 knop="Probeer opnieuw"
                 onKnop={() => void fases.komendeQuery.refetch()}
               />
-            ) : nogBestellen.length + favorieten.length + suggesties.length + eerderGekookt.length === 0 ? (
+            ) : nogBestellen.length + suggesties.length + eerderGekookt.length === 0 ? (
               <Leeg
                 icoon="utensils"
                 kop={fases.komendeQuery.isLoading ? 'Even zoeken…' : 'Nog niets om te bestellen'}
-                tekst="Zoek in Ontdekken wat je wilt eten en tik op het plusje: dan staat het hier en op je lijst."
+                tekst="Zoek in Ontdekken wat je wilt eten en tik op het hartje: dan staat het hier."
                 knop="Naar Ontdekken"
                 onKnop={() => navigeer('/ontdekken')}
               />
@@ -369,12 +368,6 @@ export function MijnRecepten() {
                     <div style={{ ...ROOSTER, paddingBottom: 18 }}>{nogBestellen.map(kaartBestellen)}</div>
                   </>
                 )}
-                {favorieten.length > 0 && (
-                  <>
-                    <span style={{ ...KOPJE, paddingBottom: 10 }}>Favorieten · {favorieten.length}</span>
-                    <div style={{ ...ROOSTER, paddingBottom: 18 }}>{favorieten.map(kaartBewaard('favoriet'))}</div>
-                  </>
-                )}
                 {suggesties.length > 0 && (
                   <>
                     <span style={{ ...KOPJE, paddingBottom: 10 }}>Suggesties · {suggesties.length}</span>
@@ -384,7 +377,7 @@ export function MijnRecepten() {
                 {eerderGekookt.length > 0 && (
                   <>
                     <span style={{ ...KOPJE, paddingBottom: 10 }}>Eerder gekookt · {eerderGekookt.length}</span>
-                    <div style={ROOSTER}>{eerderGekookt.map(kaartBewaard('gekookt'))}</div>
+                    <div style={ROOSTER}>{eerderGekookt.map(kaartGekookt)}</div>
                   </>
                 )}
               </Inhoud>
@@ -413,24 +406,6 @@ export function MijnRecepten() {
             setGekooktVraag(null)
           },
         }]}
-      />
-      <Dialoog
-        open={Boolean(favorietVraag)}
-        kop="Geen favoriet meer?"
-        tekst={favorietVraag
-          ? `Dan haal je ${favorietVraag.titel_nl ?? favorietVraag.titel} uit je favorieten. In Ontdekken kun je het altijd weer terugzetten met het hartje.`
-          : undefined}
-        onSluit={() => setFavorietVraag(null)}
-        acties={[
-          {
-            label: 'Ja, haal weg', hoofd: true,
-            onClick: () => {
-              if (favorietVraag) favorietToggle.mutate({ receptId: favorietVraag.id, favoriet: false })
-              setFavorietVraag(null)
-            },
-          },
-          { label: 'Laat maar', onClick: () => setFavorietVraag(null) },
-        ]}
       />
       <Dialoog
         open={Boolean(wegVraag)}
