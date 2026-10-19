@@ -122,6 +122,10 @@ wissen, dus laat ze zo.
   staat in `INLOGSITE` (`src/lib/config.ts`), ook voor de functies die de
   sessie nodig hebben (extraheer, samenstellen, account-verwijderen): de
   cookie hoort bij dat domein. Zet dat niet zomaar op kookmaatje.eu.
+- **Neon Auth vertrouwt alleen `receptenapp.vercel.app` als origin.** Vanaf
+  kookmaatje.eu zou inloggen "Invalid origin" geven; `api/auth.ts` zet de
+  origin van onze eigen domeinen (`EIGEN_DOMEINEN`) daarom om. Komt er een
+  domein bij, zet het daar ook in (of bij Neon Auth onder de domeinen).
 - **`CapacitorHttp` vangt élke `fetch` af** en stuurt 'm via iOS. Gedraagt een
   verzoek zich in de app anders dan in de browser, kijk dan daar eerst.
 - **Het opstartscherm gaat niet vanzelf weg** (`launchAutoHide: false`);
