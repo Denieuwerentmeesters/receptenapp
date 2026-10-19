@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { WEBSITE } from './config'
+import { INLOGSITE } from './config'
 import { db } from './db'
 import { huidigeUserId } from './auth'
 import type { Concept } from './extractie'
@@ -25,7 +25,7 @@ import type { BoodschapItem, Recept, SamenstellingRij } from './database.types'
 
 /** Zelfde regel als lib/extractie.ts: de iOS-app heeft het hele adres nodig. */
 function endpoint(): string {
-  return Capacitor.isNativePlatform() ? `${WEBSITE}/api/samenstellen` : '/api/samenstellen'
+  return Capacitor.isNativePlatform() ? `${INLOGSITE}/api/samenstellen` : '/api/samenstellen'
 }
 
 export interface Samengesteld {

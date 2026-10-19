@@ -193,7 +193,7 @@ async function vraagClaude(
   gebruik.tokensUit += u.output_tokens
 
   if (antwoord.stop_reason === 'refusal') {
-    throw new Melding('Hier kan Pinch geen menu van maken. Probeer het met andere wensen.')
+    throw new Melding('Hier kan Kookmaatje geen menu van maken. Probeer het met andere wensen.')
   }
   if (antwoord.stop_reason === 'max_tokens') {
     throw new Melding('Het menu werd te lang. Probeer het met minder gerechten.')

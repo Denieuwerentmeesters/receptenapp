@@ -2,8 +2,8 @@ import UIKit
 import UniformTypeIdentifiers
 
 /// De deelknop van iOS: in Instagram, Safari of een andere app tik je op Delen
-/// en kies je Pinch. Deze extension pakt de link uit wat er gedeeld wordt en
-/// opent de app op het toevoegscherm (`pinch://toevoegen?url=…`), waar het
+/// en kies je Kookmaatje. Deze extension pakt de link uit wat er gedeeld wordt en
+/// opent de app op het toevoegscherm (`kookmaatje://toevoegen?url=…`), waar het
 /// uitlezen vanzelf start (app/src/App.tsx, GedeeldeLink).
 ///
 /// De link gaat óók in de App Group: lukt het openen van de app niet (iOS
@@ -24,11 +24,11 @@ class ShareViewController: UIViewController {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 guard let link = link else {
-                    NSLog("Pinch delen: geen link gevonden")
+                    NSLog("Kookmaatje delen: geen link gevonden")
                     self.extensionContext?.completeRequest(returningItems: nil)
                     return
                 }
-                NSLog("Pinch delen: link %@", link)
+                NSLog("Kookmaatje delen: link %@", link)
                 UserDefaults(suiteName: Self.appGroep)?.set(link, forKey: Self.sleutel)
                 self.openApp(met: link)
                 // Even wachten met afsluiten: iOS annuleert het openen als de extension al weg is.
@@ -79,10 +79,10 @@ class ShareViewController: UIViewController {
     /// Lukt het niet, dan staat de link al in de App Group.
     private func openApp(met link: String) {
         guard let gecodeerd = link.addingPercentEncoding(withAllowedCharacters: .alphanumerics),
-              let url = URL(string: "pinch://toevoegen?url=\(gecodeerd)") else { return }
+              let url = URL(string: "kookmaatje://toevoegen?url=\(gecodeerd)") else { return }
         if let context = extensionContext {
             context.open(url) { gelukt in
-                NSLog("Pinch delen: extensionContext.open %@", gelukt ? "gelukt" : "niet gelukt")
+                NSLog("Kookmaatje delen: extensionContext.open %@", gelukt ? "gelukt" : "niet gelukt")
                 if !gelukt { self.openViaResponderChain(url) }
             }
         } else {
@@ -100,12 +100,12 @@ class ShareViewController: UIViewController {
                 typealias Open = @convention(c) (AnyObject, Selector, NSURL, NSDictionary, AnyObject?) -> Void
                 let open = unsafeBitCast(imp, to: Open.self)
                 open(huidige, selector, url as NSURL, [:] as NSDictionary, nil)
-                NSLog("Pinch delen: geopend via %@", String(describing: type(of: huidige)))
+                NSLog("Kookmaatje delen: geopend via %@", String(describing: type(of: huidige)))
                 return
             }
             responder = huidige.next
         }
-        NSLog("Pinch delen: geen responder die de app kan openen")
+        NSLog("Kookmaatje delen: geen responder die de app kan openen")
     }
 
 }

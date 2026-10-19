@@ -100,7 +100,7 @@ export const MENU_SCHEMA = {
   required: ['keuken', 'begrepen', 'plan', 'gerechten', 'draaiboek', 'opmerking'],
 } as const
 
-const HUISREGELS = `Je stelt menu's samen voor Pinch, een Nederlandse receptenapp. De gebruiker kiest een keuken en een aantal personen en geeft soms wensen mee. Jij maakt een menu van gerechten die bij elkaar passen: in smaak, in werk en in wat tegelijk in de oven of op het vuur kan. De boodschappen gaan daarna in één keer naar het mandje van Albert Heijn of Jumbo.
+const HUISREGELS = `Je stelt menu's samen voor Kookmaatje, een Nederlandse receptenapp. De gebruiker kiest een keuken en een aantal personen en geeft soms wensen mee. Jij maakt een menu van gerechten die bij elkaar passen: in smaak, in werk en in wat tegelijk in de oven of op het vuur kan. De boodschappen gaan daarna in één keer naar het mandje van Albert Heijn of Jumbo.
 
 Het menu
 - Zonder wens over het aantal gerechten: één hoofdgerecht met één of twee bijgerechten. Vraagt de gebruiker om andere of meer gerechten, volg dat, tot hooguit ${MAX_GERECHTEN}.

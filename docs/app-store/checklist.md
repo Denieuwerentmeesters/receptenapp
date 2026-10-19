@@ -1,6 +1,6 @@
 # Aanmelden bij de App Store — checklist
 
-Wat Apple nodig heeft voordat Pinch door de review kan. Afvinken wat klaar is.
+Wat Apple nodig heeft voordat Kookmaatje door de review kan. Afvinken wat klaar is.
 
 ## In de app (code)
 
@@ -14,12 +14,16 @@ Wat Apple nodig heeft voordat Pinch door de review kan. Afvinken wat klaar is.
 
 ## In App Store Connect (Reinoud)
 
-- [ ] **Privacybeleid-URL:** `https://receptenapp.vercel.app/privacy.html`
-- [ ] **Support-URL:** `https://receptenapp.vercel.app/support.html`
+- [ ] **Privacybeleid-URL:** `https://kookmaatje.eu/privacy.html`
+- [ ] **Support-URL:** `https://kookmaatje.eu/support.html`
 - [ ] **Voorwaarden** (optioneel veld "License Agreement", of in de beschrijving):
-      `https://receptenapp.vercel.app/voorwaarden.html`
-- [ ] `support@justapinch.nl` werkt en wordt gelezen. Verhuist de site naar
-      justapinch.nl, pas dan `WEBSITE` in `src/lib/config.ts` en deze adressen aan.
+      `https://kookmaatje.eu/voorwaarden.html`
+- [ ] `support@kookmaatje.eu` werkt en wordt gelezen (doorsturen instellen
+      bij yourhosting). Verandert het domein, pas dan `WEBSITE` in
+      `src/lib/config.ts` en deze adressen aan.
+- [ ] **Naam van de app:** Kookmaatje (was "Pinch weekmenu"; "Pinch" was
+      bezet). De naam op het beginscherm komt uit `Info.plist`
+      (`CFBundleDisplayName`).
 - [ ] **Demo-account** voor de reviewer (e-mail + wachtwoord) bij App Review
       Information, met een gevuld weekmenu en een paar recepten op de lijst
 - [ ] **Notitie voor de reviewer:** de mandjeknop opent ah.nl of jumbo.com in
@@ -56,7 +60,7 @@ bewaard.
 
 - **Merknamen (5.2):** Albert Heijn, Jumbo, HelloFresh en Marley Spoon komen
   in de app voor. Noem ze niet in de naam, ondertitel, trefwoorden of op de
-  screenshots als verkoopargument, en zet in de beschrijving dat Pinch niet
+  screenshots als verkoopargument, en zet in de beschrijving dat Kookmaatje niet
   aan hen verbonden is.
 - **Herkomst van de recepten (5.2):** de pool is van andere sites gehaald.
   Apple kan vragen of je de rechten hebt. Ingrediëntenlijsten zijn niet

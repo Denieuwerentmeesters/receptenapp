@@ -296,12 +296,12 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
         padding: 'calc(env(safe-area-inset-top) + 28px) 26px calc(env(safe-area-inset-bottom) + 20px)',
       }}>
         <UitlegVoorladen />
-        <Woordmerk hoogte={48} />
+        <Woordmerk hoogte={40} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <Label>Welkom bij Pinch</Label>
+          <Label>Welkom bij Kookmaatje</Label>
           <Titel grootte={32}>Kook als met een box.</Titel>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 17, lineHeight: 1.5, margin: 0 }}>
-            Betaal als bij de supermarkt. Jij kiest de recepten, Pinch maakt de boodschappenlijst
+            Betaal als bij de supermarkt. Jij kiest de recepten, Kookmaatje maakt de boodschappenlijst
             en zet alles klaar bij AH of Jumbo.
           </p>
         </div>
@@ -355,7 +355,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
           <Label>Klaar</Label>
           <Titel grootte={30}>Je week staat klaar</Titel>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.5, margin: 0 }}>
-            Hiermee kiest Pinch je recepten.
+            Hiermee kiest Kookmaatje je recepten.
           </p>
         </div>
 
@@ -409,10 +409,10 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     personen: ['Voor hoeveel mensen kook je meestal?', 'Dan kloppen de hoeveelheden meteen.'],
     kookavonden: ['Hoe vaak kook je meestal per week?', 'Een richtlijn voor Vul mijn week. Je bestelt zoveel recepten als je wilt.'],
     keukens: ['Welke keukens vind je lekker?', 'Kies er zoveel als je wilt. Daarvan krijg je meer in je weekmenu. De rest blijft gewoon te vinden.'],
-    allergieen: ['Moet Pinch ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
-    voorraad: ['Wat heb je standaard in huis?', 'Dat laat Pinch van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.'],
+    allergieen: ['Moet Kookmaatje ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
+    voorraad: ['Wat heb je standaard in huis?', 'Dat laat Kookmaatje van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.'],
     melding: ['Op welke dag wil je een herinnering om recepten te zoeken?', 'Elke week op die dag krijg je een melding op je telefoon: tijd om komende week te vullen.'],
-    winkel: ['Waar doe je je boodschappen?', 'Naar deze supermarkt stuurt Pinch je boodschappenlijst.'],
+    winkel: ['Waar doe je je boodschappen?', 'Naar deze supermarkt stuurt Kookmaatje je boodschappenlijst.'],
   }
 
   return (
@@ -500,7 +500,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
                 vervanger op je lijst. Op Ontdekken zet je het filter met één tik uit.
               </p>
               <p style={{ ...kleinStijl, fontSize: 13 }}>
-                Pinch gebruikt dit alleen om recepten te filteren en je lijst aan te passen. Wissen kan in Instellingen.
+                Kookmaatje gebruikt dit alleen om recepten te filteren en je lijst aan te passen. Wissen kan in Instellingen.
               </p>
             </div>
           </>

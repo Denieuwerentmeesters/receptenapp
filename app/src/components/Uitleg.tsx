@@ -6,7 +6,7 @@ import voorraadkast from '../assets/uitleg/voorraadkast.webp'
 import lijst from '../assets/uitleg/lijst.webp'
 
 /**
- * De uitleg in zes kaarten: wat Pinch doet, van zoeken tot mandje. Staat in
+ * De uitleg in zes kaarten: wat Kookmaatje doet, van zoeken tot mandje. Staat in
  * de onboarding vóór de vragen, en is later terug te kijken via Instellingen.
  *
  * Elke kaart is een schermafbeelding van de app zelf, met één ding uitgelicht:
@@ -47,7 +47,7 @@ const KAARTEN: Kaart[] = [
   },
   {
     kop: 'Zet op je lijst',
-    tekst: 'Kies je recepten bij Nog bestellen. Pinch zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
+    tekst: 'Kies je recepten bij Nog bestellen. Kookmaatje zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
     beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
     verhouding: 1688 / 780, licht: { x: 0.049, y: 0.303, b: 0.444, h: 0.294 }, rond: 26,
   },
@@ -59,7 +59,7 @@ const KAARTEN: Kaart[] = [
   },
   {
     kop: 'Voorraadkast',
-    tekst: 'Laat Pinch weten wat je standaard in huis hebt, zoals olie, rijst of kruiden. Dat gaat niet mee in je bestelling.',
+    tekst: 'Laat Kookmaatje weten wat je standaard in huis hebt, zoals olie, rijst of kruiden. Dat gaat niet mee in je bestelling.',
     beeld: voorraadkast, alt: 'Het scherm Voorraadkast, met een paar producten die in huis zijn uitgelicht: azijn, bloem, boter.',
     verhouding: 2000 / 924, licht: { x: 0.035, y: 0.405, b: 0.93, h: 0.2 }, rond: 18,
   },

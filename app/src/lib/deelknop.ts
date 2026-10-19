@@ -3,8 +3,8 @@ import { Preferences } from '@capacitor/preferences'
 
 /**
  * De deelknop van iOS (app/ios/App/Delen): in Instagram of Safari tik je op
- * Delen en kies je Pinch. De extension zet de link in de App Group en opent
- * de app met pinch://toevoegen?url=…; de app gaat dan naar het toevoegscherm,
+ * Delen en kies je Kookmaatje. De extension zet de link in de App Group en opent
+ * de app met kookmaatje://toevoegen?url=…; de app gaat dan naar het toevoegscherm,
  * waar het uitlezen vanzelf start.
  *
  * Twee wegen, omdat een extension de app officieel niet mag openen: lukt het
@@ -18,11 +18,11 @@ const SLEUTEL = 'gedeeldeLink'
 /** De standaardgroep van @capacitor/preferences; daar zetten we 'm na het lezen weer op. */
 const STANDAARD_GROEP = 'CapacitorStorage'
 
-/** De gedeelde link uit pinch://toevoegen?url=…, of null als het iets anders is. */
+/** De gedeelde link uit kookmaatje://toevoegen?url=…, of null als het iets anders is. */
 export function linkUitSchema(url: string): string | null {
   let u: URL
   try { u = new URL(url) } catch { return null }
-  if (u.protocol !== 'pinch:' || !/^(\/\/)?toevoegen\/?$/.test(u.host + u.pathname)) return null
+  if (u.protocol !== 'kookmaatje:' || !/^(\/\/)?toevoegen\/?$/.test(u.host + u.pathname)) return null
   const link = u.searchParams.get('url')
   return link && /^https?:\/\//i.test(link) ? link : null
 }

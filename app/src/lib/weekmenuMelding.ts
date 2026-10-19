@@ -56,7 +56,7 @@ export async function planWeekmenuMelding(v: Pick<Voorkeuren, 'pushbericht_aan' 
       notifications: [{
         id: MELDING_ID,
         title: 'Zoek weer nieuwe recepten voor komende week',
-        body: 'Open Pinch en zet met het hartje klaar wat je komende week kookt.',
+        body: 'Open Kookmaatje en zet met het hartje klaar wat je komende week kookt.',
         // `on` zonder datum herhaalt elke week op deze dag en tijd.
         schedule: { on: moment, allowWhileIdle: true },
       }],

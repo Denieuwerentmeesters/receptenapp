@@ -4,10 +4,10 @@
 # buildnummer hoogt App Store Connect zelf op.
 set -e
 cd "$(dirname "$0")"
-rm -rf build/Pinch.xcarchive build/export
+rm -rf build/Kookmaatje.xcarchive build/export
 xcodebuild -project App/App.xcodeproj -scheme App -configuration Release \
   -destination 'generic/platform=iOS' -derivedDataPath build \
-  -archivePath build/Pinch.xcarchive -allowProvisioningUpdates archive
-xcodebuild -exportArchive -archivePath build/Pinch.xcarchive \
+  -archivePath build/Kookmaatje.xcarchive -allowProvisioningUpdates archive
+xcodebuild -exportArchive -archivePath build/Kookmaatje.xcarchive \
   -exportOptionsPlist ExportOptions.plist -exportPath build/export \
   -allowProvisioningUpdates

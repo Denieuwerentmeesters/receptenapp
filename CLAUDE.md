@@ -108,14 +108,24 @@ antwoordt wel; zie `scripts/ah_verpakkingen.py`.
 
 Capacitor verpakt `app/dist` als app (`app/ios`, Swift Package Manager, geen
 CocoaPods). Bouwen: `npm run ios` in `app/`; naar TestFlight:
-`npm run testflight`. Zie docs/setup.md §4. De app heet Pinch; de bundle-id
+`npm run testflight`. Zie docs/setup.md §4. De app heet Kookmaatje (tot
+okt 2026 Pinch; die naam was bezet in de App Store); de bundle-id
 is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
+De localStorage-sleutels heten nog `pinch-…`: hernoemen zou ieders voortgang
+wissen, dus laat ze zo.
 
 - **Inloggen loopt via `receptenapp.vercel.app/api/auth`**, net als op de
   website, met `CapacitorHttp` aan. Rechtstreeks naar Neon Auth kan niet: die
   weigert de origin `capacitor://localhost`, en de webview gooit de cookie van
   een ander domein weg. `api/auth.ts` zet voor de app de origin van de website.
-  De app hangt dus aan de productie-deploy, ook een testbuild.
+  De app hangt dus aan de productie-deploy, ook een testbuild. Dat adres
+  staat in `INLOGSITE` (`src/lib/config.ts`), ook voor de functies die de
+  sessie nodig hebben (extraheer, samenstellen, account-verwijderen): de
+  cookie hoort bij dat domein. Zet dat niet zomaar op kookmaatje.eu.
+- **Neon Auth vertrouwt alleen `receptenapp.vercel.app` als origin.** Vanaf
+  kookmaatje.eu zou inloggen "Invalid origin" geven; `api/auth.ts` zet de
+  origin van onze eigen domeinen (`EIGEN_DOMEINEN`) daarom om. Komt er een
+  domein bij, zet het daar ook in (of bij Neon Auth onder de domeinen).
 - **`CapacitorHttp` vangt élke `fetch` af** en stuurt 'm via iOS. Gedraagt een
   verzoek zich in de app anders dan in de browser, kijk dan daar eerst.
 - **Het opstartscherm gaat niet vanzelf weg** (`launchAutoHide: false`);
@@ -137,10 +147,10 @@ is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
   niets. Id 2026; de kookwekker heeft 4711.
 - **De deelknop** (`app/ios/App/Delen`, target `Delen`, bundle-id
   `nl.reinoudtencate.receptenapp.delen`): in Instagram of Safari tik je op
-  Delen en kies je Pinch. De extension pakt de link, zet 'm in de App Group
+  Delen en kies je Kookmaatje. De extension pakt de link, zet 'm in de App Group
   `group.nl.reinoudtencate.receptenapp` (`App.entitlements` en
   `Delen.entitlements`, Xcode registreert de groep zelf bij automatisch
-  signen) en opent de app met `pinch://toevoegen?url=…` via de responder
+  signen) en opent de app met `kookmaatje://toevoegen?url=…` via de responder
   chain, want een extension mag UIApplication officieel niet aanroepen.
   `GedeeldeLink` in `App.tsx` vangt het URL-schema op (`appUrlOpen`,
   `getLaunchUrl`) en kijkt bij elke activering ook in de App Group
@@ -437,7 +447,7 @@ Zelf samenstellen), de schakelaar Alle / Mijn recepten, de lege zoekuitkomst,
 en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
 
 - **Gratis in de testfase.** Het plan voorziet 5 gratis scans en daarna
-  Pinch Plus; dat is bewust nog niet gebouwd (Reinoud, 7 okt 2026: eerst
+  Kookmaatje Plus; dat is bewust nog niet gebouwd (Reinoud, 7 okt 2026: eerst
   gratis maken en testen). Wel staat er een daglimiet tegen misbruik
   (`SCAN_LIMIET_PER_DAG`, standaard 30, alle pogingen). Elke poging staat in
   `scan`: soort, link, gelukt of niet, tokens en een kostenschatting in
@@ -481,7 +491,7 @@ en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
   een kookboekfoto; website en Instagram wel, met de bronvermelding erbij.
   Imports staan wél in Ontdekken en in de weekmenu-generator (het zijn jouw
   recepten), en de nachtelijke ronde geeft ze een eigen foto.
-- **Niet gebouwd uit het plan:** Pinch Plus (RevenueCat, Stripe, Plus-scherm,
+- **Niet gebouwd uit het plan:** Kookmaatje Plus (RevenueCat, Stripe, Plus-scherm,
   teller), de uitleg na de onboarding, en het herroepingsscherm. De deelknop
   van iOS staat hierboven bij "iOS-app". De privacyverklaring noemt
   Anthropic, OpenAI en Apify al.
@@ -489,7 +499,7 @@ en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
 ## Een recept delen met een link
 
 De deelknop op het receptscherm geeft een link naar de website,
-`justapinch.nl/r/<naam>` (`DEELSITE` in `src/lib/config.ts`), die iedereen kan lezen, ook zonder account.
+`kookmaatje.eu/r/<naam>` (`DEELSITE` in `src/lib/config.ts`), die iedereen kan lezen, ook zonder account.
 
 - **De naam van het gerecht staat in de link** (`src/lib/slug.ts`). Een recept
   uit de pool heeft een `slug` in de database (`/r/romige-kip-met-spinazie`),
@@ -588,8 +598,12 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 ## Laadanimatie
 
 Het woordmerk pruttelt en verdampt letter voor letter
-(`components/Laadanimatie.tsx`, naar "Pinch Loader" uit Claude Design,
-variant gekookt). `Pruttel` is de SVG, per letter een groep met een eigen
+(`components/Laadanimatie.tsx`, naar "Kookmaatje Loader" uit Claude Design,
+variant gekookt). De letters zijn paden in `src/ds/woordmerk.ts` (Unbounded
+Black, gele korrel op de j); daar komen ook `Woordmerk`, de deelpagina en het
+app-icoon (de K met de korrel) vandaan. Nieuw woordmerk: zet de letters
+opnieuw om naar paden, niet als `<text>`, anders wijkt het af zolang het
+lettertype laadt. `Pruttel` is de SVG, per letter een groep met een eigen
 blur-filter op een requestAnimationFrame-klok; `LaadScherm` zet 'm op een
 rood of paars scherm. De variant "Pinch Zout" (vallende korrels, PR #111)
 is geprobeerd en weer teruggedraaid: Reinoud vond het pruttelen leuker.
@@ -848,7 +862,10 @@ git checkout -b feat/<korte-omschrijving> origin/master
 
 ### Waar het draait
 
-- **Hosting: Vercel, op het account van Reinoud** (`receptenapp.vercel.app`).
+- **Hosting: Vercel, op het account van Reinoud** (`receptenapp.vercel.app`,
+  met de domeinnaam `kookmaatje.eu`; de DNS staat bij yourhosting).
+  `justapinch.nl` (DNS bij Vercel) stuurt door naar kookmaatje.eu, zodat oude
+  deellinks blijven werken.
   Steven heeft daar een Developer-rol; production redeployen kan alleen Reinoud.
 - De twee `VITE_NEON_*`-variabelen staan in de Vercel-projectinstellingen, niet
   in de repo. Lokaal komen ze uit `app/.env.local` (zie `app/.env.example`).

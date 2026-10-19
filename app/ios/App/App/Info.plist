@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>nl</string>
 	<key>CFBundleDisplayName</key>
-        <string>Pinch</string>
+        <string>Kookmaatje</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,7 +27,7 @@
 			<string>nl.reinoudtencate.receptenapp</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>pinch</string>
+				<string>kookmaatje</string>
 			</array>
 		</dict>
 	</array>

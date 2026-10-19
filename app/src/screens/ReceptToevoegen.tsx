@@ -186,8 +186,8 @@ export function ReceptToevoegen() {
           />
           <Keuze
             icoon="utensils"
-            kop="Laat Pinch een menu samenstellen"
-            tekst="Kies een keuken en het aantal personen; Pinch bedenkt de gerechten."
+            kop="Laat Kookmaatje een menu samenstellen"
+            tekst="Kies een keuken en het aantal personen; Kookmaatje bedenkt de gerechten."
             onClick={() => navigeer('/samenstellen')}
           />
         </Inhoud>

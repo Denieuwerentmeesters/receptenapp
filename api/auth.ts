@@ -18,6 +18,19 @@
 
 export const config = { runtime: 'edge' }
 
+/**
+ * Neon Auth kent alleen het Vercel-adres als origin; kookmaatje.eu (en het
+ * oude justapinch.nl) niet, en die zet je alleen in de Neon-console. Een
+ * verzoek vanaf een van onze eigen domeinen sturen we daarom door met de
+ * origin die Neon wel vertrouwt. Andere origins blijven staan, dus een
+ * vreemde site komt er nog steeds niet door.
+ */
+const VERTROUWDE_ORIGIN = 'https://receptenapp.vercel.app'
+const EIGEN_DOMEINEN = new Set([
+  'https://kookmaatje.eu', 'https://www.kookmaatje.eu',
+  'https://justapinch.nl', 'https://www.justapinch.nl',
+])
+
 /** Headers die we niet doorsturen: die horen bij deze verbinding, niet bij het verzoek. */
 const NIET_DOOR = new Set(['host', 'connection', 'content-length', 'accept-encoding', 'x-forwarded-host'])
 
@@ -34,7 +47,9 @@ export default async function handler(request: Request): Promise<Response> {
   request.headers.forEach((waarde, naam) => {
     if (!NIET_DOOR.has(naam.toLowerCase())) headers.set(naam, waarde)
   })
-  if (isAppOrigin(request.headers.get('origin'))) headers.set('origin', binnen.origin)
+  const origin = request.headers.get('origin')
+  if (isAppOrigin(origin)) headers.set('origin', binnen.origin)
+  else if (origin && EIGEN_DOMEINEN.has(origin)) headers.set('origin', VERTROUWDE_ORIGIN)
 
   const antwoord = await fetch(doel, {
     method: request.method,
