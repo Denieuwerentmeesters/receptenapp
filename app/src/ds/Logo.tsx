@@ -1,34 +1,41 @@
 import type { CSSProperties } from 'react'
+import { KORREL, LETTERS, VLAK } from './woordmerk'
 
 /**
- * Het woordmerk "pinch": zware letters met een zoutkorrel als punt op de i.
- * De letters nemen de tekstkleur over (currentColor); de korrel staat schuin
- * zodat hij als zoutkristal leest en niet als gewone punt.
+ * Het woordmerk "Kookmaatje": Unbounded Black met een gele korrel als punt
+ * op de j. De letters nemen de tekstkleur over (currentColor); de korrel
+ * staat schuin zodat hij als korrel leest en niet als gewone punt.
  *
- * Dezelfde tekening staat in public/favicon.svg, ios/ontwerp/maak.mjs en
- * lib/deelpagina.ts (de openbare receptpagina).
+ * De tekening staat in ./woordmerk.ts en wordt ook gebruikt door
+ * lib/deelpagina.ts (de openbare receptpagina) en ios/ontwerp/maak.mjs.
  */
-export function Woordmerk({ hoogte = 36, korrel = 'var(--c-yellow)', style }: {
+export function Woordmerk({ hoogte = 32, korrel = 'var(--c-yellow)', style }: {
   hoogte?: number
   korrel?: string
   style?: CSSProperties
 }) {
+  const [x, y, breed, hoog] = VLAK
   return (
     <svg
-      role="img" aria-label="Pinch" viewBox="-4 -16 240 104"
-      height={hoogte} width={(hoogte * 240) / 104}
+      role="img" aria-label="Kookmaatje" viewBox={`${x} ${y} ${breed} ${hoog}`}
+      height={hoogte} width={(hoogte * breed) / hoog}
       style={{ display: 'block', flex: 'none', ...style }}
     >
-      <g fill="none" stroke="currentColor" strokeWidth={16}>
-        <path d="M8 16V84" />
-        <circle cx={32} cy={40} r={16} />
-        <path d="M70 16V64" />
-        <path d="M92 64V38A16 16 0 0 1 124 38V64" />
-        <path d="M173.3 28.7A16 16 0 1 0 173.3 51.3" />
-        <path d="M192 -6V64" />
-        <path d="M192 64V38A16 16 0 0 1 224 38V64" />
+      <g fill="currentColor">
+        {LETTERS.map((l, i) => <path key={i} d={l.d} />)}
       </g>
-      <rect x={62} y={-7} width={16} height={16} rx={3} transform="rotate(20 70 1)" fill={korrel} />
+      <Korrel kleur={korrel} />
     </svg>
+  )
+}
+
+/** De gele korrel op de j. */
+export function Korrel({ kleur }: { kleur: string }) {
+  const { cx, cy, zijde, hoek } = KORREL
+  return (
+    <rect
+      x={cx - zijde / 2} y={cy - zijde / 2} width={zijde} height={zijde} rx={zijde * 0.18}
+      transform={`rotate(${hoek} ${cx} ${cy})`} fill={kleur}
+    />
   )
 }

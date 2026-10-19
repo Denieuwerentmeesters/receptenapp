@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core'
-import { WEBSITE } from './config'
+import { INLOGSITE } from './config'
 
 /**
  * Praat met de serverless functie in api/extraheer.ts.
@@ -40,7 +40,7 @@ export class BestaatAl extends Error {
  */
 function endpoint(): string {
   return import.meta.env.VITE_EXTRACTIE_URL
-    || (Capacitor.isNativePlatform() ? `${WEBSITE}/api/extraheer` : '/api/extraheer')
+    || (Capacitor.isNativePlatform() ? `${INLOGSITE}/api/extraheer` : '/api/extraheer')
 }
 
 type OpStap = (tekst: string) => void

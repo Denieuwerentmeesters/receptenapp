@@ -8,7 +8,7 @@
  * mogen niet in de app-bundle. En dit kost geld per aanvraag, dus:
  *  - alleen voor wie ingelogd is (de sessie die Neon Auth bevestigt);
  *  - een daglimiet per gebruiker tegen misbruik, geteld in de tabel `scan`.
- *    Pinch Plus komt later; nu is importeren gratis.
+ *    Kookmaatje Plus komt later; nu is importeren gratis.
  *
  * Het antwoord komt als losse regels JSON (één gebeurtenis per regel, zie
  * ScanGebeurtenis in app/src/lib/extractie.ts) zodra de app `stroom: true`
@@ -334,7 +334,7 @@ async function vraagClaude(
   // Per aanroep, niet cumulatief: de Instagram-route kan Claude twee keer vragen.
   scan.kosten += claudeKosten(MODEL, tokensIn, u.output_tokens)
 
-  if (antwoord.stop_reason === 'refusal') throw new Melding('Hier kan Pinch geen recept van maken.')
+  if (antwoord.stop_reason === 'refusal') throw new Melding('Hier kan Kookmaatje geen recept van maken.')
   if (antwoord.stop_reason === 'max_tokens') throw new Melding('Het recept werd te lang om uit te lezen. Probeer het met een kleiner deel.')
 
   const ruw = antwoord.content.find((c) => c.type === 'text')?.text ?? ''

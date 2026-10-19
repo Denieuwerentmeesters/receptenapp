@@ -272,7 +272,7 @@ export function Samenstellen() {
           </div>
         </Kop>
         <Inhoud style={{ gap: 10 }}>
-          <p style={LEAD}>Drie vragen, daarna maakt Pinch de recepten en zet de boodschappen klaar.</p>
+          <p style={LEAD}>Drie vragen, daarna maakt Kookmaatje de recepten en zet de boodschappen klaar.</p>
 
           <Vraag nummer={1} tekst="Welke keuken?" />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -466,7 +466,7 @@ export function Samenstellen() {
           <>
             {Array.from({ length: Math.max(1, verwacht - menu.gerechten.length) }, (_, i) => <Skelet key={i} />)}
             <p style={KLEIN}>
-              Pinch schrijft de recepten voor {menu.personen} {menu.personen === 1 ? 'persoon' : 'personen'}.
+              Kookmaatje schrijft de recepten voor {menu.personen} {menu.personen === 1 ? 'persoon' : 'personen'}.
               Dat duurt ongeveer een halve minuut.
             </p>
           </>
@@ -517,7 +517,7 @@ export function Samenstellen() {
                 <Chip key={b} onClick={() => { if (onderweg === null) void vraagAan({ vorig: menu, wijziging: b }) }}>{b}</Chip>
               ))}
             </div>
-            {onderweg === 'menu' && <p style={{ ...KLEIN, marginTop: 10 }}>Pinch past het menu aan…</p>}
+            {onderweg === 'menu' && <p style={{ ...KLEIN, marginTop: 10 }}>Kookmaatje past het menu aan…</p>}
           </Blok>
         )}
 

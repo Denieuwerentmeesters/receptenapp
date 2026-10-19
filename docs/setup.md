@@ -82,7 +82,7 @@ team staat al in het project (automatische signing).
 
 - **Op je eigen telefoon:** telefoon aan de Mac, bovenin als doel kiezen, Run.
 - **TestFlight:** `npm run testflight` bouwt, ondertekent en uploadt. De app
-  staat in App Store Connect als "Pinch weekmenu"
+  staat in App Store Connect als "Kookmaatje" (eerder "Pinch weekmenu")
   (`nl.reinoudtencate.receptenapp`); het buildnummer hoogt Apple zelf op.
 
 Icoon en opstartscherm komen uit `app/ios/ontwerp/maak.mjs`

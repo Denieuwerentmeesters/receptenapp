@@ -161,7 +161,7 @@ function UitlegTerugkijken() {
 }
 
 /**
- * De deelknop van iOS (lib/deelknop.ts): een link die via pinch://toevoegen
+ * De deelknop van iOS (lib/deelknop.ts): een link die via kookmaatje://toevoegen
  * binnenkomt, of die de extension in de App Group achterliet, opent het
  * toevoegscherm. Beide wegen kunnen dezelfde link brengen; de laatste
  * onthouden we even, zodat het scherm niet twee keer start.

@@ -8,15 +8,19 @@
 
 import { Capacitor } from '@capacitor/core'
 
-/** Waar de website draait; de iOS-app heeft zelf geen https-adres. */
-export const WEBSITE = 'https://receptenapp.vercel.app'
+/** Waar de website draait: de eigen domeinnaam, zelfde Vercel-project als INLOGSITE. */
+export const WEBSITE = 'https://kookmaatje.eu'
+
+/** Het adres in een deellink (/r/<naam>). Oude links op justapinch.nl sturen hierheen door. */
+export const DEELSITE = WEBSITE
 
 /**
- * Het adres in een deellink (/r/<naam>). Zelfde Vercel-project als WEBSITE,
- * onder de eigen domeinnaam. Inloggen in de iOS-app blijft op WEBSITE: Neon
- * Auth moet een domein eerst als origin kennen.
+ * Waar de iOS-app inlogt (authBasis hieronder) en de functies aanroept die
+ * de sessie nodig hebben: de cookie hoort bij dit domein. Blijft het
+ * Vercel-adres, zodat bestaande installaties ingelogd blijven en Neon Auth
+ * geen nieuw domein als origin hoeft te kennen.
  */
-export const DEELSITE = 'https://justapinch.nl'
+export const INLOGSITE = 'https://receptenapp.vercel.app'
 
 /** Openbare pagina's in app/public; App Store Connect verwijst naar dezelfde adressen. */
 export const PRIVACY_URL = `${WEBSITE}/privacy.html`
@@ -62,7 +66,7 @@ export function config(): Config {
  * domein weg — in een app op het beginscherm altijd. Dan leek inloggen te
  * lukken en stond je meteen weer op het inlogscherm.
  *
- * De iOS-app gaat langs hetzelfde doorgeefluik, op het adres van de website.
+ * De iOS-app gaat langs hetzelfde doorgeefluik, op INLOGSITE.
  * Rechtstreeks naar Neon Auth lukt daar niet: die weigert de origin
  * capacitor://localhost ("Invalid origin"), en de webview gooit de cookie
  * net als Safari weg. Daarom staat CapacitorHttp aan (capacitor.config.ts):
@@ -72,7 +76,7 @@ export function config(): Config {
  * rechtstreeks naar Neon Auth.
  */
 function authBasis(): string {
-  if (Capacitor.isNativePlatform()) return `${WEBSITE}/api/auth`
+  if (Capacitor.isNativePlatform()) return `${INLOGSITE}/api/auth`
   if (typeof window === 'undefined') return import.meta.env.VITE_NEON_AUTH_URL
   const { protocol, hostname, origin } = window.location
   if (protocol === 'https:' && hostname !== 'localhost') return `${origin}/api/auth`

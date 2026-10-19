@@ -6,6 +6,7 @@
 
 import { schaalIngredienten } from '../app/src/lib/schaal'
 import type { Ingredient } from '../app/src/lib/database.types'
+import { VLAK, woordmerkSvg } from '../app/src/ds/woordmerk'
 
 export interface DeelRecept {
   id: string
@@ -46,7 +47,7 @@ body {
   background: linear-gradient(to bottom, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 24%, rgba(0,0,0,0) 42%, rgba(0,0,0,.78) 100%);
 }
 .merk { position: absolute; z-index: 1; top: calc(16px + env(safe-area-inset-top)); left: 20px; color: #FFF000; }
-.merk svg { display: block; height: 30px; width: auto; }
+.merk svg { display: block; height: 24px; width: auto; }
 .titel { position: absolute; z-index: 1; left: 22px; right: 22px; bottom: 22px; }
 .label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 h1 { margin: 8px 0 0; font-size: 30px; line-height: 1.1; text-transform: uppercase; text-shadow: 0 2px 12px rgba(0,0,0,.35); overflow-wrap: anywhere; }
@@ -91,9 +92,8 @@ footer p { margin: 0 0 14px; font-size: 14px; color: rgba(20,20,20,.7); }
 `
 
 /** Het woordmerk, dezelfde tekening als Woordmerk in app/src/ds/Logo.tsx: hier gele letters met een rode korrel. */
-const WOORDMERK = `<svg role="img" aria-label="Pinch" viewBox="-4 -16 240 104" width="69" height="30">
-<g fill="none" stroke="currentColor" stroke-width="16"><path d="M8 16V84"/><circle cx="32" cy="40" r="16"/><path d="M70 16V64"/><path d="M92 64V38A16 16 0 0 1 124 38V64"/><path d="M173.3 28.7A16 16 0 1 0 173.3 51.3"/><path d="M192 -6V64"/><path d="M192 64V38A16 16 0 0 1 224 38V64"/></g>
-<rect x="62" y="-7" width="16" height="16" rx="3" transform="rotate(20 70 1)" fill="#E8202E"/>
+const WOORDMERK = `<svg role="img" aria-label="Kookmaatje" viewBox="${VLAK.join(' ')}" width="${Math.round((26 * VLAK[2]) / VLAK[3])}" height="26">
+${woordmerkSvg('currentColor', '#E8202E')}
 </svg>`
 
 function pagina(kop: string, inhoud: string): string {
@@ -127,10 +127,10 @@ export function receptPagina(recept: DeelRecept, personen: number, adres: string
   const pad = new URL(adres).pathname
   const foto = recept.afbeelding_url
 
-  const kop = `<title>${esc(titel)} · Pinch</title>
+  const kop = `<title>${esc(titel)} · Kookmaatje</title>
 <meta name="description" content="${esc(omschrijving)}">
 <meta property="og:type" content="article">
-<meta property="og:site_name" content="Pinch">
+<meta property="og:site_name" content="Kookmaatje">
 <meta property="og:title" content="${esc(titel)}">
 <meta property="og:description" content="${esc(omschrijving)}">
 <meta property="og:url" content="${esc(adres)}">
@@ -167,8 +167,8 @@ ${foto ? `<meta property="og:image" content="${esc(foto)}">\n<meta name="twitter
   </ol>
 </main>
 <footer>
-  <p>Gedeeld vanuit Pinch: je weekmenu, je recepten en je boodschappen in één keer in je mandje.</p>
-  <a class="knop" href="${recept.inPool ? `/#/recept/${esc(recept.id)}` : '/'}">${recept.inPool ? 'Open in Pinch' : 'Bekijk Pinch'}</a>
+  <p>Gedeeld vanuit Kookmaatje: je weekmenu, je recepten en je boodschappen in één keer in je mandje.</p>
+  <a class="knop" href="${recept.inPool ? `/#/recept/${esc(recept.id)}` : '/'}">${recept.inPool ? 'Open in Kookmaatje' : 'Bekijk Kookmaatje'}</a>
 </footer>
 </div>`
 
@@ -178,11 +178,11 @@ ${foto ? `<meta property="og:image" content="${esc(foto)}">\n<meta name="twitter
 /** Als de link niet (meer) klopt, of er iets misging. */
 export function meldingPagina(kop: string, tekst: string): string {
   return pagina(
-    `<title>${esc(kop)} · Pinch</title>`,
+    `<title>${esc(kop)} · Kookmaatje</title>`,
     `<div class="blad leeg">
 <h1>${esc(kop)}</h1>
 <p>${esc(tekst)}</p>
-<a class="knop" href="/">Naar Pinch</a>
+<a class="knop" href="/">Naar Kookmaatje</a>
 </div>`,
   )
 }

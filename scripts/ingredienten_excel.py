@@ -48,7 +48,7 @@ DOEL = ROOT / 'ingredienten.xlsx'
 
 FONT = 'Arial'
 KOP = Font(name=FONT, bold=True, color='FFFFFF')
-KOPVULLING = PatternFill('solid', fgColor='8B1E1E')  # Pinch-rood
+KOPVULLING = PatternFill('solid', fgColor='8B1E1E')  # Kookmaatje-rood
 ROOD = PatternFill('solid', fgColor='FADBD8')
 ORANJE = PatternFill('solid', fgColor='FDEBD0')
 GEEL = PatternFill('solid', fgColor='FFF9C4')

@@ -63,7 +63,7 @@ const TOEVOEGEN = [
   { label: 'Kies screenshots', naar: '/toevoegen?route=screenshots' },
   { label: 'Foto van een kookboek', naar: '/toevoegen?route=kookboek' },
   { label: 'Typ zelf', naar: '/toevoegen?route=eigen' },
-  { label: 'Laat Pinch een menu samenstellen', naar: '/samenstellen' },
+  { label: 'Laat Kookmaatje een menu samenstellen', naar: '/samenstellen' },
 ]
 
 /**
