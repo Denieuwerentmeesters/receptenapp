@@ -1,18 +1,16 @@
 // Tekent het app-icoon en het opstartscherm uit één SVG.
 // Draaien vanuit de root: node app/ios/ontwerp/maak.mjs
 import sharp from 'sharp'
-import { KORREL, LETTERS, woordmerkSvg } from '../../src/ds/woordmerk.ts'
+import { LETTERS, woordmerkSvg } from '../../src/ds/woordmerk.ts'
 
 const ROOD = '#AB2328', FEL = '#E8202E', CREME = '#FFF6E8', WIT = '#FFFFFF', GEEL = '#FFF000'
 const ASSETS = new URL('../App/App/Assets.xcassets/', import.meta.url).pathname
 
 // Het logo van Kookmaatje; dezelfde tekening als src/ds/Logo.tsx (uit src/ds/woordmerk.ts).
 
-/** Het beeldmerk: de K van het woordmerk met de gele korrel rechtsboven; samen ongeveer x 6–115, y -108–0. */
+/** Het beeldmerk: alleen de K van het woordmerk, zonder korrel (x 6–90, y -75–0). Net als public/favicon.svg. */
 const K = LETTERS[0]
-const beeldmerk = `
-  <path d="${K.d}" fill="${WIT}"/>
-  <rect x="${100 - 11}" y="${-92 - 11}" width="22" height="22" rx="4" transform="rotate(${KORREL.hoek} 100 -92)" fill="${GEEL}"/>`
+const beeldmerk = `<path d="${K.d}" fill="${WIT}"/>`
 
 /** Het hele woordmerk, voor wie het nodig heeft (nu nergens in gebruik: het opstartscherm is alleen rood). */
 const _woordmerk = woordmerkSvg(CREME, GEEL)
@@ -28,7 +26,7 @@ const svg = (maat, kleur, tekening, [x0, y0, breed, hoog], schaal) => {
 }
 
 // Icoon: zonder doorzichtigheid, anders weigert App Store Connect 'm.
-await sharp(svg(1024, FEL, beeldmerk, [3, -112, 116, 116], 0.62)).flatten({ background: FEL }).png()
+await sharp(svg(1024, FEL, beeldmerk, [-9.8, -95.5, 116, 116], 0.72)).flatten({ background: FEL }).png()
   .toFile(`${ASSETS}AppIcon.appiconset/AppIcon-512@2x.png`)
 
 // Opstartscherm: alleen rood, zonder woordmerk. Het eerste logo dat je ziet
