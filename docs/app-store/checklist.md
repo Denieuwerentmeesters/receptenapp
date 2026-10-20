@@ -14,15 +14,19 @@ Wat Apple nodig heeft voordat Kookmaatje door de review kan. Afvinken wat klaar 
 
 ## In App Store Connect (Reinoud)
 
-- [ ] **Privacybeleid-URL:** `https://kookmaatje.eu/privacy.html`
-- [ ] **Support-URL:** `https://kookmaatje.eu/support.html`
+- [ ] **Privacybeleid-URL:** `https://kookmaatje.eu/privacy.html` (staat nu nog
+      op `https://receptenapp.vercel.app/privacy.html`; omzetten zodra
+      kookmaatje.eu live is)
+- [ ] **Support-URL:** `https://kookmaatje.eu/support.html` (idem, nu nog
+      `receptenapp.vercel.app/support.html`)
 - [ ] **Voorwaarden** (optioneel veld "License Agreement", of in de beschrijving):
       `https://kookmaatje.eu/voorwaarden.html`
 - [ ] `support@kookmaatje.eu` werkt en wordt gelezen (doorsturen instellen
       bij yourhosting). Verandert het domein, pas dan `WEBSITE` in
       `src/lib/config.ts` en deze adressen aan.
-- [ ] **Naam van de app:** Kookmaatje (was "Pinch weekmenu"; "Pinch" was
-      bezet). De naam op het beginscherm komt uit `Info.plist`
+- [x] **Naam van de app:** Kookmaatje (was "Pinch koken"; "Pinch" was
+      bezet). Gezet op 20 okt 2026, met beschrijving, "Wat is nieuw" en
+      reviewnotities van versie 1.2; live zodra 1.2 is goedgekeurd. De naam op het beginscherm komt uit `Info.plist`
       (`CFBundleDisplayName`).
 - [ ] **Demo-account** voor de reviewer (e-mail + wachtwoord) bij App Review
       Information, met een gevuld weekmenu en een paar recepten op de lijst
