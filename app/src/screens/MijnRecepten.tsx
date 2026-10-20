@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Button, Chip, Icon, Woordmerk } from '../ds'
+import { Button, Chip, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
@@ -280,10 +280,7 @@ export function MijnRecepten() {
       <Grens query={fases.query} ladenTekst="Je recepten ophalen">
         {/* Compact: de recepten zijn waar het om gaat, niet de kop. */}
         <Kop kleur="var(--c-red-bright)" style={{ paddingBottom: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, minHeight: 24 }}>
-            <Label>{kop[tab].label ?? 'Mijn recepten'}</Label>
-            <Woordmerk hoogte={24} />
-          </div>
+          <Label>{kop[tab].label ?? 'Mijn recepten'}</Label>
           <div style={{ marginTop: 6 }}>
             <Titel grootte={22}>{kop[tab].titel}</Titel>
           </div>
