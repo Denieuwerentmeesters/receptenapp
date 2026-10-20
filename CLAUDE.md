@@ -601,7 +601,7 @@ Het woordmerk pruttelt en verdampt letter voor letter
 (`components/Laadanimatie.tsx`, naar "Kookmaatje Loader" uit Claude Design,
 variant gekookt). De letters zijn paden in `src/ds/woordmerk.ts` (Unbounded
 Black, gele korrel op de j); daar komen ook `Woordmerk`, de deelpagina en het
-app-icoon (de K met de korrel) vandaan. Nieuw woordmerk: zet de letters
+app-icoon en het favicon (alleen de K) vandaan. Nieuw woordmerk: zet de letters
 opnieuw om naar paden, niet als `<text>`, anders wijkt het af zolang het
 lettertype laadt. `Pruttel` is de SVG, per letter een groep met een eigen
 blur-filter op een requestAnimationFrame-klok; `LaadScherm` zet 'm op een
