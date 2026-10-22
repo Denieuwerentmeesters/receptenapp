@@ -73,6 +73,9 @@ export function Recept() {
   const gekozen = Boolean(inFase)
   const opLijst = inFase?.opLijst ?? false
   const bewaard = Boolean(id && hartje.bewaard.has(id))
+  // Te koken: de boodschappen zijn binnen. Dan alleen de ingrediënten en de
+  // knop Koken; de bereiding staat in de kookmodus, anders staat hij dubbel.
+  const teKoken = Boolean(inFase?.besteldOp)
 
   // Lokale overschrijving: je kunt per recept even schuiven met het aantal
   // personen zonder je vaste voorkeur te veranderen.
@@ -290,12 +293,14 @@ export function Recept() {
                   </div>
                 )}
 
+                {!teKoken && (
                 <div style={{
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                   textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)', marginTop: 18,
                 }}>Zo maak je het</div>
+                )}
 
-                {r.bereiding_nl.map((stap, i) => (
+                {!teKoken && r.bereiding_nl.map((stap, i) => (
                   <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0' }}>
                     <span style={{
                       flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',
@@ -314,8 +319,8 @@ export function Recept() {
 
               <Voet meeschuiven>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  {/* Staat het al op je lijst, dan wil je alleen nog koken. */}
-                  {!opLijst && (
+                  {/* Staat het al op je lijst of is het besteld, dan wil je alleen nog koken. */}
+                  {!opLijst && !teKoken && (
                     <Button
                       disabled={bezig || fases.query.isPending || fases.komendeQuery.isPending}
                       icon="plus"
@@ -341,11 +346,11 @@ export function Recept() {
                     <Button
                       tone="yellow"
                       onClick={() => navigeer(`/koken/${r.id}`)}
-                      style={{ flex: opLijst ? 1 : 'none', padding: '17px 20px', fontSize: 16 }}
+                      style={{ flex: opLijst || teKoken ? 1 : 'none', padding: '17px 20px', fontSize: 16 }}
                     >Koken</Button>
                   )}
                 </div>
-                {opLijst && (
+                {opLijst && !teKoken && (
                   <button
                     onClick={() => navigeer('/boodschappen')}
                     style={{
