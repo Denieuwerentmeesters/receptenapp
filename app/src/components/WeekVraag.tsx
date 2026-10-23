@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Dialoog } from './Dialoog'
 import { Icon } from '../ds'
 import { useActieveWeek, useDezeWeek, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
-import { nogTeKoken, useWeekWissel, weekVoorbij } from '../lib/weekwissel'
+import { nogTeKoken, oudeBestelling, useWeekWissel, weekVoorbij } from '../lib/weekwissel'
 import { weekStart } from '../lib/week'
 
 const LATER = 'pinch-weekvraag-later'
@@ -30,12 +30,14 @@ export function WeekVraag() {
   const [stap, setStap] = useState<'vraag' | 'kies' | 'dicht'>('vraag')
   const [nogKoken, setNogKoken] = useState<string[] | null>(null)
 
-  const open = nogTeKoken(dezeWeek.data ?? [])
+  const teKoken = nogTeKoken(dezeWeek.data ?? [])
+  // De vraag gaat alleen over wat een week of langer geleden besteld is.
+  const open = oudeBestelling(dezeWeek.data ?? [])
   const tonen = stap !== 'dicht' && !rondAf.isPending && weekVoorbij(dezeWeek.data ?? []) && !uitgesteld()
   const gekozen = nogKoken ?? open.map((r) => r.id)
 
   const ingehaald = useRef<string | null>(null)
-  const achter = week < weekStart() && dezeWeek.isSuccess && !dezeWeek.isFetching && open.length === 0
+  const achter = week < weekStart() && dezeWeek.isSuccess && !dezeWeek.isFetching && teKoken.length === 0
   useEffect(() => {
     if (!achter || ingehaald.current === week) return
     ingehaald.current = week
@@ -47,7 +49,7 @@ export function WeekVraag() {
   const voorkeuren = useVoorkeuren()
   const opslaan = useVoorkeurenOpslaan()
   const vastgezet = useRef<string | null>(null)
-  const los = voorkeuren.data?.actieve_week == null && voorkeuren.isSuccess && open.length > 0
+  const los = voorkeuren.data?.actieve_week == null && voorkeuren.isSuccess && teKoken.length > 0
   useEffect(() => {
     if (!los || vastgezet.current === week) return
     vastgezet.current = week
