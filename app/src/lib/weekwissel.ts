@@ -57,6 +57,17 @@ export function weekVoorbij<T extends { besteldOp: string | null; gekooktOp: str
   return nu - oudste >= VRAAG_NA_DAGEN * 24 * 60 * 60 * 1000
 }
 
+/** Besteld vóór dit moment is "een week oud": daar gaat de vraag over, niet over een verse bestelling. */
+export function vraagGrens(nu = Date.now()): string {
+  return new Date(nu - VRAAG_NA_DAGEN * 24 * 60 * 60 * 1000).toISOString()
+}
+
+/** Het deel van wat nog te koken is dat al een week of langer geleden besteld werd. */
+export function oudeBestelling<T extends { besteldOp: string | null; gekooktOp: string | null }>(recepten: T[], nu = Date.now()): T[] {
+  const grens = new Date(vraagGrens(nu)).getTime()
+  return nogTeKoken(recepten).filter((r) => new Date(r.besteldOp!).getTime() < grens)
+}
+
 async function schuifDoor(week: string, meenemen: readonly string[]): Promise<void> {
   const id = await effectieveUserId()
   const doel = doelWeek(week)
@@ -141,16 +152,24 @@ export function useWeekWissel() {
   /**
    * Het antwoord op "alles gekookt?". `meenemen` zijn de bestelde recepten die
    * je nog gaat koken; leeg betekent dat alles op is. De rest is gekookt.
+   *
+   * Alleen wat een week of langer geleden besteld is: wat je net haalde (en
+   * dus al in deze week staat) is nog niet gekookt en gaat gewoon mee.
    */
   const rondAf = useMutation({
     mutationFn: async (meenemen: readonly string[]) => {
       const nu = new Date().toISOString()
-      let klaar = (await gedeeld('weekmenu_gekozen')).update({ gekookt_op: nu, opgeruimd_op: nu })
-        .eq('week_start_datum', week).not('besteld_op', 'is', null).is('gekookt_op', null)
-      if (meenemen.length > 0) klaar = klaar.not('recept_id', 'in', `(${meenemen.join(',')})`)
-      const { error } = await klaar
+      const grens = vraagGrens()
+      const vers = await (await gedeeld('weekmenu_gekozen')).select('recept_id')
+        .eq('week_start_datum', week).is('gekookt_op', null).gte('besteld_op', grens)
+      if (vers.error) throw vers.error
+      const blijft = [...meenemen, ...(vers.data as { recept_id: string }[]).map((r) => r.recept_id)]
+
+      const { error } = await (await gedeeld('weekmenu_gekozen')).update({ gekookt_op: nu, opgeruimd_op: nu })
+        .eq('week_start_datum', week).lt('besteld_op', grens).is('gekookt_op', null)
+        .not('recept_id', 'in', `(${[...meenemen, '00000000-0000-0000-0000-000000000000'].join(',')})`)
       if (error) throw error
-      await schuifDoor(week, meenemen)
+      await schuifDoor(week, blijft)
     },
     onSettled: allesVerversen,
   })

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { doelWeek, watGaatMee, weekVoorbij, type Keuze } from './weekwissel'
+import { doelWeek, oudeBestelling, watGaatMee, weekVoorbij, type Keuze } from './weekwissel'
 
 const keuze = (recept_id: string, over: Partial<Keuze> = {}): Keuze => ({
   recept_id, aantal: 1, van_lijst_op: '2026-10-02T10:00:00Z', gekookt_op: null, besteld_op: '2026-10-02T10:00:00Z', ...over,
@@ -40,5 +40,14 @@ describe('weekVoorbij', () => {
   it('vraagt niets als alles gekookt is of er niets besteld is', () => {
     expect(weekVoorbij([{ besteldOp: '2026-10-01T10:00:00Z', gekooktOp: '2026-10-03T18:00:00Z' }], nu)).toBe(false)
     expect(weekVoorbij([{ besteldOp: null, gekooktOp: null }], nu)).toBe(false)
+  })
+})
+
+describe('oudeBestelling', () => {
+  const nu = new Date('2026-10-09T12:00:00Z').getTime()
+  it('laat een verse bestelling buiten de vraag', () => {
+    const oud = { besteldOp: '2026-10-01T10:00:00Z', gekooktOp: null }
+    const vers = { besteldOp: '2026-10-09T10:00:00Z', gekooktOp: null }
+    expect(oudeBestelling([oud, vers], nu)).toEqual([oud])
   })
 })
