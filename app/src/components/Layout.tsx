@@ -323,7 +323,9 @@ export function OnderBalk() {
     <nav style={{
       flex: 'none', display: 'flex', justifyContent: 'space-around',
       background: 'var(--color-surface-card)', borderTop: '1px solid var(--c-red-100)',
-      padding: '10px 0 calc(10px + env(safe-area-inset-bottom))',
+      // Alleen het streepje van het beginscherm vrijhouden (zo'n 13 pt),
+      // niet de hele 34 pt veilige zone: dat gaf een lege strook onder de tabs.
+      padding: '10px 0 max(10px, calc(env(safe-area-inset-bottom) - 18px))',
     }}>
       <style>{TELLER_ANIMATIE}</style>
       {TABS.map((tab) => (
