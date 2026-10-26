@@ -108,7 +108,9 @@ antwoordt wel; zie `scripts/ah_verpakkingen.py`.
 
 Capacitor verpakt `app/dist` als app (`app/ios`, Swift Package Manager, geen
 CocoaPods). Bouwen: `npm run ios` in `app/`; naar TestFlight:
-`npm run testflight`. Zie docs/setup.md §4. De app heet Kookmaatje (tot
+`npm run testflight`, dat eerst controleert of de Neon-variabelen er zijn
+(`ios/controleer-env.mjs`: zonder `app/.env.local` toont de app "De app kan niet
+starten"). Zie docs/setup.md §4. De app heet Kookmaatje (tot
 okt 2026 Pinch; die naam was bezet in de App Store); de bundle-id
 is `nl.reinoudtencate.receptenapp` (`nl.receptenapp.app` was bezet bij Apple).
 De localStorage-sleutels heten nog `pinch-…`: hernoemen zou ieders voortgang
