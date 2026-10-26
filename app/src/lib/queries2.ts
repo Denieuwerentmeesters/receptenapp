@@ -42,6 +42,37 @@ const EIGEN_BRON_TYPES: BronType[] = ['kookboek_foto', 'eigen_input', 'website',
 
 const PER_PAGINA = 30
 
+/**
+ * Elke keer dat de app opent een nieuwe volgorde in Ontdekken, zodat bovenaan
+ * steeds andere recepten staan. Binnen één sessie blijft de volgorde vast
+ * (terug van een recept, scrollpositie). Zit ook in de queryKey: de cache gaat
+ * naar localStorage en zou anders dezelfde volgorde terugbrengen.
+ */
+const SESSIE = Math.random().toString(36).slice(2)
+const volgordes = new Map<string, Promise<string[]>>()
+
+/**
+ * Willekeurige volgorde van de ids binnen deze vraag. Vegetarisch krijgt de
+ * helft van de loting, zoals `ontdek_volgorde` in de database: gemiddeld twee
+ * keer zo vaak bovenaan.
+ */
+function geschud(sleutel: string, haalOp: () => PromiseLike<{ data: unknown; error: unknown }>): Promise<string[]> {
+  let volgorde = volgordes.get(sleutel)
+  if (!volgorde) {
+    volgorde = (async () => {
+      const { data, error } = await haalOp()
+      if (error) throw error
+      return (data as { id: string; tags: string[] | null }[])
+        .map((r) => ({ id: r.id, w: Math.random() * (r.tags?.includes('vegetarisch') ? 0.5 : 1) }))
+        .sort((a, b) => a.w - b.w)
+        .map((r) => r.id)
+    })()
+    volgorde.catch(() => volgordes.delete(sleutel))
+    volgordes.set(sleutel, volgorde)
+  }
+  return volgorde
+}
+
 /** Het stukje van de PostgREST-builder dat de filters nodig hebben. */
 interface Filterbaar {
   or(filter: string): Filterbaar
@@ -147,7 +178,7 @@ interface OntdekPagina {
 export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []) {
   const voorkeur = filters.keukens.length > 0 ? [] : voorkeurKeukens
   return useInfiniteQuery({
-    queryKey: ['ontdek', filters, voorkeur],
+    queryKey: ['ontdek', SESSIE, filters, voorkeur],
     initialPageParam: { fase: voorkeur.length > 0 ? 'voorkeur' : 'rest', van: 0 } as OntdekPlek,
     getNextPageParam: (laatste: OntdekPagina) => laatste.volgende,
     queryFn: async ({ pageParam }): Promise<OntdekPagina> => {
@@ -155,17 +186,20 @@ export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []
       const haal = async (fase: OntdekPlek['fase'], van: number): Promise<Recept[]> => {
         // In de laatste fase telt de keukenvoorkeur niet meer: alles wat je al maakte, in één rij.
         const vraag = metGekookt(metKeukenFase(
-          metFilters(db.from('recepten').select('*'), filters, userId),
+          metFilters(db.from('recepten').select('id, tags'), filters, userId),
           fase === 'gekookt' ? 'rest' : fase, fase === 'gekookt' ? [] : voorkeur,
         ), fase, gekookt)
-        // Gemengde, vaste volgorde met gemiddeld meer vega bovenaan; zie migratie
-        // 20260929000000_ontdek_volgorde.sql. `id` als tiebreaker voor stabiele pagina's.
-        const { data, error } = await vraag
-          .order('ontdek_volgorde')
-          .order('id')
-          .range(van, van + PER_PAGINA - 1)
+        // Willekeurig per sessie (zie SESSIE). Eerst alleen de ids en tags ophalen
+        // en schudden, dan de pagina op id; de volgorde van de database is vast.
+        const ids = await geschud(JSON.stringify([SESSIE, filters, voorkeur, fase, gekookt, userId]), () =>
+          vraag.range(0, 999),
+        )
+        const pagina = ids.slice(van, van + PER_PAGINA)
+        if (pagina.length === 0) return []
+        const { data, error } = await db.from('recepten').select('*').in('id', pagina)
         if (error) throw error
-        return data as Recept[]
+        const opId = new Map((data as Recept[]).map((r) => [r.id, r]))
+        return pagina.flatMap((id) => opId.get(id) ?? [])
       }
 
       let { fase, van } = pageParam as OntdekPlek
