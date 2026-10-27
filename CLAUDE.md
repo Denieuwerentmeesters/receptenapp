@@ -371,7 +371,8 @@ scroll-snap-container.
   wat besteld is blijft staan. Ontdekken heeft geen plusje meer: direct op
   je lijst zetten vanaf daar was gek (Reinoud, 16 okt 2026). Op je lijst zet
   je het bij Nog bestellen. De tabel `favoriet` en het scherm Favorieten
-  (Mijn keuken) bestaan nog, maar het hartje vult ze niet meer.
+  (`/favorieten`) bestaan nog, maar staan niet meer in het menu van Profiel
+  en het hartje vult ze niet meer (Reinoud, 27 okt 2026).
 - **Nog bestellen** heeft twee blokken: wat je koos (ook met het hartje) en
   de suggesties. Elk recept staat er één keer, in het bovenste blok waar het
   in past. Eerder gekookt is sinds 27 okt 2026 een eigen chip (Reinoud). Eigen

@@ -24,8 +24,8 @@ export function Profiel() {
   const bespaard = bestellingen.data ?? []
 
   // Instellingen bovenaan: daar kom je het vaakst. Ontdekken zit al in de
-  // onderbalk. Het hartje zet een recept bij Nog bestellen; Favorieten hier
-  // zijn de oude favorieten, het hartje vult ze niet meer aan.
+  // onderbalk. Het hartje zet een recept bij Nog bestellen; de oude Favorieten
+  // staan niet meer in het menu (de route /favorieten bestaat nog).
   const rijen = [
     { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
     {
@@ -36,7 +36,6 @@ export function Profiel() {
       pad: '/bespaard',
     },
     { label: 'Voorraadkast', sub: `${voorraad.data?.filter((v) => v.in_huis).length ?? 0} producten in huis`, pad: '/voorraadkast' },
-    { label: 'Favorieten', sub: 'Komen vaker terug in je weekmenu', pad: '/favorieten' },
     { label: 'Geschiedenis', sub: `${weken.length} ${weken.length === 1 ? 'week' : 'weken'}`, pad: '/geschiedenis' },
     { label: 'Recept toevoegen', sub: 'Uit een kookboek of je eigen recept', pad: '/toevoegen' },
     // Alleen zichtbaar als je admin bent (plan §7.7).
