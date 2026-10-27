@@ -606,7 +606,7 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
   `DATABASE_URL`, `GEMINI_API_KEY` en `BLOB_READ_WRITE_TOKEN`. Eerst
   `--dry-run --telling` om de verdeling te zien, dat kost niets.
 - Nieuwe recepten: `api/afbeeldingen.ts` draait elke nacht (Vercel Cron) en
-  pakt alles zonder afbeelding op, hooguit 8 per run.
+  pakt alles zonder afbeelding op, hooguit 20 per run, vier tegelijk.
 - Tegenvallend beeld: `npm run afbeeldingen -- --id <uuid> --opnieuw`.
 - Eigen foto's (`eigen_foto`, `kookboek_foto`) worden nooit overschreven.
 - Wijzig je de prompt-lijsten, draai dan eerst `--dry-run --telling`: het doel is

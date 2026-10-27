@@ -62,7 +62,9 @@ export async function haalReceptenZonderAfbeelding(sql: Sql, limiet: number, ids
       -- Zelf samengestelde menu's krijgen geen foto: ze zijn voor één
       -- gebruiker, en een beeld per gerecht kost meer dan het oplevert.
       and bron_type <> 'samengesteld'
-    order by aangemaakt_op
+    -- Recepten die iemand zelf toevoegde gaan voor de pool: anders wacht je
+    -- recept achter een lading gescrapete recepten, hooguit acht per nacht.
+    order by (user_id is null), aangemaakt_op
     limit ${limiet}
   `) as ReceptRij[]
 }
