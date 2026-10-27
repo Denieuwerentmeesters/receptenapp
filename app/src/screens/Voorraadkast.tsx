@@ -62,7 +62,7 @@ export function Voorraadkast() {
       <Grens query={voorraad} ladenTekst="Voorraadkast ophalen">
         <Kop kleur="var(--c-red)" style={{ paddingBottom: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <TerugKnop donker />
+            <TerugKnop />
             <Label kleur="var(--c-pink-soft)">In huis</Label>
           </div>
           <div style={{ marginTop: 14 }}><Titel grootte={26}>Voorraadkast</Titel></div>

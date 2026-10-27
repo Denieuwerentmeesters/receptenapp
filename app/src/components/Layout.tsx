@@ -193,8 +193,8 @@ export function TerugKnop({ anders = '/profiel', donker = false, onClick }: {
       aria-label="Terug"
       style={{
         flex: 'none', border: 'none', width: 36, height: 36, borderRadius: 'var(--radius-full)',
-        background: donker ? 'rgba(43,20,32,0.1)' : 'rgba(248,241,236,0.22)',
-        color: donker ? 'var(--c-ink)' : 'var(--c-cream)', cursor: 'pointer',
+        background: donker ? 'rgba(43,20,32,0.1)' : 'rgba(243,205,214,0.25)',
+        color: donker ? 'var(--c-ink)' : 'var(--c-pink-soft)', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
     ><Icon name="chevronLeft" size={18} /></button>

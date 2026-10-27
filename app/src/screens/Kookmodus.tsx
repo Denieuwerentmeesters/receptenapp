@@ -162,7 +162,7 @@ export function Kookmodus() {
                   onClick={() => navigeer(-1)}
                   aria-label="Kookmodus sluiten"
                   style={{
-                    border: 'none', background: 'rgba(248,241,236,0.18)', color: 'var(--c-cream)',
+                    border: 'none', background: 'rgba(243,205,214,0.25)', color: 'var(--c-pink-soft)',
                     width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
