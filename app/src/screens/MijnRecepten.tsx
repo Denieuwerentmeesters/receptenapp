@@ -589,7 +589,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
             <span aria-label={`Jouw cijfer: ${cijfer}`} style={{
               position: 'absolute', right: 8, bottom: 8, minWidth: 28, height: 28, boxSizing: 'border-box', padding: '0 6px',
               borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, opacity: 1,
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, opacity: 1,
               background: isFavorietCijfer(cijfer) ? 'var(--c-yellow)' : 'var(--c-paper)', color: 'var(--c-ink)',
             }}>{cijfer}</span>
           )}
@@ -599,7 +599,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
         {/* Het gele bonuslabel staat linksonder over de kaart: laat er ruimte voor als er een metaregel is. */}
         <div style={{ padding: `10px 12px ${metaRegel && bonus.length > 0 ? 40 : 12}px`, width: '100%', boxSizing: 'border-box' }}>
           <h3 style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, lineHeight: 1,
+            fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, lineHeight: 1,
             margin: 0, textTransform: 'uppercase', minHeight: '2em',
             // Twee regels, dan afkappen: alle kaarten even hoog, vier in beeld.
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',

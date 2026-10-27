@@ -57,7 +57,7 @@ export function Profiel() {
           flex: 'none', width: 64, height: 64, borderRadius: 'var(--radius-full)',
           background: 'var(--c-yellow)', color: 'var(--c-ink)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24,
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 24,
         }}>
           <Icon name="chefHat" size={28} />
         </span>

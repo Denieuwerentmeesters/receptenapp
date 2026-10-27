@@ -193,8 +193,8 @@ export function TerugKnop({ anders = '/profiel', donker = false, onClick }: {
       aria-label="Terug"
       style={{
         flex: 'none', border: 'none', width: 36, height: 36, borderRadius: 'var(--radius-full)',
-        background: donker ? 'rgba(43,20,32,0.1)' : 'rgba(248,241,236,0.22)',
-        color: donker ? 'var(--c-ink)' : 'var(--c-cream)', cursor: 'pointer',
+        background: donker ? 'rgba(43,20,32,0.1)' : 'rgba(243,205,214,0.25)',
+        color: donker ? 'var(--c-ink)' : 'var(--c-pink-soft)', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
     ><Icon name="chevronLeft" size={18} /></button>
@@ -214,7 +214,7 @@ export function Label({ children, kleur = 'var(--c-yellow)' }: { children: React
 export function Titel({ children, grootte = 28 }: { children: ReactNode; grootte?: number }) {
   return (
     <h1 style={{
-      fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: grootte,
+      fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: grootte,
       lineHeight: 0.94, margin: 0, textTransform: 'uppercase',
     }}>{children}</h1>
   )
@@ -294,7 +294,7 @@ function Teller({ aantal, label }: { aantal: number; label: string }) {
       aria-label={`${aantal} ${label}`}
       style={{
         position: 'absolute', top: -6, right: -12, minWidth: 18, height: 18, padding: '0 5px',
-        borderRadius: 'var(--radius-full)', background: 'var(--c-red-bright)', color: 'var(--c-paper)',
+        borderRadius: 'var(--radius-full)', background: 'var(--c-yellow)', color: 'var(--c-ink)',
         fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700, lineHeight: '18px',
         textAlign: 'center', boxSizing: 'border-box', border: '1.5px solid var(--color-surface-card)',
         animation: plop > 0 ? 'teller-plop 520ms var(--ease)' : undefined,
@@ -358,7 +358,7 @@ export function Stat({ getal, label }: { getal: string; label: string }) {
       display: 'flex', flexDirection: 'column', gap: 4,
     }}>
       <span style={{
-        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, lineHeight: 1,
+        fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 24, lineHeight: 1,
         color: 'var(--c-red)',
       }}>{getal}</span>
       <span style={{

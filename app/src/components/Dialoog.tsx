@@ -48,7 +48,7 @@ export function Dialoog({ open, kop, tekst, acties, onSluit, sluitTekst, childre
         }}
       >
         <h2 style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22, lineHeight: 1,
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 22, lineHeight: 1,
           margin: 0, textTransform: 'uppercase', color: 'var(--color-ink)',
         }}>{kop}</h2>
         {tekst && (

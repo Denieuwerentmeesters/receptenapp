@@ -74,7 +74,7 @@ export function HuishoudenBlok() {
       {h.uitnodiging ? (
         <div style={{ background: 'var(--c-paper)', borderRadius: 14, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>Geef deze code aan je huisgenoot</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, letterSpacing: '.12em', userSelect: 'all' }}>{h.uitnodiging.code}</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, letterSpacing: '.12em', userSelect: 'all' }}>{h.uitnodiging.code}</span>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
             Geldig t/m {new Date(h.uitnodiging.verloopt_op).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}. Je huisgenoot vult hem in bij Instellingen → Huishouden.
           </span>

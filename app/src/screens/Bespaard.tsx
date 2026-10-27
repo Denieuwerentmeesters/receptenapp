@@ -87,7 +87,7 @@ export function Bespaard() {
                       </span>
                     </span>
                     <span style={{
-                      fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18,
+                      fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18,
                       color: bedrag >= 0 ? 'var(--c-green)' : 'var(--c-ink-500)',
                     }}>{bedrag >= 0 ? '+' : '−'}{euro(Math.abs(bedrag))}</span>
                   </div>

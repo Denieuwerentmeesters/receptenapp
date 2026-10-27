@@ -162,7 +162,7 @@ export function Kookmodus() {
                   onClick={() => navigeer(-1)}
                   aria-label="Kookmodus sluiten"
                   style={{
-                    border: 'none', background: 'rgba(248,241,236,0.18)', color: 'var(--c-cream)',
+                    border: 'none', background: 'rgba(243,205,214,0.25)', color: 'var(--c-pink-soft)',
                     width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
@@ -197,7 +197,7 @@ export function Kookmodus() {
                       fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, textAlign: 'left',
                     }}
                   >
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18 }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18 }}>
                       {resterend === 0 ? 'Klaar' : formatteer(resterend)}
                     </span>
                     <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -237,7 +237,7 @@ export function Kookmodus() {
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--c-yellow)',
                     }}>{deTimer ? deTimer.label : 'Timer'}</span>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 34, lineHeight: 1 }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 34, lineHeight: 1 }}>
                       {deTimer && resterend !== null ? formatteer(resterend) : '––:––'}
                     </span>
                   </span>

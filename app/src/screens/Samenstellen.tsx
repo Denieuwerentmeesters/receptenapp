@@ -289,7 +289,7 @@ export function Samenstellen() {
               style={{ background: 'var(--c-paper)', color: 'var(--c-ink)', border: '1.5px solid var(--c-ink)' }}
             />
             <output aria-live="polite" style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, minWidth: 44,
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, minWidth: 44,
               textAlign: 'center', fontVariantNumeric: 'tabular-nums',
             }}>{personen}</output>
             <IconButton
@@ -636,7 +636,7 @@ function Blok({ kop, children }: { kop: string; children: ReactNode }) {
   return (
     <section style={{ background: 'var(--c-paper)', borderRadius: 16, padding: 14 }}>
       <h2 style={{
-        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15, margin: '0 0 10px',
+        fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, margin: '0 0 10px',
         textTransform: 'uppercase', color: 'var(--color-ink)',
       }}>{kop}</h2>
       {children}

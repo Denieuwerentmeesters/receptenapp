@@ -16,7 +16,7 @@ export function Geschiedenis() {
       <Grens query={geschiedenis} ladenTekst="Geschiedenis ophalen">
         <Kop kleur="var(--c-red)" style={{ paddingBottom: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <TerugKnop donker />
+            <TerugKnop />
             <Label kleur="var(--c-pink-soft)">Wat je kookte</Label>
           </div>
           <div style={{ marginTop: 14 }}><Titel grootte={26}>Geschiedenis</Titel></div>
