@@ -69,7 +69,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
             textTransform: 'uppercase', color: 'var(--c-red)',
           }}>Gekookt</span>
           <h2 style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22, lineHeight: 1,
+            fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 22, lineHeight: 1,
             margin: '6px 0 0', textTransform: 'uppercase', color: 'var(--color-ink)',
           }}>Viel het in de smaak?</h2>
         </div>
@@ -81,7 +81,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
           }} />
           <div style={{ minWidth: 0 }}>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, lineHeight: 1.1,
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, lineHeight: 1.1,
               textTransform: 'uppercase', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>{titel}</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)', marginTop: 2 }}>
@@ -116,7 +116,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
           </div>
           <div style={{ minWidth: 0, flex: 1 }} aria-live="polite">
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 44, lineHeight: 1,
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 44, lineHeight: 1,
               color: 'var(--c-red)', minHeight: 44,
             }}>{cijfer ?? ''}</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(43,20,32,0.6)', marginTop: 4 }}>

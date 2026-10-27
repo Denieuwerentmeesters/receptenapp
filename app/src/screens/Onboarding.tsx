@@ -432,7 +432,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       </div>
 
       <div style={{ flex: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, lineHeight: 1.08, margin: 0 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, lineHeight: 1.08, margin: 0 }}>
           {kop[naam][0]}
         </h1>
         <p style={{ margin: 0, fontSize: 16, lineHeight: 1.5 }}>{kop[naam][1]}</p>
@@ -657,7 +657,7 @@ function TellerRij({ label, eenheid, waarde, min, max, onWijzig }: {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {knop('−', Math.max(min, waarde - 1), waarde <= min, `Minder ${eenheid}`)}
         <span aria-live="polite" style={{
-          width: 32, textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22,
+          width: 32, textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 22,
         }}>{waarde}</span>
         {knop('+', Math.min(max, waarde + 1), waarde >= max, `Meer ${eenheid}`)}
       </div>

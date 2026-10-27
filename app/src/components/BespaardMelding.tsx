@@ -83,7 +83,7 @@ export function BespaardMelding() {
         }}><Icon name="piggyBank" size={22} /></span>
         <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <span style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, lineHeight: 1,
+            fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 20, lineHeight: 1,
             color: 'var(--c-yellow)', textTransform: 'uppercase',
           }}>{euro(totaal)} bespaard</span>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.3 }}>

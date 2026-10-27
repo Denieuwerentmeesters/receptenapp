@@ -197,7 +197,7 @@ export function Kookmodus() {
                       fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, textAlign: 'left',
                     }}
                   >
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18 }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18 }}>
                       {resterend === 0 ? 'Klaar' : formatteer(resterend)}
                     </span>
                     <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -237,7 +237,7 @@ export function Kookmodus() {
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--c-yellow)',
                     }}>{deTimer ? deTimer.label : 'Timer'}</span>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 34, lineHeight: 1 }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 34, lineHeight: 1 }}>
                       {deTimer && resterend !== null ? formatteer(resterend) : '––:––'}
                     </span>
                   </span>

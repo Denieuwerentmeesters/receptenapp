@@ -47,7 +47,7 @@ export function Leeg({ icoon, kop, tekst, knop, onKnop, onIcoon, icoonLabel }: {
         </div>
       )}
       <h2 style={{
-        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, lineHeight: 1,
+        fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 24, lineHeight: 1,
         margin: '6px 0 0', textTransform: 'uppercase', color: 'var(--color-ink)',
       }}>{kop}</h2>
       <p style={{
@@ -87,7 +87,7 @@ export function Fout({ kop, tekst, stappen, onOpnieuw, onTerug }: {
         <div style={{
           width: 56, height: 56, borderRadius: 'var(--radius-full)', background: 'var(--c-yellow)',
           color: 'var(--c-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28,
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 28,
         }}>!</div>
         <Titel grootte={30}>{kop}</Titel>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>

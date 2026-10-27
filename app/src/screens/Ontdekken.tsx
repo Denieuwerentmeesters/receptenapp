@@ -475,7 +475,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
             style={{
               position: 'absolute', right: 12, bottom: 12, minWidth: 30, height: 30, boxSizing: 'border-box', padding: '0 7px',
               borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, pointerEvents: 'none',
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, pointerEvents: 'none',
               background: favoriet ? 'var(--c-yellow)' : 'var(--c-paper)', color: 'var(--c-ink)',
               boxShadow: '0 2px 8px rgba(43,20,32,0.18)',
             }}

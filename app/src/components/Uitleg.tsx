@@ -138,7 +138,7 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
           STAP {kaart + 1} VAN {KAARTEN.length}
         </span>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, lineHeight: 1.1,
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, lineHeight: 1.1,
           margin: 0, textTransform: 'uppercase',
         }}>{huidig.kop}</h1>
         <p style={{ margin: 0, fontSize: 17, lineHeight: 1.5 }}>{huidig.tekst}</p>
