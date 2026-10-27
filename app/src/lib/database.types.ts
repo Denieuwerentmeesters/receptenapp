@@ -50,6 +50,9 @@ export interface Recept {
   aangemaakt_op: string
   /** Ruwe schatting in euro's (lib/prijsschatting.ts); null als er niets te schatten viel. */
   prijs_pp_schatting: number | null
+  /** Gemiddeld cijfer van alle koks (trigger op beoordeling, lib/beoordeling.ts); null zonder cijfers. */
+  cijfer_gemiddeld?: number | string | null
+  cijfer_aantal?: number
   /** Allergenen die er zeker in zitten (trigger, lib/allergenen.ts). */
   allergenen?: string[]
   /** Idem, zonder vervanger: die gaan bij een allergie uit de pool. */
@@ -199,6 +202,17 @@ export interface AllergeenRegel {
   vervanger: string | null
 }
 
+/** Eén keer koken, met cijfer (1-10, mag leeg) en notitie voor de volgende keer. */
+export interface BeoordelingRij {
+  id: string
+  user_id: string
+  recept_id: string
+  cijfer: number | null
+  notitie: string | null
+  gekookt_op: string
+  aangemaakt_op: string
+}
+
 type Tabel<Rij, Invoer = Partial<Rij>> = { Row: Rij; Insert: Invoer; Update: Partial<Rij> }
 
 export interface Database {
@@ -213,6 +227,7 @@ export interface Database {
       ah_product_cache: Tabel<AhProduct>
       jumbo_product_cache: Tabel<JumboProduct>
       favoriet: Tabel<Favoriet>
+      beoordeling: Tabel<BeoordelingRij>
       voorraad_item: Tabel<VoorraadRij>
       allergeen_regel: Tabel<AllergeenRegel>
       samenstelling: Tabel<SamenstellingRij>

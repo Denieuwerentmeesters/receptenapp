@@ -48,4 +48,13 @@ describe('verdeelFases', () => {
     const s = r({ allergenen_vast: ['pinda'] })
     expect(verdeelFases('2026-10-05', [s], [], ['pinda']).suggesties).toEqual([])
   })
+
+  test('een suggestie met een 5 of lager valt af; wat je zelf koos blijft', () => {
+    const laag = r({ id: 'laag' })
+    const gekozen = r({ id: 'gekozen', gekozen: true })
+    const ok = r({ id: 'ok' })
+    const f = verdeelFases('2026-10-05', [laag, gekozen, ok], [], [], new Set(['laag', 'gekozen']))
+    expect(f.suggesties.map((x) => x.id)).toEqual(['ok'])
+    expect(f.nogBestellen.map((x) => x.id)).toEqual(['gekozen'])
+  })
 })

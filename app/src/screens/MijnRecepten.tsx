@@ -4,6 +4,7 @@ import { Button, Chip, Icon } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
+import { CijferSheet } from '../components/CijferSheet'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
 import { useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
@@ -18,14 +19,24 @@ import { TokoLabel } from '../components/TokoLabel'
 import { BonusLabel } from '../components/Bonus'
 import { receptBonusProducten, useBonus, type BonusProduct } from '../lib/bonus'
 import { standaardPersonen } from '../lib/menu'
+import {
+  cijferTekst, isFavorietCijfer, isLaagCijfer, useBeoordelingBewaren, useBeoordelingen, useLaagCijferWissen,
+  type LaatsteBeoordeling,
+} from '../lib/beoordeling'
 import type { Recept } from '../lib/database.types'
 
-type Tab = 'koken' | 'bestellen'
+type Tab = 'koken' | 'bestellen' | 'gekookt'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'koken', label: 'Te koken' },
   { id: 'bestellen', label: 'Nog bestellen' },
+  { id: 'gekookt', label: 'Eerder gekookt' },
 ]
+
+type Sortering = 'nieuwste' | 'cijfer' | 'notitie'
+
+/** Zoveel eerder gekookte recepten passen ongeveer in één scherm; daarboven komen de sorteerchips. */
+const SORTEER_VANAF = 8
 
 /**
  * Eerder gekookt dat je wegtikte. Alleen op dit toestel: het recept blijft in
@@ -83,11 +94,14 @@ function alsKaart(recept: Recept, status: FaseRecept | undefined): WeekRecept {
  * ertussen, of tikt op een chip en de baan schuift zelf (scroll-snap).
  *
  * - Te koken: wat op een bevestigde bestelling stond. De knop kookt; het
- *   kruisje vraagt "Gekookt?" en zet het dan bij Eerder gekookt.
- * - Nog bestellen: wat je koos (ook met het hartje), de suggesties van het
- *   weekmenu en onderaan wat je eerder kookte. Elk recept staat er één keer,
- *   in het bovenste blok waar het in hoort. Vul mijn week vult aan tot je
- *   kookavonden (lib/weekvullen.ts), alleen uit de suggesties.
+ *   kruisje opent "Viel het in de smaak?" (cijfer en notitie, allebei niet
+ *   verplicht) en zet het dan bij Eerder gekookt.
+ * - Nog bestellen: wat je koos (ook met het hartje) en de suggesties van het
+ *   weekmenu. Elk recept staat er één keer, in het bovenste blok waar het in
+ *   hoort. Vul mijn week vult aan tot je kookavonden (lib/weekvullen.ts),
+ *   alleen uit de suggesties.
+ * - Eerder gekookt: wat je kookte, met je cijfer en notitie. Een recept met
+ *   een 5 of lager staat er grijs, met "Zet terug".
  *
  * Je eigen recepten staan niet hier maar in Ontdekken (Mijn recepten).
  *
@@ -118,7 +132,15 @@ export function MijnRecepten() {
 
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
   const [wegVraag, setWegVraag] = useState<FaseRecept | null>(null)
-  const [gekooktVraag, setGekooktVraag] = useState<FaseRecept | null>(null)
+  // Het blad "Viel het in de smaak?": bij het kruisje (je kookte net) of achteraf bij Eerder gekookt.
+  const [cijferVoor, setCijferVoor] = useState<
+    | { soort: 'koken'; recept: FaseRecept }
+    | { soort: 'achteraf'; recept: Recept; gekooktOp: string | null }
+    | null
+  >(null)
+  const beoordelingen = useBeoordelingen()
+  const bewaar = useBeoordelingBewaren()
+  const zetTerug = useLaagCijferWissen()
 
   const plek = (doel: Tab) => TABS.findIndex((t) => t.id === doel)
 
@@ -162,19 +184,35 @@ export function MijnRecepten() {
     bewaarWegGekookt(nieuw)
     setWegGekookt(nieuw)
   }
+  const [sortering, setSortering] = useState<Sortering>('nieuwste')
   const eerderGekookt = useMemo(() => {
-    // Wat al bij Te koken, Nog bestellen of de suggesties staat, staat daar: niet nog eens.
-    const gezien = new Set([...teKoken, ...nogBestellen, ...suggesties].map((r) => r.id))
-    const eenKeer = (r: Recept) => !gezien.has(r.id) && Boolean(gezien.add(r.id))
-    // Eerder gekookt: het laatst gekookte eerst.
+    // Wat nu bij Te koken staat is net opnieuw besteld: dat staat daar.
+    const gezien = new Set(teKoken.map((r) => r.id))
+    // Het laatst gekookte eerst; elk recept één keer, met de dag van de laatste keer.
     const rijen = (geschiedenis.data ?? []).flatMap((w) => w.gekozen).filter((g) => g.gekooktOp)
     rijen.sort((a, b) => b.gekooktOp!.localeCompare(a.gekooktOp!))
-    return rijen.map((g) => g.recept).filter((r) => !wegGekookt.has(r.id)).filter(eenKeer)
-  }, [teKoken, nogBestellen, suggesties, geschiedenis.data, wegGekookt])
+    const lijst = rijen
+      .filter((g) => !wegGekookt.has(g.recept.id))
+      .filter((g) => !gezien.has(g.recept.id) && Boolean(gezien.add(g.recept.id)))
+      .map((g) => ({ recept: g.recept, gekooktOp: g.gekooktOp! }))
+    const cijferVan = (id: string) => beoordelingen.perRecept.get(id)?.cijfer ?? 0
+    if (sortering === 'cijfer') return lijst.sort((a, b) => cijferVan(b.recept.id) - cijferVan(a.recept.id))
+    if (sortering === 'notitie') {
+      return lijst.sort((a, b) =>
+        Number(Boolean(beoordelingen.perRecept.get(b.recept.id)?.notitie))
+        - Number(Boolean(beoordelingen.perRecept.get(a.recept.id)?.notitie)))
+    }
+    return lijst
+  }, [teKoken, geschiedenis.data, wegGekookt, sortering, beoordelingen.perRecept])
+
+  const gemiddeldCijfer = useMemo(() => {
+    const cijfers = eerderGekookt.map((g) => beoordelingen.perRecept.get(g.recept.id)?.cijfer).filter((c): c is number => c != null)
+    return cijfers.length > 0 ? cijfers.reduce((a, b) => a + b, 0) / cijfers.length : null
+  }, [eerderGekookt, beoordelingen.perRecept])
 
   const bonus = useBonus()
   const bonusPerRecept = useMemo(
-    () => new Map([...nogBestellen, ...suggesties, ...eerderGekookt]
+    () => new Map([...nogBestellen, ...suggesties, ...eerderGekookt.map((g) => g.recept)]
       .map((r) => [r.id, receptBonusProducten(r.ingredienten, bonus.data)])),
     [nogBestellen, suggesties, eerderGekookt, bonus.data],
   )
@@ -214,7 +252,7 @@ export function MijnRecepten() {
       knop={{ tekst: 'Koken', icoon: 'chefHat' }}
       onOpen={() => open(recept.id)}
       onKnop={() => navigeer(`/koken/${recept.id}`)}
-      weg={{ label: 'Gekookt?', onClick: () => setGekooktVraag(recept) }}
+      weg={{ label: 'Gekookt?', onClick: () => setCijferVoor({ soort: 'koken', recept }) }}
     />
   )
 
@@ -236,11 +274,15 @@ export function MijnRecepten() {
   )
 
   /**
-   * Een eerder gekookt recept: staat nog nergens, dus het plusje zet het op je
-   * lijst. Het kruisje haalt het uit dit blok.
+   * Een eerder gekookt recept: met je cijfer en notitie. Staat het ondertussen
+   * al in Nog bestellen, dan zegt de knop dat; anders zet een tik het daar.
+   * Het kruisje haalt het uit dit onderdeel. Met een 5 of lager staat het grijs.
    */
-  const kaartGekookt = (recept: Recept, i: number) => {
-    const kaart = alsKaart(recept, undefined)
+  const kaartGekookt = ({ recept, gekooktOp }: { recept: Recept; gekooktOp: string }, i: number) => {
+    const status = [...nogBestellen, ...suggesties].find((r) => r.id === recept.id)
+    const kaart = alsKaart(recept, status)
+    const mijn: LaatsteBeoordeling | undefined = beoordelingen.perRecept.get(recept.id)
+    const laag = isLaagCijfer(mijn?.cijfer)
     return (
       <ReceptKaart
         key={recept.id}
@@ -248,10 +290,16 @@ export function MijnRecepten() {
         vlak={VLAKKEN[i % VLAKKEN.length]}
         bonus={bonusPerRecept.get(recept.id) ?? []}
         personen={standaardPersonen(recept, personen)}
-        knop={{ tekst: knopTekst(kaart), icoon: 'plus' }}
+        knop={laag ? { tekst: 'Zet terug', icoon: 'arrowRight' } : { tekst: knopTekst(kaart), icoon: kaart.opLijst ? 'check' : 'plus' }}
         onOpen={() => open(recept.id)}
-        onKnop={() => opLijstVoorNieuw.voegToe({ ...kaart, titel: recept.titel_nl ?? recept.titel })}
+        onKnop={() => laag
+          ? zetTerug.mutate(recept.id)
+          : opLijstVoorNieuw.voegToe({ ...kaart, titel: recept.titel_nl ?? recept.titel })}
         weg={{ label: 'Weghalen', onClick: () => haalGekooktWeg(recept.id) }}
+        cijfer={mijn?.cijfer ?? null}
+        metaRegel={[`Gekookt ${datumLabel(gekooktOp)}`, mijn?.notitie].filter(Boolean).join(' · ')}
+        gedempt={laag}
+        cijferKnop={mijn?.cijfer == null ? { label: 'Cijfer', onClick: () => setCijferVoor({ soort: 'achteraf', recept, gekooktOp }) } : undefined}
       />
     )
   }
@@ -271,6 +319,11 @@ export function MijnRecepten() {
       label: null,
       titel: 'Wat eet jij hierna?',
       sub: `${nogBestellen.length} nog te bestellen · ${voor}`,
+    },
+    gekookt: {
+      label: null,
+      titel: 'Wat kook jij nog eens?',
+      sub: `${eerderGekookt.length} eerder gekookt${gemiddeldCijfer != null ? ` · gemiddeld ${cijferTekst(gemiddeldCijfer)}` : ''}`,
     },
   }
 
@@ -335,7 +388,7 @@ export function MijnRecepten() {
                 knop="Probeer opnieuw"
                 onKnop={() => void fases.komendeQuery.refetch()}
               />
-            ) : nogBestellen.length + suggesties.length + eerderGekookt.length === 0 ? (
+            ) : nogBestellen.length + suggesties.length === 0 ? (
               <Leeg
                 icoon="utensils"
                 kop={fases.komendeQuery.isLoading ? 'Even zoeken…' : 'Nog niets om te bestellen'}
@@ -368,15 +421,32 @@ export function MijnRecepten() {
                 {suggesties.length > 0 && (
                   <>
                     <span style={{ ...KOPJE, paddingBottom: 10 }}>Suggesties · {suggesties.length}</span>
-                    <div style={{ ...ROOSTER, paddingBottom: 18 }}>{suggesties.map((r, i) => kaartBestellen(r, i + nogBestellen.length))}</div>
+                    <div style={ROOSTER}>{suggesties.map((r, i) => kaartBestellen(r, i + nogBestellen.length))}</div>
                   </>
                 )}
-                {eerderGekookt.length > 0 && (
-                  <>
-                    <span style={{ ...KOPJE, paddingBottom: 10 }}>Eerder gekookt · {eerderGekookt.length}</span>
-                    <div style={ROOSTER}>{eerderGekookt.map(kaartGekookt)}</div>
-                  </>
+              </Inhoud>
+            )}
+          </Paneel>
+
+          <Paneel verborgen={tab !== 'gekookt'}>
+            {eerderGekookt.length === 0 ? (
+              <Leeg
+                icoon="chefHat"
+                kop="Nog niets gekookt"
+                tekst="Zodra je een recept als gekookt aftikt, staat het hier, met je cijfer en notitie voor de volgende keer."
+                knop="Naar Te koken"
+                onKnop={() => naar('koken')}
+              />
+            ) : (
+              <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
+                {eerderGekookt.length > SORTEER_VANAF && (
+                  <div style={{ display: 'flex', gap: 8, paddingBottom: 12, overflowX: 'auto' }}>
+                    {([['nieuwste', 'Nieuwste eerst'], ['cijfer', 'Hoogste cijfer'], ['notitie', 'Met notitie']] as const).map(([id, label]) => (
+                      <Chip key={id} selected={sortering === id} onClick={() => setSortering(id)}>{label}</Chip>
+                    ))}
+                  </div>
                 )}
+                <div style={ROOSTER}>{eerderGekookt.map(kaartGekookt)}</div>
               </Inhoud>
             )}
           </Paneel>
@@ -387,23 +457,30 @@ export function MijnRecepten() {
       {lijstDeze.dialoog}
       {lijstKomende.dialoog}
       <WeekVraag />
-      <Dialoog
-        open={Boolean(gekooktVraag)}
-        kop="Gekookt?"
-        tekst={gekooktVraag
-          ? `Dan haal je ${gekooktVraag.titel_nl ?? gekooktVraag.titel} weg bij Te koken. Je vindt het terug bij Nog bestellen, onder Eerder gekookt.`
-          : undefined}
-        onSluit={() => setGekooktVraag(null)}
-        sluitTekst="Annuleer"
-        acties={[{
-          label: 'Gekookt',
-          hoofd: true,
-          onClick: () => {
-            if (gekooktVraag) gekookt.mutate({ receptId: gekooktVraag.id, opruimen: true, inWeek: gekooktVraag.week })
-            setGekooktVraag(null)
-          },
-        }]}
-      />
+      {cijferVoor && (
+        <CijferSheet
+          recept={cijferVoor.recept}
+          personen={standaardPersonen(cijferVoor.recept, personen)}
+          gekooktOp={cijferVoor.soort === 'achteraf' && cijferVoor.gekooktOp ? new Date(cijferVoor.gekooktOp) : undefined}
+          onSluit={() => setCijferVoor(null)}
+          onOverslaan={() => {
+            if (cijferVoor.soort === 'koken') {
+              gekookt.mutate({ receptId: cijferVoor.recept.id, opruimen: true, inWeek: cijferVoor.recept.week })
+            }
+            setCijferVoor(null)
+          }}
+          onKlaar={({ cijfer, notitie }) => {
+            if (cijferVoor.soort === 'koken') {
+              gekookt.mutate({ receptId: cijferVoor.recept.id, opruimen: true, inWeek: cijferVoor.recept.week })
+            }
+            bewaar.mutate({
+              receptId: cijferVoor.recept.id, cijfer, notitie,
+              gekooktOp: cijferVoor.soort === 'achteraf' ? cijferVoor.gekooktOp?.slice(0, 10) : undefined,
+            })
+            setCijferVoor(null)
+          }}
+        />
+      )}
       <Dialoog
         open={Boolean(wegVraag)}
         kop="Weghalen?"
@@ -447,7 +524,7 @@ function knopTekst(recept: WeekRecept): string {
   return 'Zet op je lijst'
 }
 
-function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop, weg }: {
+function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop, weg, cijfer = null, metaRegel, gedempt = false, cijferKnop }: {
   recept: WeekRecept
   vlak: string
   /** Producten van het recept in de bonus bij je winkel: het gele label op de foto. Alleen bij Nog bestellen. */
@@ -459,6 +536,14 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
   onKnop: () => void
   /** Het kruisje op de foto: weghalen, of bij Te koken de vraag "Gekookt?". */
   weg?: { label: string; onClick: () => void }
+  /** Jouw cijfer: de bol op de foto (geel vanaf 8, wit daaronder). Alleen bij Eerder gekookt. */
+  cijfer?: number | null
+  /** Een regel onder de meta, zoals "Gekookt 20 okt · minder chili". */
+  metaRegel?: string
+  /** Grijs: een recept dat je niet meer terug wilt zien. */
+  gedempt?: boolean
+  /** Een tweede knop naast de eerste, bijvoorbeeld om achteraf een cijfer te geven. */
+  cijferKnop?: { label: string; onClick: () => void }
 }) {
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   return (
@@ -467,6 +552,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
       // Een gele ring betekent: staat op je boodschappenlijst.
       background: recept.opLijst ? 'var(--c-yellow)' : 'transparent',
       transition: 'background var(--motion-base) var(--ease)',
+      ...(gedempt ? { opacity: 0.55, filter: 'grayscale(1)' } : {}),
     }}>
       <div style={{ flex: 1, position: 'relative', display: 'flex' }}>
       {toko && <TokoLabel />}
@@ -486,7 +572,16 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
           background: recept.afbeelding_url ? `url(${recept.afbeelding_url}) center/cover` : 'rgba(0,0,0,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'var(--font-body)', fontSize: 12, opacity: recept.afbeelding_url ? 1 : 0.5,
+          position: 'relative',
         }}>
+          {cijfer != null && (
+            <span aria-label={`Jouw cijfer: ${cijfer}`} style={{
+              position: 'absolute', right: 8, bottom: 8, minWidth: 28, height: 28, boxSizing: 'border-box', padding: '0 6px',
+              borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, opacity: 1,
+              background: isFavorietCijfer(cijfer) ? 'var(--c-yellow)' : 'var(--c-paper)', color: 'var(--c-ink)',
+            }}>{cijfer}</span>
+          )}
           {/* Een samengesteld recept krijgt nooit een foto: dan ook geen belofte. */}
           {recept.afbeelding_url || recept.bron_type === 'samengesteld' ? '' : 'foto'}
         </div>
@@ -505,6 +600,11 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
               <Icon name="users" size={13} />{personen}
             </span>
           </div>
+          {metaRegel && (
+            <div style={{
+              fontSize: 12, marginTop: 4, opacity: 0.85, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            }}>{metaRegel}</div>
+          )}
         </div>
       </button>
 
@@ -535,6 +635,16 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
         <Icon name={knop.icoon} size={14} />
         {knop.tekst}
       </button>
+      {cijferKnop && (
+        <button
+          onClick={cijferKnop.onClick}
+          style={{
+            flex: 'none', height: 34, padding: '0 12px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
+            fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
+            border: '1.5px solid rgba(20,20,20,0.14)', color: 'var(--c-ink)',
+          }}
+        >{cijferKnop.label}</button>
+      )}
       </div>
     </div>
   )
