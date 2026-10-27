@@ -35,8 +35,8 @@ const TABS: { id: Tab; label: string }[] = [
 
 type Sortering = 'nieuwste' | 'cijfer' | 'notitie'
 
-/** Zoveel eerder gekookte recepten passen ongeveer in één scherm; daarboven komen de sorteerchips. */
-const SORTEER_VANAF = 8
+/** Vanaf zoveel eerder gekookte recepten is sorteren zinvol. */
+const SORTEER_VANAF = 3
 
 /**
  * Eerder gekookt dat je wegtikte. Alleen op dit toestel: het recept blijft in
@@ -297,7 +297,7 @@ export function MijnRecepten() {
           : opLijstVoorNieuw.voegToe({ ...kaart, titel: recept.titel_nl ?? recept.titel })}
         weg={{ label: 'Weghalen', onClick: () => haalGekooktWeg(recept.id) }}
         cijfer={mijn?.cijfer ?? null}
-        metaRegel={[`Gekookt ${datumLabel(gekooktOp)}`, mijn?.notitie].filter(Boolean).join(' · ')}
+        metaRegel={[`Gekookt ${datumLabel(gekooktOp)}`, mijn?.cijfer != null ? `Cijfer ${mijn.cijfer}` : null, mijn?.notitie].filter(Boolean).join(' · ')}
         gedempt={laag}
         cijferKnop={mijn?.cijfer == null ? { label: 'Cijfer', onClick: () => setCijferVoor({ soort: 'achteraf', recept, gekooktOp }) } : undefined}
       />
@@ -438,16 +438,19 @@ export function MijnRecepten() {
                 onKnop={() => naar('koken')}
               />
             ) : (
-              <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
-                {eerderGekookt.length > SORTEER_VANAF && (
-                  <div style={{ display: 'flex', gap: 8, paddingBottom: 12, overflowX: 'auto' }}>
+              <>
+                {/* Buiten de scroll, zodat de kaarten er nooit overheen schuiven. */}
+                {eerderGekookt.length >= SORTEER_VANAF && (
+                  <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '8px 22px 4px', overflowX: 'auto' }}>
                     {([['nieuwste', 'Nieuwste eerst'], ['cijfer', 'Hoogste cijfer'], ['notitie', 'Met notitie']] as const).map(([id, label]) => (
                       <Chip key={id} selected={sortering === id} onClick={() => setSortering(id)}>{label}</Chip>
                     ))}
                   </div>
                 )}
-                <div style={ROOSTER}>{eerderGekookt.map(kaartGekookt)}</div>
-              </Inhoud>
+                <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
+                  <div style={ROOSTER}>{eerderGekookt.map(kaartGekookt)}</div>
+                </Inhoud>
+              </>
             )}
           </Paneel>
 
@@ -481,6 +484,13 @@ export function MijnRecepten() {
           }}
         />
       )}
+      <Dialoog
+        open={bewaar.isError}
+        kop="Cijfer bewaren lukte niet"
+        tekst="Je recept staat wel bij gekookt. Probeer het cijfer straks nog eens via Cijfer op de kaart."
+        onSluit={() => bewaar.reset()}
+        acties={[{ label: 'Oké', hoofd: true, onClick: () => bewaar.reset() }]}
+      />
       <Dialoog
         open={Boolean(wegVraag)}
         kop="Weghalen?"

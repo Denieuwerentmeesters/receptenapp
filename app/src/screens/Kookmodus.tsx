@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
 import { Scherm } from '../components/Layout'
 import { Grens } from '../components/Staten'
+import { Dialoog } from '../components/Dialoog'
 import { CijferSheet, type CijferAntwoord } from '../components/CijferSheet'
 import { useBeoordelingBewaren } from '../lib/beoordeling'
 import { useRecept, useVoorkeuren } from '../lib/queries'
@@ -48,6 +49,7 @@ export function Kookmodus() {
   const { gekookt } = useWeekWissel()
   const bewaar = useBeoordelingBewaren()
   const [cijferOpen, setCijferOpen] = useState(false)
+  const [bewaarMislukt, setBewaarMislukt] = useState(false)
 
   /**
    * Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Eerder gekookt,
@@ -64,7 +66,10 @@ export function Kookmodus() {
       try {
         await bewaar.mutateAsync({ receptId: id, cijfer: antwoord.cijfer, notitie: antwoord.notitie })
       } catch {
-        // Het cijfer kun je later nog geven bij Eerder gekookt.
+        // Je kunt het cijfer later nog geven bij Eerder gekookt; maar zeg het wel.
+        setCijferOpen(false)
+        setBewaarMislukt(true)
+        return
       }
     }
     navigeer('/mijn-recepten', { state: { tab: 'gekookt' } })
@@ -301,6 +306,13 @@ export function Kookmodus() {
           )
         })()}
       </Grens>
+      <Dialoog
+        open={bewaarMislukt}
+        kop="Cijfer bewaren lukte niet"
+        tekst="Je recept staat wel bij gekookt. Geef het cijfer straks nog via Cijfer bij Eerder gekookt."
+        onSluit={() => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } })}
+        acties={[{ label: 'Oké', hoofd: true, onClick: () => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } }) }]}
+      />
       {cijferOpen && recept.data && (
         <CijferSheet
           recept={recept.data}
