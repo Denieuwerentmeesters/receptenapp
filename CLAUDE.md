@@ -319,13 +319,13 @@ vragen, gedeeld door de inhoud van de verpakking.
 
 De eerste tab (`src/screens/MijnRecepten.tsx`, route `/mijn-recepten`; het
 oude `/deze-week` stuurt door) deelt recepten in naar fase, niet naar
-kalenderweek. Twee chips erboven; vegen of tikken, de baan is een
+kalenderweek. Drie chips erboven (Te koken, Nog bestellen, Eerder gekookt); vegen of tikken, de baan is een
 scroll-snap-container.
 
 - **De fases komen uit bestaande kolommen** (`src/lib/fases.ts`,
   `verdeelFases`), er is geen statuskolom. Te koken = `besteld_op` gezet,
   niet gekookt of opgeruimd. Nog bestellen = gekozen, niet besteld. Gekookt
-  = `gekookt_op`, en staat onderaan Nog bestellen onder Eerder gekookt. De badge op de
+  = `gekookt_op`, en staat bij de derde chip Eerder gekookt. De badge op de
   tab telt alleen Te koken.
 - **Onder de motorkap blijven er twee weken.** De generator maakt per week
   suggesties, de lijst loopt over deze en komende week (`lijstWeken`), en
@@ -346,11 +346,25 @@ scroll-snap-container.
   vervangt "Klaar met boodschappen" als alles afgevinkt is. Zonder
   bestelling telt het niet mee voor Bespaard!. Beide zetten ook
   `actieve_week` vast.
-- **Gekookt:** het kruisje bij Te koken opent "Gekookt?" met Gekookt en
-  Annuleer, en de laatste stap van de kookmodus heeft de knop Gekookt. Er is
-  geen "niet gekookt, haal weg": wie iets niet kookte tikt ook op Gekookt.
-  Gaat Eerder gekookt later meetellen (beoordelingen, cooldown van de
-  generator), kijk daar dan opnieuw naar.
+- **Gekookt:** het kruisje bij Te koken en de laatste stap van de kookmodus
+  openen het blad "Viel het in de smaak?" (`components/CijferSheet.tsx`):
+  cijfer 1-10 en een notitie, allebei niet verplicht. Klaar zet het recept op
+  gekookt; zonder cijfer blijft het cijfer leeg (nooit stiekem een 6). Sla over
+  zet het alleen op gekookt. Tik naast het blad doet niets. Er is geen "niet
+  gekookt, haal weg": wie iets niet kookte tikt ook op Sla over.
+- **Cijfers** (`lib/beoordeling.ts`, tabel `beoordeling`): één rij per keer
+  koken, persoonlijk (ook binnen een huishouden: de kok oordeelt), het laatste
+  cijfer per recept telt. 8 of hoger is "Jouw favoriet" (gele bol, chip Hoog
+  cijfer in Ontdekken, in `genereer_weekmenu` een cooldown van 8 in plaats van
+  26 weken). 5 of lager valt uit de suggesties (`verdeelFases`, dus ook Vul mijn
+  week) en uit `genereer_weekmenu`; in Eerder gekookt staat het grijs met "Zet
+  terug", dat het lage cijfer wist. Wie achteraf een cijfer wil geeft het met
+  "Cijfer" op de kaart in Eerder gekookt.
+- **Gemiddelde over alle koks** staat in `recepten.cijfer_gemiddeld` en
+  `cijfer_aantal`; een trigger op `beoordeling` houdt het bij (geen nachtelijke
+  ronde: pg_cron is er niet). De kaart toont het pas vanaf 20 cijfers
+  (`GEMIDDELDE_VANAF_AANTAL`) en alleen bij recepten waar jij zelf geen cijfer
+  voor gaf.
 - **Het hartje zet een recept bij Nog bestellen** (`components/Hartje.tsx`),
   in Ontdekken en op het receptscherm: als keuze in de bestelweek
   (`zetInWeek`), nog niet op je lijst. Nog een tik haalt het uit je week;
@@ -358,13 +372,14 @@ scroll-snap-container.
   je lijst zetten vanaf daar was gek (Reinoud, 16 okt 2026). Op je lijst zet
   je het bij Nog bestellen. De tabel `favoriet` en het scherm Favorieten
   (Mijn keuken) bestaan nog, maar het hartje vult ze niet meer.
-- **Nog bestellen** heeft drie blokken: wat je koos (ook met het hartje),
-  de suggesties en onderaan eerder gekookt. Elk recept staat er één keer, in
-  het bovenste blok waar het in past. Eigen recepten staan alleen in
+- **Nog bestellen** heeft twee blokken: wat je koos (ook met het hartje) en
+  de suggesties. Elk recept staat er één keer, in het bovenste blok waar het
+  in past. Eerder gekookt is sinds 27 okt 2026 een eigen chip (Reinoud). Eigen
+  recepten staan alleen in
   Ontdekken (Mijn recepten). Bewaard en Favorieten waren aparte blokken; die
   zijn weg (Reinoud, 15 en 16 okt 2026). Elke kaart heeft een kruisje: bij
   wat je koos en de suggesties weghalen uit de week, bij eerder gekookt weg
-  uit dat blok, alleen op het toestel (`localStorage`, `pinch-weg-gekookt`);
+  uit dat onderdeel, alleen op het toestel (`localStorage`, `pinch-weg-gekookt`);
   de geschiedenis blijft.
 - **Terug van een recept** brengt je in het onderdeel waar je het opende:
   `open` in `MijnRecepten.tsx` zet de tab eerst in de state van de huidige

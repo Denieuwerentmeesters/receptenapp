@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
 import { Scherm } from '../components/Layout'
 import { Grens } from '../components/Staten'
+import { CijferSheet, type CijferAntwoord } from '../components/CijferSheet'
+import { useBeoordelingBewaren } from '../lib/beoordeling'
 import { useRecept, useVoorkeuren } from '../lib/queries'
 import { useFases } from '../lib/fases'
 import { useWeekWissel } from '../lib/weekwissel'
@@ -44,16 +46,28 @@ export function Kookmodus() {
   const { teKoken, nogBestellen } = useFases()
   const inFase = [...teKoken, ...nogBestellen].find((r) => r.id === id)
   const { gekookt } = useWeekWissel()
+  const bewaar = useBeoordelingBewaren()
+  const [cijferOpen, setCijferOpen] = useState(false)
 
-  /** Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Nog bestellen onder Eerder gekookt. */
-  async function rondAf() {
+  /**
+   * Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Eerder gekookt,
+   * met het cijfer en de notitie die je net gaf (allebei niet verplicht).
+   */
+  async function rondAf(antwoord?: CijferAntwoord) {
     if (!id || !inFase) return
     try {
       await gekookt.mutateAsync({ receptId: id, opruimen: true, inWeek: inFase.week })
     } catch {
       // Je eten staat klaar; het vinkje zet je straks op de kaart.
     }
-    navigeer('/mijn-recepten')
+    if (antwoord) {
+      try {
+        await bewaar.mutateAsync({ receptId: id, cijfer: antwoord.cijfer, notitie: antwoord.notitie })
+      } catch {
+        // Het cijfer kun je later nog geven bij Eerder gekookt.
+      }
+    }
+    navigeer('/mijn-recepten', { state: { tab: 'gekookt' } })
   }
 
   const [stap, setStap] = useState(0)
@@ -272,7 +286,7 @@ export function Kookmodus() {
                 <button
                   onClick={() => {
                     if (!laatste) { setStap(stap + 1); return }
-                    if (inFase) void rondAf()
+                    if (inFase) setCijferOpen(true)
                     else navigeer('/mijn-recepten')
                   }}
                   disabled={gekookt.isPending}
@@ -287,6 +301,16 @@ export function Kookmodus() {
           )
         })()}
       </Grens>
+      {cijferOpen && recept.data && (
+        <CijferSheet
+          recept={recept.data}
+          personen={standaardPersonen(recept.data, voorkeuren.data?.aantal_personen ?? 4)}
+          bezig={gekookt.isPending || bewaar.isPending}
+          onSluit={() => setCijferOpen(false)}
+          onOverslaan={() => void rondAf()}
+          onKlaar={(antwoord) => void rondAf(antwoord)}
+        />
+      )}
     </Scherm>
   )
 }
