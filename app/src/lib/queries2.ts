@@ -24,6 +24,11 @@ export interface OntdekFilters {
   /** Alle gekozen diëten moeten kloppen (lib/dieet.ts). */
   dieet: Dieet[]
   alleenBudget: boolean
+  /**
+   * Alleen recepten waar jij een 8 of hoger voor gaf (lib/beoordeling.ts): de ids,
+   * of null als het filter uit staat. Leeg betekent dat er niets is dat past.
+   */
+  hoogCijferIds?: string[] | null
   /** Laat recepten weg die een van deze allergenen vast bevatten (lib/allergenen.ts). */
   zonderAllergenen: string[]
   /** Alleen je eigen recepten: toegevoegd, geïmporteerd en samengesteld. */
@@ -106,6 +111,9 @@ function metFilters<T>(vraag: T, filters: OntdekFilters, userId: string | null):
   const afgeleid = filters.dieet.filter((d) => d !== 'vegetarisch')
   if (afgeleid.length > 0) v = v.contains('dieet', afgeleid)
   if (filters.alleenBudget) v = v.lte('prijs_pp_schatting', BUDGET_PER_PERSOON)
+  if (filters.hoogCijferIds) {
+    v = v.in('id', filters.hoogCijferIds.length > 0 ? filters.hoogCijferIds : ['00000000-0000-0000-0000-000000000000'])
+  }
   // not.ov: geen overlap tussen allergenen_vast en jouw allergieën.
   if (filters.zonderAllergenen.length > 0) {
     v = v.not('allergenen_vast', 'ov', `{${filters.zonderAllergenen.join(',')}}`)

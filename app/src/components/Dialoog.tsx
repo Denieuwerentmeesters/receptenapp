@@ -32,7 +32,7 @@ export function Dialoog({ open, kop, tekst, acties, onSluit, sluitTekst, childre
         // Niet `inset: 0`: in iOS Safari loopt dat door tot onder de zwevende
         // adresbalk en valt de onderste knop erachter. 100dvh is het zichtbare deel.
         position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh',
-        zIndex: 50, background: 'rgba(20,20,20,0.45)',
+        zIndex: 50, background: 'rgba(43,20,32,0.45)',
         display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
       }}
     >
@@ -48,13 +48,13 @@ export function Dialoog({ open, kop, tekst, acties, onSluit, sluitTekst, childre
         }}
       >
         <h2 style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22, lineHeight: 1,
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 22, lineHeight: 1,
           margin: 0, textTransform: 'uppercase', color: 'var(--color-ink)',
         }}>{kop}</h2>
         {tekst && (
           <p style={{
             fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: '0 0 6px',
-            color: 'rgba(20,20,20,0.7)',
+            color: 'rgba(43,20,32,0.7)',
           }}>{tekst}</p>
         )}
         {children}
@@ -71,7 +71,7 @@ export function Dialoog({ open, kop, tekst, acties, onSluit, sluitTekst, childre
             onClick={onSluit}
             style={{
               alignSelf: 'center', background: 'none', border: 'none', padding: '8px 16px', cursor: 'pointer',
-              fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'rgba(20,20,20,0.6)',
+              fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'rgba(43,20,32,0.6)',
             }}
           >{sluitTekst}</button>
         )}

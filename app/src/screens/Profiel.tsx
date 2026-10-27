@@ -24,8 +24,8 @@ export function Profiel() {
   const bespaard = bestellingen.data ?? []
 
   // Instellingen bovenaan: daar kom je het vaakst. Ontdekken zit al in de
-  // onderbalk. Het hartje zet een recept bij Nog bestellen; Favorieten hier
-  // zijn de oude favorieten, het hartje vult ze niet meer aan.
+  // onderbalk. Het hartje zet een recept bij Nog bestellen; de oude Favorieten
+  // staan niet meer in het menu (de route /favorieten bestaat nog).
   const rijen = [
     { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
     {
@@ -36,7 +36,6 @@ export function Profiel() {
       pad: '/bespaard',
     },
     { label: 'Voorraadkast', sub: `${voorraad.data?.filter((v) => v.in_huis).length ?? 0} producten in huis`, pad: '/voorraadkast' },
-    { label: 'Favorieten', sub: 'Komen vaker terug in je weekmenu', pad: '/favorieten' },
     { label: 'Geschiedenis', sub: `${weken.length} ${weken.length === 1 ? 'week' : 'weken'}`, pad: '/geschiedenis' },
     { label: 'Recept toevoegen', sub: 'Uit een kookboek of je eigen recept', pad: '/toevoegen' },
     // Alleen zichtbaar als je admin bent (plan §7.7).
@@ -57,7 +56,7 @@ export function Profiel() {
           flex: 'none', width: 64, height: 64, borderRadius: 'var(--radius-full)',
           background: 'var(--c-yellow)', color: 'var(--c-ink)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24,
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 24,
         }}>
           <Icon name="chefHat" size={28} />
         </span>
@@ -86,12 +85,12 @@ export function Profiel() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
                 background: 'transparent', border: 'none',
-                borderBottom: '1.5px solid rgba(20,20,20,0.12)', padding: '14px 2px', cursor: 'pointer',
+                borderBottom: '1.5px solid rgba(43,20,32,0.12)', padding: '14px 2px', cursor: 'pointer',
               }}
             >
               <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>{rij.label}</span>
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(20,20,20,0.6)' }}>{rij.sub}</span>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)' }}>{rij.sub}</span>
               </span>
               <Icon name="chevronRight" size={18} style={{ color: 'var(--c-red)' }} />
             </button>
@@ -103,7 +102,7 @@ export function Profiel() {
           style={{
             alignSelf: 'flex-start', background: 'transparent', border: 'none',
             padding: '2px 2px 20px', cursor: 'pointer',
-            fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'rgba(20,20,20,0.6)',
+            fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'rgba(43,20,32,0.6)',
           }}
         >Uitloggen</button>
       </Inhoud>

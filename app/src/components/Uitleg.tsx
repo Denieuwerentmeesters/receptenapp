@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button, IconButton } from '../ds'
 import ontdekken from '../assets/uitleg/ontdekken.webp'
 import mijnRecepten from '../assets/uitleg/mijn-recepten.webp'
+import teKoken from '../assets/uitleg/te-koken.webp'
 import voorraadkast from '../assets/uitleg/voorraadkast.webp'
 import lijst from '../assets/uitleg/lijst.webp'
 
@@ -12,7 +13,7 @@ import lijst from '../assets/uitleg/lijst.webp'
  * Elke kaart is een schermafbeelding van de app zelf, met één ding uitgelicht:
  * de rest is gedimd. Geen nagetekende schermen: wat je hier ziet is wat je
  * daarna tegenkomt. Verandert een scherm, maak dan een nieuwe afbeelding
- * (src/assets/uitleg/, 780 px breed; de verhouding staat per kaart) en zet het uitgelichte
+ * (src/assets/uitleg/, 780 px breed, een telefoon van 440 pt breed) en zet het uitgelichte
  * vlak opnieuw.
  */
 
@@ -37,37 +38,37 @@ const KAARTEN: Kaart[] = [
     kop: 'Zoek',
     tekst: 'Honderden recepten. Zoek op gerecht of ingrediënt, of filter op keuken, tijd, budget en dieet.',
     beeld: ontdekken, alt: 'Het scherm Ontdekken, met de zoekbalk en de filters uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.031, y: 0.069, b: 0.938, h: 0.217 }, rond: 18,
+    verhouding: 2868 / 1320, licht: { x: 0.03, y: 0.128, b: 0.94, h: 0.195 }, rond: 18,
   },
   {
     kop: 'Bewaar',
     tekst: 'Tik op het hartje en het recept staat in Nog bestellen, bovenaan. Daar zet je het op je lijst.',
     beeld: ontdekken, alt: 'Een receptkaart in Ontdekken, met het hartje uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.354, y: 0.338, b: 0.123, h: 0.111 }, rond: 999,
+    verhouding: 2868 / 1320, licht: { x: 0.382, y: 0.378, b: 0.09, h: 0.0414 }, rond: 999,
   },
   {
     kop: 'Zet op je lijst',
     tekst: 'Kies je recepten bij Nog bestellen. Kookmaatje zet alle ingrediënten op één boodschappenlijst en telt dubbele bij elkaar op.',
-    beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met een recept dat op je lijst staat uitgelicht: gele rand en de knop Op je lijst.',
-    verhouding: 1688 / 780, licht: { x: 0.049, y: 0.303, b: 0.444, h: 0.294 }, rond: 26,
+    beeld: mijnRecepten, alt: 'Het scherm Nog bestellen, met een recept en de knop Zet op je lijst uitgelicht.',
+    verhouding: 2868 / 1320, licht: { x: 0.04, y: 0.328, b: 0.44, h: 0.272 }, rond: 26,
   },
   {
     kop: 'Te koken',
-    tekst: 'Na het bestellen staan je recepten bij Te koken. Gekookt? Tik op het kruisje, dan vind je het terug onderaan Nog bestellen.',
-    beeld: mijnRecepten, alt: 'Het scherm Mijn recepten, met de knoppen Te koken en Nog bestellen uitgelicht.',
-    verhouding: 1688 / 780, licht: { x: 0.046, y: 0.139, b: 0.546, h: 0.05 }, rond: 999,
+    tekst: 'Na het bestellen staan je recepten bij Te koken. Gekookt? Tik op het kruisje en geef je gerecht een cijfer: je vindt het daarna terug bij Eerder gekookt.',
+    beeld: teKoken, alt: 'Het scherm Mijn recepten, met de knoppen Te koken, Nog bestellen en Eerder gekookt uitgelicht.',
+    verhouding: 2868 / 1320, licht: { x: 0.04, y: 0.178, b: 0.76, h: 0.045 }, rond: 999,
   },
   {
     kop: 'Voorraadkast',
     tekst: 'Laat Kookmaatje weten wat je standaard in huis hebt, zoals olie, rijst of kruiden. Dat gaat niet mee in je bestelling.',
     beeld: voorraadkast, alt: 'Het scherm Voorraadkast, met een paar producten die in huis zijn uitgelicht: azijn, bloem, boter.',
-    verhouding: 2000 / 924, licht: { x: 0.035, y: 0.405, b: 0.93, h: 0.2 }, rond: 18,
+    verhouding: 2868 / 1320, licht: { x: 0.035, y: 0.352, b: 0.93, h: 0.183 }, rond: 18,
   },
   {
     kop: 'Naar je supermarkt',
-    tekst: 'Eén tik en alles gaat naar je mandje bij AH of Jumbo.',
+    tekst: 'Eén tik en alles gaat naar je mandje bij AH of Jumbo. Of koop in je lokale supermarkt en vink de producten af.',
     beeld: lijst, alt: 'De boodschappenlijst, met de mandjeknop uitgelicht.',
-    verhouding: 2000 / 924, licht: { x: 0.045, y: 0.762, b: 0.91, h: 0.074 }, rond: 999,
+    verhouding: 2868 / 1320, licht: { x: 0.04, y: 0.82, b: 0.92, h: 0.063 }, rond: 999,
   },
 ]
 
@@ -138,7 +139,7 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
           STAP {kaart + 1} VAN {KAARTEN.length}
         </span>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, lineHeight: 1.1,
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, lineHeight: 1.1,
           margin: 0, textTransform: 'uppercase',
         }}>{huidig.kop}</h1>
         <p style={{ margin: 0, fontSize: 17, lineHeight: 1.5 }}>{huidig.tekst}</p>
@@ -223,7 +224,7 @@ function Beelden({ kaart }: { kaart: number }) {
                 left: `${licht.x * 100}%`, top: `${licht.y * 100}%`,
                 width: `${licht.b * 100}%`, height: `${licht.h * 100}%`,
                 borderRadius: k.rond ?? 14, border: '3px solid var(--c-paper)',
-                boxShadow: '0 0 0 2000px rgba(20,20,20,0.55)',
+                boxShadow: '0 0 0 2000px rgba(43,20,32,0.55)',
               }} />
             </div>
           </div>

@@ -3,6 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
 import { Scherm } from '../components/Layout'
 import { Grens } from '../components/Staten'
+import { Dialoog } from '../components/Dialoog'
+import { CijferSheet, type CijferAntwoord } from '../components/CijferSheet'
+import { useBeoordelingBewaren } from '../lib/beoordeling'
 import { useRecept, useVoorkeuren } from '../lib/queries'
 import { useFases } from '../lib/fases'
 import { useWeekWissel } from '../lib/weekwissel'
@@ -44,16 +47,32 @@ export function Kookmodus() {
   const { teKoken, nogBestellen } = useFases()
   const inFase = [...teKoken, ...nogBestellen].find((r) => r.id === id)
   const { gekookt } = useWeekWissel()
+  const bewaar = useBeoordelingBewaren()
+  const [cijferOpen, setCijferOpen] = useState(false)
+  const [bewaarMislukt, setBewaarMislukt] = useState(false)
 
-  /** Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Nog bestellen onder Eerder gekookt. */
-  async function rondAf() {
+  /**
+   * Legt vast dat je kookte: weg bij Te koken, terug te vinden bij Eerder gekookt,
+   * met het cijfer en de notitie die je net gaf (allebei niet verplicht).
+   */
+  async function rondAf(antwoord?: CijferAntwoord) {
     if (!id || !inFase) return
     try {
       await gekookt.mutateAsync({ receptId: id, opruimen: true, inWeek: inFase.week })
     } catch {
       // Je eten staat klaar; het vinkje zet je straks op de kaart.
     }
-    navigeer('/mijn-recepten')
+    if (antwoord) {
+      try {
+        await bewaar.mutateAsync({ receptId: id, cijfer: antwoord.cijfer, notitie: antwoord.notitie })
+      } catch {
+        // Je kunt het cijfer later nog geven bij Eerder gekookt; maar zeg het wel.
+        setCijferOpen(false)
+        setBewaarMislukt(true)
+        return
+      }
+    }
+    navigeer('/mijn-recepten', { state: { tab: 'gekookt' } })
   }
 
   const [stap, setStap] = useState(0)
@@ -143,7 +162,7 @@ export function Kookmodus() {
                   onClick={() => navigeer(-1)}
                   aria-label="Kookmodus sluiten"
                   style={{
-                    border: 'none', background: 'rgba(255,246,232,0.18)', color: 'var(--c-cream)',
+                    border: 'none', background: 'rgba(243,205,214,0.25)', color: 'var(--c-pink-soft)',
                     width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
@@ -157,7 +176,7 @@ export function Kookmodus() {
               </div>
 
               <div style={{ flex: 'none', padding: '0 22px' }}>
-                <div style={{ height: 8, borderRadius: 'var(--radius-full)', background: 'rgba(255,246,232,0.24)', overflow: 'hidden' }}>
+                <div style={{ height: 8, borderRadius: 'var(--radius-full)', background: 'rgba(248,241,236,0.24)', overflow: 'hidden' }}>
                   <div style={{
                     height: '100%', borderRadius: 'var(--radius-full)', background: 'var(--c-yellow)',
                     width: `${Math.round(((stap + 1) / stappen.length) * 100)}%`,
@@ -172,13 +191,13 @@ export function Kookmodus() {
                     onClick={() => setStap(timer.stap)}
                     style={{
                       width: '100%', border: 'none', borderRadius: 'var(--radius-full)',
-                      background: resterend === 0 ? 'var(--c-yellow)' : 'rgba(255,246,232,0.14)',
+                      background: resterend === 0 ? 'var(--c-yellow)' : 'rgba(248,241,236,0.14)',
                       color: resterend === 0 ? 'var(--c-ink)' : 'var(--c-cream)',
                       padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
                       fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, textAlign: 'left',
                     }}
                   >
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18 }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18 }}>
                       {resterend === 0 ? 'Klaar' : formatteer(resterend)}
                     </span>
                     <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -203,14 +222,14 @@ export function Kookmodus() {
                       <span key={n} style={{
                         fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
                         padding: '9px 14px', borderRadius: 'var(--radius-full)',
-                        border: '1.5px solid rgba(255,246,232,0.4)',
+                        border: '1.5px solid rgba(248,241,236,0.4)',
                       }}>{i.weergave} {i.naam}</span>
                     ))}
                   </div>
                 )}
 
                 <div style={{
-                  background: 'rgba(20,20,20,0.22)', borderRadius: 'var(--radius-lg)', padding: 20,
+                  background: 'rgba(43,20,32,0.22)', borderRadius: 'var(--radius-lg)', padding: 20,
                   display: 'flex', flexDirection: 'column', gap: 14,
                 }}>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -218,7 +237,7 @@ export function Kookmodus() {
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--c-yellow)',
                     }}>{deTimer ? deTimer.label : 'Timer'}</span>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 34, lineHeight: 1 }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 34, lineHeight: 1 }}>
                       {deTimer && resterend !== null ? formatteer(resterend) : '––:––'}
                     </span>
                   </span>
@@ -262,7 +281,7 @@ export function Kookmodus() {
                   aria-label="Vorige stap"
                   style={{
                     flex: 'none', width: 56, height: 56, borderRadius: 'var(--radius-full)',
-                    border: '1.5px solid rgba(255,246,232,0.5)', background: 'transparent',
+                    border: '1.5px solid rgba(248,241,236,0.5)', background: 'transparent',
                     color: 'var(--c-cream)', cursor: stap === 0 ? 'not-allowed' : 'pointer',
                     opacity: stap === 0 ? 0.4 : 1,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -272,7 +291,7 @@ export function Kookmodus() {
                 <button
                   onClick={() => {
                     if (!laatste) { setStap(stap + 1); return }
-                    if (inFase) void rondAf()
+                    if (inFase) setCijferOpen(true)
                     else navigeer('/mijn-recepten')
                   }}
                   disabled={gekookt.isPending}
@@ -287,6 +306,24 @@ export function Kookmodus() {
           )
         })()}
       </Grens>
+      <Dialoog
+        open={bewaarMislukt}
+        kop="Cijfer bewaren lukte niet"
+        tekst={`Je recept staat wel bij gekookt. Geef het cijfer straks nog via Cijfer bij Eerder gekookt.${
+          bewaar.error ? ` (${(bewaar.error as { message?: string }).message ?? 'onbekende fout'})` : ''}`}
+        onSluit={() => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } })}
+        acties={[{ label: 'Oké', hoofd: true, onClick: () => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } }) }]}
+      />
+      {cijferOpen && recept.data && (
+        <CijferSheet
+          recept={recept.data}
+          personen={standaardPersonen(recept.data, voorkeuren.data?.aantal_personen ?? 4)}
+          bezig={gekookt.isPending || bewaar.isPending}
+          onSluit={() => setCijferOpen(false)}
+          onOverslaan={() => void rondAf()}
+          onKlaar={(antwoord) => void rondAf(antwoord)}
+        />
+      )}
     </Scherm>
   )
 }
@@ -300,7 +337,7 @@ const timerKnop: React.CSSProperties = {
 const timerKnopStil: React.CSSProperties = {
   ...timerKnop,
   background: 'transparent', color: 'var(--c-cream)',
-  boxShadow: 'inset 0 0 0 1.5px rgba(255,246,232,0.5)',
+  boxShadow: 'inset 0 0 0 1.5px rgba(248,241,236,0.5)',
 }
 
 function formatteer(s: number): string {

@@ -72,7 +72,7 @@ export function BespaardMelding() {
           display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
           border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', textAlign: 'left',
           background: 'var(--c-green)', color: 'var(--c-cream)',
-          boxShadow: '0 8px 24px rgba(20,20,20,0.25)',
+          boxShadow: '0 8px 24px rgba(43,20,32,0.25)',
           animation: 'bespaard-in 420ms var(--ease)',
         }}
       >
@@ -83,7 +83,7 @@ export function BespaardMelding() {
         }}><Icon name="piggyBank" size={22} /></span>
         <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <span style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, lineHeight: 1,
+            fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 20, lineHeight: 1,
             color: 'var(--c-yellow)', textTransform: 'uppercase',
           }}>{euro(totaal)} bespaard</span>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.3 }}>

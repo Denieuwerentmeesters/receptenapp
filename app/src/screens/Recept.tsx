@@ -129,13 +129,13 @@ export function Recept() {
                         if (((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0) navigeer(-1)
                         else navigeer('/ontdekken')
                       }}
-                      style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
+                      style={{ background: 'rgba(43,20,32,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
                     />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       {gekozen && (
                         <span style={{
                           padding: '8px 12px', borderRadius: 'var(--radius-full)',
-                          background: 'rgba(20,20,20,0.5)', backdropFilter: 'blur(8px)',
+                          background: 'rgba(43,20,32,0.5)', backdropFilter: 'blur(8px)',
                           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                         }}>{inFase?.besteldOp ? 'Te koken' : opLijst ? 'Op je lijst' : 'Nog bestellen'}</span>
                       )}
@@ -144,14 +144,14 @@ export function Recept() {
                         onClick={() => {
                           setDeelStap(magDelen(r) ? 'vraag' : 'kookboek')
                         }}
-                        style={{ background: 'rgba(20,20,20,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
+                        style={{ background: 'rgba(43,20,32,0.5)', color: 'var(--c-paper)', backdropFilter: 'blur(8px)' }}
                       />
                       <IconButton
                         icon="heart" size={42}
                         label={bewaard ? 'Haal uit Nog bestellen' : 'Zet bij Nog bestellen'}
                         onClick={() => hartje.tik(r)}
                         style={{
-                          background: bewaard ? 'var(--c-red-bright)' : 'rgba(20,20,20,0.5)',
+                          background: bewaard ? 'var(--c-red-bright)' : 'rgba(43,20,32,0.5)',
                           color: 'var(--c-paper)', backdropFilter: 'blur(8px)',
                         }}
                       />
@@ -216,7 +216,7 @@ export function Recept() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <span style={{
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
-                    textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
+                    textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)',
                   }}>Ingrediënten</span>
 
                   {/* Portieschaling: on the fly, we slaan nooit herschaalde
@@ -225,7 +225,7 @@ export function Recept() {
                     <IconButton
                       icon="minus" label="Minder personen" size={32}
                       onClick={() => setLokaalPersonen(Math.max(1, personen - 1))}
-                      style={{ background: 'transparent', color: 'var(--c-ink)', border: '1.5px solid rgba(20,20,20,0.2)' }}
+                      style={{ background: 'transparent', color: 'var(--c-ink)', border: '1.5px solid rgba(43,20,32,0.2)' }}
                     />
                     <span style={{
                       fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700,
@@ -258,7 +258,7 @@ export function Recept() {
                   return (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'baseline', gap: 12, padding: '11px 2px',
-                    borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+                    borderBottom: '1.5px solid rgba(43,20,32,0.12)',
                   }}>
                     <span style={{
                       flex: 'none', width: 88, fontFamily: 'var(--font-body)', fontSize: 14,
@@ -286,7 +286,7 @@ export function Recept() {
 
                 {inBonus.size > 0 && (
                   <div style={{ marginTop: 6 }}>
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.55)' }}>
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.55)' }}>
                       Bonus {bonus.peildatum.zelfHalen ? 'vandaag' : 'op je bezorgdag'} ·{' '}
                     </span>
                     <BonusBron klein />
@@ -296,7 +296,7 @@ export function Recept() {
                 {!teKoken && (
                 <div style={{
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
-                  textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)', marginTop: 18,
+                  textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)', marginTop: 18,
                 }}>Zo maak je het</div>
                 )}
 
@@ -418,7 +418,7 @@ function AllergieBlok({ allergie, allergieen }: { allergie: ReceptAllergie; alle
   return (
     <div style={{
       background: bevat.length > 0 ? 'var(--c-warm-300)' : 'var(--c-paper)',
-      border: bevat.length > 0 ? 'none' : '1.5px solid rgba(20,20,20,0.12)',
+      border: bevat.length > 0 ? 'none' : '1.5px solid rgba(43,20,32,0.12)',
       borderRadius: 'var(--radius-sm)', padding: '12px 14px', margin: '4px 0 8px',
       fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45,
       display: 'flex', flexDirection: 'column', gap: 6,
