@@ -20,26 +20,32 @@ export interface Transcript {
   model: string
 }
 
+/** Waarom er geen transcript kwam; komt in `scan.toelichting` en in de melding aan de gebruiker. */
+export interface GeenTranscript {
+  reden: string
+}
+
 export function uitschrijvenAan(): boolean {
   return Boolean(process.env.OPENAI_API_KEY)
 }
 
 /**
- * Schrijft de gesproken tekst van een video uit. Geeft null als de video te
- * groot is, de dienst niet is ingesteld of er niets verstaanbaars in zit: dan
- * gaan onderschrift en beeld alleen verder.
+ * Schrijft de gesproken tekst van een video uit. Geeft een reden als de video
+ * te groot is, de dienst niet is ingesteld of er niets verstaanbaars in zit:
+ * dan gaan onderschrift en beeld alleen verder.
  */
-export async function schrijfUit(videoUrl: string): Promise<Transcript | null> {
+export async function schrijfUit(videoUrl: string): Promise<Transcript | GeenTranscript> {
   const sleutel = process.env.OPENAI_API_KEY
-  if (!sleutel) return null
+  if (!sleutel) return { reden: 'geen OPENAI_API_KEY' }
   const model = process.env.OPENAI_TRANSCRIBE_MODEL || 'gpt-4o-mini-transcribe'
 
   let video
   try {
     video = await haalBestand(videoUrl, MAX_VIDEO_BYTES, 30_000)
   } catch (e) {
-    console.error('transcriptie: video ophalen', e instanceof Error ? e.message : e)
-    return null
+    const reden = e instanceof Error ? e.message : String(e)
+    console.error('transcriptie: video ophalen', reden)
+    return { reden: `video ophalen: ${reden}` }
   }
 
   const vorm = new FormData()
@@ -54,9 +60,9 @@ export async function schrijfUit(videoUrl: string): Promise<Transcript | null> {
   })
   if (!respons.ok) {
     console.error('transcriptie', respons.status, (await respons.text().catch(() => '')).slice(0, 300))
-    return null
+    return { reden: `OpenAI-fout ${respons.status}` }
   }
   const data = (await respons.json().catch(() => null)) as { text?: string } | null
   const tekst = data?.text?.trim()
-  return tekst ? { tekst, model } : null
+  return tekst ? { tekst, model } : { reden: 'geen verstaanbare spraak' }
 }
