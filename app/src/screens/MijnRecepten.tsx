@@ -252,7 +252,7 @@ export function MijnRecepten() {
       knop={{ tekst: 'Koken', icoon: 'chefHat' }}
       onOpen={() => open(recept.id)}
       onKnop={() => navigeer(`/koken/${recept.id}`)}
-      weg={{ label: 'Gekookt?', onClick: () => setCijferVoor({ soort: 'koken', recept }) }}
+      cijferKnop={{ label: 'Gekookt', onClick: () => setCijferVoor({ soort: 'koken', recept }) }}
     />
   )
 
@@ -545,7 +545,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
   knop: { tekst: string; icoon: string }
   onOpen: () => void
   onKnop: () => void
-  /** Het kruisje op de foto: weghalen, of bij Te koken de vraag "Gekookt?". */
+  /** Het kruisje op de foto: weghalen. */
   weg?: { label: string; onClick: () => void }
   /** Jouw cijfer: de bol op de foto (geel vanaf 8, wit daaronder). Alleen bij Eerder gekookt. */
   cijfer?: number | null
@@ -553,7 +553,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
   metaRegel?: string
   /** Grijs: een recept dat je niet meer terug wilt zien. */
   gedempt?: boolean
-  /** Een tweede knop naast de eerste, bijvoorbeeld om achteraf een cijfer te geven. */
+  /** Een tweede knop naast de eerste: "Gekookt" bij Te koken, of achteraf een cijfer geven. */
   cijferKnop?: { label: string; onClick: () => void }
 }) {
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
