@@ -309,7 +309,8 @@ export function Kookmodus() {
       <Dialoog
         open={bewaarMislukt}
         kop="Cijfer bewaren lukte niet"
-        tekst="Je recept staat wel bij gekookt. Geef het cijfer straks nog via Cijfer bij Eerder gekookt."
+        tekst={`Je recept staat wel bij gekookt. Geef het cijfer straks nog via Cijfer bij Eerder gekookt.${
+          bewaar.error ? ` (${(bewaar.error as { message?: string }).message ?? 'onbekende fout'})` : ''}`}
         onSluit={() => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } })}
         acties={[{ label: 'Oké', hoofd: true, onClick: () => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } }) }]}
       />
