@@ -117,7 +117,7 @@ function Sectiekop({ children }: { children: React.ReactNode }) {
 function Tekst({ children }: { children: React.ReactNode }) {
   return (
     <p style={{
-      fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(20,20,20,0.75)',
+      fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(43,20,32,0.75)',
     }}>{children}</p>
   )
 }

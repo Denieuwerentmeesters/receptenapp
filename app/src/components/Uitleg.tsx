@@ -223,7 +223,7 @@ function Beelden({ kaart }: { kaart: number }) {
                 left: `${licht.x * 100}%`, top: `${licht.y * 100}%`,
                 width: `${licht.b * 100}%`, height: `${licht.h * 100}%`,
                 borderRadius: k.rond ?? 14, border: '3px solid var(--c-paper)',
-                boxShadow: '0 0 0 2000px rgba(20,20,20,0.55)',
+                boxShadow: '0 0 0 2000px rgba(43,20,32,0.55)',
               }} />
             </div>
           </div>

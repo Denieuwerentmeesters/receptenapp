@@ -21,7 +21,7 @@ import {
 import type { Ingredient } from '../lib/database.types'
 
 /** Zelfde perzik als Ontdekken: daar kom je vandaan. */
-const ACHTERGROND = '#FCD6C3'
+const ACHTERGROND = 'var(--c-cream)'
 
 const WENS_KEUZES = ['vegetarisch', 'niet te duur', 'snel klaar', 'kindvriendelijk', 'zonder noten']
 const BIJSTUREN = ['Goedkoper', 'Iets vegetarisch erbij', 'Minder pittig']
@@ -348,7 +348,7 @@ export function Samenstellen() {
             {gevondenEerdere.map((e) => (
               <button key={e.id} onClick={() => void haalTerug(e)} style={LIJSTKNOP}>
                 <span style={{ fontSize: 16, fontWeight: 700 }}>
-                  {menuNaam(e.menu)} <span style={{ fontWeight: 500, color: 'rgba(20,20,20,0.6)' }}>· {datumTekst(e.aangemaaktOp)}</span>
+                  {menuNaam(e.menu)} <span style={{ fontWeight: 500, color: 'rgba(43,20,32,0.6)' }}>· {datumTekst(e.aangemaaktOp)}</span>
                 </span>
                 <span style={KLEIN}>{e.menu.gerechten.map((g) => g.titel).join(' · ')}</span>
                 {e.wensen && <span style={{ ...KLEIN, fontStyle: 'italic' }}>{e.aangepast ? 'Aangepast: ' : ''}“{e.wensen}”</span>}
@@ -416,7 +416,7 @@ export function Samenstellen() {
           </button>
           {/* Weg ermee en opnieuw beginnen. Wat al is opgeslagen of op je lijst staat blijft. */}
           <button onClick={wis} style={{
-            flex: 'none', border: '1.5px solid rgba(255,246,232,0.5)', borderRadius: 'var(--radius-full)',
+            flex: 'none', border: '1.5px solid rgba(248,241,236,0.5)', borderRadius: 'var(--radius-full)',
             background: 'transparent', color: 'var(--c-cream)', cursor: 'pointer', padding: '6px 12px',
             display: 'flex', alignItems: 'center', gap: 6,
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
@@ -428,7 +428,7 @@ export function Samenstellen() {
         {wensen.trim() && (
           <p style={{
             fontFamily: 'var(--font-body)', fontSize: 13, fontStyle: 'italic', margin: '10px 0 0',
-            color: 'rgba(255,246,232,0.75)', display: '-webkit-box', WebkitLineClamp: 2,
+            color: 'rgba(248,241,236,0.75)', display: '-webkit-box', WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical', overflow: 'hidden',
           }}>“{wensen.trim()}”</p>
         )}
@@ -534,7 +534,7 @@ export function Samenstellen() {
         <Voet>
           <div style={{
             display: 'flex', justifyContent: 'space-between', gap: 10, marginBottom: 10,
-            fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(20,20,20,0.65)',
+            fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.65)',
           }}>
             <span>
               <b style={{ color: 'var(--color-ink)' }}>{producten} producten</b>
@@ -598,15 +598,15 @@ const ZOEKVELD: CSSProperties = {
 }
 const LIJSTKNOP: CSSProperties = {
   display: 'flex', flexDirection: 'column', gap: 2, textAlign: 'left', cursor: 'pointer',
-  background: 'none', border: 'none', borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+  background: 'none', border: 'none', borderBottom: '1.5px solid rgba(43,20,32,0.12)',
   padding: '11px 2px', fontFamily: 'var(--font-body)', color: 'var(--color-ink)',
 }
 
 const LEAD: CSSProperties = {
-  fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(20,20,20,0.65)',
+  fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(43,20,32,0.65)',
 }
 const KLEIN: CSSProperties = {
-  fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45, margin: 0, color: 'rgba(20,20,20,0.65)',
+  fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45, margin: 0, color: 'rgba(43,20,32,0.65)',
 }
 
 function Vraag({ nummer, tekst, bij }: { nummer: number; tekst: string; bij?: string }) {
@@ -616,7 +616,7 @@ function Vraag({ nummer, tekst, bij }: { nummer: number; tekst: string; bij?: st
       fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 800, color: 'var(--color-ink)',
     }}>
       {nummer}. {tekst}
-      {bij && <span style={{ fontWeight: 500, fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>{bij}</span>}
+      {bij && <span style={{ fontWeight: 500, fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>{bij}</span>}
     </div>
   )
 }
@@ -627,7 +627,7 @@ function Melding({ children, toon = 'fout' }: { children: ReactNode; toon?: 'fou
       fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45, margin: 0, padding: '10px 12px',
       borderRadius: 12, color: 'var(--color-ink)',
       background: toon === 'fout' ? 'var(--c-red-100)' : 'var(--c-paper)',
-      border: toon === 'fout' ? 'none' : '1.5px dashed rgba(20,20,20,0.35)',
+      border: toon === 'fout' ? 'none' : '1.5px dashed rgba(43,20,32,0.35)',
     }}>{children}</p>
   )
 }
@@ -719,12 +719,12 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
           {open ? 'Verberg recept' : 'Bekijk recept'}
         </button>
         {onAnder && (
-          <button onClick={onAnder} style={{ ...KAART_KNOP, borderColor: 'rgba(20,20,20,0.25)' }}>
+          <button onClick={onAnder} style={{ ...KAART_KNOP, borderColor: 'rgba(43,20,32,0.25)' }}>
             {allergenen.length > 0 ? 'Vervang dit gerecht' : 'Ander voorstel'}
           </button>
         )}
         {receptId && (
-          <button onClick={() => onRecept(receptId)} style={{ ...KAART_KNOP, borderColor: 'rgba(20,20,20,0.25)' }}>
+          <button onClick={() => onRecept(receptId)} style={{ ...KAART_KNOP, borderColor: 'rgba(43,20,32,0.25)' }}>
             Open recept
           </button>
         )}
@@ -732,14 +732,14 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
 
       {open && (
         <div style={{
-          borderTop: '1px solid rgba(20,20,20,0.1)', padding: '12px 14px 14px',
+          borderTop: '1px solid rgba(43,20,32,0.1)', padding: '12px 14px 14px',
           fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45, color: 'var(--color-ink)',
         }}>
-          <Label kleur="rgba(20,20,20,0.6)">Ingrediënten voor {personen}</Label>
+          <Label kleur="rgba(43,20,32,0.6)">Ingrediënten voor {personen}</Label>
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 14px', display: 'grid', gap: 3 }}>
             {gerecht.ingredienten.map((ing, i) => (
               <li key={i} style={{ display: 'grid', gridTemplateColumns: '72px 1fr', gap: 8 }}>
-                <span style={{ color: 'rgba(20,20,20,0.6)', fontVariantNumeric: 'tabular-nums' }}>{hoeveelheid(ing)}</span>
+                <span style={{ color: 'rgba(43,20,32,0.6)', fontVariantNumeric: 'tabular-nums' }}>{hoeveelheid(ing)}</span>
                 <span>
                   {ing.naam}
                   {zoek.has(ing.naam) && (
@@ -749,7 +749,7 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
               </li>
             ))}
           </ul>
-          <Label kleur="rgba(20,20,20,0.6)">Bereiding</Label>
+          <Label kleur="rgba(43,20,32,0.6)">Bereiding</Label>
           <ol style={{ margin: '6px 0 0', paddingLeft: 20, display: 'grid', gap: 6 }}>
             {gerecht.bereiding_nl.map((stap, i) => <li key={i}>{stap}</li>)}
           </ol>
@@ -762,7 +762,7 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
 /** De plek van het gerecht dat nog onderweg is. */
 function Skelet() {
   const balk = (breedte: string, hoogte: number): CSSProperties => ({
-    width: breedte, height: hoogte, borderRadius: 8, background: 'rgba(20,20,20,0.08)',
+    width: breedte, height: hoogte, borderRadius: 8, background: 'rgba(43,20,32,0.08)',
   })
   return (
     <div aria-hidden className="samenstellen-skelet" style={{

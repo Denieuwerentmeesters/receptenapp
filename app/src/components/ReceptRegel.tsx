@@ -52,7 +52,7 @@ export function ReceptRegel({ recept, index = 0, favoriet, onOpen, onFavoriet, a
             fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--color-ink)',
           }}>{recept.titel_nl ?? recept.titel}</span>
           <span style={{
-            fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(20,20,20,0.6)',
+            fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)',
           }}>{meta}</span>
         </span>
       </button>
@@ -70,7 +70,7 @@ export function ReceptRegel({ recept, index = 0, favoriet, onOpen, onFavoriet, a
           aria-label={favoriet ? 'Uit favorieten' : 'Bewaren als favoriet'}
           style={{
             flex: 'none', width: 36, height: 36, borderRadius: 'var(--radius-full)',
-            border: '1.5px solid rgba(20,20,20,0.14)', background: favoriet ? 'var(--c-red)' : 'transparent',
+            border: '1.5px solid rgba(43,20,32,0.14)', background: favoriet ? 'var(--c-red)' : 'transparent',
             color: favoriet ? 'var(--c-cream)' : 'var(--c-red)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
             transition: 'background var(--motion-fast) var(--ease)',

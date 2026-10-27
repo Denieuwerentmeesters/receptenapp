@@ -48,7 +48,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
       onClick={onSluit}
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh',
-        zIndex: 50, background: 'rgba(20,20,20,0.45)',
+        zIndex: 50, background: 'rgba(43,20,32,0.45)',
         display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
       }}
     >
@@ -84,7 +84,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
               fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, lineHeight: 1.1,
               textTransform: 'uppercase', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>{titel}</div>
-            <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(20,20,20,0.6)', marginTop: 2 }}>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)', marginTop: 2 }}>
               Gekookt op {dagLabel(gekooktOp)} · {personen} {personen === 1 ? 'persoon' : 'personen'}
             </div>
           </div>
@@ -106,7 +106,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
                   style={{
                     width: 44, height: 44, borderRadius: 'var(--radius-full)', cursor: 'pointer',
                     fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
-                    border: `1.5px solid ${gekozen ? 'var(--c-red)' : 'rgba(20,20,20,0.18)'}`,
+                    border: `1.5px solid ${gekozen ? 'var(--c-red)' : 'rgba(43,20,32,0.18)'}`,
                     background: gekozen ? 'var(--c-red)' : 'var(--c-paper)',
                     color: gekozen ? 'var(--c-paper)' : 'var(--c-ink)',
                   }}
@@ -119,7 +119,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
               fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 44, lineHeight: 1,
               color: 'var(--c-red)', minHeight: 44,
             }}>{cijfer ?? ''}</div>
-            <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(20,20,20,0.6)', marginTop: 4 }}>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(43,20,32,0.6)', marginTop: 4 }}>
               {cijfer ? cijferBetekenis(cijfer) : 'Tik een cijfer, of laat het leeg'}
             </div>
           </div>
@@ -136,7 +136,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
             style={{
               // 16px: kleiner zoomt iOS Safari in bij focus.
               fontFamily: 'var(--font-body)', fontSize: 16, padding: '10px 12px', resize: 'none',
-              borderRadius: 'var(--radius-md)', border: '1.5px solid rgba(20,20,20,0.18)',
+              borderRadius: 'var(--radius-md)', border: '1.5px solid rgba(43,20,32,0.18)',
               background: 'var(--c-paper)', color: 'var(--c-ink)', boxSizing: 'border-box', width: '100%',
             }}
           />
@@ -153,7 +153,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
           disabled={bezig}
           style={{
             alignSelf: 'center', background: 'none', border: 'none', padding: '4px 16px', cursor: 'pointer',
-            fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'rgba(20,20,20,0.6)',
+            fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'rgba(43,20,32,0.6)',
           }}
         >Sla over</button>
       </div>

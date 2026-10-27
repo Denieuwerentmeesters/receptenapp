@@ -73,9 +73,9 @@ export function HuishoudenBlok() {
 
       {h.uitnodiging ? (
         <div style={{ background: 'var(--c-paper)', borderRadius: 14, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>Geef deze code aan je huisgenoot</span>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>Geef deze code aan je huisgenoot</span>
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, letterSpacing: '.12em', userSelect: 'all' }}>{h.uitnodiging.code}</span>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
             Geldig t/m {new Date(h.uitnodiging.verloopt_op).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}. Je huisgenoot vult hem in bij Instellingen → Huishouden.
           </span>
         </div>
@@ -97,7 +97,7 @@ export function HuishoudenBlok() {
               autoCapitalize="characters"
               autoComplete="off"
               style={{
-                flex: 1, minWidth: 0, background: 'var(--c-paper)', border: '1.5px solid rgba(20,20,20,0.14)',
+                flex: 1, minWidth: 0, background: 'var(--c-paper)', border: '1.5px solid rgba(43,20,32,0.14)',
                 borderRadius: 14, padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 16, letterSpacing: '.08em',
               }}
             />

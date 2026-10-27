@@ -51,7 +51,7 @@ export function Beoordelen() {
                   }}>{r.titel_nl ?? r.titel}</h3>
                   <p style={{
                     fontFamily: 'var(--font-body)', fontSize: 13, margin: '4px 0 0',
-                    color: 'rgba(20,20,20,0.6)',
+                    color: 'rgba(43,20,32,0.6)',
                   }}>
                     {r.bereidingstijd_minuten ? `${r.bereidingstijd_minuten} min · ` : ''}
                     voor {r.personen} · {r.ingredienten.length} ingrediënten

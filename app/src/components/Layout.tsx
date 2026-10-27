@@ -193,7 +193,7 @@ export function TerugKnop({ anders = '/profiel', donker = false, onClick }: {
       aria-label="Terug"
       style={{
         flex: 'none', border: 'none', width: 36, height: 36, borderRadius: 'var(--radius-full)',
-        background: donker ? 'rgba(20,20,20,0.1)' : 'rgba(255,246,232,0.22)',
+        background: donker ? 'rgba(43,20,32,0.1)' : 'rgba(248,241,236,0.22)',
         color: donker ? 'var(--c-ink)' : 'var(--c-cream)', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
@@ -250,7 +250,7 @@ export function Voet({ children, meeschuiven = false }: { children: ReactNode; m
   const balk = (
     <div style={{
       flex: 'none', padding: '12px 22px 14px',
-      borderTop: '1.5px solid rgba(20,20,20,0.12)', background: 'inherit',
+      borderTop: '1.5px solid rgba(43,20,32,0.12)', background: 'inherit',
     }}>
       {children}
     </div>
@@ -362,7 +362,7 @@ export function Stat({ getal, label }: { getal: string; label: string }) {
         color: 'var(--c-red)',
       }}>{getal}</span>
       <span style={{
-        fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(20,20,20,0.6)',
+        fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(43,20,32,0.6)',
       }}>{label}</span>
     </div>
   )

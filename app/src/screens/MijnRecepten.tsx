@@ -68,7 +68,7 @@ const BAAN_STIJL = '.weekbaan{scrollbar-width:none}.weekbaan::-webkit-scrollbar{
 
 const KOPJE: React.CSSProperties = {
   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
-  textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
+  textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)',
 }
 
 const ROOSTER: React.CSSProperties = {
@@ -623,7 +623,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
         aria-label={weg.label}
         style={{
           position: 'absolute', top: 10, right: 10, width: 32, height: 32,
-          borderRadius: 'var(--radius-full)', background: 'rgba(20,20,20,0.34)', border: 'none',
+          borderRadius: 'var(--radius-full)', background: 'rgba(43,20,32,0.34)', border: 'none',
           display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
           color: 'var(--c-paper)',
         }}
@@ -638,7 +638,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, height: 34,
           borderRadius: 'var(--radius-full)', cursor: 'pointer',
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
-          border: `1.5px solid ${recept.opLijst ? 'var(--c-red)' : 'rgba(20,20,20,0.14)'}`,
+          border: `1.5px solid ${recept.opLijst ? 'var(--c-red)' : 'rgba(43,20,32,0.14)'}`,
           color: recept.opLijst ? 'var(--c-red)' : 'var(--c-ink)',
         }}
       >
@@ -651,7 +651,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
           style={{
             flex: 'none', height: 34, padding: '0 12px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
-            border: '1.5px solid rgba(20,20,20,0.14)', color: 'var(--c-ink)',
+            border: '1.5px solid rgba(43,20,32,0.14)', color: 'var(--c-ink)',
           }}
         >{cijferKnop.label}</button>
       )}

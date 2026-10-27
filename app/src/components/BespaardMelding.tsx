@@ -72,7 +72,7 @@ export function BespaardMelding() {
           display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
           border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', textAlign: 'left',
           background: 'var(--c-green)', color: 'var(--c-cream)',
-          boxShadow: '0 8px 24px rgba(20,20,20,0.25)',
+          boxShadow: '0 8px 24px rgba(43,20,32,0.25)',
           animation: 'bespaard-in 420ms var(--ease)',
         }}
       >
