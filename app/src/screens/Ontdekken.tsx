@@ -69,6 +69,17 @@ const TOEVOEGEN = [
   { label: 'Laat Kookmaatje een menu samenstellen', naar: '/samenstellen' },
 ]
 
+/** Sleutel in localStorage: de uitleg bij Mijn recepten laten we één keer zien. */
+const UITLEG_SLEUTEL = 'pinch-mijn-recepten-uitleg'
+
+function uitlegGezien(): boolean {
+  try { return localStorage.getItem(UITLEG_SLEUTEL) !== null } catch { return true }
+}
+
+function onthoudUitleg() {
+  try { localStorage.setItem(UITLEG_SLEUTEL, new Date().toISOString()) } catch { /* zonder opslag zie je 'm weer */ }
+}
+
 /**
  * Alle recepten doorbladeren, foto voorop. Filters op kooktijd, keuken en dieet —
  * precies de dingen waarop je een doordeweekse avond selecteert. Het hartje
@@ -86,6 +97,7 @@ export function Ontdekken() {
   const [zonder, setZonder] = useState(onthouden.zonder)
   const [mijn, setMijn] = useState(onthouden.mijn)
   const [toevoegenOpen, setToevoegenOpen] = useState(false)
+  const [uitlegOpen, setUitlegOpen] = useState(false)
   // Welke keuzelijst onderin openstaat: kooktijd, dieet of allergieën.
   const [open, setOpen] = useState<'tijd' | 'keuken' | 'dieet' | 'allergie' | null>(null)
   const allergieen = useAllergieen()
@@ -215,7 +227,11 @@ export function Ontdekken() {
               key={String(waarde)}
               role="tab"
               aria-selected={mijn === waarde}
-              onClick={() => setMijn(waarde)}
+              onClick={() => {
+                setMijn(waarde)
+                // De eerste keer Mijn recepten: laten zien hoe je er een toevoegt.
+                if (waarde && !uitlegGezien()) { onthoudUitleg(); setUitlegOpen(true) }
+              }}
               style={{
                 flex: 1, border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-full)', padding: '9px 12px',
                 background: mijn === waarde ? 'var(--c-paper)' : 'transparent',
@@ -300,6 +316,23 @@ export function Ontdekken() {
               ))}
             </div>
 
+            {/* Onder je laatste recept: een grote plus, naast de knop rechtsboven. */}
+            {mijn && !resultaten.hasNextPage && (
+              <button
+                onClick={() => setToevoegenOpen(true)}
+                aria-label="Recept toevoegen"
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  padding: '28px 16px', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                  border: '2px dashed rgba(20,20,20,0.3)', background: 'transparent', color: 'var(--c-ink)',
+                  fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 800,
+                }}
+              >
+                <Icon name="plus" size={44} />
+                Recept toevoegen
+              </button>
+            )}
+
             <div ref={onderkant} />
             {resultaten.hasNextPage && (
               <button
@@ -317,6 +350,26 @@ export function Ontdekken() {
           </Inhoud>
         )}
       </Grens>
+
+      <Dialoog
+        open={uitlegOpen}
+        kop="Zo zet je een recept erbij"
+        tekst="Recepten van Instagram, TikTok of een website bewaar je in een paar tikken. Kookmaatje leest ze uit en zet ze in het Nederlands, metrisch en met een boodschappenlijst."
+        acties={[
+          { label: 'Plak een link', hoofd: true, onClick: () => { setUitlegOpen(false); navigeer('/toevoegen?route=link') } },
+          { label: 'Begrepen', onClick: () => setUitlegOpen(false) },
+        ]}
+        onSluit={() => setUitlegOpen(false)}
+      >
+        <ol style={{
+          margin: '0 0 6px', paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 10,
+          fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.45, color: 'var(--color-ink)',
+        }}>
+          <li><b>Via Delen:</b> tik in Instagram of Safari op Delen en kies Kookmaatje. Het recept staat meteen klaar om te controleren.</li>
+          <li><b>Link plakken:</b> kopieer de link van de post of website, kom hier terug en tik op Toevoegen → Plak een link.</li>
+          <li><b>Of een screenshot</b> van een recept, of een foto uit je kookboek.</li>
+        </ol>
+      </Dialoog>
 
       <Dialoog
         open={toevoegenOpen}
