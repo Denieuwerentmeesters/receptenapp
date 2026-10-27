@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button, Woordmerk } from '../ds'
 import { Titel } from '../components/Layout'
-import { logIn, maakAccount } from '../lib/auth'
+import { logIn, maakAccount, resetWachtwoord, vraagWachtwoordResetAan } from '../lib/auth'
 import { PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
 
@@ -10,21 +10,44 @@ import { foutTekst } from '../lib/fouten'
  * inloggen en een account aanmaken — expliciet, want automatisch een account
  * aanmaken bij een onbekend e-mailadres levert bij een typefout een spookaccount op.
  */
+type Modus = 'inloggen' | 'nieuw' | 'vergeten' | 'verstuurd' | 'reset'
+
+/** Het token uit de herstellink: ?token=… vóór of achter de #. */
+function tokenUitLink(): string {
+  const uit = (q: string) => new URLSearchParams(q).get('token') ?? ''
+  return uit(window.location.search) || uit(window.location.hash.split('?')[1] ?? '')
+}
+
 export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
-  const [nieuw, setNieuw] = useState(false)
+  const [token, setToken] = useState(tokenUitLink)
+  const [modus, setModus] = useState<Modus>(token ? 'reset' : 'inloggen')
+  const nieuw = modus === 'nieuw'
+  const metWachtwoord = modus === 'inloggen' || modus === 'nieuw' || modus === 'reset'
+  const kiesNieuw = nieuw || modus === 'reset'
   const [email, setEmail] = useState('')
   const [wachtwoord, setWachtwoord] = useState('')
   const [bezig, setBezig] = useState(false)
   const [fout, setFout] = useState('')
 
-  const teKort = nieuw && wachtwoord.length > 0 && wachtwoord.length < 8
+  const teKort = kiesNieuw && wachtwoord.length > 0 && wachtwoord.length < 8
 
   async function verstuur(e: React.FormEvent) {
     e.preventDefault()
     setBezig(true); setFout('')
     try {
-      await (nieuw ? maakAccount(email, wachtwoord) : logIn(email, wachtwoord))
-      onKlaar()
+      if (modus === 'vergeten') {
+        await vraagWachtwoordResetAan(email)
+        setModus('verstuurd')
+      } else if (modus === 'reset') {
+        await resetWachtwoord(token, wachtwoord)
+        // Token weg uit de adresbalk, anders staat het er bij de volgende start nog.
+        window.history.replaceState(null, '', window.location.pathname)
+        setToken(''); setWachtwoord(''); setModus('inloggen')
+        setFout('Gelukt! Log in met je nieuwe wachtwoord.')
+      } else {
+        await (nieuw ? maakAccount(email, wachtwoord) : logIn(email, wachtwoord))
+        onKlaar()
+      }
     } catch (f) {
       setFout(foutTekst(f))
     } finally {
@@ -44,10 +67,19 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
       }}>
 
         {/* 'Thuisbezorging' past op 32 niet op één regel. */}
-        <Titel grootte={nieuw ? 32 : 27}>{nieuw ? 'Maak een account' : 'Van recept tot thuisbezorging'}</Titel>
+        <Titel grootte={modus === 'inloggen' ? 27 : 32}>{
+          nieuw ? 'Maak een account'
+            : modus === 'vergeten' ? 'Wachtwoord vergeten'
+            : modus === 'verstuurd' ? 'Check je mail'
+            : modus === 'reset' ? 'Nieuw wachtwoord'
+            : 'Van recept tot thuisbezorging'
+        }</Titel>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>
           {nieuw
             ? 'Kies een wachtwoord van minstens 8 tekens. Daarna hoef je hier nooit meer te zijn op dit toestel.'
+            : modus === 'vergeten' ? 'Vul je e-mailadres in, dan sturen we je een link om een nieuw wachtwoord te kiezen.'
+            : modus === 'verstuurd' ? `Staat er een account bij ${email.trim()}, dan ligt er een mail met een link. Die is een uur geldig. Kijk ook in je spam.`
+            : modus === 'reset' ? 'Kies een wachtwoord van minstens 8 tekens.'
             : 'Veelzijdiger, goedkoper, lekkerder'}
         </p>
 
@@ -63,26 +95,30 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
         onSubmit={verstuur}
         style={{ flex: 'none', padding: '22px 26px 44px', display: 'flex', flexDirection: 'column', gap: 10 }}
       >
-        <input
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="jouw@email.nl"
-          style={veldStijl}
-        />
-        <input
-          type="password"
-          autoComplete={nieuw ? 'new-password' : 'current-password'}
-          required
-          minLength={nieuw ? 8 : undefined}
-          value={wachtwoord}
-          onChange={(e) => setWachtwoord(e.target.value)}
-          placeholder="Wachtwoord"
-          style={veldStijl}
-        />
+        {modus !== 'reset' && modus !== 'verstuurd' && (
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="jouw@email.nl"
+            style={veldStijl}
+          />
+        )}
+        {metWachtwoord && (
+          <input
+            type="password"
+            autoComplete={kiesNieuw ? 'new-password' : 'current-password'}
+            required
+            minLength={kiesNieuw ? 8 : undefined}
+            value={wachtwoord}
+            onChange={(e) => setWachtwoord(e.target.value)}
+            placeholder={modus === 'reset' ? 'Nieuw wachtwoord' : 'Wachtwoord'}
+            style={veldStijl}
+          />
+        )}
 
         {teKort && (
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, opacity: 0.85 }}>
@@ -90,24 +126,36 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
           </span>
         )}
 
-        <Button
-          type="submit"
-          tone="yellow"
-          disabled={bezig || teKort}
-          style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-        >
-          {bezig ? 'Even geduld' : nieuw ? 'Account aanmaken' : 'Inloggen'}
-        </Button>
+        {modus !== 'verstuurd' && (
+          <Button
+            type="submit"
+            tone="yellow"
+            disabled={bezig || teKort}
+            style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
+          >
+            {bezig ? 'Even geduld'
+              : nieuw ? 'Account aanmaken'
+              : modus === 'vergeten' ? 'Stuur me een link'
+              : modus === 'reset' ? 'Wachtwoord opslaan'
+              : 'Inloggen'}
+          </Button>
+        )}
+
+        {modus === 'inloggen' && (
+          <button type="button" onClick={() => { setModus('vergeten'); setFout('') }} style={tekstKnop}>
+            Wachtwoord vergeten?
+          </button>
+        )}
 
         <button
           type="button"
-          onClick={() => { setNieuw(!nieuw); setFout('') }}
-          style={{
-            fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--c-cream)',
-            background: 'transparent', border: 'none', padding: 12, cursor: 'pointer',
-          }}
+          onClick={() => { setModus(nieuw ? 'inloggen' : modus === 'inloggen' ? 'nieuw' : 'inloggen'); setFout('') }}
+          style={tekstKnop}
         >
-          {nieuw ? 'Ik heb al een account' : 'Nog geen account? Maak er een'}
+          {modus === 'inloggen' ? 'Nog geen account? Maak er een'
+            : modus === 'reset' ? 'Terug naar inloggen'
+            : modus === 'nieuw' ? 'Ik heb al een account'
+            : 'Terug naar inloggen'}
         </button>
 
         <p style={{
@@ -122,6 +170,11 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
       </form>
     </div>
   )
+}
+
+const tekstKnop: React.CSSProperties = {
+  fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--c-cream)',
+  background: 'transparent', border: 'none', padding: 12, cursor: 'pointer',
 }
 
 const linkStijl: React.CSSProperties = {

@@ -75,6 +75,29 @@ export async function maakAccount(email: string, wachtwoord: string): Promise<Se
   return { userId: data.user.id, email: data.user.email }
 }
 
+/**
+ * Stuurt een mail met een herstellink. De link opent de website (ook vanuit de
+ * iOS-app: de mail opent in Safari) met ?token=… erachter; Inloggen pikt dat op.
+ * Geen foutmelding bij een onbekend adres: dan lekt de app niet wie een account heeft.
+ */
+export async function vraagWachtwoordResetAan(email: string): Promise<void> {
+  const { error } = await authClient().requestPasswordReset({
+    email: email.trim().toLowerCase(),
+    redirectTo: `${INLOGSITE}/`,
+  })
+  if (error) throw new Error(vertaal(error.message) ?? 'De mail versturen lukte niet. Probeer het later opnieuw.')
+}
+
+/** Zet het nieuwe wachtwoord met het token uit de herstellink. */
+export async function resetWachtwoord(token: string, nieuwWachtwoord: string): Promise<void> {
+  const { error } = await authClient().resetPassword({ token, newPassword: nieuwWachtwoord })
+  if (error) {
+    const l = (error.message ?? '').toLowerCase()
+    if (l.includes('token')) throw new Error('Deze link is verlopen of al gebruikt. Vraag een nieuwe aan.')
+    throw new Error(vertaal(error.message) ?? 'Wachtwoord wijzigen lukte niet.')
+  }
+}
+
 /** Better Auth antwoordt in het Engels; de bekende gevallen vertalen we. */
 function vertaal(bericht: string | undefined): string | undefined {
   if (!bericht) return undefined

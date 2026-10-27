@@ -138,7 +138,7 @@ export function ReceptToevoegen() {
             }}
             aria-label="Terug"
             style={{
-              border: 'none', background: 'rgba(255,246,232,0.22)', color: 'var(--c-cream)',
+              border: 'none', background: 'rgba(243,205,214,0.25)', color: 'var(--c-pink-soft)',
               width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
@@ -299,7 +299,7 @@ export function ReceptToevoegen() {
                 placeholder="Bijvoorbeeld: ui, knoflook en gehakt in de pan, tomatenblokjes erbij, 20 minuten laten sudderen. Voor 4 personen."
                 style={{
                   width: '100%', background: 'var(--c-paper)', borderRadius: 14,
-                  border: '1.5px solid rgba(20,20,20,0.14)', padding: '14px 16px',
+                  border: '1.5px solid rgba(43,20,32,0.14)', padding: '14px 16px',
                   fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.5, resize: 'vertical',
                 }}
               />
@@ -393,7 +393,7 @@ export function ReceptToevoegen() {
                 />
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5 }}>
                   <strong>Aanmelden om te delen</strong><br />
-                  <span style={{ color: 'rgba(20,20,20,0.6)' }}>
+                  <span style={{ color: 'rgba(43,20,32,0.6)' }}>
                     Het recept gaat eerst langs een beoordeling voordat anderen het zien.
                   </span>
                 </span>
@@ -438,7 +438,7 @@ function Keuze({ icoon, kop, tekst, onClick }: {
       }}><Icon name={icoon} size={22} /></span>
       <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>{kop}</span>
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, color: 'rgba(20,20,20,0.6)' }}>{tekst}</span>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, color: 'rgba(43,20,32,0.6)' }}>{tekst}</span>
       </span>
       <Icon name="chevronRight" size={18} style={{ color: 'var(--c-purple)' }} />
     </button>
@@ -463,7 +463,7 @@ function Veld({ label, waarde, onChange, type = 'text' }: {
       <input
         type={type} value={waarde} onChange={(e) => onChange(e.target.value)}
         style={{
-          background: 'var(--c-paper)', border: '1.5px solid rgba(20,20,20,0.14)',
+          background: 'var(--c-paper)', border: '1.5px solid rgba(43,20,32,0.14)',
           borderRadius: 14, padding: '13px 15px', fontFamily: 'var(--font-body)', fontSize: 16,
           width: '100%', minWidth: 0,
         }}
@@ -504,7 +504,7 @@ function Lijst({ label, regels, onChange, plaatshouder, groot }: {
             aria-label="Regel verwijderen"
             style={{
               flex: 'none', width: 32, height: 32, marginTop: 6, border: 'none',
-              background: 'transparent', color: 'rgba(20,20,20,0.45)', cursor: 'pointer',
+              background: 'transparent', color: 'rgba(43,20,32,0.45)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           ><Icon name="x" size={14} /></button>
@@ -516,13 +516,13 @@ function Lijst({ label, regels, onChange, plaatshouder, groot }: {
 }
 
 const regelStijl: React.CSSProperties = {
-  flex: 1, minWidth: 0, background: 'var(--c-paper)', border: '1.5px solid rgba(20,20,20,0.14)',
+  flex: 1, minWidth: 0, background: 'var(--c-paper)', border: '1.5px solid rgba(43,20,32,0.14)',
   borderRadius: 14, padding: '12px 15px', fontFamily: 'var(--font-body)', fontSize: 16,
   lineHeight: 1.4, resize: 'vertical',
 }
 
 const uitlegStijl: React.CSSProperties = {
-  fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(20,20,20,0.6)',
+  fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(43,20,32,0.6)',
 }
 
 const tekstKnop: React.CSSProperties = {
