@@ -487,7 +487,8 @@ export function MijnRecepten() {
       <Dialoog
         open={bewaar.isError}
         kop="Cijfer bewaren lukte niet"
-        tekst="Je recept staat wel bij gekookt. Probeer het cijfer straks nog eens via Cijfer op de kaart."
+        tekst={`Je recept staat wel bij gekookt. Probeer het cijfer straks nog eens via Cijfer op de kaart.${
+          bewaar.error ? ` (${(bewaar.error as { message?: string }).message ?? 'onbekende fout'})` : ''}`}
         onSluit={() => bewaar.reset()}
         acties={[{ label: 'Oké', hoofd: true, onClick: () => bewaar.reset() }]}
       />
@@ -595,7 +596,8 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
           {/* Een samengesteld recept krijgt nooit een foto: dan ook geen belofte. */}
           {recept.afbeelding_url || recept.bron_type === 'samengesteld' ? '' : 'foto'}
         </div>
-        <div style={{ padding: '10px 12px 12px', width: '100%', boxSizing: 'border-box' }}>
+        {/* Het gele bonuslabel staat linksonder over de kaart: laat er ruimte voor als er een metaregel is. */}
+        <div style={{ padding: `10px 12px ${metaRegel && bonus.length > 0 ? 40 : 12}px`, width: '100%', boxSizing: 'border-box' }}>
           <h3 style={{
             fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, lineHeight: 1,
             margin: 0, textTransform: 'uppercase', minHeight: '2em',
