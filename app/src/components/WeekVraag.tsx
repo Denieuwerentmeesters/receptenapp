@@ -99,7 +99,7 @@ export function WeekVraag() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', textAlign: 'left',
                 borderRadius: 'var(--radius-md)', cursor: 'pointer', background: 'var(--c-paper)',
-                border: `1.5px solid ${aan ? 'var(--c-red)' : 'rgba(20,20,20,0.14)'}`,
+                border: `1.5px solid ${aan ? 'var(--c-red)' : 'rgba(43,20,32,0.14)'}`,
                 fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--color-ink)',
               }}
             >
@@ -107,7 +107,7 @@ export function WeekVraag() {
                 flex: 'none', width: 22, height: 22, borderRadius: 'var(--radius-full)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 background: aan ? 'var(--c-red)' : 'transparent', color: 'var(--c-paper)',
-                border: aan ? 'none' : '1.5px solid rgba(20,20,20,0.3)',
+                border: aan ? 'none' : '1.5px solid rgba(43,20,32,0.3)',
               }}>{aan && <Icon name="check" size={14} />}</span>
               <span style={{ flex: 1, minWidth: 0 }}>{r.titel_nl ?? r.titel}</span>
             </button>

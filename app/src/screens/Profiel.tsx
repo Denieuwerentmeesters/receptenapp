@@ -86,12 +86,12 @@ export function Profiel() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
                 background: 'transparent', border: 'none',
-                borderBottom: '1.5px solid rgba(20,20,20,0.12)', padding: '14px 2px', cursor: 'pointer',
+                borderBottom: '1.5px solid rgba(43,20,32,0.12)', padding: '14px 2px', cursor: 'pointer',
               }}
             >
               <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>{rij.label}</span>
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(20,20,20,0.6)' }}>{rij.sub}</span>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)' }}>{rij.sub}</span>
               </span>
               <Icon name="chevronRight" size={18} style={{ color: 'var(--c-red)' }} />
             </button>
@@ -103,7 +103,7 @@ export function Profiel() {
           style={{
             alignSelf: 'flex-start', background: 'transparent', border: 'none',
             padding: '2px 2px 20px', cursor: 'pointer',
-            fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'rgba(20,20,20,0.6)',
+            fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'rgba(43,20,32,0.6)',
           }}
         >Uitloggen</button>
       </Inhoud>

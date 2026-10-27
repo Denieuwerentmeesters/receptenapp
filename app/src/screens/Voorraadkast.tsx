@@ -49,7 +49,7 @@ export function Voorraadkast() {
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: items.length === 0 ? 'center' : 'flex-start' }}>
       {suggesties.map((s) => (
         <button key={s} onClick={() => voegToe(s)} style={{
-          border: '1.5px solid rgba(20,20,20,0.14)', background: 'transparent',
+          border: '1.5px solid rgba(43,20,32,0.14)', background: 'transparent',
           borderRadius: 'var(--radius-full)', padding: '8px 14px',
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
         }}>+ {s}</button>
@@ -60,10 +60,10 @@ export function Voorraadkast() {
   return (
     <Scherm>
       <Grens query={voorraad} ladenTekst="Voorraadkast ophalen">
-        <Kop kleur="var(--c-gold)" tekstKleur="var(--c-ink)" style={{ paddingBottom: 22 }}>
+        <Kop kleur="var(--c-red)" style={{ paddingBottom: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <TerugKnop donker />
-            <Label kleur="var(--c-green)">In huis</Label>
+            <Label kleur="var(--c-pink-soft)">In huis</Label>
           </div>
           <div style={{ marginTop: 14 }}><Titel grootte={26}>Voorraadkast</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
@@ -83,7 +83,7 @@ export function Voorraadkast() {
               placeholder="Voeg iets toe dat je in huis hebt"
               style={{
                 flex: 1, minWidth: 0, background: 'var(--c-paper)',
-                border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 14,
+                border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 14,
                 padding: '13px 15px', fontFamily: 'var(--font-body)', fontSize: 16,
               }}
             />
@@ -112,7 +112,7 @@ export function Voorraadkast() {
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                     textTransform: 'uppercase', color: 'var(--c-red)',
                   }}>{groep.naam}</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(20,20,20,0.6)' }}>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(43,20,32,0.6)' }}>
                     {groep.items.filter((i) => i.in_huis).length} van {groep.items.length}
                   </span>
                 </div>
@@ -120,11 +120,11 @@ export function Voorraadkast() {
                 {groep.items.map((item) => (
                   <div key={item.ingredient_key} style={{
                     display: 'flex', alignItems: 'center', gap: 10, padding: '11px 2px',
-                    borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+                    borderBottom: '1.5px solid rgba(43,20,32,0.12)',
                   }}>
                     <span style={{
                       flex: 1, minWidth: 0, fontFamily: 'var(--font-body)', fontSize: 15,
-                      color: item.in_huis ? 'var(--color-ink)' : 'rgba(20,20,20,0.45)',
+                      color: item.in_huis ? 'var(--color-ink)' : 'rgba(43,20,32,0.45)',
                     }}>
                       {item.naam}
                       {item.ingredient_key === DROGE_KRUIDEN_KEY ? (
@@ -140,9 +140,9 @@ export function Voorraadkast() {
                       onClick={() => toggle.mutate({ key: item.ingredient_key, inHuis: !item.in_huis, naam: item.naam })}
                       style={{
                         flex: 'none', borderRadius: 'var(--radius-full)', padding: '8px 14px', cursor: 'pointer',
-                        border: item.in_huis ? 'none' : '1.5px solid rgba(20,20,20,0.18)',
+                        border: item.in_huis ? 'none' : '1.5px solid rgba(43,20,32,0.18)',
                         background: item.in_huis ? 'var(--c-red)' : 'transparent',
-                        color: item.in_huis ? 'var(--c-cream)' : 'rgba(20,20,20,0.6)',
+                        color: item.in_huis ? 'var(--c-cream)' : 'rgba(43,20,32,0.6)',
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       }}
                     >{item.in_huis ? 'in huis' : 'op'}</button>
@@ -152,7 +152,7 @@ export function Voorraadkast() {
                       aria-label={`${item.naam} verwijderen`}
                       style={{
                         flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',
-                        border: 'none', background: 'transparent', color: 'rgba(20,20,20,0.45)',
+                        border: 'none', background: 'transparent', color: 'rgba(43,20,32,0.45)',
                         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     ><Icon name="x" size={14} /></button>
@@ -175,7 +175,7 @@ export function Voorraadkast() {
                       onClick={() => altijdOp.mutate({ naam, op: !op })}
                       style={{
                         flex: 'none', borderRadius: 'var(--radius-full)', padding: '8px 14px', cursor: 'pointer',
-                        border: op ? 'none' : '1.5px solid rgba(20,20,20,0.18)',
+                        border: op ? 'none' : '1.5px solid rgba(43,20,32,0.18)',
                         background: op ? 'var(--c-red)' : 'transparent',
                         color: op ? 'var(--c-cream)' : 'var(--c-ink)',
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
@@ -203,7 +203,7 @@ export function Voorraadkast() {
           <Voet>
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, margin: 0,
-              textAlign: 'center', color: 'rgba(20,20,20,0.6)',
+              textAlign: 'center', color: 'rgba(43,20,32,0.6)',
             }}>
               {inHuis} {inHuis === 1 ? 'product' : 'producten'} in huis · deze laten we van je lijst af
             </p>
@@ -232,7 +232,7 @@ function groepeer(items: VoorraadItem[]) {
 }
 
 const subStijl: React.CSSProperties = {
-  display: 'block', fontSize: 12, marginTop: 2, color: 'rgba(20,20,20,0.6)',
+  display: 'block', fontSize: 12, marginTop: 2, color: 'rgba(43,20,32,0.6)',
 }
 
 const kopStijl: React.CSSProperties = {
@@ -242,5 +242,5 @@ const kopStijl: React.CSSProperties = {
 
 const rijStijl: React.CSSProperties = {
   display: 'flex', alignItems: 'center', gap: 10, padding: '11px 2px',
-  borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+  borderBottom: '1.5px solid rgba(43,20,32,0.12)',
 }

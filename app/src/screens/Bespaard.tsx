@@ -74,21 +74,21 @@ export function Bespaard() {
                 return (
                   <div key={b.id} style={{
                     display: 'flex', alignItems: 'center', gap: 12, padding: '14px 2px',
-                    borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+                    borderBottom: '1.5px solid rgba(43,20,32,0.12)',
                   }}>
                     <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                       <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>
                         {DATUM.format(new Date(b.besteld_op))} · {b.maaltijden}{' '}
                         {b.maaltijden === 1 ? 'maaltijd' : 'maaltijden'} voor {b.personen}
                       </span>
-                      <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(20,20,20,0.6)' }}>
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)' }}>
                         Mandje {euro(b.mandje_kosten, true)} · {MAALTIJDBOX.naam} {euro(b.maaltijdbox_kosten, true)}
                         {b.bonus_voordeel > 0 && ` · bonus ${euro(b.bonus_voordeel, true)}`}
                       </span>
                     </span>
                     <span style={{
                       fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18,
-                      color: bedrag >= 0 ? 'var(--c-green)' : 'var(--c-red)',
+                      color: bedrag >= 0 ? 'var(--c-green)' : 'var(--c-ink-500)',
                     }}>{bedrag >= 0 ? '+' : '−'}{euro(Math.abs(bedrag))}</span>
                   </div>
                 )
@@ -138,7 +138,7 @@ function Sectiekop({ children }: { children: React.ReactNode }) {
 function Uitleg({ children }: { children: React.ReactNode }) {
   return (
     <p style={{
-      fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(20,20,20,0.75)',
+      fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'rgba(43,20,32,0.75)',
     }}>{children}</p>
   )
 }

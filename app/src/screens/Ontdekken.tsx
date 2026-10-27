@@ -29,10 +29,9 @@ const TIJDEN = [
 ]
 
 /**
- * Zachte perzik: orange uit de kop, gemengd met cream. Zo voelt Ontdekken
- * anders dan "Deze week", en springen de foto's eruit.
+ * Crème, zoals de rest van de app; de roze onderkant van de kaarten springt eruit.
  */
-const ACHTERGROND = '#FCD6C3'
+const ACHTERGROND = 'var(--c-cream)'
 
 /** Zonder foto toch een vlak: de roodtinten wisselen af, het merkritme. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
@@ -200,7 +199,7 @@ export function Ontdekken() {
             <button
               onClick={() => setZoek('')}
               aria-label="Zoekterm wissen"
-              style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'rgba(20,20,20,0.45)', display: 'flex' }}
+              style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'rgba(43,20,32,0.45)', display: 'flex' }}
             ><Icon name="x" size={16} /></button>
           )}
         </div>
@@ -209,7 +208,7 @@ export function Ontdekken() {
       <div style={{ flex: 'none', padding: '14px 22px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
         {/* Alle recepten of alleen die van jou: wat je toevoegde, importeerde of liet samenstellen. */}
         <div role="tablist" aria-label="Welke recepten" style={{
-          display: 'flex', background: 'rgba(20,20,20,0.08)', borderRadius: 'var(--radius-full)', padding: 3,
+          display: 'flex', background: 'rgba(43,20,32,0.08)', borderRadius: 'var(--radius-full)', padding: 3,
         }}>
           {([false, true] as const).map((waarde) => (
             <button
@@ -221,7 +220,7 @@ export function Ontdekken() {
                 flex: 1, border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-full)', padding: '9px 12px',
                 background: mijn === waarde ? 'var(--c-paper)' : 'transparent',
                 color: 'var(--c-ink)', fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 800,
-                boxShadow: mijn === waarde ? '0 1px 4px rgba(20,20,20,0.12)' : 'none',
+                boxShadow: mijn === waarde ? '0 1px 4px rgba(43,20,32,0.12)' : 'none',
               }}
             >{waarde ? 'Mijn recepten' : 'Alle recepten'}</button>
           ))}
@@ -278,7 +277,7 @@ export function Ontdekken() {
           >
             <span style={{
               fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
-              textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
+              textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)',
             }}>
               {totaal} {totaal === 1 ? 'recept' : 'recepten'}
             </span>
@@ -308,7 +307,7 @@ export function Ontdekken() {
                 disabled={resultaten.isFetchingNextPage}
                 style={{
                   margin: '8px 0 4px', padding: '14px', borderRadius: 'var(--radius-full)',
-                  border: '1.5px solid rgba(20,20,20,0.14)', background: 'transparent',
+                  border: '1.5px solid rgba(43,20,32,0.14)', background: 'transparent',
                   fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, cursor: 'pointer',
                 }}
               >
@@ -400,7 +399,7 @@ function Keuzelijst({ keuzes, gekozen, onWissel }: {
       {keuzes.map((k) => (
         <label key={k.id} style={{
           display: 'flex', alignItems: 'center', gap: 12, padding: '11px 2px', cursor: 'pointer',
-          borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+          borderBottom: '1.5px solid rgba(43,20,32,0.12)',
           fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
         }}>
           <input
@@ -478,7 +477,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
               borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, pointerEvents: 'none',
               background: favoriet ? 'var(--c-yellow)' : 'var(--c-paper)', color: 'var(--c-ink)',
-              boxShadow: '0 2px 8px rgba(20,20,20,0.18)',
+              boxShadow: '0 2px 8px rgba(43,20,32,0.18)',
             }}
           >{mijn?.cijfer ?? cijferTekst(gemiddeld!.gemiddeld)}</span>
         )}
@@ -505,7 +504,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
           color: 'var(--color-ink)', display: '-webkit-box', WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical', overflow: 'hidden',
         }}>{recept.titel_nl ?? recept.titel}</span>
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
           {meta}
           {isBudget(recept) && <BudgetLabel />}
         </span>
@@ -526,12 +525,12 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
           }}>Jouw favoriet</span>
         )}
         {mijn?.cijfer != null && (
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
             Jouw cijfer: {mijn.cijfer}{mijn.notitie ? ` · notitie: ${mijn.notitie}` : ''}
           </span>
         )}
         {gemiddeld && (
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
             {cijferTekst(gemiddeld.gemiddeld)} gemiddeld · {gemiddeld.aantal} koks
           </span>
         )}
@@ -544,7 +543,7 @@ const rondje: React.CSSProperties = {
   width: 38, height: 38, borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   background: 'rgba(255,255,255,0.92)', color: 'var(--c-red)',
-  boxShadow: '0 2px 8px rgba(20,20,20,0.18)',
+  boxShadow: '0 2px 8px rgba(43,20,32,0.18)',
   transition: 'background var(--motion-fast) var(--ease)',
 }
 const aan: React.CSSProperties = { background: 'var(--c-red)', color: 'var(--c-cream)' }

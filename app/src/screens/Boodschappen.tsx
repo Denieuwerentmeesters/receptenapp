@@ -31,14 +31,14 @@ const keuzeInRegel: React.CSSProperties = {
   display: 'inline-block', verticalAlign: 'baseline', maxWidth: '100%',
   fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
   color: 'var(--c-green)', background: 'var(--c-paper)',
-  border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 10, padding: '3px 8px',
+  border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 10, padding: '3px 8px',
 }
 
 const keuzeStijl: React.CSSProperties = {
   display: 'block', marginTop: 6, marginLeft: 36, maxWidth: 'calc(100% - 36px)',
   fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
   color: 'var(--c-green)', background: 'var(--c-paper)',
-  border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 10, padding: '6px 10px',
+  border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 10, padding: '6px 10px',
 }
 
 const SUGGESTIES = ['Koffie', 'Brood', 'Melk', 'Bananen', 'Wc-papier']
@@ -274,7 +274,7 @@ export function Boodschappen() {
               <button
                 onClick={() => setWisVraag(true)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 6, border: '1.5px solid rgba(255,246,232,0.5)',
+                  display: 'flex', alignItems: 'center', gap: 6, border: '1.5px solid rgba(248,241,236,0.5)',
                   background: 'transparent', color: 'var(--c-cream)', borderRadius: 'var(--radius-full)',
                   padding: '6px 12px', cursor: 'pointer',
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
@@ -314,7 +314,7 @@ export function Boodschappen() {
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                     textTransform: 'uppercase', color: 'var(--c-green)',
                   }}>{groep.schap}</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(20,20,20,0.6)' }}>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(43,20,32,0.6)' }}>
                     {groep.regels.filter((r) => !r.afgevinkt).length} van {groep.regels.length}
                   </span>
                 </div>
@@ -322,7 +322,7 @@ export function Boodschappen() {
                 {groep.regels.map((regel) => (
                   <div key={regel.key} style={{
                     display: 'flex', alignItems: 'center', gap: 8, padding: '10px 2px',
-                    borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+                    borderBottom: '1.5px solid rgba(43,20,32,0.12)',
                   }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <Checkbox
@@ -386,7 +386,7 @@ export function Boodschappen() {
                         return (
                           <span style={{
                             display: 'block', marginLeft: 36, marginTop: 2,
-                            fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.55)',
+                            fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.55)',
                           }}>
                             {aantal.totaal}× {inhoudTekst(verpakking)}
                             {aantal.samenMet.length > 0 && ` · samen met ${aantal.samenMet.join(' en ')}`}
@@ -416,7 +416,7 @@ export function Boodschappen() {
                           <span style={{
                             display: 'block', marginLeft: 36, marginTop: 3,
                             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
-                            color: zeker.length > 0 ? 'var(--c-red)' : 'rgba(20,20,20,0.6)',
+                            color: zeker.length > 0 ? 'var(--c-red)' : 'rgba(43,20,32,0.6)',
                           }}>
                             {zeker.length > 0
                               ? `Bevat ${opsomming(zeker)}`
@@ -427,7 +427,7 @@ export function Boodschappen() {
                     </div>
                     {blijftThuis(regel.key) ? (
                       <span style={{
-                        fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(20,20,20,0.5)',
+                        fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(43,20,32,0.5)',
                       }}>thuis</span>
                     ) : !winkel.heeftProduct(voorWinkel(regel)) && (() => {
                       // Niet bij de winkel, wel bij de toko? Dan daarheen in plaats van zoeken.
@@ -447,7 +447,7 @@ export function Boodschappen() {
                       aria-label={`${regel.naam} verwijderen`}
                       style={{
                         flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',
-                        border: 'none', background: 'transparent', color: 'rgba(20,20,20,0.45)',
+                        border: 'none', background: 'transparent', color: 'rgba(43,20,32,0.45)',
                         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     ><Icon name="x" size={14} /></button>
@@ -472,7 +472,7 @@ export function Boodschappen() {
                   placeholder="Bijv. koffiebonen"
                   style={{
                     flex: 1, minWidth: 0, background: 'var(--c-paper)',
-                    border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 14,
+                    border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 14,
                     padding: '13px 15px', fontFamily: 'var(--font-body)', fontSize: 16,
                   }}
                 />
@@ -489,7 +489,7 @@ export function Boodschappen() {
                   .slice(0, 4)
                   .map((s) => (
                     <button key={s} onClick={() => toevoegen.mutate(s)} style={{
-                      border: '1.5px solid rgba(20,20,20,0.14)', background: 'transparent',
+                      border: '1.5px solid rgba(43,20,32,0.14)', background: 'transparent',
                       borderRadius: 'var(--radius-full)', padding: '8px 14px',
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
                     }}>+ {s}</button>
@@ -561,7 +561,7 @@ export function Boodschappen() {
             )}
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.4, margin: '8px 0 0',
-              textAlign: 'center', color: 'rgba(20,20,20,0.6)',
+              textAlign: 'center', color: 'rgba(43,20,32,0.6)',
             }}>
               {naarWinkel.length === 0
                 ? 'Je lijst wordt leeggemaakt. Je recepten gaan naar Te koken.'

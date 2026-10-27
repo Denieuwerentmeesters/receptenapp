@@ -225,7 +225,7 @@ export function ProgressBar({ value, max = 100, tone = 'action', trackTone = 'on
   return (
     <div style={{
       height: 8, borderRadius: 'var(--radius-full)',
-      background: trackTone === 'onDark' ? 'rgba(255,246,232,0.3)' : 'var(--c-red-100)',
+      background: trackTone === 'onDark' ? 'rgba(248,241,236,0.3)' : 'var(--c-red-100)',
       overflow: 'hidden',
     }}>
       <div style={{

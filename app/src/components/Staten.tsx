@@ -52,7 +52,7 @@ export function Leeg({ icoon, kop, tekst, knop, onKnop, onIcoon, icoonLabel }: {
       }}>{kop}</h2>
       <p style={{
         fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0,
-        maxWidth: 280, color: 'rgba(20,20,20,0.6)',
+        maxWidth: 280, color: 'rgba(43,20,32,0.6)',
       }}>{tekst}</p>
       {knop && (
         <Button onClick={onKnop} style={{ marginTop: 10, width: '100%', maxWidth: 280, padding: '17px 24px' }}>
@@ -98,7 +98,7 @@ export function Fout({ kop, tekst, stappen, onOpnieuw, onTerug }: {
             {stappen.map((stap, i) => (
               <div key={i} style={{
                 display: 'flex', gap: 10, padding: '11px 0',
-                borderBottom: '1.5px solid rgba(255,246,232,0.3)',
+                borderBottom: '1.5px solid rgba(248,241,236,0.3)',
               }}>
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'var(--c-yellow)' }}>
                   {i + 1}

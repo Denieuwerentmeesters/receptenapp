@@ -162,7 +162,7 @@ export function Kookmodus() {
                   onClick={() => navigeer(-1)}
                   aria-label="Kookmodus sluiten"
                   style={{
-                    border: 'none', background: 'rgba(255,246,232,0.18)', color: 'var(--c-cream)',
+                    border: 'none', background: 'rgba(248,241,236,0.18)', color: 'var(--c-cream)',
                     width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
@@ -176,7 +176,7 @@ export function Kookmodus() {
               </div>
 
               <div style={{ flex: 'none', padding: '0 22px' }}>
-                <div style={{ height: 8, borderRadius: 'var(--radius-full)', background: 'rgba(255,246,232,0.24)', overflow: 'hidden' }}>
+                <div style={{ height: 8, borderRadius: 'var(--radius-full)', background: 'rgba(248,241,236,0.24)', overflow: 'hidden' }}>
                   <div style={{
                     height: '100%', borderRadius: 'var(--radius-full)', background: 'var(--c-yellow)',
                     width: `${Math.round(((stap + 1) / stappen.length) * 100)}%`,
@@ -191,7 +191,7 @@ export function Kookmodus() {
                     onClick={() => setStap(timer.stap)}
                     style={{
                       width: '100%', border: 'none', borderRadius: 'var(--radius-full)',
-                      background: resterend === 0 ? 'var(--c-yellow)' : 'rgba(255,246,232,0.14)',
+                      background: resterend === 0 ? 'var(--c-yellow)' : 'rgba(248,241,236,0.14)',
                       color: resterend === 0 ? 'var(--c-ink)' : 'var(--c-cream)',
                       padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
                       fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, textAlign: 'left',
@@ -222,14 +222,14 @@ export function Kookmodus() {
                       <span key={n} style={{
                         fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
                         padding: '9px 14px', borderRadius: 'var(--radius-full)',
-                        border: '1.5px solid rgba(255,246,232,0.4)',
+                        border: '1.5px solid rgba(248,241,236,0.4)',
                       }}>{i.weergave} {i.naam}</span>
                     ))}
                   </div>
                 )}
 
                 <div style={{
-                  background: 'rgba(20,20,20,0.22)', borderRadius: 'var(--radius-lg)', padding: 20,
+                  background: 'rgba(43,20,32,0.22)', borderRadius: 'var(--radius-lg)', padding: 20,
                   display: 'flex', flexDirection: 'column', gap: 14,
                 }}>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -281,7 +281,7 @@ export function Kookmodus() {
                   aria-label="Vorige stap"
                   style={{
                     flex: 'none', width: 56, height: 56, borderRadius: 'var(--radius-full)',
-                    border: '1.5px solid rgba(255,246,232,0.5)', background: 'transparent',
+                    border: '1.5px solid rgba(248,241,236,0.5)', background: 'transparent',
                     color: 'var(--c-cream)', cursor: stap === 0 ? 'not-allowed' : 'pointer',
                     opacity: stap === 0 ? 0.4 : 1,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -336,7 +336,7 @@ const timerKnop: React.CSSProperties = {
 const timerKnopStil: React.CSSProperties = {
   ...timerKnop,
   background: 'transparent', color: 'var(--c-cream)',
-  boxShadow: 'inset 0 0 0 1.5px rgba(255,246,232,0.5)',
+  boxShadow: 'inset 0 0 0 1.5px rgba(248,241,236,0.5)',
 }
 
 function formatteer(s: number): string {

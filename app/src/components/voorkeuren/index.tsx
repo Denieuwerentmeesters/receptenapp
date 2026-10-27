@@ -142,7 +142,7 @@ export function VoorraadKeuze({ gekozen, bekend, onZet }: {
           autoCapitalize="sentences"
           style={{
             flex: 1, minWidth: 0, height: 48, boxSizing: 'border-box', padding: '0 16px',
-            border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 14, outline: 'none',
+            border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 14, outline: 'none',
             // 16 px of groter: anders zoomt iOS in bij focus.
             background: 'var(--c-paper)', fontFamily: 'var(--font-body)', fontSize: 16, color: 'var(--c-ink)',
           }}

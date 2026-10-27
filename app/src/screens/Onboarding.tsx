@@ -538,7 +538,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
                 value={antw.meldingTijd}
                 onChange={(e) => { if (e.target.value) setAntw({ ...antw, meldingTijd: e.target.value }) }}
                 style={{
-                  height: 44, padding: '0 12px', border: '1.5px solid rgba(20,20,20,0.14)', borderRadius: 12,
+                  height: 44, padding: '0 12px', border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 12,
                   // 16 px of groter: anders zoomt iOS in bij focus.
                   background: 'var(--c-cream)', fontFamily: 'var(--font-body)', fontSize: 16, color: 'var(--c-ink)',
                 }}

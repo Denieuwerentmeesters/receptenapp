@@ -71,7 +71,7 @@ export function Instellingen() {
                   <Sectie naam="Keukens">
                     <p style={{
                       fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45,
-                      color: 'rgba(20,20,20,0.6)', margin: '0 0 10px',
+                      color: 'rgba(43,20,32,0.6)', margin: '0 0 10px',
                     }}>
                       Wat je het liefst eet. Deze keukens komen vaker in je weekmenu en staan
                       bovenaan in Ontdekken; de rest komt nog af en toe langs. Tik uit wat je
@@ -91,7 +91,7 @@ export function Instellingen() {
                 <Sectie naam="Allergieën">
                   <p style={{
                     fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45,
-                    color: 'rgba(20,20,20,0.6)', margin: '0 0 10px',
+                    color: 'rgba(43,20,32,0.6)', margin: '0 0 10px',
                   }}>
                     Recepten waar het in zit laten we weg. Gluten en koemelk vervangen we waar het
                     kan, dan krijg je op je lijst bijvoorbeeld glutenvrije pasta of havermelk. Staat
@@ -207,11 +207,11 @@ function Rij({ label, sub, children }: { label: string; sub: string; children: R
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: 12, padding: '14px 2px',
-      borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+      borderBottom: '1.5px solid rgba(43,20,32,0.12)',
     }}>
       <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>{label}</span>
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, color: 'rgba(20,20,20,0.6)' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, color: 'rgba(43,20,32,0.6)' }}>
           {sub}
         </span>
       </span>
@@ -230,7 +230,7 @@ function Schakelaar({ aan, onWijzig }: { aan: boolean; onWijzig: () => void }) {
         width: 52, height: 30, border: 'none', borderRadius: 'var(--radius-full)', flex: 'none',
         display: 'flex', alignItems: 'center', padding: 3, cursor: 'pointer',
         justifyContent: aan ? 'flex-end' : 'flex-start',
-        background: aan ? 'var(--c-red)' : 'rgba(20,20,20,0.18)',
+        background: aan ? 'var(--c-red)' : 'rgba(43,20,32,0.18)',
         transition: 'background var(--motion-fast) var(--ease)',
       }}
     >
@@ -247,7 +247,7 @@ function Keuze<W extends string>({ opties, waarde, onWijzig }: {
   return (
     <div role="radiogroup" style={{
       display: 'flex', flex: 'none', padding: 3, gap: 2,
-      borderRadius: 'var(--radius-full)', background: 'rgba(20,20,20,0.08)',
+      borderRadius: 'var(--radius-full)', background: 'rgba(43,20,32,0.08)',
     }}>
       {opties.map(([w, label]) => {
         const gekozen = w === waarde
@@ -261,7 +261,7 @@ function Keuze<W extends string>({ opties, waarde, onWijzig }: {
               border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', cursor: 'pointer',
               fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700,
               background: gekozen ? 'var(--c-red)' : 'transparent',
-              color: gekozen ? 'var(--c-cream)' : 'rgba(20,20,20,0.6)',
+              color: gekozen ? 'var(--c-cream)' : 'rgba(43,20,32,0.6)',
               transition: 'background var(--motion-fast) var(--ease)',
             }}
           >{label}</button>
@@ -288,7 +288,7 @@ function Stapper({ label, sub, waarde, min, max, stap = 1, weergave, onWijzig }:
       aria-label={omschrijving}
       style={{
         width: 32, height: 32, borderRadius: 'var(--radius-full)',
-        border: '1.5px solid rgba(20,20,20,0.2)', background: 'transparent',
+        border: '1.5px solid rgba(43,20,32,0.2)', background: 'transparent',
         cursor: uit ? 'not-allowed' : 'pointer', opacity: uit ? 0.35 : 1,
         fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700, lineHeight: 1,
       }}
