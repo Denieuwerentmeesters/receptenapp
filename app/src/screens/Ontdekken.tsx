@@ -14,6 +14,9 @@ import { BonusLabel } from '../components/Bonus'
 import { receptBonusProducten, useBonus } from '../lib/bonus'
 import { ALLERGENEN_OP_VOORKOMEN, opsomming, useAllergieen, vastVoorJou } from '../lib/allergenen'
 import { Dialoog } from '../components/Dialoog'
+import {
+  cijferTekst, gemiddeldeOpKaart, isFavorietCijfer, useBeoordelingen, type LaatsteBeoordeling,
+} from '../lib/beoordeling'
 import { useVoorkeuren } from '../lib/queries'
 import { DIETEN, dieetLabels, wisselDieet, type Dieet } from '../lib/dieet'
 
@@ -26,10 +29,9 @@ const TIJDEN = [
 ]
 
 /**
- * Zachte perzik: orange uit de kop, gemengd met cream. Zo voelt Ontdekken
- * anders dan "Deze week", en springen de foto's eruit.
+ * Crème, zoals de rest van de app; de roze onderkant van de kaarten springt eruit.
  */
-const ACHTERGROND = '#FCD6C3'
+const ACHTERGROND = 'var(--c-cream)'
 
 /** Zonder foto toch een vlak: de roodtinten wisselen af, het merkritme. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
@@ -47,6 +49,7 @@ const onthouden = {
   keukens: [] as string[],
   dieet: [] as Dieet[],
   alleenBudget: false,
+  hoogCijfer: false,
   // Het allergiefilter begint met je allergieën uit Instellingen (null = nog
   // niet aangeraakt). Wat je hier aan- of uitvinkt geldt tot een herstart:
   // vaak heeft maar één iemand in het gezin een allergie, of eet er iemand mee
@@ -90,6 +93,7 @@ export function Ontdekken() {
   const [keukens, setKeukens] = useState(onthouden.keukens)
   const [dieet, setDieet] = useState(onthouden.dieet)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
+  const [hoogCijfer, setHoogCijfer] = useState(onthouden.hoogCijfer)
   const [zonder, setZonder] = useState(onthouden.zonder)
   const [mijn, setMijn] = useState(onthouden.mijn)
   const [toevoegenOpen, setToevoegenOpen] = useState(false)
@@ -100,9 +104,18 @@ export function Ontdekken() {
   const zonderAllergenen = zonder ?? allergieen
   const voorkeurKeukens = useVoorkeuren().data?.favoriete_keukens ?? GEEN
 
+  const beoordelingen = useBeoordelingen()
+  // Een eigen sleutel per inhoud: anders is dit elke render een nieuw filter.
+  const hoogCijferIds = useMemo(
+    () => (hoogCijfer
+      ? [...beoordelingen.perRecept].filter(([, b]) => isFavorietCijfer(b.cijfer)).map(([id]) => id).sort()
+      : null),
+    [hoogCijfer, beoordelingen.perRecept],
+  )
+
   const filters: OntdekFilters = useMemo(
-    () => ({ zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn }),
-    [zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn],
+    () => ({ zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn, hoogCijferIds }),
+    [zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn, hoogCijferIds],
   )
 
   // Ander filter = andere lijst: dan hoort de oude scrollpositie er niet meer bij.
@@ -110,9 +123,9 @@ export function Ontdekken() {
   useEffect(() => {
     if (vorigeFilters.current === filters) return
     vorigeFilters.current = filters
-    Object.assign(onthouden, { zoek, maxTijd, keukens, dieet, alleenBudget, zonder, mijn, scrollTop: 0 })
+    Object.assign(onthouden, { zoek, maxTijd, keukens, dieet, alleenBudget, hoogCijfer, zonder, mijn, scrollTop: 0 })
     scroller.current?.scrollTo({ top: 0 })
-  }, [filters, zoek, maxTijd, keukens, dieet, alleenBudget, zonder, mijn])
+  }, [filters, zoek, maxTijd, keukens, dieet, alleenBudget, hoogCijfer, zonder, mijn])
 
   const resultaten = useOntdek(filters, mijn ? GEEN : voorkeurKeukens)
   const telling = useOntdekTelling(filters)
@@ -145,7 +158,7 @@ export function Ontdekken() {
     scroller.current.scrollTop = onthouden.scrollTop
     nogHerstellen.current = false
   }, [recepten.length])
-  const heeftFilter = Boolean(maxTijd || keukens.length > 0 || dieet.length > 0 || alleenBudget)
+  const heeftFilter = Boolean(maxTijd || keukens.length > 0 || dieet.length > 0 || alleenBudget || hoogCijfer)
   const totaal = telling.data ?? recepten.length
 
   // Vanzelf verder laden zodra je bij de onderkant komt; de knop blijft als
@@ -198,7 +211,7 @@ export function Ontdekken() {
             <button
               onClick={() => setZoek('')}
               aria-label="Zoekterm wissen"
-              style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'rgba(20,20,20,0.45)', display: 'flex' }}
+              style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'rgba(43,20,32,0.45)', display: 'flex' }}
             ><Icon name="x" size={16} /></button>
           )}
         </div>
@@ -207,7 +220,7 @@ export function Ontdekken() {
       <div style={{ flex: 'none', padding: '14px 22px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
         {/* Alle recepten of alleen die van jou: wat je toevoegde, importeerde of liet samenstellen. */}
         <div role="tablist" aria-label="Welke recepten" style={{
-          display: 'flex', background: 'rgba(20,20,20,0.08)', borderRadius: 'var(--radius-full)', padding: 3,
+          display: 'flex', background: 'rgba(43,20,32,0.08)', borderRadius: 'var(--radius-full)', padding: 3,
         }}>
           {([false, true] as const).map((waarde) => (
             <button
@@ -223,7 +236,7 @@ export function Ontdekken() {
                 flex: 1, border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-full)', padding: '9px 12px',
                 background: mijn === waarde ? 'var(--c-paper)' : 'transparent',
                 color: 'var(--c-ink)', fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 800,
-                boxShadow: mijn === waarde ? '0 1px 4px rgba(20,20,20,0.12)' : 'none',
+                boxShadow: mijn === waarde ? '0 1px 4px rgba(43,20,32,0.12)' : 'none',
               }}
             >{waarde ? 'Mijn recepten' : 'Alle recepten'}</button>
           ))}
@@ -240,6 +253,7 @@ export function Ontdekken() {
             {maxTijd ? `Binnen ${maxTijd} min` : 'Kooktijd'} ▾
           </Chip>
           <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
+          <Chip selected={hoogCijfer} onClick={() => setHoogCijfer(!hoogCijfer)}>Hoog cijfer</Chip>
           <Chip selected={zonderAllergenen.length > 0} onClick={() => setOpen('allergie')}>
             {zonderAllergenen.length > 0 ? `Zonder ${opsomming(zonderAllergenen)}` : 'Allergieën'} ▾
           </Chip>
@@ -279,7 +293,7 @@ export function Ontdekken() {
           >
             <span style={{
               fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
-              textTransform: 'uppercase', color: 'rgba(20,20,20,0.6)',
+              textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)',
             }}>
               {totaal} {totaal === 1 ? 'recept' : 'recepten'}
             </span>
@@ -293,6 +307,7 @@ export function Ontdekken() {
                   recept={r}
                   index={i}
                   fase={inFase.get(r.id)}
+                  mijn={beoordelingen.perRecept.get(r.id)}
                   bevat={vastVoorJou(r, allergieen)}
                   onOpen={() => navigeer(`/recept/${r.id}`)}
                   bewaard={hartje.bewaard.has(r.id)}
@@ -325,7 +340,7 @@ export function Ontdekken() {
                 disabled={resultaten.isFetchingNextPage}
                 style={{
                   margin: '8px 0 4px', padding: '14px', borderRadius: 'var(--radius-full)',
-                  border: '1.5px solid rgba(20,20,20,0.14)', background: 'transparent',
+                  border: '1.5px solid rgba(43,20,32,0.14)', background: 'transparent',
                   fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, cursor: 'pointer',
                 }}
               >
@@ -437,7 +452,7 @@ function Keuzelijst({ keuzes, gekozen, onWissel }: {
       {keuzes.map((k) => (
         <label key={k.id} style={{
           display: 'flex', alignItems: 'center', gap: 12, padding: '11px 2px', cursor: 'pointer',
-          borderBottom: '1.5px solid rgba(20,20,20,0.12)',
+          borderBottom: '1.5px solid rgba(43,20,32,0.12)',
           fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
         }}>
           <input
@@ -457,11 +472,13 @@ function Keuzelijst({ keuzes, gekozen, onWissel }: {
  * Een recept als foto met de tekst eronder. Rechtsboven het hartje (naar Nog
  * bestellen); staat 'ie op je lijst, dan de gele rand.
  */
-function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje }: {
+function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje }: {
   recept: Recept
   index: number
   /** Staat het bij Te koken of Nog bestellen: voor de gele rand en de regel eronder. */
   fase: FaseRecept | undefined
+  /** Jouw laatste cijfer en notitie, als je dit recept beoordeeld hebt. */
+  mijn: LaatsteBeoordeling | undefined
   /** Staat bij Te koken of Nog bestellen: het hartje is gevuld. */
   bewaard: boolean
   /** Jouw allergenen die erin zitten, zonder vervanger. Alleen als het filter uit staat. */
@@ -476,6 +493,9 @@ function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje }: {
     label === 'vegan' || label === 'vegetarisch' ? label : recept.keuken,
   ].filter(Boolean).join(' · ')
   const status = fase?.besteldOp ? 'Te koken' : fase?.opLijst ? 'Op je lijst' : fase ? 'Nog bestellen' : null
+  // Jouw cijfer gaat voor; heb je het niet gekookt, dan het gemiddelde van alle koks (vanaf genoeg cijfers).
+  const gemiddeld = mijn?.cijfer == null ? gemiddeldeOpKaart(recept) : null
+  const favoriet = isFavorietCijfer(mijn?.cijfer)
   const toko = useMemo(() => tokoIngredienten(recept.ingredienten).length > 0, [recept.ingredienten])
   const bonusData = useBonus().data
   const bonus = useMemo(() => receptBonusProducten(recept.ingredienten, bonusData), [recept.ingredienten, bonusData])
@@ -502,6 +522,18 @@ function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje }: {
         >{recept.afbeelding_url ? '' : 'foto'}</button>
         {toko && <TokoLabel />}
         <BonusLabel producten={bonus} />
+        {(mijn?.cijfer != null || gemiddeld) && (
+          <span
+            aria-label={mijn?.cijfer != null ? `Jouw cijfer: ${mijn.cijfer}` : `Gemiddeld ${cijferTekst(gemiddeld!.gemiddeld)}`}
+            style={{
+              position: 'absolute', right: 12, bottom: 12, minWidth: 30, height: 30, boxSizing: 'border-box', padding: '0 7px',
+              borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, pointerEvents: 'none',
+              background: favoriet ? 'var(--c-yellow)' : 'var(--c-paper)', color: 'var(--c-ink)',
+              boxShadow: '0 2px 8px rgba(43,20,32,0.18)',
+            }}
+          >{mijn?.cijfer ?? cijferTekst(gemiddeld!.gemiddeld)}</span>
+        )}
 
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <button
@@ -525,7 +557,7 @@ function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje }: {
           color: 'var(--color-ink)', display: '-webkit-box', WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical', overflow: 'hidden',
         }}>{recept.titel_nl ?? recept.titel}</span>
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(20,20,20,0.6)' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
           {meta}
           {isBudget(recept) && <BudgetLabel />}
         </span>
@@ -539,6 +571,22 @@ function FotoKaart({ recept, index, fase, bewaard, bevat, onOpen, onHartje }: {
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
           }}>{status}</span>
         )}
+        {favoriet && (
+          <span style={{
+            fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700, letterSpacing: '.08em',
+            textTransform: 'uppercase', color: 'var(--c-red)',
+          }}>Jouw favoriet</span>
+        )}
+        {mijn?.cijfer != null && (
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
+            Jouw cijfer: {mijn.cijfer}{mijn.notitie ? ` · notitie: ${mijn.notitie}` : ''}
+          </span>
+        )}
+        {gemiddeld && (
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
+            {cijferTekst(gemiddeld.gemiddeld)} gemiddeld · {gemiddeld.aantal} koks
+          </span>
+        )}
       </button>
     </div>
   )
@@ -548,7 +596,7 @@ const rondje: React.CSSProperties = {
   width: 38, height: 38, borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   background: 'rgba(255,255,255,0.92)', color: 'var(--c-red)',
-  boxShadow: '0 2px 8px rgba(20,20,20,0.18)',
+  boxShadow: '0 2px 8px rgba(43,20,32,0.18)',
   transition: 'background var(--motion-fast) var(--ease)',
 }
 const aan: React.CSSProperties = { background: 'var(--c-red)', color: 'var(--c-cream)' }

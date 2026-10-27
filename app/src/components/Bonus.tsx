@@ -14,7 +14,7 @@ export function BonusBron({ klein = false }: { klein?: boolean }) {
       target="_blank"
       rel="noopener noreferrer"
       style={{
-        fontFamily: 'var(--font-body)', fontSize: klein ? 11 : 12, color: 'rgba(20,20,20,0.55)',
+        fontFamily: 'var(--font-body)', fontSize: klein ? 11 : 12, color: 'rgba(43,20,32,0.55)',
         textDecoration: 'underline', textUnderlineOffset: 2,
       }}
     >{BONUS_BRON.kort}</a>
@@ -38,7 +38,7 @@ export function BonusLabel({ producten }: { producten: BonusProduct[] }) {
           position: 'absolute', left: 8, bottom: 8, zIndex: 1, border: 'none', cursor: 'pointer',
           background: 'var(--c-yellow)', color: 'var(--c-ink)', borderRadius: 'var(--radius-full)',
           padding: '4px 9px', fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
-          letterSpacing: '.06em', textTransform: 'uppercase', boxShadow: '0 1px 4px rgba(20,20,20,0.18)',
+          letterSpacing: '.06em', textTransform: 'uppercase', boxShadow: '0 1px 4px rgba(43,20,32,0.18)',
         }}
       >Bonus</button>
       <Dialoog

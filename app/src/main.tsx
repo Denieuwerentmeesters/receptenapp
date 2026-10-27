@@ -6,12 +6,11 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { SplashScreen } from '@capacitor/splash-screen'
 
 // Fonts in de bundle, geen CDN: de app moet ook werken zonder bereik.
-import '@fontsource/unbounded/500.css'
-import '@fontsource/unbounded/700.css'
-import '@fontsource/unbounded/900.css'
-import '@fontsource/plus-jakarta-sans/400.css'
-import '@fontsource/plus-jakarta-sans/500.css'
-import '@fontsource/plus-jakarta-sans/700.css'
+import '@fontsource-variable/source-serif-4/opsz.css'
+import '@fontsource/dm-sans/400.css'
+import '@fontsource/dm-sans/500.css'
+import '@fontsource/dm-sans/600.css'
+import '@fontsource/dm-sans/700.css'
 
 import './ds/styles.css'
 import App from './App'

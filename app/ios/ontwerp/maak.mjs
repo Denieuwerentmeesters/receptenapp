@@ -3,7 +3,7 @@
 import sharp from 'sharp'
 import { LETTERS, woordmerkSvg } from '../../src/ds/woordmerk.ts'
 
-const ROOD = '#AB2328', FEL = '#E8202E', CREME = '#FFF6E8', WIT = '#FFFFFF', GEEL = '#FFF000'
+const ROOD = '#5E1A3B', FEL = '#5E1A3B', CREME = '#F8F1EC', WIT = '#FFFFFF', GEEL = '#FFF000'
 const ASSETS = new URL('../App/App/Assets.xcassets/', import.meta.url).pathname
 
 // Het logo van Kookmaatje; dezelfde tekening als src/ds/Logo.tsx (uit src/ds/woordmerk.ts).

@@ -3,6 +3,7 @@ import { useActieveWeek, useDezeWeek, type WeekRecept } from './queries'
 import { useAllergieen, vastVoorJou } from './allergenen'
 import { zonderDubbeleSoort } from './gerechtsoort'
 import { volgendeWeek } from './week'
+import { laagBeoordeeld, useBeoordelingen } from './beoordeling'
 
 /**
  * Mijn recepten: waar een recept staat hangt af van de fase, niet van de
@@ -10,7 +11,7 @@ import { volgendeWeek } from './week'
  *
  * - Te koken: op een bevestigde bestelling (`besteld_op`), nog niet gekookt.
  * - Nog bestellen: gekozen, nog niet besteld.
- * - Gekookt: `gekookt_op`; dat staat bij Nog bestellen onder Eerder gekookt.
+ * - Gekookt: `gekookt_op`; dat staat in het derde onderdeel, Eerder gekookt.
  *
  * Er is geen statuskolom: `weekmenu_gekozen` had `besteld_op`, `gekookt_op` en
  * `opgeruimd_op` al. Onder de motorkap blijven er weken (de generator maakt
@@ -42,12 +43,14 @@ const open = (r: WeekRecept) => r.gekozen && !r.gekooktOp && !r.opgeruimdOp
  * Een suggestie met een allergeen zonder vervanger laten we weg, ook als je
  * je allergie pas instelde nadat dit weekmenu er al stond. Wat je zelf koos
  * blijft staan. Van elke soort gerecht één suggestie (lib/gerechtsoort.ts).
+ * Een recept waar je een 5 of lager voor gaf is ook geen suggestie meer.
  */
 export function verdeelFases(
   week: string,
   deze: readonly WeekRecept[],
   komende: readonly WeekRecept[],
   allergieen: readonly string[] = [],
+  laag: ReadonlySet<string> = new Set(),
 ): Fases {
   const komendeWeek = volgendeWeek(week)
   const alle: FaseRecept[] = [
@@ -71,7 +74,8 @@ export function verdeelFases(
   const kandidaten = alle
     .filter((r) => r.week === bestelWeek && !r.opgeruimdOp)
     .filter((r) => r.gekozen || vastVoorJou(r, allergieen).length === 0)
-  const suggesties = zonderDubbeleSoort(kandidaten).filter((r) => !r.gekozen).filter(eenmaal)
+  const suggesties = zonderDubbeleSoort(kandidaten.filter((r) => r.gekozen || !laag.has(r.id)))
+    .filter((r) => !r.gekozen).filter(eenmaal)
 
   return { teKoken, nogBestellen, suggesties, bestelWeek }
 }
@@ -81,9 +85,10 @@ export function useFases() {
   const deze = useDezeWeek(week)
   const komende = useDezeWeek(volgendeWeek(week))
   const allergieen = useAllergieen()
+  const { perRecept } = useBeoordelingen()
   const fases = useMemo(
-    () => verdeelFases(week, deze.data ?? [], komende.data ?? [], allergieen),
-    [week, deze.data, komende.data, allergieen],
+    () => verdeelFases(week, deze.data ?? [], komende.data ?? [], allergieen, laagBeoordeeld(perRecept)),
+    [week, deze.data, komende.data, allergieen, perRecept],
   )
   return { ...fases, week, query: deze, komendeQuery: komende }
 }
