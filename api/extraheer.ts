@@ -286,12 +286,12 @@ async function viaInstagram(
   if (post.soort === 'video' && post.videoUrl) {
     stap('Video uitschrijven')
     const transcript = await schrijfUit(post.videoUrl)
-    if (transcript) {
+    if ('tekst' in transcript) {
       scan.kosten += TRANSCRIPTIE_KOSTEN
       scan.route = 'video'
       delen.push(`Dit is de gesproken tekst uit de video, automatisch uitgeschreven:\n<transcript>\n${transcript.tekst}\n</transcript>`)
     } else {
-      scan.route = 'video-zonder-transcript'
+      scan.route = `video-zonder-transcript (${transcript.reden})`
     }
     if (inhoud.length > 0) delen.push('Het beeld is de omslag van de video; soms staat daar het recept of de titel op.')
   } else {
@@ -307,7 +307,10 @@ async function viaInstagram(
   return vraagClaude(claude, sleutels, inhoud, bron, scan, stap)
 }
 
-function geenRecept(post?: SocialPost): string {
+function geenRecept(post?: SocialPost, geenSpraak = false): string {
+  if (post?.soort === 'video' && geenSpraak) {
+    return 'De gesproken tekst uit deze video kon niet worden uitgeschreven. Staat het recept in beeld of in de reacties? Maak dan een screenshot, of plak de link van het recept.'
+  }
   return post?.soort === 'video'
     ? 'In deze video staat geen recept dat we kunnen uitlezen. Staat het in de reacties of op een website? Plak die link, of maak een screenshot van het recept.'
     : 'In deze post staat geen recept dat we kunnen uitlezen. Maak een screenshot van het recept en voeg die toe.'
@@ -345,7 +348,7 @@ async function vraagClaude(
     throw new Melding('Het recept kwam niet goed door. Probeer het opnieuw.')
   }
   if (typeof data.geen_recept === 'string' && data.geen_recept.trim()) {
-    throw new Melding(bron.soort === 'instagram' ? geenRecept({ soort: scan.route.startsWith('video') ? 'video' : 'foto' } as SocialPost)
+    throw new Melding(bron.soort === 'instagram' ? geenRecept({ soort: scan.route.startsWith('video') ? 'video' : 'foto' } as SocialPost, scan.route.startsWith('video-zonder-transcript'))
       : bron.soort === 'website' ? 'Op deze pagina staat geen recept dat we kunnen uitlezen. Plak de link van het recept zelf, of maak een screenshot.'
       : 'Hier staat geen recept op dat we kunnen uitlezen. Probeer een duidelijkere foto van de ingrediënten en de bereiding.')
   }
