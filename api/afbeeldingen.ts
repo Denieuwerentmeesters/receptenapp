@@ -11,7 +11,7 @@
  * heeft dat geen effect op het toevoegen zelf, en de volgende nacht pakt hij het
  * gewoon opnieuw op. Vercel Hobby laat één cron-run per dag toe.
  *
- * Per run hooguit een handvol beelden, binnen de 60 seconden die de functie
+ * Per run hooguit 20 beelden, vier tegelijk, binnen de 60 seconden die de functie
  * krijgt. Ligt er meer, dan is dat morgen aan de beurt.
  *
  * Omgevingsvariabelen op Vercel: DATABASE_URL, GEMINI_API_KEY,
@@ -21,7 +21,9 @@
 
 import { haalReceptenZonderAfbeelding, maakSql, verwerkRecept } from '../lib/afbeeldingen/genereer.js'
 
-const MAX_PER_RUN = 8
+const MAX_PER_RUN = 20
+/** Gelijktijdige aanvragen bij Gemini; achter elkaar haalde een run er maar een handvol. */
+const PARALLEL = 4
 const TIJDSLIMIET_MS = 45_000
 
 export async function GET(request: Request): Promise<Response> {
@@ -37,15 +39,21 @@ export async function GET(request: Request): Promise<Response> {
   const gelukt: string[] = []
   const mislukt: { titel: string; fout: string }[] = []
 
-  for (const recept of recepten) {
-    if (Date.now() - start > TIJDSLIMIET_MS) break
-    try {
-      const uitkomst = await verwerkRecept(sql, recept)
-      gelukt.push(uitkomst.titel)
-    } catch (fout) {
-      mislukt.push({ titel: recept.titel_nl ?? recept.titel, fout: fout instanceof Error ? fout.message : String(fout) })
+  // Een paar werkers trekken uit dezelfde rij. Na de tijdslimiet begint niemand
+  // aan een nieuw recept; wat overblijft is morgen aan de beurt.
+  const wachtrij = [...recepten]
+  const werker = async () => {
+    for (let recept = wachtrij.shift(); recept; recept = wachtrij.shift()) {
+      if (Date.now() - start > TIJDSLIMIET_MS) return
+      try {
+        const uitkomst = await verwerkRecept(sql, recept)
+        gelukt.push(uitkomst.titel)
+      } catch (fout) {
+        mislukt.push({ titel: recept.titel_nl ?? recept.titel, fout: fout instanceof Error ? fout.message : String(fout) })
+      }
     }
   }
+  await Promise.all(Array.from({ length: PARALLEL }, werker))
 
   console.log(`afbeeldingen: ${gelukt.length} gelukt, ${mislukt.length} mislukt, ${recepten.length} gevonden`)
   return Response.json({ gevonden: recepten.length, gelukt, mislukt })
