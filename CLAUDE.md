@@ -644,6 +644,10 @@ de details staan in Mijn keuken → Bespaard!.
   scrapen. Eén verpakking per regel, zoals de mandjelink. Zonder prijs de
   klassenschatting uit `lib/prijsschatting.ts`. Zelf toegevoegde producten
   tellen niet mee.
+- **Bezorging:** het mandje telt € 5 bezorging mee (`BEZORGING_MANDJE`), want een
+  maaltijdbox komt ook aan de deur (Reinoud, 28 okt 2026). In de tekst heten
+  de boxen "HelloFresh of Marley Spoon" (`MAALTIJDBOX.namen`); gerekend wordt met
+  HelloFresh-prijzen.
 - **Maaltijdbox:** prijs per portie naar aantal personen plus bezorging, in
   `lib/besparing.ts` (`MAALTIJDBOX`), met bronnen en peildatum. Een recept
   telt één keer per week.

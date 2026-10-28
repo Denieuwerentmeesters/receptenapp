@@ -29,6 +29,8 @@ import type { Verpakking } from './eenheden'
  */
 export const MAALTIJDBOX = {
   naam: 'HelloFresh',
+  /** Hoe we de maaltijdboxen noemen in de tekst; de prijzen zijn die van HelloFresh. */
+  namen: 'HelloFresh of Marley Spoon',
   peildatum: 'september 2026',
   perPortie: { 1: 13.33, 2: 7.67, 3: 6.44, 4: 5.31, 5: 4.9, 6: 4.49 } as Record<number, number>,
   /** Eén keer per week, bij de eerste bestelling. */
@@ -46,6 +48,12 @@ export function maaltijdboxKosten(maaltijden: number, personen: number, metBezor
   return Math.round(kosten * 100) / 100
 }
 
+/**
+ * Bezorging van je mandje, eerlijk meegerekend: een maaltijdbox komt aan de deur,
+ * dus tellen wij ook bezorgkosten (AH en Jumbo vragen er rond de vijf euro voor).
+ */
+export const BEZORGING_MANDJE = 5
+
 export interface MandjeKosten {
   totaal: number
   /** Regels met een echte Jumbo-prijs; de rest is geschat. */
@@ -58,7 +66,7 @@ export interface MandjeKosten {
  * bij AH bestelt; die liggen dicht genoeg bij elkaar. Zoveel verpakkingen
  * als de mandjelink (verpakkingenPerRegel). Zonder Jumbo-prijs de klassenschatting uit
  * lib/prijsschatting.ts. Zelf toegevoegde producten (koffie, wc-papier) tellen
- * niet mee: die zitten ook niet in een maaltijdbox.
+ * niet mee: die zitten ook niet in een maaltijdbox. Plus BEZORGING_MANDJE.
  */
 export function mandjeKosten(
   regels: LijstRegel[],
@@ -102,6 +110,7 @@ export function mandjeKosten(
     }
   }
 
+  if (totaal > 0) totaal += BEZORGING_MANDJE
   return { totaal: Math.round(totaal * 100) / 100, metPrijs, geschat }
 }
 

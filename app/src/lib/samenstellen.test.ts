@@ -5,7 +5,7 @@ vi.mock('./db', () => ({ db: {} }))
 vi.mock('./auth', () => ({ huidigeUserId: async () => 'u' }))
 
 import { alsLijst } from './samenstellen'
-import { mandjeKosten } from './besparing'
+import { BEZORGING_MANDJE, mandjeKosten } from './besparing'
 import type { Menu, MenuGerecht } from './menu'
 import type { JumboProduct } from './database.types'
 
@@ -31,12 +31,12 @@ describe('alsLijst', () => {
     expect(regels.find((r) => r.key === 'citroen')?.items).toHaveLength(2)
   })
 
-  it('rekent in hele verpakkingen: 700 g gehakt is twee pakken van 500 g', () => {
+  it('rekent in hele verpakkingen plus bezorging: 700 g gehakt is twee pakken van 500 g', () => {
     const mapping = { rundergehakt: { ingredient_key: 'rundergehakt', standaard_sku: 'G' } } as unknown as Record<string, JumboProduct>
     const kosten = mandjeKosten(
       alsLijst(menu).filter((r) => r.key === 'rundergehakt'), mapping, { G: 5 },
       { biologisch: false, huismerk: false }, { G: { inhoud: 500, eenheid: 'g' } },
     )
-    expect(kosten.totaal).toBe(10)
+    expect(kosten.totaal).toBe(10 + BEZORGING_MANDJE)
   })
 })

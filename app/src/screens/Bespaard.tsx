@@ -4,7 +4,7 @@ import { Grens, Leeg } from '../components/Staten'
 import { useBestellingen } from '../lib/queries2'
 import { useVoorkeuren } from '../lib/queries'
 import { BonusBron } from '../components/Bonus'
-import { MAALTIJDBOX, bespaardMet, euro, prijsPerPortie, totaalBespaard } from '../lib/besparing'
+import { BEZORGING_MANDJE, MAALTIJDBOX, bespaardMet, euro, prijsPerPortie, totaalBespaard } from '../lib/besparing'
 
 const DATUM = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'short' })
 
@@ -38,9 +38,9 @@ export function Bespaard() {
         </div>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
           {lijst.length > 0
-            ? `Minder uitgegeven dan bij bijv. ${MAALTIJDBOX.naam} of Marley Spoon, over ${lijst.length} ` +
+            ? `Minder uitgegeven dan bij bijv. ${MAALTIJDBOX.namen}, over ${lijst.length} ` +
               `${lijst.length === 1 ? 'bestelling' : 'bestellingen'}.`
-            : `Wat je bespaart ten opzichte van een maaltijdbox als ${MAALTIJDBOX.naam}.`}
+            : `Wat je bespaart ten opzichte van een maaltijdbox als ${MAALTIJDBOX.namen}.`}
         </p>
         {bonusTotaal > 0 && (
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, lineHeight: 1.5, margin: '6px 0 0', color: 'var(--c-yellow)' }}>
@@ -55,7 +55,7 @@ export function Bespaard() {
             icoon="piggyBank"
             kop="Je eerste besparing komt eraan"
             tekst={'Stuur je boodschappen naar je mandje en bevestig dat ze aankwamen. ' +
-              `Dan rekenen we uit wat je bespaarde ten opzichte van ${MAALTIJDBOX.naam}.`}
+              `Dan rekenen we uit wat je bespaarde ten opzichte van ${MAALTIJDBOX.namen}.`}
             knop="Naar mijn lijst"
             onKnop={() => navigeer('/boodschappen')}
           />
@@ -99,11 +99,11 @@ export function Bespaard() {
               <Sectiekop>Hoe we rekenen</Sectiekop>
               <Uitleg>
                 <b>Je mandje</b> in gewone Jumbo-prijzen, ook als je bij AH bestelt, zonder
-                aanbiedingen. We tellen hele verpakkingen, ook als je die niet in één week opmaakt.
+                aanbiedingen, plus {euro(BEZORGING_MANDJE)} bezorging. We tellen hele verpakkingen, ook als je die niet in één week opmaakt.
                 Wat je voorraadkast al heeft en wat je zelf aan je lijst toevoegde, telt niet mee.
               </Uitleg>
               <Uitleg>
-                <b>{MAALTIJDBOX.naam}</b>: {euro(prijsPerPortie(personen), true)} per portie
+                <b>{MAALTIJDBOX.namen}</b> (we rekenen met de prijzen van {MAALTIJDBOX.naam}): {euro(prijsPerPortie(personen), true)} per portie
                 voor {personen} {personen === 1 ? 'persoon' : 'personen'}, plus{' '}
                 {euro(MAALTIJDBOX.bezorging, true)} bezorging per week. Prijzen
                 van {MAALTIJDBOX.peildatum}, zonder toeslagen voor premiumgerechten.
