@@ -8359,5 +8359,32 @@
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
+ },
+ {
+  "key": "tacoschelpen",
+  "naam": "Santa Maria Taco Schelpen 12 Stuks 135 g",
+  "standaard": "730402DS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "taco schelpen",
+  "naam": "Santa Maria Taco Schelpen 12 Stuks 135 g",
+  "standaard": "730402DS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "ingelegde jalapeno",
+  "naam": "Santa Maria Jalapeños Green hot 215g",
+  "standaard": "179657POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
  }
 ]

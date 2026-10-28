@@ -7,7 +7,7 @@ import { Dialoog } from '../components/Dialoog'
 import { volgendeWeek } from '../lib/week'
 import { useActieveWeek, useBoodschapMuteren, useBoodschappen, useDezeWeek, useJumboMapping, useVoorkeuren } from '../lib/queries'
 import { useBestellingen, useBestellingVastleggen, useBoodschappenGedaan, useJumboPrijzen, useJumboVerpakkingen, useVoorraad } from '../lib/queries2'
-import { MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
+import { BEZORGING_MANDJE, MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalBespaard } from '../lib/besparing'
 import type { Bestelling, BoodschapItem } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isBijzonderKruid, isDroogKruid } from '../lib/kruiden'
 import { inVoorraad } from '../lib/voorraad'
@@ -670,9 +670,9 @@ export function Boodschappen() {
         open={Boolean(bespaard) && !nietMee}
         kop={bespaard ? `${euro(bespaardMet(bespaard))} bespaard!` : ''}
         tekst={bespaard
-          ? `Deze boodschappen kosten zo'n ${euro(bespaard.mandje_kosten)}. ` +
+          ? `Deze boodschappen kosten zo'n ${euro(bespaard.mandje_kosten)}, ${euro(BEZORGING_MANDJE)} bezorging inbegrepen. ` +
             `Dezelfde ${bespaard.maaltijden} ${bespaard.maaltijden === 1 ? 'maaltijd' : 'maaltijden'} voor ` +
-            `${bespaard.personen} bij ${MAALTIJDBOX.naam}: ${euro(bespaard.maaltijdbox_kosten)}. ` +
+            `${bespaard.personen} bij ${MAALTIJDBOX.namen}: ${euro(bespaard.maaltijdbox_kosten)}. ` +
             // De lijst kan nog aan het verversen zijn; deze bestelling telt hoe dan ook mee.
             `Totaal bespaard met de app: ${euro(totaalBespaard([
               ...(bestellingen.data ?? []).filter((b) => b.id !== bespaard.id), bespaard,
