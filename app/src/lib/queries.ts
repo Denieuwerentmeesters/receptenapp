@@ -338,7 +338,7 @@ export function useLijstActies(gevraagd?: string) {
       // Al eens gekookt (of opgeruimd) in deze week: dezelfde rij gaat weer open,
       // want er mag er maar één per recept per week zijn. Het cijfer blijft staan.
       const open = await (await gedeeld('weekmenu_gekozen'))
-        .update({ gekookt_op: null, opgeruimd_op: null, besteld_op: null, van_lijst_op: null })
+        .update({ gekookt_op: null, opgeruimd_op: null, besteld_op: null, van_lijst_op: new Date().toISOString() })
         .eq('week_start_datum', week).eq('recept_id', recept.id)
         .or('gekookt_op.not.is.null,opgeruimd_op.not.is.null').select('id')
       if (open.error) throw open.error
