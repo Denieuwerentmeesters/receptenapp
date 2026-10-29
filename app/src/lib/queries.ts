@@ -335,6 +335,15 @@ export function useLijstActies(gevraagd?: string) {
       if (terug.error) throw terug.error
       if ((terug.data ?? []).length > 0) return
 
+      // Al eens gekookt (of opgeruimd) in deze week: dezelfde rij gaat weer open,
+      // want er mag er maar één per recept per week zijn. Het cijfer blijft staan.
+      const open = await (await gedeeld('weekmenu_gekozen'))
+        .update({ gekookt_op: null, opgeruimd_op: null, besteld_op: null, van_lijst_op: new Date().toISOString() })
+        .eq('week_start_datum', week).eq('recept_id', recept.id)
+        .or('gekookt_op.not.is.null,opgeruimd_op.not.is.null').select('id')
+      if (open.error) throw open.error
+      if ((open.data ?? []).length > 0) return
+
       const { error } = await (await gedeeld('weekmenu_gekozen')).upsert({
         user_id: await userId(),
         week_start_datum: week,
@@ -347,10 +356,10 @@ export function useLijstActies(gevraagd?: string) {
     onMutate: async (recept) => {
       await qc.cancelQueries({ queryKey: sleutels.dezeWeek(week) })
       const vorige = qc.getQueryData<WeekRecept[]>(sleutels.dezeWeek(week))
-      if (vorige && !vorige.some((r) => r.id === recept.id)) {
+      if (vorige && !vorige.some((r) => r.id === recept.id && !r.gekooktOp && !r.opgeruimdOp)) {
         qc.setQueryData<WeekRecept[]>(sleutels.dezeWeek(week), [{
           ...recept, positie: null, gekozen: true, aantal: 1, opLijst: false, gekooktOp: null, besteldOp: null, opgeruimdOp: null,
-        }, ...vorige])
+        }, ...vorige.filter((r) => r.id !== recept.id)])
       }
       return { vorige }
     },
