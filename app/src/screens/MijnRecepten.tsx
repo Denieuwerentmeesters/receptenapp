@@ -12,6 +12,7 @@ import { useGeschiedenis, useVoorraad } from '../lib/queries2'
 import { volgendeWeek } from '../lib/week'
 import { WeekVraag } from '../components/WeekVraag'
 import { useFases, type FaseRecept } from '../lib/fases'
+import { useHartje } from '../components/Hartje'
 import { useWeekWissel } from '../lib/weekwissel'
 import { vulAan } from '../lib/weekvullen'
 import { tokoIngredienten } from '../lib/toko'
@@ -127,7 +128,6 @@ export function MijnRecepten() {
   const actiesKomende = useLijstActies(komende)
   const lijst = (r: { week: string }) => (r.week === komende ? lijstKomende : lijstDeze)
   const acties = (r: { week: string }) => (r.week === komende ? actiesKomende : actiesDeze)
-  const opLijstVoorNieuw = bestelWeek === komende ? lijstKomende : lijstDeze
   const { gekookt } = useWeekWissel()
 
   // Staat het op je lijst, dan vragen we eerst: dan gaan er ook boodschappen af.
@@ -135,12 +135,13 @@ export function MijnRecepten() {
   // Het blad "Viel het in de smaak?": bij het kruisje (je kookte net) of achteraf bij Eerder gekookt.
   const [cijferVoor, setCijferVoor] = useState<
     | { soort: 'koken'; recept: FaseRecept }
-    | { soort: 'achteraf'; recept: Recept; gekooktOp: string | null }
+    | { soort: 'achteraf'; recept: Recept; gekooktOp: string | null; daarnaWeg?: boolean }
     | null
   >(null)
   const beoordelingen = useBeoordelingen()
   const bewaar = useBeoordelingBewaren()
   const zetTerug = useLaagCijferWissen()
+  const hartje = useHartje()
 
   const plek = (doel: Tab) => TABS.findIndex((t) => t.id === doel)
 
@@ -274,9 +275,11 @@ export function MijnRecepten() {
   )
 
   /**
-   * Een eerder gekookt recept: met je cijfer en notitie. Staat het ondertussen
-   * al in Nog bestellen, dan zegt de knop dat; anders zet een tik het daar.
-   * Het kruisje haalt het uit dit onderdeel. Met een 5 of lager staat het grijs.
+   * Een eerder gekookt recept: met je cijfer en notitie. Linksboven het kruisje
+   * (uit dit onderdeel; zonder cijfer vraagt het eerst om een cijfer, voor een
+   * volgende keer), rechtsboven het hartje (terug naar Nog bestellen). Onder de
+   * kaart alleen "Cijfer", zolang je dat niet gaf. Met een 5 of lager staat het
+   * grijs, met "Zet terug".
    */
   const kaartGekookt = ({ recept, gekooktOp }: { recept: Recept; gekooktOp: string }, i: number) => {
     const status = [...nogBestellen, ...suggesties].find((r) => r.id === recept.id)
@@ -290,12 +293,17 @@ export function MijnRecepten() {
         vlak={VLAKKEN[i % VLAKKEN.length]}
         bonus={bonusPerRecept.get(recept.id) ?? []}
         personen={standaardPersonen(recept, personen)}
-        knop={laag ? { tekst: 'Zet terug', icoon: 'arrowRight' } : { tekst: knopTekst(kaart), icoon: kaart.opLijst ? 'check' : 'plus' }}
+        knop={laag ? { tekst: 'Zet terug', icoon: 'arrowRight' } : undefined}
         onOpen={() => open(recept.id)}
-        onKnop={() => laag
-          ? zetTerug.mutate(recept.id)
-          : opLijstVoorNieuw.voegToe({ ...kaart, titel: recept.titel_nl ?? recept.titel })}
-        weg={{ label: 'Weghalen', onClick: () => haalGekooktWeg(recept.id) }}
+        onKnop={() => zetTerug.mutate(recept.id)}
+        weg={{
+          label: 'Weghalen',
+          links: true,
+          onClick: () => mijn?.cijfer == null
+            ? setCijferVoor({ soort: 'achteraf', recept, gekooktOp, daarnaWeg: true })
+            : haalGekooktWeg(recept.id),
+        }}
+        hartje={laag ? undefined : { aan: hartje.bewaard.has(recept.id), onClick: () => hartje.tik(recept) }}
         cijfer={mijn?.cijfer ?? null}
         metaRegel={[`Gekookt ${datumLabel(gekooktOp)}`, mijn?.cijfer != null ? `Cijfer ${mijn.cijfer}` : null, mijn?.notitie].filter(Boolean).join(' · ')}
         gedempt={laag}
@@ -469,7 +477,7 @@ export function MijnRecepten() {
           onOverslaan={() => {
             if (cijferVoor.soort === 'koken') {
               gekookt.mutate({ receptId: cijferVoor.recept.id, opruimen: true, inWeek: cijferVoor.recept.week })
-            }
+            } else if (cijferVoor.daarnaWeg) haalGekooktWeg(cijferVoor.recept.id)
             setCijferVoor(null)
           }}
           onKlaar={({ cijfer, notitie }) => {
@@ -480,6 +488,7 @@ export function MijnRecepten() {
               receptId: cijferVoor.recept.id, cijfer, notitie,
               gekooktOp: cijferVoor.soort === 'achteraf' ? cijferVoor.gekooktOp?.slice(0, 10) : undefined,
             })
+            if (cijferVoor.soort === 'achteraf' && cijferVoor.daarnaWeg) haalGekooktWeg(cijferVoor.recept.id)
             setCijferVoor(null)
           }}
         />
@@ -535,18 +544,20 @@ function knopTekst(recept: WeekRecept): string {
   return 'Zet op je lijst'
 }
 
-function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop, weg, cijfer = null, metaRegel, gedempt = false, cijferKnop }: {
+function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop, weg, hartje, cijfer = null, metaRegel, gedempt = false, cijferKnop }: {
   recept: WeekRecept
   vlak: string
   /** Producten van het recept in de bonus bij je winkel: het gele label op de foto. Alleen bij Nog bestellen. */
   bonus?: BonusProduct[]
   personen: number
-  /** De knop onder de kaart: wat een tik doet, of hoe het recept ervoor staat. */
-  knop: { tekst: string; icoon: string }
+  /** De knop onder de kaart: wat een tik doet, of hoe het recept ervoor staat. Zonder knop alleen de cijferknop. */
+  knop?: { tekst: string; icoon: string }
   onOpen: () => void
   onKnop: () => void
-  /** Het kruisje op de foto: weghalen. */
-  weg?: { label: string; onClick: () => void }
+  /** Het kruisje op de foto: weghalen. Rechtsboven, of met `links` linksboven. */
+  weg?: { label: string; onClick: () => void; links?: boolean }
+  /** Het hartje rechtsboven: naar Nog bestellen. */
+  hartje?: { aan: boolean; onClick: () => void }
   /** Jouw cijfer: de bol op de foto (geel vanaf 8, wit daaronder). Alleen bij Eerder gekookt. */
   cijfer?: number | null
   /** Een regel onder de meta, zoals "Gekookt 20 okt · minder chili". */
@@ -566,7 +577,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
       ...(gedempt ? { opacity: 0.55, filter: 'grayscale(1)' } : {}),
     }}>
       <div style={{ flex: 1, position: 'relative', display: 'flex' }}>
-      {toko && <TokoLabel />}
+      {toko && <TokoLabel links={weg?.links ? 50 : 8} />}
       <BonusLabel producten={bonus} />
       <button
         onClick={onOpen}
@@ -624,16 +635,29 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
         onClick={weg.onClick}
         aria-label={weg.label}
         style={{
-          position: 'absolute', top: 10, right: 10, width: 32, height: 32,
+          position: 'absolute', top: 10, ...(weg.links ? { left: 10 } : { right: 10 }), width: 32, height: 32,
           borderRadius: 'var(--radius-full)', background: 'rgba(43,20,32,0.34)', border: 'none',
           display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
           color: 'var(--c-paper)',
         }}
       ><Icon name="x" size={16} /></button>}
+      {hartje && <button
+        onClick={hartje.onClick}
+        aria-label={hartje.aan ? 'Haal uit Nog bestellen' : 'Zet bij Nog bestellen'}
+        aria-pressed={hartje.aan}
+        style={{
+          position: 'absolute', top: 10, right: 10, width: 32, height: 32,
+          borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: hartje.aan ? 'var(--c-red)' : 'rgba(255,255,255,0.92)',
+          color: hartje.aan ? 'var(--c-cream)' : 'var(--c-red)',
+          boxShadow: '0 2px 8px rgba(43,20,32,0.18)',
+        }}
+      ><Icon name="heart" size={16} /></button>}
       </div>
 
       <div style={{ display: 'flex', gap: 6, margin: '0 4px 4px' }}>
-      <button
+      {knop && <button
         onClick={onKnop}
         style={{
           flex: 1, minWidth: 0,
@@ -646,12 +670,12 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
       >
         <Icon name={knop.icoon} size={14} />
         {knop.tekst}
-      </button>
+      </button>}
       {cijferKnop && (
         <button
           onClick={cijferKnop.onClick}
           style={{
-            flex: 'none', height: 34, padding: '0 12px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
+            flex: knop ? 'none' : 1, height: 34, padding: '0 12px', borderRadius: 'var(--radius-full)', cursor: 'pointer',
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, background: 'var(--c-paper)',
             border: '1.5px solid rgba(43,20,32,0.14)', color: 'var(--c-ink)',
           }}
