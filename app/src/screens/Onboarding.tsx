@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import { Button, Chip, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
+import { Button, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
 import { Label, Titel } from '../components/Layout'
 import { Grens, Laden } from '../components/Staten'
 import { AANTAL_UITLEGKAARTEN, Uitleg, UitlegVoorladen } from '../components/Uitleg'
-import { AllergieKeuze, KeukenKeuze, VoorraadKeuze } from '../components/voorkeuren'
+import { AllergieKeuze, VoorraadKeuze } from '../components/voorkeuren'
 import { haalDezeWeek, sleutels, useLijstActies, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
-import { useKeukens, useVoorraad, useVoorraadMuteren } from '../lib/queries2'
+import { useVoorraad, useVoorraadMuteren } from '../lib/queries2'
 import { ingredientKey } from '../lib/schaal'
 import { DROGE_KRUIDEN } from '../lib/kruiden'
 import { opsomming, vastVoorJou } from '../lib/allergenen'
@@ -20,7 +20,7 @@ import type { Voorkeuren } from '../lib/database.types'
 
 /**
  * De onboarding: één keer na het aanmaken van een account. Eerst de uitleg,
- * dan zeven vragen, en daarna sta je op Deze week met een weekmenu dat bij je
+ * dan vijf vragen, en daarna sta je op Deze week met een weekmenu dat bij je
  * huishouden past.
  *
  * - De antwoorden gaan naar dezelfde kolommen als Instellingen
@@ -35,7 +35,7 @@ import type { Voorkeuren } from '../lib/database.types'
  * - App.tsx stuurt hierheen zolang onboarding_klaar_op leeg is.
  */
 
-const VRAGEN = ['personen', 'kookavonden', 'keukens', 'allergieen', 'voorraad', 'melding', 'winkel'] as const
+const VRAGEN = ['personen', 'allergieen', 'voorraad', 'melding', 'winkel'] as const
 type Vraag = (typeof VRAGEN)[number]
 type Winkel = Voorkeuren['voorkeurswinkel']
 
@@ -47,10 +47,6 @@ const DAG_VOLGORDE = [1, 2, 3, 4, 5, 6, 0]
 
 interface Antwoorden {
   personen: number
-  avonden: number
-  /** Hoeveel van je avonden vegetarisch; de kolom bewaart "x van de 10". */
-  vega: number
-  keukens: string[]
   allergieen: string[]
   /** De herinnering om recepten te zoeken: dag (0 = zondag) en tijd 'uu:mm'. */
   meldingDag: number
@@ -59,12 +55,8 @@ interface Antwoorden {
 }
 
 function uitVoorkeuren(v: Voorkeuren): Antwoorden {
-  const avonden = v.kookavonden ?? 4
   return {
     personen: Math.min(v.aantal_personen, MAX_PERSONEN),
-    avonden,
-    vega: vegaDoel({ vega_minimum: v.vega_minimum, kookavonden: avonden }),
-    keukens: v.favoriete_keukens ?? [],
     allergieen: v.allergieen ?? [],
     meldingDag: v.pushbericht_dag,
     meldingTijd: v.pushbericht_tijd.slice(0, 5),
@@ -122,8 +114,10 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   const week = weekStart()
   const opslaan = useVoorkeurenOpslaan()
   const { zetOpLijst } = useLijstActies(week)
-  const keukens = useKeukens()
-  const alleKeukens = (keukens.data ?? []).map((k) => k.keuken)
+  // Kookavonden en keukens vraagt de onboarding niet: je bepaalt elke week zelf
+  // wat je kookt. "Vul mijn week" rekent met wat er al in je voorkeuren staat.
+  const avonden = voorkeuren.kookavonden ?? 4
+  const vegaMinimum = vegaMinimumVoor(vegaDoel({ vega_minimum: voorkeuren.vega_minimum, kookavonden: avonden }), avonden)
 
   // Eén keer lezen: daarna is de state hier de waarheid.
   const [hervat] = useState(leesVoortgang)
@@ -180,14 +174,9 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   }, [scherm, vraag, klaarBereikt, overgeslagen])
 
   const naam = VRAGEN[vraag]
-  const vegaMinimum = vegaMinimumVoor(antw.vega, antw.avonden)
-  // Alles aan of niets aan is hetzelfde: geen voorkeur.
-  const keukensOpslaan = alleKeukens.length > 0 && antw.keukens.length === alleKeukens.length ? [] : antw.keukens
 
   const wijziging: Record<Vraag, Partial<Voorkeuren>> = {
     personen: { aantal_personen: antw.personen },
-    kookavonden: { kookavonden: antw.avonden, vega_minimum: vegaMinimum },
-    keukens: { favoriete_keukens: keukensOpslaan },
     allergieen: { allergieen: antw.allergieen },
     voorraad: {},
     melding: { pushbericht_aan: true, pushbericht_dag: antw.meldingDag, pushbericht_tijd: `${antw.meldingTijd}:00` },
@@ -231,8 +220,6 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       setAntw({
         ...antw,
         ...(naam === 'personen' ? { personen: stond.personen }
-          : naam === 'kookavonden' ? { avonden: stond.avonden, vega: stond.vega }
-          : naam === 'keukens' ? { keukens: stond.keukens }
           : naam === 'melding' ? { meldingDag: stond.meldingDag, meldingTijd: stond.meldingTijd }
           : { allergieen: stond.allergieen }),
       })
@@ -255,7 +242,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     const passend = recepten.filter((r) => r.gekozen || vastVoorJou(r, antw.allergieen).length === 0)
     const ids = kiesWeek(
       passend.filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp),
-      { vega_minimum: vegaMinimum, kookavonden: antw.avonden },
+      { vega_minimum: vegaMinimum, kookavonden: avonden },
       passend.filter((r) => r.gekozen),
     )
     // Na elkaar: elk recept schrijft zijn eigen regels op de boodschappenlijst.
@@ -337,8 +324,6 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     const p = antw.personen
     const chips: [Vraag, string][] = [
       ['personen', `${p} ${p === 1 ? 'persoon' : 'personen'}`],
-      ['kookavonden', `${antw.avonden === 7 ? 'Elke avond' : `${antw.avonden} ${antw.avonden === 1 ? 'avond' : 'avonden'}`}, ${antw.vega} vegetarisch`],
-      ['keukens', keukensOpslaan.length > 0 ? keukensOpslaan.join(', ') : 'Alle keukens'],
       ['allergieen', antw.allergieen.length > 0 ? `Zonder ${opsomming(antw.allergieen)}` : 'Geen allergieën'],
       ['voorraad', voorraadGekozen.length === 0 ? 'Voorraadkast leeg'
         : `${voorraadGekozen.length} ${voorraadGekozen.length === 1 ? 'product' : 'producten'} in huis`],
@@ -407,8 +392,6 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
 
   const kop: Record<Vraag, [string, string]> = {
     personen: ['Voor hoeveel mensen kook je meestal?', 'Dan kloppen de hoeveelheden meteen.'],
-    kookavonden: ['Hoe vaak kook je meestal per week?', 'Een richtlijn voor Vul mijn week. Je bestelt zoveel recepten als je wilt.'],
-    keukens: ['Welke keukens vind je lekker?', 'Kies er zoveel als je wilt. Daarvan krijg je meer in je weekmenu. De rest blijft gewoon te vinden.'],
     allergieen: ['Moet Kookmaatje ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
     voorraad: ['Wat heb je standaard in huis?', 'Dat laat Kookmaatje van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.'],
     melding: ['Op welke dag wil je een herinnering om recepten te zoeken?', 'Elke week op die dag krijg je een melding op je telefoon: tijd om komende week te vullen.'],
@@ -459,35 +442,6 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
           </>
         )}
 
-        {naam === 'kookavonden' && (
-          <>
-            <div role="radiogroup" aria-label="Aantal kookavonden" style={lijstStijl}>
-              {([[2, '2 avonden'], [3, '3 avonden'], [4, '4 avonden'], [5, '5 avonden'], [7, 'Elke avond']] as const).map(([n, label]) => (
-                <Optie
-                  key={n} gekozen={antw.avonden === n}
-                  onClick={() => setAntw({ ...antw, avonden: n, vega: Math.min(antw.vega, n) })}
-                >{label}</Optie>
-              ))}
-            </div>
-            <TellerRij
-              label="Hoeveel daarvan vegetarisch?" eenheid="vegetarische avonden"
-              waarde={antw.vega} min={0} max={antw.avonden}
-              onWijzig={(n) => setAntw({ ...antw, vega: n })}
-            />
-            <p style={{ ...kleinStijl, flex: 'none' }}>
-              {antw.vega} van je {antw.avonden} {antw.avonden === 1 ? 'avond' : 'avonden'} vegetarisch.
-            </p>
-          </>
-        )}
-
-        {naam === 'keukens' && (
-          keukens.isPending
-            ? <p style={kleinStijl}>Keukens ophalen…</p>
-            : alleKeukens.length === 0
-              ? <p style={kleinStijl}>De keukens zijn nu niet op te halen. Je kiest ze later in Instellingen.</p>
-              : <KeukenKeuze groot keukens={alleKeukens} gekozen={antw.keukens} onWijzig={(nieuw) => setAntw({ ...antw, keukens: nieuw })} />
-        )}
-
         {naam === 'allergieen' && (
           <>
             <AllergieKeuze groot metGeen gekozen={antw.allergieen} onWijzig={(nieuw) => setAntw({ ...antw, allergieen: nieuw })} />
@@ -519,12 +473,11 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
 
         {naam === 'melding' && (
           <>
-            <div role="radiogroup" aria-label="Dag van de herinnering" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <div role="radiogroup" aria-label="Dag van de herinnering" style={{ ...lijstStijl, gap: 8 }}>
               {DAG_VOLGORDE.map((dag) => (
-                <Chip
-                  key={dag} groot selected={antw.meldingDag === dag}
-                  onClick={() => setAntw({ ...antw, meldingDag: dag })}
-                >{DAGEN[dag][0].toUpperCase() + DAGEN[dag].slice(1)}</Chip>
+                <Optie key={dag} gekozen={antw.meldingDag === dag} onClick={() => setAntw({ ...antw, meldingDag: dag })}>
+                  {DAGEN[dag][0].toUpperCase() + DAGEN[dag].slice(1)}
+                </Optie>
               ))}
             </div>
             <label style={{

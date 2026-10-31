@@ -761,8 +761,14 @@ Daar vink je een of meer keukens aan (`filters.keukens`).
 
 ## Onboarding
 
+**Inlogscherm:** de eerste keer op een toestel staat Account aanmaken voorop
+en is Inloggen een kleine link onderin (`Inloggen.tsx`); daarna andersom. Het
+toestel onthoudt dat in `localStorage` (`pinch-heeft-account`, gezet in
+`start()` zodra er een sessie is, ook voor bestaande gebruikers). Een nieuwe
+installatie telt dus weer als eerste keer.
+
 Een nieuwe gebruiker ziet na het aanmelden één keer een welkomscherm, zes
-uitlegkaarten en zeven vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
+uitlegkaarten en vijf vragen (`/welkom`, `src/screens/Onboarding.tsx`) en
 staat daarna op Mijn recepten.
 
 - **`Poort` in `App.tsx` stuurt naar `/welkom`** zolang
@@ -777,8 +783,10 @@ staat daarna op Mijn recepten.
   standaardwaarden gemaakt. De poort moet dus vóór Mijn recepten blijven, en de
   onboarding roept `haalDezeWeek` pas aan bij "Vul mijn week".
 - **"Vul mijn week" zet direct recepten op je lijst** (`kiesWeek`, zoveel als
-  `kookavonden`), zonder bevestigscherm. Vegetarisch vraag je als "2 van je
-  4 avonden"; `vegaMinimumVoor` rekent dat om naar "x van de 10".
+  `kookavonden`), zonder bevestigscherm. De onboarding vraagt kookavonden,
+  vega en keukens niet meer (Reinoud, 31 okt 2026: je bepaalt dat elke week
+  zelf); het rekent met wat al in je voorkeuren staat (standaard 4 avonden).
+  Beide stel je nog in bij Instellingen.
 - **De herinneringsvraag** (dag en tijd om recepten te zoeken) schrijft naar
   `pushbericht_dag`, `pushbericht_tijd` en zet `pushbericht_aan`; overslaan
   laat de standaard staan (zondag 17:00, aan).
@@ -792,8 +800,6 @@ staat daarna op Mijn recepten.
   dan wordt het die naam ("miso" → "Misopasta"). Een nieuw product in de
   lijst krijgt de naam die de recepten gebruiken, anders dekt `inVoorraad`
   het niet; `voorraad.test.ts` bewaakt een paar gevallen.
-- **Keukens komen uit de pool** (`useKeukens`), niet uit een vaste lijst: een
-  chip die bij geen recept hoort doet niets in de generator.
 - **Opslaan per stap**, en waar je was staat in `localStorage`
   (`pinch-onboarding`). De winkelvraag kun je niet overslaan.
 - **Meten:** zes events in `onboarding_event` (`src/lib/meten.ts`). Alleen

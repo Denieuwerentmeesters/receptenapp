@@ -36,6 +36,17 @@ function authClient(): Client {
   return client
 }
 
+const ACCOUNT_SLEUTEL = 'pinch-heeft-account'
+
+/** Heeft er op dit toestel ooit een sessie gestaan? Dan toont Inloggen eerst het inlogformulier, anders eerst Account aanmaken. */
+export function heeftAccountOpToestel(): boolean {
+  try { return localStorage.getItem(ACCOUNT_SLEUTEL) === '1' } catch { return false }
+}
+
+export function onthoudAccountOpToestel() {
+  try { localStorage.setItem(ACCOUNT_SLEUTEL, '1') } catch { /* geen opslag: dan blijft het scherm zoals bij de eerste keer */ }
+}
+
 export interface Sessie {
   userId: string
   email: string
