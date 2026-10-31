@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button, Woordmerk } from '../ds'
 import { Titel } from '../components/Layout'
-import { logIn, maakAccount, resetWachtwoord, vraagWachtwoordResetAan } from '../lib/auth'
+import { heeftAccountOpToestel, logIn, maakAccount, resetWachtwoord, vraagWachtwoordResetAan } from '../lib/auth'
 import { PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
 
@@ -20,7 +20,9 @@ function tokenUitLink(): string {
 
 export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
   const [token, setToken] = useState(tokenUitLink)
-  const [modus, setModus] = useState<Modus>(token ? 'reset' : 'inloggen')
+  // Eerste keer op dit toestel: Account aanmaken voorop, Inloggen klein onderin.
+  const [eerste] = useState(() => !heeftAccountOpToestel())
+  const [modus, setModus] = useState<Modus>(token ? 'reset' : eerste ? 'nieuw' : 'inloggen')
   const nieuw = modus === 'nieuw'
   const metWachtwoord = modus === 'inloggen' || modus === 'nieuw' || modus === 'reset'
   const kiesNieuw = nieuw || modus === 'reset'
@@ -150,11 +152,11 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
         <button
           type="button"
           onClick={() => { setModus(nieuw ? 'inloggen' : modus === 'inloggen' ? 'nieuw' : 'inloggen'); setFout('') }}
-          style={tekstKnop}
+          style={eerste && nieuw ? kleineTekstKnop : tekstKnop}
         >
           {modus === 'inloggen' ? 'Nog geen account? Maak er een'
             : modus === 'reset' ? 'Terug naar inloggen'
-            : modus === 'nieuw' ? 'Ik heb al een account'
+            : modus === 'nieuw' ? (eerste ? 'Heb je al een account? Inloggen' : 'Ik heb al een account')
             : 'Terug naar inloggen'}
         </button>
 
@@ -175,6 +177,11 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
 const tekstKnop: React.CSSProperties = {
   fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--c-cream)',
   background: 'transparent', border: 'none', padding: 12, cursor: 'pointer',
+}
+
+const kleineTekstKnop: React.CSSProperties = {
+  ...tekstKnop, fontSize: 13, fontWeight: 500, opacity: 0.85,
+  textDecoration: 'underline', textUnderlineOffset: 3,
 }
 
 const linkStijl: React.CSSProperties = {

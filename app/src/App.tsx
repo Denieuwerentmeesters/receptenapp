@@ -23,7 +23,7 @@ import { Account } from './screens/Account'
 import { Onboarding } from './screens/Onboarding'
 import { Uitleg } from './components/Uitleg'
 import { Fout, Laden } from './components/Staten'
-import { huidigeSessie } from './lib/auth'
+import { huidigeSessie, onthoudAccountOpToestel } from './lib/auth'
 import { andereGebruiker, zorgVoorGebruiker } from './lib/gebruiker'
 import { vergeetHuishouden } from './lib/huishouden'
 import { foutTekst } from './lib/fouten'
@@ -57,6 +57,7 @@ export default function App() {
         setStatus('uitgelogd')
         return
       }
+      onthoudAccountOpToestel()
       // Idempotent: maakt de gebruiker en de voorkeurenrij aan als ze er nog
       // niet zijn, en doet verder niets.
       const id = await zorgVoorGebruiker()
