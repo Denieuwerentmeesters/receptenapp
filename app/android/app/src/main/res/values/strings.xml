@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kookmaatje</string>
+    <string name="title_activity_main">Kookmaatje</string>
+    <string name="package_name">nl.reinoudtencate.receptenapp</string>
+    <string name="custom_url_scheme">nl.reinoudtencate.receptenapp</string>
+</resources>
