@@ -463,7 +463,19 @@ Ingangen: de knop Toevoegen rechtsboven op Ontdekken (vervangt de losse knop
 Zelf samenstellen), de schakelaar Alle / Mijn recepten, de lege zoekuitkomst,
 en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
 
-- **Gratis in de testfase.** Het plan voorziet 5 gratis scans en daarna
+- **Vijf gratis, daarna Kookmaatje Plus (€ 3 per maand).** Eén teller voor
+  alles wat AI voor je maakt (`lib/plus.ts`, `GRATIS_RECEPTEN`, standaard 5):
+  gelukte scans (`scan.telt_mee`) plus de gerechten van gelukte menu's uit
+  Zelf samenstellen (`samenstelling` soort 'nieuw'; een aanpassing vervangt
+  een gerecht en telt niet nog eens). `api/extraheer.ts` en
+  `api/samenstellen.ts` geven een 402 zonder lopend `abonnement`; een menu
+  van drie gerechten mag alleen als er nog drie gratis zijn. Zelf typen kost
+  niets en telt niet. De app toont dezelfde grens en telling in
+  `src/lib/plus.ts`: houd die gelijk. De tabel `abonnement` vult alleen de
+  server. **Nog niet gebouwd:** de betaling zelf (in-app aankoop via Apple,
+  3.1.1; RevenueCat is de gebruikelijke route; Stripe op de website). Die zet
+  via een webhook `loopt_tot`. Tot dan: `abonnement` met de hand vullen.
+- **Daglimiet en kosten (was: gratis in de testfase).** Het plan voorziet 5 gratis scans en daarna
   Kookmaatje Plus; dat is bewust nog niet gebouwd (Reinoud, 7 okt 2026: eerst
   gratis maken en testen). Wel staat er een daglimiet tegen misbruik
   (`SCAN_LIMIET_PER_DAG`, standaard 30, alle pogingen). Elke poging staat in
