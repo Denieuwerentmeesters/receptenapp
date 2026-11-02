@@ -10,6 +10,8 @@ export interface PlusStand {
   gebruikt: number
   /** Er loopt een abonnement. */
   plus: boolean
+  /** Tot wanneer het abonnement loopt, ook als het is opgezegd; null zonder abonnement. */
+  tot: Date | null
   /** Hoeveel gratis uitlezingen er nog zijn; 0 als de limiet bereikt is. */
   over: number
 }
@@ -32,8 +34,9 @@ export function usePlusStand() {
         return som + (Array.isArray(gerechten) ? gerechten.length : 0)
       }, 0)
       const gebruikt = uitgelezen + samengesteld
-      const plus = !abo.error && !!abo.data && new Date(abo.data.loopt_tot as string) > new Date()
-      return { gebruikt, plus, over: Math.max(0, GRATIS_RECEPTEN - gebruikt) }
+      const tot = !abo.error && abo.data ? new Date(abo.data.loopt_tot as string) : null
+      const plus = !!tot && tot > new Date()
+      return { gebruikt, plus, tot: plus ? tot : null, over: Math.max(0, GRATIS_RECEPTEN - gebruikt) }
     },
     staleTime: 30_000,
   })

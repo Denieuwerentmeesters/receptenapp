@@ -5,6 +5,7 @@ import { useAanmeldingen, useBestellingen, useGeschiedenis, useIsAdmin, useVoorr
 import { MAALTIJDBOX, euro, totaalBespaard } from '../lib/besparing'
 import { useVoorkeuren } from '../lib/queries'
 import { logUit } from '../lib/auth'
+import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
 
 export function Profiel() {
   const navigeer = useNavigate()
@@ -14,6 +15,7 @@ export function Profiel() {
   const voorraad = useVoorraad()
   const isAdmin = useIsAdmin()
   const aanmeldingen = useAanmeldingen()
+  const plusStand = usePlusStand()
 
   const weken = geschiedenis.data ?? []
   const alleGekozen = weken.flatMap((w) => w.gekozen)
@@ -46,6 +48,13 @@ export function Profiel() {
           pad: '/beoordelen',
         }]
       : []),
+    {
+      label: 'Kookmaatje Plus',
+      sub: plusStand.data?.plus
+        ? 'Actief: AI-recepten zonder limiet'
+        : `${plusStand.data?.gebruikt ?? 0} van ${GRATIS_RECEPTEN} gratis AI-recepten gebruikt`,
+      pad: '/plus',
+    },
     { label: 'Account', sub: 'Privacy, hulp en account verwijderen', pad: '/account' },
   ]
 

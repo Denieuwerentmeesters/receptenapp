@@ -361,6 +361,7 @@ export function Samenstellen() {
               {plusStand.over > 0
                 ? `${plusStand.gebruikt} van ${GRATIS_RECEPTEN} gratis recepten gebruikt. Elk gerecht in het menu telt als één recept; daarna kost AI-recepten maken € 3 per maand met Kookmaatje Plus.`
                 : `Je ${GRATIS_RECEPTEN} gratis recepten zijn op. Meer laten maken kan met Kookmaatje Plus (€ 3 per maand).`}
+              {' '}<a href="#/plus" style={{ color: 'inherit', fontWeight: 700 }}>Bekijk Plus</a>
             </Melding>
           )}
           {fout && <Melding>{fout}</Melding>}

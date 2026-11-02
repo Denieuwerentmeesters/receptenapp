@@ -472,9 +472,20 @@ en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
   van drie gerechten mag alleen als er nog drie gratis zijn. Zelf typen kost
   niets en telt niet. De app toont dezelfde grens en telling in
   `src/lib/plus.ts`: houd die gelijk. De tabel `abonnement` vult alleen de
-  server. **Nog niet gebouwd:** de betaling zelf (in-app aankoop via Apple,
-  3.1.1; RevenueCat is de gebruikelijke route; Stripe op de website). Die zet
-  via een webhook `loopt_tot`. Tot dan: `abonnement` met de hand vullen.
+  server.
+- **Kookmaatje Plus kopen** loopt in de iOS-app via Apple (regel 3.1.1, dus
+  geen Stripe in de app) en RevenueCat. `src/lib/aankoop.ts` logt RevenueCat
+  in met het Neon-id en koopt het huidige aanbod; scherm `/plus`
+  (`screens/Plus.tsx`, vanuit Profiel en de limietmeldingen). RevenueCat meldt
+  elke wijziging aan `api/revenuecat.ts`, dat `abonnement.loopt_tot` zet;
+  alleen die rij telt, niet de uitkomst van de aankoop in de app. Het scherm
+  vraagt daarna een halve minuut opnieuw of Plus loopt. Opzeggen doet de
+  gebruiker bij Apple en verandert niets tot het eind van de periode.
+  Instellingen: `VITE_REVENUECAT_IOS_KEY` in `app/.env.local` (zonder sleutel
+  geen koopknop), `REVENUECAT_WEBHOOK_AUTH` en `DATABASE_URL` op Vercel,
+  recht (entitlement) `plus` in RevenueCat (`REVENUECAT_ENTITLEMENT`). In de
+  browser is er niets te kopen; het scherm verwijst naar de app. **Nog niet:**
+  Stripe voor wie alleen de website gebruikt.
 - **Daglimiet en kosten (was: gratis in de testfase).** Het plan voorziet 5 gratis scans en daarna
   Kookmaatje Plus; dat is bewust nog niet gebouwd (Reinoud, 7 okt 2026: eerst
   gratis maken en testen). Wel staat er een daglimiet tegen misbruik

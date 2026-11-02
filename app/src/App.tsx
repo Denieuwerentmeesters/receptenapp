@@ -20,6 +20,7 @@ import { Boodschappen } from './screens/Boodschappen'
 import { Instellingen } from './screens/Instellingen'
 import { Inloggen } from './screens/Inloggen'
 import { Account } from './screens/Account'
+import { Plus } from './screens/Plus'
 import { Onboarding } from './screens/Onboarding'
 import { Uitleg } from './components/Uitleg'
 import { Fout, Laden } from './components/Staten'
@@ -122,6 +123,7 @@ export default function App() {
         <Route path="/beoordelen" element={<Beoordelen />} />
         <Route path="/instellingen" element={<Instellingen />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/plus" element={<Plus />} />
         <Route path="*" element={<Navigate to="/mijn-recepten" replace />} />
         </Route>
       </Routes>
