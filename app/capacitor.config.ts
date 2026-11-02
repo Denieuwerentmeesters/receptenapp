@@ -4,6 +4,9 @@ const config: CapacitorConfig = {
   appId: 'nl.reinoudtencate.receptenapp',
   appName: 'Kookmaatje',
   webDir: 'dist',
+  // Android: de strook achter de statusbalk en navigatiebalk is paars,
+  // net als de kop; zonder is die wit.
+  backgroundColor: '#5E1A3B',
   ios: {
     // De app tekent zelf tot achter de statusbalk; elk scherm heeft al
     // env(safe-area-inset-top) in de kop verwerkt.
@@ -20,6 +23,9 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchAutoHide: false,
       backgroundColor: '#5E1A3B',
+    },
+    SystemBars: {
+      style: 'DARK',
     },
     StatusBar: {
       // De koppen zijn rood met crèmekleurige tekst.

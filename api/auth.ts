@@ -87,7 +87,8 @@ export function eigenCookie(cookie: string): string {
 }
 
 /**
- * De iOS-app stuurt capacitor://localhost als origin, of helemaal geen. Neon
+ * De iOS-app stuurt capacitor://localhost als origin, de Android-app
+ * https://localhost, of helemaal geen. Neon
  * Auth kent alleen het adres van de website en weigert de rest ("Invalid
  * origin"). Voor die twee gevallen vullen we dus ons eigen adres in.
  *
@@ -96,5 +97,10 @@ export function eigenCookie(cookie: string): string {
  * staan.
  */
 export function isAppOrigin(origin: string | null): boolean {
-  return origin === null || origin === '' || origin === 'capacitor://localhost'
+  return (
+    origin === null ||
+    origin === '' ||
+    origin === 'capacitor://localhost' ||
+    origin === 'https://localhost'
+  )
 }
