@@ -170,8 +170,8 @@ export function ReceptToevoegen() {
           lineHeight: 1.4, color: 'var(--c-ink-600, inherit)',
         }}>
           {plusStand.over > 0
-            ? `${plusStand.gebruikt} van ${GRATIS_RECEPTEN} gratis recepten gebruikt. Daarna kost uitlezen € 3 per maand met Kookmaatje Plus.`
-            : `Je ${GRATIS_RECEPTEN} gratis recepten zijn op. Meer uitlezen kan met Kookmaatje Plus (€ 3 per maand).`}
+            ? `${plusStand.gebruikt} van ${GRATIS_RECEPTEN} gratis recepten gebruikt. Daarna kost AI-recepten maken € 3 per maand met Kookmaatje Plus.`
+            : `Je ${GRATIS_RECEPTEN} gratis recepten zijn op. Meer laten maken kan met Kookmaatje Plus (€ 3 per maand).`}
         </div>
       )}
 

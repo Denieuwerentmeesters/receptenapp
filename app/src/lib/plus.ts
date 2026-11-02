@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 import { db } from './db'
 import { huidigeUserId } from './auth'
 
-/** Gelijk aan GRATIS_RECEPTEN in api/extraheer.ts; die functie handhaaft het, dit is alleen de weergave. */
-export const GRATIS_RECEPTEN = 10
+/** Gelijk aan GRATIS_RECEPTEN in lib/plus.ts; die functie handhaaft het, dit is alleen de weergave. */
+export const GRATIS_RECEPTEN = 5
 
 export interface PlusStand {
-  /** Gelukte scans tot nu toe (alleen de eigen rijen zijn leesbaar). */
+  /** Recepten die AI voor je maakte: gelukte uitleesacties plus de gerechten van gelukte menu's. */
   gebruikt: number
   /** Er loopt een abonnement. */
   plus: boolean
@@ -20,12 +20,18 @@ export function usePlusStand() {
     queryKey: ['plus-stand'],
     queryFn: async (): Promise<PlusStand> => {
       const userId = await huidigeUserId()
-      const [scans, abo] = await Promise.all([
+      const [scans, menus, abo] = await Promise.all([
         db.from('scan').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('telt_mee', true),
+        db.from('samenstelling').select('antwoord').eq('user_id', userId).eq('soort', 'nieuw'),
         db.from('abonnement').select('loopt_tot').eq('user_id', userId).maybeSingle(),
       ])
       // Ontbreekt de tabel nog (migratie niet gedraaid), dan nergens blokkeren: de server beslist.
-      const gebruikt = scans.error ? 0 : scans.count ?? 0
+      const uitgelezen = scans.error ? 0 : scans.count ?? 0
+      const samengesteld = menus.error ? 0 : (menus.data ?? []).reduce((som, m) => {
+        const gerechten = (m.antwoord as { gerechten?: unknown } | null)?.gerechten
+        return som + (Array.isArray(gerechten) ? gerechten.length : 0)
+      }, 0)
+      const gebruikt = uitgelezen + samengesteld
       const plus = !abo.error && !!abo.data && new Date(abo.data.loopt_tot as string) > new Date()
       return { gebruikt, plus, over: Math.max(0, GRATIS_RECEPTEN - gebruikt) }
     },

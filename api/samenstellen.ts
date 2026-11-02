@@ -26,6 +26,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import { isAppOrigin } from './auth'
 import { sessieUserId } from '../lib/sessie'
+import { GRATIS_RECEPTEN, limietMelding, plusStand } from '../lib/plus'
 import { MENU_SCHEMA, aanvulling, systeem, vraag } from '../lib/samenstellen/prompt'
 import { MenuStroom, type StroomDeel } from '../app/src/lib/menuStroom'
 import {
@@ -80,6 +81,12 @@ export default async function handler(request: Request): Promise<Response> {
       return fout(soort === 'nieuw'
         ? `Je hebt vandaag al ${LIMIET.nieuw} menu's laten samenstellen. Morgen kan het weer.`
         : `Je hebt dit menu vandaag al ${LIMIET.aanpassing} keer aangepast. Morgen kan het weer.`, 429)
+    }
+    // Een aanpassing vervangt een gerecht van een menu dat al meetelde.
+    if (soort === 'nieuw') {
+      const stand = await plusStand(sql, userId)
+      const melding = limietMelding(stand, verzoek.gerechten)
+      if (melding) return fout(melding, 402, { limiet: true, gebruikt: stand.gebruikt, gratis: GRATIS_RECEPTEN })
     }
     sleutels = await productSleutels(sql, verzoek.winkel)
     // Vóór de aanroep vastleggen: ook een afgebroken aanvraag telt voor de limiet.
@@ -360,8 +367,8 @@ function leesVerzoek(ruw: unknown): { verzoek: SamenstelVerzoek; vorig: Menu | n
   return { verzoek: { ...verzoek, wijziging }, vorig }
 }
 
-function fout(bericht: string, status: number): Response {
-  return new Response(JSON.stringify({ fout: bericht }), {
+function fout(bericht: string, status: number, extra: Record<string, unknown> = {}): Response {
+  return new Response(JSON.stringify({ fout: bericht, ...extra }), {
     status, headers: { 'content-type': 'application/json' },
   })
 }

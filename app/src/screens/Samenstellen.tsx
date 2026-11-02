@@ -9,6 +9,7 @@ import { allergeenNaam, opsomming, receptAllergie, useAllergeenRegels, useAllerg
 import { altijdInHuis } from '../lib/altijdInHuis'
 import { euro } from '../lib/besparing'
 import { foutTekst } from '../lib/fouten'
+import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
 import { ingredientKey } from '../lib/schaal'
 import { zoekProduct } from '../lib/zoekProduct'
 import {
@@ -107,6 +108,7 @@ export function Samenstellen() {
   const [verwacht, setVerwacht] = useState(0)
   const [wijziging, setWijziging] = useState('')
   const [fout, setFout] = useState('')
+  const { data: plusStand } = usePlusStand()
   const [bewaren, setBewaren] = useState(false)
   const [eerdereOpen, setEerdereOpen] = useState(false)
   const [zoekEerder, setZoekEerder] = useState('')
@@ -152,6 +154,7 @@ export function Samenstellen() {
       setMenu(uitkomst.menu)
       setSamenstellingId(uitkomst.samenstellingId)
       void qc.invalidateQueries({ queryKey: ['eerdere-menus'] })
+      void qc.invalidateQueries({ queryKey: ['plus-stand'] })
       setWijziging('')
       setFase('menu')
     } catch (e) {
@@ -352,6 +355,13 @@ export function Samenstellen() {
           </div>
           {allergieen.length > 0 && (
             <p style={KLEIN}>Je allergie-instelling geldt ook hier: zonder {opsomming(allergieen)}.</p>
+          )}
+          {plusStand && !plusStand.plus && (
+            <Melding toon="rustig">
+              {plusStand.over > 0
+                ? `${plusStand.gebruikt} van ${GRATIS_RECEPTEN} gratis recepten gebruikt. Elk gerecht in het menu telt als één recept; daarna kost AI-recepten maken € 3 per maand met Kookmaatje Plus.`
+                : `Je ${GRATIS_RECEPTEN} gratis recepten zijn op. Meer laten maken kan met Kookmaatje Plus (€ 3 per maand).`}
+            </Melding>
           )}
           {fout && <Melding>{fout}</Melding>}
         </Inhoud>

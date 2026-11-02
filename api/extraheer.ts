@@ -8,7 +8,7 @@
  * mogen niet in de app-bundle. En dit kost geld per aanvraag, dus:
  *  - alleen voor wie ingelogd is (de sessie die Neon Auth bevestigt);
  *  - een daglimiet per gebruiker tegen misbruik, geteld in de tabel `scan`.
- *    Kookmaatje Plus komt later; nu is importeren gratis.
+ *    De eerste vijf recepten (samen met Zelf samenstellen) zijn gratis, zie lib/plus.ts.
  *
  * Het antwoord komt als losse regels JSON (één gebeurtenis per regel, zie
  * ScanGebeurtenis in app/src/lib/extractie.ts) zodra de app `stroom: true`
@@ -39,6 +39,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import { isAppOrigin } from './auth'
 import { sessieUserId } from '../lib/sessie'
+import { GRATIS_RECEPTEN, limietMelding, plusStand } from '../lib/plus'
 import { RECEPT_SCHEMA, systeem } from '../lib/extractie/prompt'
 import {
   canoniekeUrl, haalWebpagina, leesReceptBlok, receptBlokAlsTekst, siteNaamUit, zichtbareTekst,
@@ -59,13 +60,6 @@ const MODEL = process.env.ANTHROPIC_MODEL_EXTRAHEER || 'claude-sonnet-5-5'
 
 /** Tegen misbruik, niet als verdienmodel: per gebruiker, per 24 uur, alle pogingen. */
 const LIMIET_PER_DAG = Number(process.env.SCAN_LIMIET_PER_DAG) || 30
-
-/**
- * Zoveel gelukte scans (`scan.telt_mee`) zijn gratis, in totaal en niet per maand;
- * daarna is Kookmaatje Plus nodig (tabel `abonnement`). Wisselen kan zonder deploy.
- * De app toont dezelfde grens in src/lib/plus.ts: houd die gelijk.
- */
-const GRATIS_RECEPTEN = Number(process.env.GRATIS_RECEPTEN) || 10
 
 /** Hooguit zoveel beelden per scan; meer dan vier screenshots is geen recept meer. */
 const MAX_BEELDEN = 4
@@ -133,17 +127,9 @@ export default async function handler(request: Request): Promise<Response> {
           : fout('Dit recept staat al bij je recepten.', 409, { receptId: bestaand.id })
       }
     }
-    const [{ gebruikt, plus }] = await sql`
-      select
-        (select count(*)::int from scan where user_id = ${userId} and telt_mee) as gebruikt,
-        exists (select 1 from abonnement where user_id = ${userId} and loopt_tot > now()) as plus
-    ` as { gebruikt: number; plus: boolean }[]
-    if (!plus && gebruikt >= GRATIS_RECEPTEN) {
-      return fout(
-        `Je hebt je ${GRATIS_RECEPTEN} gratis recepten door AI laten uitlezen. Met Kookmaatje Plus (€ 3 per maand) lees je er zoveel uit als je wilt.`,
-        402, { limiet: true, gebruikt, gratis: GRATIS_RECEPTEN },
-      )
-    }
+    const stand = await plusStand(sql, userId)
+    const melding = limietMelding(stand)
+    if (melding) return fout(melding, 402, { limiet: true, gebruikt: stand.gebruikt, gratis: GRATIS_RECEPTEN })
     sleutels = await productSleutels(sql, userId)
   } catch (e) {
     console.error('extraheer: database', e)
