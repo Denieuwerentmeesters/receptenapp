@@ -793,6 +793,19 @@ in fasen op: voorkeur, dan de rest, en **wat je al kookte achteraan**:
 150 omdat de ids in de URL meegaan) en zet ze bovenaan in de lijst Keuken ▾.
 Daar vink je een of meer keukens aan (`filters.keukens`).
 
+## Mails van het inlogsysteem
+
+Neon Auth stuurt zelf een mail in Neon-huisstijl en laat die niet aanpassen.
+Daarom staat in de Neon-console (Auth → Configuration → Webhooks) het event
+`send.magic_link` aan, met als URL `https://kookmaatje.eu/api/neon-webhook`.
+Neon slaat dan zijn eigen mail over; `api/neon-webhook.ts` controleert de
+handtekening, bouwt de mail (`lib/mail/wachtwoordmail.ts`) en verstuurt 'm via
+Resend vanaf kookmaatje.eu. Vercel-variabelen: `RESEND_API_KEY`,
+`MAIL_AFZENDER`. **Staat de webhook aan en ontbreekt de sleutel, dan werkt
+"Wachtwoord vergeten" niet.** Het logo in de mail is een PNG
+(`app/public/mail/kookmaatje.png`, `scripts/maak_maillogo.ts`): Gmail toont
+geen SVG. Zet er nergens Neon, Vercel of Receptenapp in.
+
 ## Account, privacy en de App Store
 
 - **Account verwijderen** zit in Profiel → Account, en loopt via
