@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button, Icon } from '../ds'
 import { Inhoud, Kop, Label, Scherm, Titel, Voet } from '../components/Layout'
 import { foutTekst } from '../lib/fouten'
@@ -9,6 +10,7 @@ import {
 import { bronTypeVoor, normaliseerUrl, isInstagramUrl, siteNaam } from '../lib/importeren'
 import { useReceptOpslaan } from '../lib/queries2'
 import { openBijWinkel } from '../lib/ah'
+import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
 import { LaadScherm } from '../components/Laadanimatie'
 import type { BronType } from '../lib/database.types'
 
@@ -52,6 +54,8 @@ export function ReceptToevoegen() {
   const navigeer = useNavigate()
   const [params] = useSearchParams()
   const opslaan = useReceptOpslaan()
+  const client = useQueryClient()
+  const { data: plusStand } = usePlusStand()
 
   const gevraagd = ROUTES[params.get('route') ?? '']
   const [stap, setStap] = useState<Stap>(gevraagd ? (gevraagd === 'zelf' ? 'concept' : 'invoer') : 'kiezen')
@@ -74,6 +78,7 @@ export function ReceptToevoegen() {
     setStap('bezig'); setFout(''); setStapTekst('')
     try {
       const { concept, scanId } = await actie(setStapTekst)
+      void client.invalidateQueries({ queryKey: ['plus-stand'] })
       setConcept(concept)
       setScanId(scanId)
       setStap('concept')
@@ -82,6 +87,7 @@ export function ReceptToevoegen() {
         navigeer(`/recept/${f.receptId}`, { replace: true, state: { terug: '/ontdekken' } })
         return
       }
+      void client.invalidateQueries({ queryKey: ['plus-stand'] })
       setFout(foutTekst(f))
       setStap('invoer')
     }
@@ -156,6 +162,17 @@ export function ReceptToevoegen() {
           borderRadius: 'var(--radius-sm)', padding: '12px 14px',
           fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4,
         }}>{fout}</div>
+      )}
+
+      {plusStand && !plusStand.plus && (stap === 'kiezen' || stap === 'invoer') && (
+        <div style={{
+          flex: 'none', margin: '14px 22px 0', fontFamily: 'var(--font-body)', fontSize: 13,
+          lineHeight: 1.4, color: 'var(--c-ink-600, inherit)',
+        }}>
+          {plusStand.over > 0
+            ? `${plusStand.gebruikt} van ${GRATIS_RECEPTEN} gratis recepten gebruikt. Daarna kost uitlezen € 3 per maand met Kookmaatje Plus.`
+            : `Je ${GRATIS_RECEPTEN} gratis recepten zijn op. Meer uitlezen kan met Kookmaatje Plus (€ 3 per maand).`}
+        </div>
       )}
 
       {stap === 'kiezen' && (

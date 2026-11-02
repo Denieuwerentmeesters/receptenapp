@@ -463,7 +463,15 @@ Ingangen: de knop Toevoegen rechtsboven op Ontdekken (vervangt de losse knop
 Zelf samenstellen), de schakelaar Alle / Mijn recepten, de lege zoekuitkomst,
 en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
 
-- **Gratis in de testfase.** Het plan voorziet 5 gratis scans en daarna
+- **Tien gratis, daarna Kookmaatje Plus (€ 3 per maand).** `api/extraheer.ts`
+  telt gelukte scans (`scan.telt_mee`, in totaal) en geeft bij de elfde een 402
+  tenzij er een lopend `abonnement` is (`GRATIS_RECEPTEN`, standaard 10; de
+  app toont dezelfde grens in `src/lib/plus.ts`). De tabel `abonnement` vult
+  alleen de server. **Nog niet gebouwd:** de betaling zelf. In de iOS-app moet
+  dat een in-app aankoop zijn (Apple, 3.1.1; RevenueCat is de gebruikelijke
+  route), op de website Stripe; beide zetten via een webhook `loopt_tot`.
+  Tot dan is er geen manier om te betalen: zet `abonnement` met de hand.
+- **Daglimiet en kosten (was: gratis in de testfase).** Het plan voorziet 5 gratis scans en daarna
   Kookmaatje Plus; dat is bewust nog niet gebouwd (Reinoud, 7 okt 2026: eerst
   gratis maken en testen). Wel staat er een daglimiet tegen misbruik
   (`SCAN_LIMIET_PER_DAG`, standaard 30, alle pogingen). Elke poging staat in

@@ -60,6 +60,13 @@ const MODEL = process.env.ANTHROPIC_MODEL_EXTRAHEER || 'claude-sonnet-5-5'
 /** Tegen misbruik, niet als verdienmodel: per gebruiker, per 24 uur, alle pogingen. */
 const LIMIET_PER_DAG = Number(process.env.SCAN_LIMIET_PER_DAG) || 30
 
+/**
+ * Zoveel gelukte scans (`scan.telt_mee`) zijn gratis, in totaal en niet per maand;
+ * daarna is Kookmaatje Plus nodig (tabel `abonnement`). Wisselen kan zonder deploy.
+ * De app toont dezelfde grens in src/lib/plus.ts: houd die gelijk.
+ */
+const GRATIS_RECEPTEN = Number(process.env.GRATIS_RECEPTEN) || 10
+
 /** Hooguit zoveel beelden per scan; meer dan vier screenshots is geen recept meer. */
 const MAX_BEELDEN = 4
 /** Een beeld van Instagram dat we zelf ophalen. */
@@ -115,6 +122,7 @@ export default async function handler(request: Request): Promise<Response> {
     if (aantal >= LIMIET_PER_DAG) {
       return fout(`Je hebt vandaag al ${LIMIET_PER_DAG} recepten laten uitlezen. Morgen kan het weer.`, 429)
     }
+    // Een link die al bij je recepten staat kost niets, dus die controle gaat voor de gratis limiet.
     if (url) {
       const [bestaand] = await sql`
         select id from recepten where user_id = ${userId} and url = ${url} limit 1
@@ -124,6 +132,17 @@ export default async function handler(request: Request): Promise<Response> {
           ? stroomAntwoord(async (stuur) => stuur({ soort: 'bestaat', receptId: bestaand.id }))
           : fout('Dit recept staat al bij je recepten.', 409, { receptId: bestaand.id })
       }
+    }
+    const [{ gebruikt, plus }] = await sql`
+      select
+        (select count(*)::int from scan where user_id = ${userId} and telt_mee) as gebruikt,
+        exists (select 1 from abonnement where user_id = ${userId} and loopt_tot > now()) as plus
+    ` as { gebruikt: number; plus: boolean }[]
+    if (!plus && gebruikt >= GRATIS_RECEPTEN) {
+      return fout(
+        `Je hebt je ${GRATIS_RECEPTEN} gratis recepten door AI laten uitlezen. Met Kookmaatje Plus (€ 3 per maand) lees je er zoveel uit als je wilt.`,
+        402, { limiet: true, gebruikt, gratis: GRATIS_RECEPTEN },
+      )
     }
     sleutels = await productSleutels(sql, userId)
   } catch (e) {
