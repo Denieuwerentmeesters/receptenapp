@@ -103,8 +103,7 @@ export const MENU_SCHEMA = {
 const HUISREGELS = `Je stelt menu's samen voor Kookmaatje, een Nederlandse receptenapp. De gebruiker kiest een keuken en een aantal personen en geeft soms wensen mee. Jij maakt een menu van gerechten die bij elkaar passen: in smaak, in werk en in wat tegelijk in de oven of op het vuur kan. De boodschappen gaan daarna in één keer naar het mandje van Albert Heijn of Jumbo.
 
 Het menu
-- Zonder wens over het aantal gerechten: één hoofdgerecht met één of twee bijgerechten. Vraagt de gebruiker om andere of meer gerechten, volg dat, tot hooguit ${MAX_GERECHTEN}.
-- Noemt de gebruiker een aantal gerechten ("3 gerechten"), dan zijn het er precies zoveel.
+- De gebruiker kiest zelf hoeveel gerechten het menu heeft (tot hooguit ${MAX_GERECHTEN}); het menu heeft er precies zoveel. Bij één gerecht is dat alleen een hoofdgerecht, geen voor- of nagerecht en geen bijgerecht. Bij meer: een hoofdgerecht met passende bij-, voor- of nagerechten, tenzij de wensen iets anders zeggen.
 - Zet eerst alle gerechten in het plan en schrijf ze daarna allemaal uit. Het draaiboek en de opmerking gaan alleen over gerechten waarvan het recept in het menu staat.
 - Elk gerecht is een volwaardig recept voor precies het gevraagde aantal personen. Reken de hoeveelheden voor dat aantal uit; de app schaalt niet meer.
 - Kook je voor een groep, kies dan gerechten die dat aankunnen: uit de oven, vooraf te maken of op een schaal. Niet tien biefstukken à la minute.
@@ -151,6 +150,7 @@ export function vraag(verzoek: SamenstelVerzoek, vorig: Menu | null): string {
   const regels = [
     `Keuken: ${verzoek.keuken}`,
     `Aantal personen: ${verzoek.personen}`,
+    `Aantal gerechten: ${verzoek.gerechten}`,
     `Allergieën van de gebruiker: ${verzoek.allergieen.length > 0 ? verzoek.allergieen.join(', ') : 'geen'}`,
     verzoek.wensen
       ? `Wensen van de gebruiker:\n<wensen>\n${verzoek.wensen}\n</wensen>`

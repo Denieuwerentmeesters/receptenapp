@@ -436,10 +436,9 @@ eigen omschrijving van het gerecht, zonder namen van makers of merken
 (migratie `20261002100000_eigen_receptnamen.sql`). Komt er een nieuwe lading
 bij, geef die dan meteen een eigen titel.
 
-**Mijn recepten op Ontdekken is alleen wat je zelf toevoegde**
-(`EIGEN_BRON_TYPES` in `src/lib/queries2.ts`): link, screenshots, kookboek,
-eigen tekst. Geen pool en geen samengesteld menu; dat laatste staat op het
-vragenscherm van Zelf samenstellen.
+**Mijn recepten op Ontdekken is alleen wat je zelf toevoegde of liet
+samenstellen** (`EIGEN_BRON_TYPES` in `src/lib/queries2.ts`): link,
+screenshots, kookboek, eigen tekst en bewaarde samengestelde recepten. Geen pool.
 
 **Recepten in bulk voor iedereen gaan de pool in**, niet op je eigen account:
 `user_id` null, `bron_type = 'scraper'`, `deel_status = 'goedgekeurd'`. De
@@ -559,6 +558,10 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
   limiet per 24 uur (10 nieuwe menu's, 30 aanpassingen), geteld in
   `samenstelling`. Het model staat in `ANTHROPIC_MODEL_SAMENSTELLEN`
   (standaard `claude-sonnet-5-5`).
+- **Hoeveel gerechten kies je zelf** (vraag 3, `SamenstelVerzoek.gerechten`,
+  1 tot `MAX_GERECHTEN`). Standaard 1: alleen een hoofdgerecht (Reinoud,
+  2 nov 2026: standaard drie gangen was te veel). De server leest een ontbrekend
+  veld (oude app-build) ook als 1.
 - **Eerst een plan, dan de recepten.** Claude noemt in `plan` alle gerechten
   en schrijft ze daarna uit. Mist er een (het draaiboek ging over een lasagne
   die niet in het menu stond), dan vraagt de functie dat gerecht er in een
@@ -574,9 +577,10 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
   zoeklink. Zo is er geen vierde plek met `ingredient_key`.
 - **Opslaan pas bij "Zet op mijn lijst" of "Bewaar alleen de recepten".**
   Ze staan daarna onder "Mijn recepten" op het vragenscherm (zoeken op
-  gerecht, ingrediënt of datum), niet bij je favorieten. Ze krijgen **geen
+  gerecht, ingrediënt of datum) én onder Mijn recepten in Ontdekken
+  (`EIGEN_BRON_TYPES`), niet bij je favorieten. Ze krijgen **geen
   foto**: de nachtelijke ronde slaat ze over, dat kost te veel. `bron_type = 'samengesteld'`, altijd privé
-  (check-constraint), met `samenstelling_id`. Ze staan niet in Ontdekken en
+  (check-constraint), met `samenstelling_id`. Ze staan in Ontdekken alleen bij Mijn recepten, en
   niet in de weekmenu-generator, en tellen niet mee voor Bespaard!.
 - **Porties:** een samengesteld recept gaat op de lijst en opent voor het
   aantal van het menu, niet voor je huishouden (`standaardPersonen`).

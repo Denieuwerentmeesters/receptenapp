@@ -51,6 +51,8 @@ export interface Menu {
 export interface SamenstelVerzoek {
   keuken: string
   personen: number
+  /** Hoeveel gerechten het menu krijgt (1 tot MAX_GERECHTEN); 1 is alleen een hoofdgerecht. */
+  gerechten: number
   wensen: string
   allergieen: string[]
   winkel: 'ah' | 'jumbo'

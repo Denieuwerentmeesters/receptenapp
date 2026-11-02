@@ -12,7 +12,7 @@ import { foutTekst } from '../lib/fouten'
 import { ingredientKey } from '../lib/schaal'
 import { zoekProduct } from '../lib/zoekProduct'
 import {
-  KEUKEN_KEUZES, MAX_PERSONEN, MAX_WENSEN, menuNaam,
+  KEUKEN_KEUZES, MAX_GERECHTEN, MAX_PERSONEN, MAX_WENSEN, menuNaam,
   type Menu, type MenuGerecht, type SamenstelVerzoek,
 } from '../lib/menu'
 import {
@@ -33,6 +33,7 @@ const OPSLAG = 'pinch-samenstellen'
 interface Onthouden {
   keuken: string | null
   personen: number | null
+  gerechten: number | null
   wensen: string
   menu: Menu | null
   samenstellingId: string | null
@@ -48,7 +49,7 @@ interface Onthouden {
  */
 function leesOnthouden(): Onthouden {
   const leeg: Onthouden = {
-    keuken: null, personen: null, wensen: '', menu: null, samenstellingId: null, receptIds: null, opLijst: false,
+    keuken: null, personen: null, gerechten: null, wensen: '', menu: null, samenstellingId: null, receptIds: null, opLijst: false,
   }
   try {
     const ruw = JSON.parse(localStorage.getItem(OPSLAG) ?? 'null') as Partial<Onthouden> | null
@@ -91,6 +92,9 @@ export function Samenstellen() {
   const [keuken, setKeuken] = useState(onthouden.keuken)
   const [personenKeuze, setPersonen] = useState(onthouden.personen)
   const personen = personenKeuze ?? voorkeuren.data?.aantal_personen ?? 4
+  // Standaard alleen een hoofdgerecht: wie meer wil kiest dat zelf.
+  const [gerechtenKeuze, setGerechten] = useState(onthouden.gerechten)
+  const aantalGerechten = gerechtenKeuze ?? 1
   const [wensen, setWensen] = useState(onthouden.wensen)
   const [menu, setMenu] = useState(onthouden.menu)
   const [samenstellingId, setSamenstellingId] = useState(onthouden.samenstellingId)
@@ -110,9 +114,9 @@ export function Samenstellen() {
   const [zoekRecept, setZoekRecept] = useState('')
 
   useEffect(() => {
-    Object.assign(onthouden, { keuken, personen: personenKeuze, wensen, menu, samenstellingId, receptIds, opLijst })
+    Object.assign(onthouden, { keuken, personen: personenKeuze, gerechten: gerechtenKeuze, wensen, menu, samenstellingId, receptIds, opLijst })
     try { localStorage.setItem(OPSLAG, JSON.stringify(onthouden)) } catch { /* geen opslag: dan alleen in het geheugen */ }
-  }, [keuken, personenKeuze, wensen, menu, samenstellingId, receptIds, opLijst])
+  }, [keuken, personenKeuze, gerechtenKeuze, wensen, menu, samenstellingId, receptIds, opLijst])
 
   // Ga je weg terwijl Claude nog schrijft, dan hoeft het antwoord niet meer.
   const lopend = useRef<AbortController | null>(null)
@@ -133,7 +137,7 @@ export function Samenstellen() {
     }
     try {
       const uitkomst = await stelSamen(
-        { keuken, personen, wensen: wensen.trim(), allergieen, winkel: winkelId, ...extra },
+        { keuken, personen, gerechten: aantalGerechten, wensen: wensen.trim(), allergieen, winkel: winkelId, ...extra },
         (g) => {
           // Bij bijsturen blijft het oude menu staan tot het nieuwe af is.
           if (!nieuw) return
@@ -192,6 +196,7 @@ export function Samenstellen() {
       const ids = await receptenVanMenu(eerder.id)
       const opDeLijst = new Set((dezeWeek.data ?? []).filter((r) => r.opLijst).map((r) => r.id))
       setKeuken(eerder.menu.keuken); setPersonen(eerder.menu.personen)
+      setGerechten(Math.min(MAX_GERECHTEN, Math.max(1, eerder.menu.gerechten.length)))
       setWensen(eerder.aangepast ? '' : eerder.wensen)
       setMenu(eerder.menu); setSamenstellingId(eerder.id)
       setReceptIds(ids.length > 0 ? ids : null)
@@ -226,7 +231,7 @@ export function Samenstellen() {
   /** "Wis recepten": het menu en de drie antwoorden weg, terug naar een leeg vragenscherm. */
   function wis() {
     opnieuw()
-    setKeuken(null); setPersonen(null); setWensen(''); setWijziging(''); setOpen(null)
+    setKeuken(null); setPersonen(null); setGerechten(null); setWensen(''); setWijziging(''); setOpen(null)
   }
 
   // Wat straks als zoeklink gaat in plaats van als product in je mandje. Pas
@@ -272,7 +277,7 @@ export function Samenstellen() {
           </div>
         </Kop>
         <Inhoud style={{ gap: 10 }}>
-          <p style={LEAD}>Drie vragen, daarna maakt Kookmaatje de recepten en zet de boodschappen klaar.</p>
+          <p style={LEAD}>Vier vragen, daarna maakt Kookmaatje de recepten en zet de boodschappen klaar.</p>
 
           <Vraag nummer={1} tekst="Welke keuken?" />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -300,7 +305,28 @@ export function Samenstellen() {
             <span style={{ ...KLEIN, fontSize: 14 }}>{personen === 1 ? 'persoon' : 'personen'}</span>
           </div>
 
-          <Vraag nummer={3} tekst="Nog wensen?" bij="mag leeg blijven" />
+          <Vraag nummer={3} tekst="Hoeveel gerechten?" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <IconButton
+              icon="minus" label="Minder gerechten" size={44}
+              onClick={() => setGerechten(Math.max(1, aantalGerechten - 1))}
+              style={{ background: 'var(--c-paper)', color: 'var(--c-ink)', border: '1.5px solid var(--c-ink)' }}
+            />
+            <output aria-live="polite" style={{
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, minWidth: 44,
+              textAlign: 'center', fontVariantNumeric: 'tabular-nums',
+            }}>{aantalGerechten}</output>
+            <IconButton
+              icon="plus" label="Meer gerechten" size={44}
+              onClick={() => setGerechten(Math.min(MAX_GERECHTEN, aantalGerechten + 1))}
+              style={{ background: 'var(--c-paper)', color: 'var(--c-ink)', border: '1.5px solid var(--c-ink)' }}
+            />
+            <span style={{ ...KLEIN, fontSize: 14 }}>
+              {aantalGerechten === 1 ? 'gerecht: alleen een hoofdgerecht' : 'gerechten: hoofdgerecht en bijgerechten'}
+            </span>
+          </div>
+
+          <Vraag nummer={4} tekst="Nog wensen?" bij="mag leeg blijven" />
           <textarea
             value={wensen}
             maxLength={MAX_WENSEN}
