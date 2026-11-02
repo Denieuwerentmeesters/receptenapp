@@ -1,5 +1,5 @@
 import { AppLauncher } from '@capacitor/app-launcher'
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, registerPlugin } from '@capacitor/core'
 import { WEBSITE } from './config'
 import type { AhProduct, BoodschapItem } from './database.types'
 import { zoekProduct } from './zoekProduct'
@@ -18,6 +18,9 @@ export { enkelvoudVormen, zoekProduct } from './zoekProduct'
  */
 const ADD_MULTIPLE = 'https://www.ah.nl/mijnlijst//add-multiple'
 const ZOEKEN = 'https://www.ah.nl/zoeken'
+
+/** Eigen plugin in MainActivity: opent een link in de standaardbrowser, niet in de winkelapp. */
+const AndroidBrowser = registerPlugin<{ openUrl(opties: { url: string }): Promise<void> }>('AndroidBrowser')
 
 /** Een boodschapregel op weg naar het mandje, met hoeveel verpakkingen. */
 export type MandjeItem = BoodschapItem & {
@@ -129,6 +132,18 @@ export async function openBijWinkel(url: string): Promise<void> {
   if (!isMandjeLink(url)) {
     if (native) await AppLauncher.openUrl({ url })
     else window.open(url, '_blank', 'noopener,noreferrer')
+    return
+  }
+
+  // Android: AH en Jumbo claimen hun links als App Link, net als op iOS. Het
+  // pakket van de browser meegeven slaat de winkelapp over. Zonder de plugin
+  // (een oudere build) valt het terug op een gewone AppLauncher.
+  if (Capacitor.getPlatform() === 'android') {
+    try {
+      await AndroidBrowser.openUrl({ url })
+    } catch {
+      await AppLauncher.openUrl({ url })
+    }
     return
   }
 

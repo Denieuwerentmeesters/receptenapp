@@ -161,6 +161,33 @@ wissen, dus laat ze zo.
   met de hand in `project.pbxproj` gezet (id's beginnen met `DE1E`);
   `cap sync` raakt 'm niet aan.
 
+## Android-app
+
+Zelfde Capacitor-project, tweede platform (`app/android`, Gradle). Bouwen en
+openen in Android Studio: `npm run android` in `app/` (controleert ook of
+`.env.local` er is). Een debug-APK zonder Studio: `cd app/android &&
+./gradlew assembleDebug`. Nodig: JDK 21 en de Android SDK
+(`JAVA_HOME`, `ANDROID_HOME`).
+
+- **Systeembalken zijn paars** via `windowBackground` in `styles.xml`
+  (`kookmaatje_paars`); de webview krijgt zelf de insets. Een witte strook
+  boven of onder betekent dat die regel weg is.
+- **Inloggen:** Android stuurt `https://localhost` als origin; `isAppOrigin`
+  in `api/auth.ts` kent die naast `capacitor://localhost`.
+- **Mandjelinks** gaan via `AndroidBrowserPlugin` (eigen plugin, in
+  `MainActivity` geregistreerd): die opent de standaardbrowser en slaat de
+  AH- of Jumbo-app over, die de link als App Link claimt en niets toevoegt.
+  `x-safari-https://` bestaat alleen op iOS. Nog niet getest op een echt
+  toestel.
+- **Deelknop:** `MainActivity.deelNaarSchema` zet een gedeelde tekst met een
+  link om in `kookmaatje://toevoegen?url=…`, dezelfde weg als iOS. Alleen
+  links, geen screenshots.
+- **Weekmenu-melding:** `POST_NOTIFICATIONS` staat in het manifest; de app
+  vraagt de toestemming bij het plannen.
+- **Nog niet:** Google Play (account, ondertekening, gesloten test met 12
+  testers), RevenueCat voor Android (Play Billing), icoon en splash
+  op maat (nu het standaardicoon van Capacitor).
+
 ## AH-mapping — hoe het hoort te werken
 
 De mapping (`ah_product_cache`) koppelt een genormaliseerde `ingredient_key` aan

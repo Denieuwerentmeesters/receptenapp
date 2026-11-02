@@ -22,6 +22,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- kookmaatje://toevoegen?url=… (zie src/lib/deelknop.ts) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="kookmaatje" />
+            </intent-filter>
+
+            <!-- Delen → Kookmaatje vanuit Instagram of Chrome; alleen links. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
         </activity>
 
         <provider
@@ -35,7 +50,17 @@
         </provider>
     </application>
 
+    <!-- Nodig om te zien welke browser de standaard is (AndroidBrowserPlugin). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+: de wekelijkse herinnering. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>
