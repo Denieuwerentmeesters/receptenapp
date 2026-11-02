@@ -39,11 +39,11 @@ export interface OntdekFilters {
  * Wat in Ontdekken tussen de hoofdgerechten staat. Als lijst van wat wél mag:
  * zo werkt het ook tegen een database die een nieuwe waarde nog niet kent.
  * Zelf samengestelde menu's horen er niet bij (een bijgerecht voor tien is
- * geen doordeweeks hoofdgerecht); die staan onder "Mijn recepten".
+ * geen doordeweeks hoofdgerecht); die staan alleen onder "Mijn recepten".
  */
 const ONTDEK_BRON_TYPES: BronType[] = ['scraper', 'kookboek_foto', 'eigen_input', 'website', 'screenshot', 'instagram']
-/** Wat je zelf toevoegde: geen pool, en geen samengesteld menu (dat staat op het vragenscherm). */
-const EIGEN_BRON_TYPES: BronType[] = ['kookboek_foto', 'eigen_input', 'website', 'screenshot', 'instagram']
+/** Wat je zelf toevoegde of liet samenstellen: geen pool. */
+const EIGEN_BRON_TYPES: BronType[] = ['kookboek_foto', 'eigen_input', 'website', 'screenshot', 'instagram', 'samengesteld']
 
 const PER_PAGINA = 30
 

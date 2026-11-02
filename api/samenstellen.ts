@@ -29,7 +29,7 @@ import { sessieUserId } from '../lib/sessie'
 import { MENU_SCHEMA, aanvulling, systeem, vraag } from '../lib/samenstellen/prompt'
 import { MenuStroom, type StroomDeel } from '../app/src/lib/menuStroom'
 import {
-  MAX_PERSONEN, MAX_WENSEN, inPlanVolgorde, leesDraaiboek, leesGerecht, leesMenu, leesPlan, ontbrekend, waaromNiet,
+  MAX_GERECHTEN, MAX_PERSONEN, MAX_WENSEN, inPlanVolgorde, leesDraaiboek, leesGerecht, leesMenu, leesPlan, ontbrekend, waaromNiet,
   type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek,
 } from '../app/src/lib/menu'
 
@@ -326,11 +326,17 @@ function leesVerzoek(ruw: unknown): { verzoek: SamenstelVerzoek; vorig: Menu | n
   if (!Number.isInteger(personen) || personen < 1 || personen > MAX_PERSONEN) {
     return `Kies een aantal personen van 1 tot ${MAX_PERSONEN}.`
   }
+  // Standaard alleen een hoofdgerecht; een oude app-build stuurt dit niet mee.
+  const aantal = Number(o.gerechten ?? 1)
+  if (!Number.isInteger(aantal) || aantal < 1 || aantal > MAX_GERECHTEN) {
+    return `Kies een aantal gerechten van 1 tot ${MAX_GERECHTEN}.`
+  }
   const kort = (w: unknown) => (typeof w === 'string' ? w.trim().slice(0, MAX_WENSEN) : '')
 
   const verzoek: SamenstelVerzoek = {
     keuken,
     personen,
+    gerechten: aantal,
     wensen: kort(o.wensen),
     // De id's uit lib/allergenen.ts: één woord in kleine letters. Meer laten we niet door.
     allergieen: Array.isArray(o.allergieen)
