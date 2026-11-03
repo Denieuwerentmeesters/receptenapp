@@ -161,6 +161,18 @@ wissen, dus laat ze zo.
   met de hand in `project.pbxproj` gezet (id's beginnen met `DE1E`);
   `cap sync` raakt 'm niet aan.
 
+## Website
+
+Wie kookmaatje.eu in een gewone browser opent zonder ingelogd te zijn ziet
+`screens/Website.tsx` (naar het ontwerp "Kookmaatje Website" uit Claude Design),
+niet het inlogscherm. De app staat voorop: de App Store-knop is de hoofdactie,
+Inloggen (`/inloggen`) is de tweede keuze voor wie de webversie wil. Alleen op
+`/` zonder `#`; de iOS- en Android-app slaan de website over (`App.tsx`,
+`opSite`). De telefoons zijn nagebouwde schermen met vaste inhoud. De
+App Store-link (`APPSTORE_URL`) en "Google Play komt eraan"
+(`GOOGLE_PLAY_BESCHIKBAAR`) staan in `src/lib/config.ts`: werk ze bij zodra de
+app in de store staat.
+
 ## Android-app
 
 Zelfde Capacitor-project, tweede platform (`app/android`, Gradle). Bouwen en
