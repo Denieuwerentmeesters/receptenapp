@@ -28,9 +28,8 @@ import type { Verpakking } from './eenheden'
  * Prijzen veranderen: kijk dit een paar keer per jaar na.
  */
 export const MAALTIJDBOX = {
-  naam: 'HelloFresh',
-  /** Hoe we de maaltijdboxen noemen in de tekst; de prijzen zijn die van HelloFresh. */
-  namen: 'HelloFresh of Marley Spoon',
+  /** Hoe we het in de tekst noemen: nooit een merknaam. De prijzen zijn die van HelloFresh. */
+  naam: 'een maaltijdbox',
   peildatum: 'september 2026',
   perPortie: { 1: 13.33, 2: 7.67, 3: 6.44, 4: 5.31, 5: 4.9, 6: 4.49 } as Record<number, number>,
   /** Eén keer per week, bij de eerste bestelling. */

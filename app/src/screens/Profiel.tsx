@@ -33,8 +33,8 @@ export function Profiel() {
     {
       label: 'Bespaard!',
       sub: bespaard.length > 0
-        ? `${euro(totaalBespaard(bespaard))} minder dan bij ${MAALTIJDBOX.namen}`
-        : `Wat je bespaart ten opzichte van ${MAALTIJDBOX.namen}`,
+        ? `${euro(totaalBespaard(bespaard))} minder dan bij ${MAALTIJDBOX.naam}`
+        : `Wat je bespaart ten opzichte van ${MAALTIJDBOX.naam}`,
       pad: '/bespaard',
     },
     { label: 'Voorraadkast', sub: `${voorraad.data?.filter((v) => v.in_huis).length ?? 0} producten in huis`, pad: '/voorraadkast' },

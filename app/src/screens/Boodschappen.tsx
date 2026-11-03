@@ -672,7 +672,7 @@ export function Boodschappen() {
         tekst={bespaard
           ? `Deze boodschappen kosten zo'n ${euro(bespaard.mandje_kosten)}, ${euro(BEZORGING_MANDJE)} bezorging inbegrepen. ` +
             `Dezelfde ${bespaard.maaltijden} ${bespaard.maaltijden === 1 ? 'maaltijd' : 'maaltijden'} voor ` +
-            `${bespaard.personen} bij ${MAALTIJDBOX.namen}: ${euro(bespaard.maaltijdbox_kosten)}. ` +
+            `${bespaard.personen} bij ${MAALTIJDBOX.naam}: ${euro(bespaard.maaltijdbox_kosten)}. ` +
             // De lijst kan nog aan het verversen zijn; deze bestelling telt hoe dan ook mee.
             `Totaal bespaard met de app: ${euro(totaalBespaard([
               ...(bestellingen.data ?? []).filter((b) => b.id !== bespaard.id), bespaard,

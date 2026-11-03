@@ -699,7 +699,7 @@ staat het logo stil.
 
 ## Bespaard!
 
-Wat je bespaart ten opzichte van een maaltijdbox (HelloFresh). Bij het openen
+Wat je bespaart ten opzichte van een maaltijdbox. Bij het openen
 van de app schuift het totaal even bovenin (`components/BespaardMelding.tsx`) —
 de eerste keer en daarna eens per drie keer openen, geteld in `localStorage`;
 de details staan in Mijn keuken → Bespaard!.
@@ -711,17 +711,17 @@ de details staan in Mijn keuken → Bespaard!.
   klassenschatting uit `lib/prijsschatting.ts`. Zelf toegevoegde producten
   tellen niet mee.
 - **Bezorging:** het mandje telt € 5 bezorging mee (`BEZORGING_MANDJE`), want een
-  maaltijdbox komt ook aan de deur (Reinoud, 28 okt 2026). In de tekst heten
-  de boxen "HelloFresh of Marley Spoon" (`MAALTIJDBOX.namen`); gerekend wordt met
-  HelloFresh-prijzen.
+  maaltijdbox komt ook aan de deur (Reinoud, 28 okt 2026). In de tekst heet het
+  altijd "een maaltijdbox" (`MAALTIJDBOX.naam`), nooit een merknaam (Reinoud,
+  3 nov 2026); gerekend wordt met HelloFresh-prijzen.
 - **Maaltijdbox:** prijs per portie naar aantal personen plus bezorging, in
   `lib/besparing.ts` (`MAALTIJDBOX`), met bronnen en peildatum. Een recept
   telt één keer per week.
 - **Prijzen bijwerken,** een paar keer per jaar: `python3 scripts/jumbo_prijzen.py`
-  en dan `--migratie` voor een nieuwe migratie. De HelloFresh-tabel pas je met
+  en dan `--migratie` voor een nieuwe migratie. De prijstabel pas je met
   de hand aan in `lib/besparing.ts`.
 - Rekent zich bewust niet rijk: gewone prijs zonder aanbieding, hele
-  verpakkingen, geen premiumtoeslag aan de HelloFresh-kant.
+  verpakkingen, geen premiumtoeslag aan de maaltijdboxkant.
 
 ## Bonus
 

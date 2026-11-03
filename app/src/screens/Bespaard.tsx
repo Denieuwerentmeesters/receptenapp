@@ -38,9 +38,9 @@ export function Bespaard() {
         </div>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
           {lijst.length > 0
-            ? `Minder uitgegeven dan bij bijv. ${MAALTIJDBOX.namen}, over ${lijst.length} ` +
+            ? `Minder uitgegeven dan bij ${MAALTIJDBOX.naam}, over ${lijst.length} ` +
               `${lijst.length === 1 ? 'bestelling' : 'bestellingen'}.`
-            : `Wat je bespaart ten opzichte van een maaltijdbox als ${MAALTIJDBOX.namen}.`}
+            : `Wat je bespaart ten opzichte van ${MAALTIJDBOX.naam}.`}
         </p>
         {bonusTotaal > 0 && (
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, lineHeight: 1.5, margin: '6px 0 0', color: 'var(--c-yellow)' }}>
@@ -55,7 +55,7 @@ export function Bespaard() {
             icoon="piggyBank"
             kop="Je eerste besparing komt eraan"
             tekst={'Stuur je boodschappen naar je mandje en bevestig dat ze aankwamen. ' +
-              `Dan rekenen we uit wat je bespaarde ten opzichte van ${MAALTIJDBOX.namen}.`}
+              `Dan rekenen we uit wat je bespaarde ten opzichte van ${MAALTIJDBOX.naam}.`}
             knop="Naar mijn lijst"
             onKnop={() => navigeer('/boodschappen')}
           />
@@ -82,7 +82,7 @@ export function Bespaard() {
                         {b.maaltijden === 1 ? 'maaltijd' : 'maaltijden'} voor {b.personen}
                       </span>
                       <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)' }}>
-                        Mandje {euro(b.mandje_kosten, true)} · {MAALTIJDBOX.naam} {euro(b.maaltijdbox_kosten, true)}
+                        Mandje {euro(b.mandje_kosten, true)} · Maaltijdbox {euro(b.maaltijdbox_kosten, true)}
                         {b.bonus_voordeel > 0 && ` · bonus ${euro(b.bonus_voordeel, true)}`}
                       </span>
                     </span>
@@ -103,7 +103,7 @@ export function Bespaard() {
                 Wat je voorraadkast al heeft en wat je zelf aan je lijst toevoegde, telt niet mee.
               </Uitleg>
               <Uitleg>
-                <b>{MAALTIJDBOX.namen}</b> (we rekenen met de prijzen van {MAALTIJDBOX.naam}): {euro(prijsPerPortie(personen), true)} per portie
+                <b>Maaltijdbox</b>: {euro(prijsPerPortie(personen), true)} per portie
                 voor {personen} {personen === 1 ? 'persoon' : 'personen'}, plus{' '}
                 {euro(MAALTIJDBOX.bezorging, true)} bezorging per week. Prijzen
                 van {MAALTIJDBOX.peildatum}, zonder toeslagen voor premiumgerechten.
