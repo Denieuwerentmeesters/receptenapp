@@ -129,6 +129,9 @@ export async function logUit(): Promise<void> {
   // waarmee de app snel opent. Blijft die kopie staan, dan ziet een nieuw
   // account even jouw voorkeuren en slaat het daardoor de onboarding over.
   try { localStorage.clear() } catch { /* geen opslag: niets op te ruimen */ }
+  // Wel onthouden dat dit toestel een account kent: wie uitlogt wil daarna
+  // Inloggen als grote knop zien, niet weer Account aanmaken.
+  onthoudAccountOpToestel()
 }
 
 /**
