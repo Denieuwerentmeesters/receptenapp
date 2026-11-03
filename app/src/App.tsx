@@ -19,6 +19,7 @@ import { Recept } from './screens/Recept'
 import { Boodschappen } from './screens/Boodschappen'
 import { Instellingen } from './screens/Instellingen'
 import { Inloggen } from './screens/Inloggen'
+import { Website } from './screens/Website'
 import { Account } from './screens/Account'
 import { Plus } from './screens/Plus'
 import { Onboarding } from './screens/Onboarding'
@@ -42,6 +43,12 @@ export default function App() {
   const [status, setStatus] = useState<Status>('bezig')
   const [fout, setFout] = useState('')
   const qc = useQueryClient()
+  // De website (kookmaatje.eu) is wat je in een gewone browser ziet zolang je
+  // niet bent ingelogd. De app zelf opent direct op het inlogscherm; ook wie
+  // /inloggen of een adres met # opent wil gewoon inloggen.
+  const [opSite, setOpSite] = useState(
+    () => !Capacitor.isNativePlatform() && window.location.pathname === '/' && !window.location.hash,
+  )
   // De laadanimatie blijft bij het openen minstens drie seconden staan, ook
   // als de sessie sneller binnen is: even het logo zien laten pruttelen.
   const [animatieKlaar, setAnimatieKlaar] = useState(false)
@@ -59,6 +66,7 @@ export default function App() {
         return
       }
       onthoudAccountOpToestel()
+      if (window.location.pathname === '/inloggen') window.history.replaceState(null, '', '/')
       // Idempotent: maakt de gebruiker en de voorkeurenrij aan als ze er nog
       // niet zijn, en doet verder niets.
       const id = await zorgVoorGebruiker()
@@ -77,6 +85,17 @@ export default function App() {
 
   useEffect(() => { void start() }, [start])
 
+  // De website hoeft niet op de laadanimatie te wachten.
+  if (status === 'uitgelogd' && opSite) {
+    return (
+      <Website
+        onInloggen={() => {
+          window.history.pushState(null, '', '/inloggen')
+          setOpSite(false)
+        }}
+      />
+    )
+  }
   if (status === 'bezig' || !animatieKlaar) return <Laden />
   if (status === 'uitgelogd') return <Inloggen onKlaar={() => void start()} />
   if (status === 'fout') {
