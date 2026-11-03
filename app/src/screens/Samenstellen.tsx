@@ -329,7 +329,7 @@ export function Samenstellen() {
             </span>
           </div>
 
-          <Vraag nummer={4} tekst="Nog wensen?" bij="mag leeg blijven" />
+          <Vraag nummer={4} tekst="Nog wensen?" bij="mag leeg blijven (of laat ons weten wat je nog in huis hebt)" />
           <textarea
             value={wensen}
             maxLength={MAX_WENSEN}
@@ -649,7 +649,7 @@ const KLEIN: CSSProperties = {
 function Vraag({ nummer, tekst, bij }: { nummer: number; tekst: string; bij?: string }) {
   return (
     <div style={{
-      display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 12,
+      display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0 8px', marginTop: 12,
       fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 800, color: 'var(--color-ink)',
     }}>
       {nummer}. {tekst}
