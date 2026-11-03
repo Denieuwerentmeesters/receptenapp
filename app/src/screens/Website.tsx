@@ -177,7 +177,7 @@ export function Website({ onInloggen }: { onInloggen: () => void }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
           <a href={VOORWAARDEN_URL}>Voorwaarden</a>
           <a href={PRIVACY_URL}>Privacy</a>
-          <a href="mailto:hallo@kookmaatje.eu">Contact</a>
+          <a href="mailto:support@kookmaatje.eu">Contact</a>
           <span>© 2026 Kookmaatje</span>
         </div>
       </footer>

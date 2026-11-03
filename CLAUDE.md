@@ -170,8 +170,8 @@ Inloggen (`/inloggen`) is de tweede keuze voor wie de webversie wil. Alleen op
 `/` zonder `#`; de iOS- en Android-app slaan de website over (`App.tsx`,
 `opSite`). De telefoons zijn nagebouwde schermen met vaste inhoud. De
 App Store-link (`APPSTORE_URL`) en "Google Play komt eraan"
-(`GOOGLE_PLAY_BESCHIKBAAR`) staan in `src/lib/config.ts`: werk ze bij zodra de
-app in de store staat.
+(`GOOGLE_PLAY_BESCHIKBAAR`) staan in `src/lib/config.ts`: zet het laatste op
+true zodra de Android-app in Google Play staat. Contact is support@kookmaatje.eu.
 
 ## Android-app
 
