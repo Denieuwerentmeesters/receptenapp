@@ -22,12 +22,8 @@ export const DEELSITE = WEBSITE
  */
 export const INLOGSITE = 'https://receptenapp.vercel.app'
 
-/**
- * De App Store-knop op de website. Zet hier de echte link van de app neer
- * (apps.apple.com/nl/app/kookmaatje/id…) zodra die bestaat; tot dan opent de
- * knop de App Store zelf.
- */
-export const APPSTORE_URL = 'https://apps.apple.com/'
+/** De App Store-pagina van Kookmaatje, voor de knop op de website. */
+export const APPSTORE_URL = 'https://apps.apple.com/nl/app/kookmaatje/id6818273736'
 
 /** Zet op true zodra de Android-app in Google Play staat: dan verdwijnt "komt eraan". */
 export const GOOGLE_PLAY_BESCHIKBAAR: boolean = false
