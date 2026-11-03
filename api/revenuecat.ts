@@ -1,7 +1,8 @@
 /**
  * Webhook van RevenueCat: zet in `abonnement` tot wanneer Kookmaatje Plus loopt.
  *
- * De aankoop zelf loopt in de iOS-app via Apple (src/lib/aankoop.ts) en
+ * De aankoop zelf loopt in de iOS-app via Apple en in de Android-app via
+ * Google Play (src/lib/aankoop.ts) en
  * RevenueCat meldt elke wijziging hier: eerste aankoop, verlenging, opzegging,
  * verlopen. Wij slaan alleen de einddatum op; `api/extraheer.ts` en
  * `api/samenstellen.ts` kijken daarnaar (lib/plus.ts). Een opzegging doet dus
@@ -68,7 +69,10 @@ export default async function handler(request: Request): Promise<Response> {
   }
   if (typeof e.expiration_at_ms !== 'number') return antwoord({ ok: true, genegeerd: 'geen einddatum' }, 200)
 
-  const kanaal = e.store === 'APP_STORE' || e.store === 'MAC_APP_STORE' ? 'apple' : e.store === 'STRIPE' ? 'stripe' : 'handmatig'
+  const kanaal = e.store === 'APP_STORE' || e.store === 'MAC_APP_STORE' ? 'apple'
+    : e.store === 'PLAY_STORE' ? 'google'
+    : e.store === 'STRIPE' ? 'stripe'
+    : 'handmatig'
   const loopt = new Date(e.expiration_at_ms)
   if (Number.isNaN(loopt.getTime())) return antwoord({ fout: 'Ongeldige einddatum.' }, 400)
 

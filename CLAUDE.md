@@ -196,9 +196,13 @@ openen in Android Studio: `npm run android` in `app/` (controleert ook of
   links, geen screenshots.
 - **Weekmenu-melding:** `POST_NOTIFICATIONS` staat in het manifest; de app
   vraagt de toestemming bij het plannen.
-- **Nog niet:** Google Play (account, ondertekening, gesloten test met 12
-  testers), RevenueCat voor Android (Play Billing), icoon en splash
-  op maat (nu het standaardicoon van Capacitor).
+- **Plus op Android** loopt via Play Billing (`lib/aankoop.ts` kiest de
+  sleutel per platform; de webhook zet `kanaal = 'google'` bij `PLAY_STORE`,
+  migratie `20261103100000`). Werkt pas met een Play Console-account, een
+  abonnementsproduct daar en de Play Store-app in RevenueCat (met een
+  service-account-sleutel). Niet getest met een echte aankoop.
+- **Nog niet:** Google Play zelf (account, ondertekening, gesloten test met 12
+  testers), icoon en splash op maat (nu het standaardicoon van Capacitor).
 
 ## AH-mapping — hoe het hoort te werken
 
@@ -513,15 +517,17 @@ en `/toevoegen?route=link&url=…` (straks de deelknop van iOS).
   `src/lib/plus.ts`: houd die gelijk. De tabel `abonnement` vult alleen de
   server.
 - **Kookmaatje Plus kopen** loopt in de iOS-app via Apple (regel 3.1.1, dus
-  geen Stripe in de app) en RevenueCat. `src/lib/aankoop.ts` logt RevenueCat
+  geen Stripe in de app) en in de Android-app via Google Play Billing, beide
+  met RevenueCat. `src/lib/aankoop.ts` logt RevenueCat
   in met het Neon-id en koopt het huidige aanbod; scherm `/plus`
   (`screens/Plus.tsx`, vanuit Profiel en de limietmeldingen). RevenueCat meldt
   elke wijziging aan `api/revenuecat.ts`, dat `abonnement.loopt_tot` zet;
   alleen die rij telt, niet de uitkomst van de aankoop in de app. Het scherm
   vraagt daarna een halve minuut opnieuw of Plus loopt. Opzeggen doet de
   gebruiker bij Apple en verandert niets tot het eind van de periode.
-  Instellingen: `VITE_REVENUECAT_IOS_KEY` in `app/.env.local` (zonder sleutel
-  geen koopknop), `REVENUECAT_WEBHOOK_AUTH` en `DATABASE_URL` op Vercel,
+  Instellingen: `VITE_REVENUECAT_IOS_KEY` ("appl_…") en
+  `VITE_REVENUECAT_ANDROID_KEY` ("goog_…") in `app/.env.local` (zonder sleutel
+  van dat platform geen koopknop; elk platform heeft zijn eigen sleutel), `REVENUECAT_WEBHOOK_AUTH` en `DATABASE_URL` op Vercel,
   recht (entitlement) `plus` in RevenueCat (`REVENUECAT_ENTITLEMENT`). In de
   browser is er niets te kopen; het scherm verwijst naar de app. **Nog niet:**
   Stripe voor wie alleen de website gebruikt.
