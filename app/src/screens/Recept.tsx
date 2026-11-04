@@ -113,7 +113,7 @@ export function Recept() {
                   color: 'var(--c-paper)',
                 }}>
                   <div aria-hidden style={{
-                    position: 'absolute', inset: 0,
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
                     background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.78) 100%)',
                   }} />
 
