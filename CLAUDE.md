@@ -198,7 +198,7 @@ openen in Android Studio: `npm run android` in `app/` (controleert ook of
   vraagt de toestemming bij het plannen.
 - **Plus op Android** loopt via Play Billing (`lib/aankoop.ts` kiest de
   sleutel per platform; de webhook zet `kanaal = 'google'` bij `PLAY_STORE`,
-  migratie `20261103100000`). Werkt pas met een Play Console-account, een
+  migratie `20261104100000`). Werkt pas met een Play Console-account, een
   abonnementsproduct daar en de Play Store-app in RevenueCat (met een
   service-account-sleutel). Niet getest met een echte aankoop.
 - **Nog niet:** Google Play zelf (account, ondertekening, gesloten test met 12
