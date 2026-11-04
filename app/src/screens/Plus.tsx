@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '../ds'
 import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { haalAanbod, herstel, kanKopen, koop, type PlusAanbod } from '../lib/aankoop'
+import { Capacitor } from '@capacitor/core'
 import { PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
 import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
@@ -10,7 +11,7 @@ import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
 /**
  * Kookmaatje Plus: meer dan vijf recepten door AI laten maken, € 3 per maand.
  *
- * De aankoop loopt via Apple (lib/aankoop.ts). Daarna meldt RevenueCat het aan
+ * De aankoop loopt via Apple of Google Play (lib/aankoop.ts). Daarna meldt RevenueCat het aan
  * api/revenuecat.ts, wat een paar seconden kan duren; we vragen daarom een tijdje
  * opnieuw of Plus loopt, in plaats van de aankoop zelf te vertrouwen.
  *
@@ -100,14 +101,18 @@ export function Plus() {
                   : 'Plus is nu niet beschikbaar'}
               </Button>
               <Tekst klein>
-                Je betaalt via je Apple-account. Het abonnement verlengt zichzelf elke maand tot je opzegt;
-                opzeggen kan minstens een dag voor de verlenging in de Instellingen van je iPhone,
-                onder je naam → Abonnementen. Je houdt Plus tot het eind van de periode die je betaalde.
+                {Capacitor.getPlatform() === 'android'
+                  ? <>Je betaalt via Google Play. Het abonnement verlengt zichzelf elke maand tot je opzegt;
+                    opzeggen kan op elk moment in de Play Store: tik op je profielfoto → Betalingen en
+                    abonnementen → Abonnementen. Je houdt Plus tot het eind van de periode die je betaalde.</>
+                  : <>Je betaalt via je Apple-account. Het abonnement verlengt zichzelf elke maand tot je opzegt;
+                    opzeggen kan minstens een dag voor de verlenging in de Instellingen van je iPhone,
+                    onder je naam → Abonnementen. Je houdt Plus tot het eind van de periode die je betaalde.</>}
               </Tekst>
             </div>
           ) : (
             <Kader>
-              Kookmaatje Plus neem je af in de Kookmaatje-app voor iPhone. Open de app, ga naar Profiel →
+              Kookmaatje Plus neem je af in de Kookmaatje-app voor iPhone of Android. Open de app, ga naar Profiel →
               Kookmaatje Plus en log in met hetzelfde account.
             </Kader>
           )
