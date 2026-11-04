@@ -55,6 +55,14 @@ const PER_PAGINA = 30
  */
 const SESSIE = Math.random().toString(36).slice(2)
 const volgordes = new Map<string, Promise<string[]>>()
+/** Recepten die je net toevoegde: staan bovenaan, tot de app opnieuw opent. */
+const nieuweIds: string[] = []
+
+/** Na het toevoegen: de bewaarde volgordes kennen het nieuwe recept niet. */
+function vergeetVolgordes(nieuwId: string) {
+  nieuweIds.unshift(nieuwId)
+  volgordes.clear()
+}
 
 /**
  * Willekeurige volgorde van de ids binnen deze vraag. Vegetarisch krijgt de
@@ -71,6 +79,8 @@ function geschud(sleutel: string, haalOp: () => PromiseLike<{ data: unknown; err
         .map((r) => ({ id: r.id, w: Math.random() * (r.tags?.includes('vegetarisch') ? 0.5 : 1) }))
         .sort((a, b) => a.w - b.w)
         .map((r) => r.id)
+        // Je eigen nieuwe recept bovenaan, anders lijkt het zoek.
+        .sort((a, b) => Number(nieuweIds.includes(b)) - Number(nieuweIds.includes(a)))
     })()
     volgorde.catch(() => volgordes.delete(sleutel))
     volgordes.set(sleutel, volgorde)
@@ -561,7 +571,8 @@ export function useReceptOpslaan() {
       if (error) throw error
       return (data as { id: string }).id
     },
-    onSuccess: () => {
+    onSuccess: (id) => {
+      vergeetVolgordes(id)
       void qc.invalidateQueries({ queryKey: ['ontdek'] })
       void qc.invalidateQueries({ queryKey: ['ontdek-telling'] })
     },
