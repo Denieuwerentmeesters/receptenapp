@@ -179,7 +179,7 @@ Kookmaatje is not affiliated with Albert Heijn, Jumbo or any meal-box service.
 
 ### Screenshots
 
-Telefoonscreenshots (minstens twee, het liefst acht; 9:16, 1080 × 1920).
+Telefoonscreenshots staan klaar in `docs/google-play/screenshots/` (1080 × 2130, van de Samsung A16, statusbalk en navigatiebalk eraf). Eisen: minstens twee, het liefst acht, zijden 320 tot 3840 px en de lange zijde hooguit twee keer de korte.
 Maak ze op de Samsung of de emulator, met hetzelfde demo-account als bij
 Apple: weekmenu (Mijn recepten), boodschappenlijst, recept, Ontdekken,
 Bespaard!, Instellingen. De iOS-screenshots in `docs/app-store/screenshots/`
