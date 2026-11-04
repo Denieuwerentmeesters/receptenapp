@@ -15,6 +15,7 @@ screenshots; zet in de beschrijving dat Kookmaatje niet aan hen verbonden is.
       cd android && ./gradlew bundleRelease` →
       `app/android/app/build/outputs/bundle/release/app-release.aab`
 - [x] Privacyverklaring noemt RevenueCat, Apple en Google Play
+- [x] Header 1024 × 500: `app/android/play/header-1024x500.png`
 - [ ] Verhoog `versionCode` in `app/android/app/build.gradle` bij elke upload
       (Google weigert een nummer dat al gebruikt is); `versionName` volgt iOS
 
