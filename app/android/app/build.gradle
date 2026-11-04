@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+// Ondertekening voor Google Play: sleutel en wachtwoorden staan in
+// ~/.kookmaatje/keystore.properties (nooit in de repo). Zonder dat bestand
+// bouwt een release-build ongetekend; debug werkt altijd.
+def sleutelBestand = new File(System.getProperty('user.home'), '.kookmaatje/keystore.properties')
+def sleutel = new Properties()
+if (sleutelBestand.exists()) sleutelBestand.withInputStream { sleutel.load(it) }
+
 android {
     namespace = "nl.reinoudtencate.receptenapp"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -8,7 +15,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,8 +23,19 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (sleutelBestand.exists()) {
+                storeFile file(sleutel['storeFile'])
+                storePassword sleutel['storePassword']
+                keyAlias sleutel['keyAlias']
+                keyPassword sleutel['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
+            if (sleutelBestand.exists()) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

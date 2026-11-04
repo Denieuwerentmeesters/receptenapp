@@ -201,8 +201,16 @@ openen in Android Studio: `npm run android` in `app/` (controleert ook of
   migratie `20261104100000`). Werkt pas met een Play Console-account, een
   abonnementsproduct daar en de Play Store-app in RevenueCat (met een
   service-account-sleutel). Niet getest met een echte aankoop.
-- **Nog niet:** Google Play zelf (account, ondertekening, gesloten test met 12
-  testers), icoon en splash op maat (nu het standaardicoon van Capacitor).
+- **Icoon en opstartscherm** komen uit `node app/android/ontwerp/maak.mjs`
+  (de K van iOS, wit op paars; opstartscherm alleen paars). Zelfde afspraak als
+  bij iOS: niet met de hand in `res/` aanpassen.
+- **Release naar Google Play:** `./gradlew bundleRelease` in `app/android` geeft
+  een ondertekende `.aab`. Sleutel en wachtwoorden staan in
+  `~/.kookmaatje/` (buiten de repo; maak een back-up). Verhoog `versionCode`
+  bij elke upload. Checklist, teksten en Data safety:
+  `docs/google-play/checklist.md`.
+- **Nog niet:** de Play Console zelf (account in aanvraag, app, abonnement,
+  testen).
 
 ## AH-mapping — hoe het hoort te werken
 
