@@ -2,7 +2,7 @@
 // (app/ios/ontwerp/maak.mjs), wit op paars.
 // Draaien vanuit de root: node app/android/ontwerp/maak.mjs
 import sharp from 'sharp'
-import { LETTERS } from '../../src/ds/woordmerk.ts'
+import { LETTERS, VLAK, woordmerkSvg } from '../../src/ds/woordmerk.ts'
 
 const PAARS = '#5E1A3B', WIT = '#FFFFFF'
 const RES = new URL('../app/src/main/res/', import.meta.url).pathname
@@ -49,3 +49,11 @@ for (const naam of ['hdpi', 'mdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']) {
 const winkel = new URL('../play/', import.meta.url).pathname
 await import('node:fs').then(fs => fs.mkdirSync(winkel, { recursive: true }))
 await sharp(tekening(512, PAARS, 0.6)).flatten({ background: PAARS }).png().toFile(`${winkel}icoon-512.png`)
+
+// Voorbeeldafbeelding voor de Play Store: 1024 × 500, het woordmerk op paars.
+const [vx, vy, vb, vh] = VLAK
+const schaal = 700 / vb
+await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500">
+  <rect width="100%" height="100%" fill="${PAARS}"/>
+  <g transform="translate(${(1024 - vb * schaal) / 2 - vx * schaal} ${(500 - vh * schaal) / 2 - vy * schaal}) scale(${schaal})">${woordmerkSvg('#F8F1EC', '#FFF000')}</g>
+</svg>`)).flatten({ background: PAARS }).png().toFile(`${winkel}header-1024x500.png`)
