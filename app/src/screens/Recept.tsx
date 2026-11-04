@@ -118,7 +118,7 @@ export function Recept() {
                   }} />
 
                   <div style={{
-                    position: 'absolute', top: 16, left: 16, right: 16,
+                    position: 'absolute', top: 16, left: 16, right: 16, zIndex: 2,
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
                   }}>
                     {/* Geopend via een link of direct na het toevoegen: dan is er geen vorige pagina. */}
@@ -162,6 +162,8 @@ export function Recept() {
                     <div style={{
                       position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center',
                       justifyContent: 'center', gap: 10, opacity: 0.6,
+                      // Zonder dit ligt de plaatshouder over de knoppen bovenin en werken die niet.
+                      pointerEvents: 'none',
                     }}>
                       <Icon name="utensils" size={48} />
                       {/* Een eigen recept krijgt vannacht een foto (api/afbeeldingen.ts); een samengesteld menu niet. */}
