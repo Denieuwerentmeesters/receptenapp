@@ -156,6 +156,28 @@ export function Website({ onInloggen }: { onInloggen: () => void }) {
         </div>
       </section>
 
+      <section id="verhaal" style={{ ...BREED, padding: '0 28px 96px' }}>
+        <div style={{ background: 'var(--k-paper)', borderRadius: 24, padding: 'clamp(28px,5vw,56px)', display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 760, margin: '0 auto' }}>
+          <span style={LABEL_GRIJS}>Mijn verhaal</span>
+          <h2 style={{ ...KOP2, maxWidth: '16em' }}>Altijd dezelfde vier gerechten</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontSize: 18, lineHeight: 1.6, textWrap: 'pretty' }}>
+            <p style={{ margin: 0 }}>
+              Ik was na een paar jaar een maaltijdbox een beetje klaar met altijd dezelfde gerechten. Shakshuka, orzo met paddenstoelen, de boekoeloekoeburger, en een pasta met garnalen.
+            </p>
+            <p style={{ margin: 0 }}>
+              Ik hou van koken, en wil wat meer zelf bepalen wat ik eet. Gevarieerder, lekkerder, en waar ik op dat moment zin in heb. Maar wel met het gemak van een box, en liefst ook nog goedkoper!
+            </p>
+            <p style={{ margin: 0 }}>
+              Dat is nu allemaal gelukt, met mijn Kookmaatje. Ik kies weer zelf, ik bespaar elke week, het hele gezin eet lekkerder. Ik kan ook nog gaandeweg alle lekkere recepten die ik tegenkom toevoegen aan mijn app. Iedereen blij!
+            </p>
+            <p style={{ margin: 0, fontWeight: 700, color: 'var(--k-purple)' }}>
+              Herken je dit? Download de app (gratis)!
+            </p>
+          </div>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18, textTransform: 'uppercase', color: 'var(--k-purple)' }}>Reinoud</span>
+        </div>
+      </section>
+
       <section style={{ background: 'var(--k-purple)', color: 'var(--k-cream)' }}>
         <div style={{ ...BREED, padding: '88px 28px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 24 }}>
           <Woordmerk hoogte={44} korrel="var(--k-yellow)" />
