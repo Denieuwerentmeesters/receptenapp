@@ -7333,5 +7333,23 @@
     "leverbaar": true,
     "inhoud": 500.0,
     "eenheid": "g"
+  },
+  {
+    "product_id": 533083,
+    "titel": "AH Scharrel kipfilet 2 stuks",
+    "inhoud_tekst": "300 g",
+    "prijs": null,
+    "leverbaar": true,
+    "inhoud": 300.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 626381,
+    "titel": "AH Scharrel kipdijfilet",
+    "inhoud_tekst": "240 g",
+    "prijs": null,
+    "leverbaar": true,
+    "inhoud": 240.0,
+    "eenheid": "g"
   }
 ]
