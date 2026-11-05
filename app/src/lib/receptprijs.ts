@@ -9,7 +9,8 @@ import { schatIngredient } from './prijsschatting'
 import { useVoorraad } from './queries2'
 import { ingredientKey } from './schaal'
 import { inVoorraad } from './voorraad'
-import { useWinkel } from './winkel'
+import { useWinkel, type Winkel } from './winkel'
+import { goedkoperOpties } from './goedkoper'
 
 /**
  * Wat een recept ongeveer kost per persoon aan de kassa: de hele verpakkingen
@@ -80,14 +81,8 @@ function gebruiktDeel(regel: LijstRegel, verpakking: Verpakking): number | null 
   return deel <= 1 ? deel : null
 }
 
-export function receptPrijs(
-  regels: PrijsRegel[],
-  personen: number,
-  bron: PrijsBron,
-  voorraad: ReadonlySet<string> = new Set(),
-  kruidenThuis = false,
-): ReceptPrijs {
-  // Dezelfde samenvoeging als de boodschappenlijst, zodat "ui" en "uien" één product zijn.
+/** De regels van een recept zoals de boodschappenlijst ze samenvoegt, zonder basisvoorraad en olie. */
+export function receptRegels(regels: PrijsRegel[]): LijstRegel[] {
   const items: BoodschapItem[] = regels
     .filter((r) => {
       const key = ingredientKey(r.naam ?? '')
@@ -98,7 +93,17 @@ export function receptPrijs(
       hoeveelheid: r.geschaald, eenheid: r.eenheid, categorie: null, bron_type: 'recept' as const,
       bron_recept_id: null, is_afgevinkt: false, aangemaakt_op: '',
     }))
-  const alle = voegSamen(items)
+  return voegSamen(items)
+}
+
+export function receptPrijs(
+  regels: PrijsRegel[],
+  personen: number,
+  bron: PrijsBron,
+  voorraad: ReadonlySet<string> = new Set(),
+  kruidenThuis = false,
+): ReceptPrijs {
+  const alle = receptRegels(regels)
   const inHuisRegel = (r: LijstRegel) => (kruidenThuis && isDroogKruid(r.key)) || inVoorraad(r.key, voorraad)
   const kopen = alle.filter((r) => !inHuisRegel(r))
 
@@ -140,7 +145,9 @@ export function receptPrijs(
 }
 
 /** Het recept van het scherm, met jouw winkel en jouw voorraadkast. */
-export function useReceptPrijs(regels: PrijsRegel[] | null, personen: number): ReceptPrijs | null {
+export type Tip = NonNullable<ReturnType<typeof besparingTip>>
+
+export function useReceptPrijs(regels: PrijsRegel[] | null, personen: number): (ReceptPrijs & { tip: Tip | null }) | null {
   const winkel = useWinkel()
   const voorraad = useVoorraad()
   return useMemo(() => {
@@ -149,6 +156,24 @@ export function useReceptPrijs(regels: PrijsRegel[] | null, personen: number): R
     const kruidenThuis = voorraad.data.some((v) => v.ingredient_key === DROGE_KRUIDEN_KEY && v.in_huis)
     const thuis = new Set(voorraad.data
       .filter((v) => v.in_huis && v.ingredient_key !== DROGE_KRUIDEN_KEY).map((v) => v.ingredient_key))
-    return receptPrijs(regels, personen, winkel, thuis, kruidenThuis)
+    return {
+      ...receptPrijs(regels, personen, winkel, thuis, kruidenThuis),
+      tip: besparingTip(regels, personen, winkel, thuis),
+    }
   }, [regels, personen, winkel, voorraad.data])
+}
+
+/** De duurste regel van het recept met een goedkoper alternatief: "Grana Padano scheelt € 3,10 p.p.". */
+export function besparingTip(
+  regels: PrijsRegel[], personen: number, winkel: Winkel, voorraad: ReadonlySet<string> = new Set(),
+): { regel: string; alternatief: string; scheeltPerPersoon: number } | null {
+  let beste: { regel: string; alternatief: string; scheelt: number } | null = null
+  for (const r of receptRegels(regels)) {
+    if (inVoorraad(r.key, voorraad)) continue
+    const opt = goedkoperOpties(r, winkel)[0]
+    if (opt && (!beste || opt.scheelt > beste.scheelt)) beste = { regel: r.naam, alternatief: opt.label, scheelt: opt.scheelt }
+  }
+  if (!beste) return null
+  const p = personen > 0 ? personen : 1
+  return { regel: beste.regel, alternatief: beste.alternatief, scheeltPerPersoon: Math.round((beste.scheelt / p) * 100) / 100 }
 }

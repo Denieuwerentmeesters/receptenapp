@@ -11,6 +11,7 @@ import { BEZORGING_MANDJE, MAALTIJDBOX, bespaardMet, euro, mandjeKosten, totaalB
 import type { Bestelling, BoodschapItem } from '../lib/database.types'
 import { DROGE_KRUIDEN_KEY, isBijzonderKruid, isDroogKruid } from '../lib/kruiden'
 import { inVoorraad } from '../lib/voorraad'
+import { alternatieven, bewaarGoedkoperKeuzes, goedkoperOpties, leesGoedkoperKeuzes, metGoedkoperKeuze } from '../lib/goedkoper'
 import { bewaarVegaKeuzes, leesVegaKeuzes, metVegaKeuze, vegaOpties, type VegaKeuze } from '../lib/vega'
 import { openBijWinkel } from '../lib/ah'
 import { tokoProduct } from '../lib/toko'
@@ -139,6 +140,13 @@ export function Boodschappen() {
     setVegaKeuzes(nieuw)
     bewaarVegaKeuzes(nieuw)
   }
+  // Goedkoper alternatief (parmezaan → Grana Padano): de keuze per ingrediënt op dit toestel.
+  const [goedkoperKeuzes, setGoedkoperKeuzes] = useState(leesGoedkoperKeuzes)
+  const kiesGoedkoper = (key: string, keuze: string) => {
+    const nieuw = { ...goedkoperKeuzes, [key]: keuze }
+    setGoedkoperKeuzes(nieuw)
+    bewaarGoedkoperKeuzes(nieuw)
+  }
   // Allergieën: de glutenvrije of plantaardige versie gaat standaard mee,
   // net als vega. Per regel terug te zetten; dat onthouden we op dit toestel.
   const allergieen = useAllergieen()
@@ -155,7 +163,7 @@ export function Boodschappen() {
 
   /** De rij zoals hij naar de winkel gaat — met de vega-versie en de allergievervanger waar je die koos. */
   const voorWinkel = (regel: LijstRegel) => metAllergieKeuze(
-    metVegaKeuze(regel.voorbeeld, vegaKeuze(regel.key)),
+    metVegaKeuze(metGoedkoperKeuze(regel.voorbeeld, goedkoperKeuzes[regel.key]), vegaKeuze(regel.key)),
     allergieKeuze(regel.key), allergieRegels, allergieen,
   )
 
@@ -391,6 +399,42 @@ export function Boodschappen() {
                             {aantal.totaal}× {inhoudTekst(verpakking)}
                             {aantal.samenMet.length > 0 && ` · samen met ${aantal.samenMet.join(' en ')}`}
                           </span>
+                        )
+                      })()}
+                      {!regel.afgevinkt && (() => {
+                        // Een goedkoper product dat hetzelfde doet: kies het in de lijst, dan zie je wat het scheelt.
+                        const gekozen = goedkoperKeuzes[regel.key]
+                        const opties = goedkoperOpties(regel, winkel)
+                        const lijst = gekozen && !opties.some((o) => o.key === gekozen)
+                          ? [...opties, ...alternatieven(regel.voorbeeld.ingredient_key).filter((a) => a.key === gekozen).map((a) => ({ ...a, scheelt: 0 }))]
+                          : opties
+                        if (lijst.length === 0) return null
+                        const huidig = lijst.find((o) => o.key === gekozen)
+                        const naam = regel.voorbeeld.naam
+                        return (
+                          <>
+                            <select
+                              value={gekozen ?? 'recept'}
+                              onChange={(e) => kiesGoedkoper(regel.key, e.target.value)}
+                              aria-label={`Goedkoper alternatief voor ${regel.naam}`}
+                              style={keuzeStijl}
+                            >
+                              <option value="recept">{naam.charAt(0).toUpperCase() + naam.slice(1)}</option>
+                              {lijst.map((o) => (
+                                <option key={o.key} value={o.key}>
+                                  {o.label}{o.scheelt > 0 ? ` · scheelt ${euro(o.scheelt, true)}` : ''}
+                                </option>
+                              ))}
+                            </select>
+                            <span style={{
+                              display: 'block', marginLeft: 36, marginTop: 3,
+                              fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.55)',
+                            }}>
+                              {huidig
+                                ? `${huidig.uitleg} Je koos het goedkopere product.`
+                                : `Duur product: kies een alternatief dat bij ${winkel.naam} minder kost. ${lijst[0].uitleg}`}
+                            </span>
+                          </>
                         )
                       })()}
                       {!regel.afgevinkt && allergieen.length > 0 && (() => {

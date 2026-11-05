@@ -358,6 +358,18 @@ per ingrediënt: een bio- of huismerkvariant heeft een eigen prijs.
 - **Waarom niet PrijsProfeet:** daar is alleen de bonus te halen
   (`lib/bonus/`); de gewone prijs per product niet.
 
+## Goedkoper alternatief
+
+Parmezaan op de lijst heeft een keuzelijst met goedkopere producten die hetzelfde
+doen (`src/lib/goedkoper.ts`, Reinoud 5 nov 2026): Grana Padano en het zakje
+bio-parmigiano (AH 400471, 40 g). Handgemaakte lijst, bij twijfel geen alternatief.
+Een alternatief staat er alleen als het bij jouw winkel een productnummer heeft en
+minstens € 0,50 scheelt voor wat het recept vraagt (hele verpakkingen: drie zakjes
+van 40 g zijn duurder dan één Grana). Dezelfde som geeft de tip op het receptscherm
+("scheelt ± € x p.p."). De keuze staat per ingrediënt in `localStorage`
+(`goedkoper-keuze`). Een nieuw alternatief is een regel in `alternatieven()` plus
+mapping-rijen (AH én Jumbo), verpakking en prijs.
+
 ## Vega of vlees
 
 Gehakt, rookworst en spekjes gaan standaard vega naar het mandje
