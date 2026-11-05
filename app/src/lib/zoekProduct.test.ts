@@ -16,3 +16,12 @@ describe('dure snit uit een keuze', () => {
     expect(zoek('steak of ossenhaas')).toEqual({ id: 3 })
   })
 })
+
+describe('keuze met streep of schuine streep', () => {
+  const mapping = { broccoli: { id: 'B' }, kip: { id: 'K' } }
+  const zoek = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, mapping)
+  test('broccoli/romanesco pakt broccoli', () => expect(zoek('broccoli/romanesco')).toEqual({ id: 'B' }))
+  test('broccoli of romanesco pakt broccoli', () => expect(zoek('Broccoli of romanesco')).toEqual({ id: 'B' }))
+  test('broccoli- of romanescoroosjes pakt broccoli', () => expect(zoek('broccoli- of romanescoroosjes')).toEqual({ id: 'B' }))
+  test('kippen- of groentebouillon wordt geen kip', () => expect(zoek('kippen- of groentebouillon')).toBeUndefined())
+})
