@@ -94,7 +94,13 @@ export function zoekProduct<P>(
     const product = zoekZonderKeuze({ ingredient_key: ingredientKey(keuze), naam: keuze }, mapping)
     if (product) return product
   }
-  return zoekZonderKeuze(item, mapping)
+  const direct = zoekZonderKeuze(item, mapping)
+  if (direct) return direct
+  // "broccoli- of romanescoroosjes": de laatste is een heel woord, maar het
+  // eerste kan ook zelf een product zijn. Alleen als het precies zo in de
+  // mapping staat: "kippen- of groentebouillon" mag geen kip worden.
+  const streep = item.naam.toLowerCase().match(/^\s*([\p{L}]+)-\s+of\s/u)
+  return streep ? mapping[ingredientKey(streep[1])] : undefined
 }
 
 /** Dure snitten die je niet uit een keuze wilt kiezen; zie zoekProduct. */
@@ -116,6 +122,8 @@ const DUUR_VLEES = /ossenhaas|ribeye|entrecote|tournedos|ossenhaaspunt/
  *    op de hele naam.
  */
 function keuzes(naam: string): string[] {
+  // "broccoli/romanesco" is net zo goed een keuze als "broccoli of romanesco".
+  naam = naam.replace(/(\p{L})\s*\/\s*(\p{L})/gu, '$1 of $2')
   // Ook "halfzachte kaas (bv. gruyère, cheddar)": een opsomming of een
   // voorbeeld tussen haakjes is net zo goed een keuze als "of".
   const haakjes = naam.match(/^([^(]*)\(([^)]*(?:\bof\b|,|\b(?:zoals|bijv|bijvoorbeeld|bv)\b)[^)]*)\)/)
