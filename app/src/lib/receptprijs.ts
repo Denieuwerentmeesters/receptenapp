@@ -28,8 +28,8 @@ import { goedkoperOpties } from './goedkoper'
  * Behalve wat je bewaart (miso, chipotle, sauzen; lib/bewaarbaar.ts): daarvan
  * tellen we wat het recept gebruikt, want die pot gaat naar meer gerechten.
  *
- * Per ingrediënt: basisvoorraad (water, zout, olie) en wat in je voorraadkast
- * staat telt niet. Een product met prijs: aantal verpakkingen maal de prijs,
+ * Per ingrediënt: basisvoorraad (water, zout, olie), droge kruiden en wat in je
+ * voorraadkast staat telt niet. Een product met prijs: aantal verpakkingen maal de prijs,
  * per product geteld (twee regels uit één pot vragen samen één pot). Zonder
  * prijs of product: de klassenschatting uit lib/prijsschatting.ts; `geschat`
  * telt die regels, zodat het scherm niet doet alsof het exact is.
@@ -96,24 +96,6 @@ export function receptRegels(regels: PrijsRegel[]): LijstRegel[] {
   return voegSamen(items)
 }
 
-/**
- * Een potje kruiden heeft in onze data geen inhoud (de mandjeregel telt er één).
- * Voor de prijs rekenen we met wat het recept gebruikt van een potje van
- * ± 40 g (een eetlepel ± 7 g, een theelepel ± 2,5 g), minstens 5%: een potje
- * gaat naar tientallen gerechten. Geen lepelmaat bekend: 10%.
- */
-function kruidDeel(regel: LijstRegel): number | null {
-  if (!isKruid(regel.key)) return null
-  let gram = 0
-  for (const item of regel.items) {
-    const eenheid = (item.eenheid ?? '').trim().toLowerCase()
-    const lepel = LEPEL[eenheid]
-    if (item.hoeveelheid === null || !lepel) return 0.1
-    gram += item.hoeveelheid * (lepel === 15 ? 7 : 2.5)
-  }
-  return Math.min(1, Math.max(0.05, gram / 40))
-}
-
 export function receptPrijs(
   regels: PrijsRegel[],
   personen: number,
@@ -123,7 +105,8 @@ export function receptPrijs(
 ): ReceptPrijs {
   const alle = receptRegels(regels)
   const inHuisRegel = (r: LijstRegel) => (kruidenThuis && isDroogKruid(r.key)) || inVoorraad(r.key, voorraad)
-  const kopen = alle.filter((r) => !inHuisRegel(r))
+  // Droge kruiden en specerijen tellen nooit mee (Reinoud, 5 nov 2026): een potje gaat naar tientallen gerechten.
+  const kopen = alle.filter((r) => !inHuisRegel(r) && !isKruid(r.key))
 
   const productVan = (r: LijstRegel) => bron.productVoor(r.voorbeeld)
   const aantallen = verpakkingenPerRegel(kopen, productVan, (r) => bron.verpakkingVoor(r.voorbeeld))
@@ -135,7 +118,7 @@ export function receptPrijs(
     const prijs = productVan(regel) ? bron.prijsVoor(regel.voorbeeld) : undefined
     if (prijs !== undefined) {
       const verpakking = bron.verpakkingVoor(regel.voorbeeld)
-      const deel = verpakking ? gebruiktDeel(regel, verpakking) : kruidDeel(regel)
+      const deel = verpakking ? gebruiktDeel(regel, verpakking) : null
       totaal += prijs * (deel ?? aantallen.get(regel.key)?.aantal ?? 1)
       opPrijs++
       continue

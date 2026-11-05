@@ -83,13 +83,9 @@ describe('receptPrijs: wat het mandje kost', () => {
   })
 })
 
-describe('kruidenpotjes zonder inhoud', () => {
-  test('een halve eetlepel kurkuma kost een stukje van het potje, niet het hele potje', () => {
-    const kruidBron: PrijsBron = {
-      productVoor: () => 'x', verpakkingVoor: () => undefined, prijsVoor: () => 3.29,
-    }
-    const p = receptPrijs([regel('kurkuma', 0.5, 'el')], 4, kruidBron)
-    expect(p.totaal).toBeGreaterThan(0.2)
-    expect(p.totaal).toBeLessThan(0.5)
+describe('droge kruiden', () => {
+  test('tellen nooit mee, ook niet zonder voorraad', () => {
+    const kruidBron: PrijsBron = { productVoor: () => 'x', verpakkingVoor: () => undefined, prijsVoor: () => 3.29 }
+    expect(receptPrijs([regel('kurkuma', 0.5, 'el'), regel('komijnzaad', 1, 'tl')], 4, kruidBron).totaal).toBe(0)
   })
 })
