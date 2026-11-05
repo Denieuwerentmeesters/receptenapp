@@ -185,6 +185,12 @@ const ONSCHULDIG = new Set(`
 function onschuldig(woord: string, sleutel: string): boolean {
   if (UIT_BLIK.test(woord)) return !VERS_OF_BLIK.test(sleutel)
   if (GEROOSTERD.test(woord)) return NOOT_OF_ZAAD.test(sleutel)
+  // De mapping heeft voor noten, miso en pita het gewone product; de
+  // variant erbij (ongezouten noten, lichte miso, volkoren pita) koop je
+  // gewoon als dat product (Reinoud, 5 nov 2026).
+  if (/^ongezouten$/.test(woord)) return NOOT_OF_ZAAD.test(sleutel)
+  if (/^lichte?$/.test(woord)) return /^(?:miso|misopasta)$/.test(sleutel)
+  if (/^volkoren$/.test(woord)) return /^pita(?:broodje)?s?$/.test(sleutel)
   return ONSCHULDIG.has(woord) || BEREID.test(woord)
 }
 const UIT_BLIK = /^(?:blik|blikje|pot)$/
