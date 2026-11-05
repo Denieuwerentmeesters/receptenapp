@@ -3,7 +3,7 @@
 
 ah.nl blokkeert kale verzoeken, maar de API van de AH-app geeft wel antwoord:
 per productnummer de naam, de inhoud ("375 g", "ca. 530 g", "6 stuks",
-"per stuk"), de prijs en of het nog te koop is. Dit script vraagt alle
+"per stuk"), de prijs (vóór bonus) en of het nog te koop is. Dit script vraagt alle
 productnummers op die in de AH-mapping staan (data/ah_mapping.json plus wat
 latere migraties aan ah_product_cache toevoegden) en schrijft
 data/ah_producten.json.
@@ -118,24 +118,39 @@ def verzamel() -> list[dict]:
     nummers = productnummers()
     with ThreadPoolExecutor(4) as werkers:
         producten = list(werkers.map(lambda n: haal_product(n, token), nummers))
+    vandaag = datetime.now().strftime("%Y-%m-%d")
     for product in producten:
+        product["peildatum"] = vandaag
         inhoud = inhoud_van(product["titel"], product["inhoud_tekst"])
         product["inhoud"], product["eenheid"] = inhoud if inhoud else (None, None)
     return producten
 
 
-def schrijf_migratie(rijen: list[dict]) -> Path:
+def schrijf_migratie(producten: list[dict]) -> Path:
+    """Inhoud (ah_verpakking) en gewone prijs (ah_prijs) in één migratie."""
     stempel = datetime.now().strftime("%Y%m%d%H%M%S")
-    pad = MIGRATIES / f"{stempel}_ah_verpakkingen.sql"
-    waarden = ",\n".join(f"  ({r['product_id']}, {r['inhoud']:g}, '{r['eenheid']}')" for r in rijen)
+    pad = MIGRATIES / f"{stempel}_ah_verpakkingen_en_prijzen.sql"
+    inhouden = [r for r in producten if r.get("inhoud")]
+    # Alleen wat nu te koop is: een weggevallen product heeft geen prijs om mee te rekenen.
+    prijzen = [r for r in producten if r.get("prijs") and r.get("leverbaar")]
+    waarden = ",\n".join(f"  ({r['product_id']}, {r['inhoud']:g}, '{r['eenheid']}')" for r in inhouden)
+    prijs_waarden = ",\n".join(
+        f"  ({r['product_id']}, {r['prijs']:.2f}, '{r.get('peildatum') or datetime.now().strftime('%Y-%m-%d')}')" for r in prijzen
+    )
     pad.write_text(
         "-- Gegenereerd door scripts/ah_verpakkingen.py --migratie — niet met de hand aanpassen.\n"
-        "-- Inhoud per AH-productnummer, opgevraagd bij AH. Zie de uitleg in het script.\n\n"
+        "-- Inhoud en gewone prijs (vóór bonus) per AH-productnummer, opgevraagd bij AH.\n"
+        "-- Zie de uitleg in het script.\n\n"
         "insert into ah_verpakking (product_id, inhoud, eenheid)\nvalues\n"
         f"{waarden}\n"
         "on conflict (product_id) do update set\n"
         "  inhoud = excluded.inhoud,\n"
-        "  eenheid = excluded.eenheid;\n"
+        "  eenheid = excluded.eenheid;\n\n"
+        "insert into ah_prijs (product_id, prijs, peildatum)\nvalues\n"
+        f"{prijs_waarden}\n"
+        "on conflict (product_id) do update set\n"
+        "  prijs = excluded.prijs,\n"
+        "  peildatum = excluded.peildatum;\n"
     )
     return pad
 
@@ -146,8 +161,8 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.migratie:
-        rijen = [r for r in json.loads(DOEL.read_text()) if r.get("inhoud")]
-        print(f"Migratie geschreven: {schrijf_migratie(rijen).relative_to(WORTEL)} ({len(rijen)} producten)")
+        producten = json.loads(DOEL.read_text())
+        print(f"Migratie geschreven: {schrijf_migratie(producten).relative_to(WORTEL)} ({len(producten)} producten)")
         return
 
     producten = verzamel()

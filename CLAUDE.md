@@ -331,6 +331,27 @@ kiest; `src/lib/jumbo.ts` bouwt de link.
   opvangt en de `add`-parameter dan ook verwerkt, is nog onbekend. In Safari
   werkt het.
 
+## Prijzen per product en per recept
+
+Gewone prijs (vóór bonus) per productnummer: `ah_prijs` (AH) en `jumbo_prijs`
+(Jumbo), naast `ah_verpakking` en `jumbo_verpakking`. Per productnummer, niet
+per ingrediënt: een bio- of huismerkvariant heeft een eigen prijs.
+
+- **Elke maand verversen** (eerste van de maand), met de hand:
+  `python3 scripts/ah_verpakkingen.py` en `--migratie` (inhoud én prijs in één
+  migratie), `python3 scripts/jumbo_prijzen.py` en `--migratie`. Commit de json
+  en de migraties in één PR. Een bestaande migratie pas je nooit aan. Het
+  AH-script meldt ook wat niet meer te koop is: herstel dat in de mapping.
+- **Receptprijs** (`src/lib/receptprijs.ts`, op het receptscherm als "± € x,xx
+  p.p."): het *aandeel* van de pakprijs dat het recept verbruikt (150 g uit 500 g
+  is 30%), niet hele verpakkingen zoals Bespaard! (`mandjeKosten`). In de prijzen
+  van jouw winkel (`Winkel.prijsVoor`). Wat in je voorraadkast staat en de
+  basisvoorraad tellen niet. Kan de hoeveelheid niet omgerekend worden (el, tl,
+  een bos) of is er geen prijs of inhoud, dan de klassenschatting uit
+  `lib/prijsschatting.ts`; `geschat` telt die regels.
+- **Waarom niet PrijsProfeet:** daar is alleen de bonus te halen
+  (`lib/bonus/`); de gewone prijs per product niet.
+
 ## Vega of vlees
 
 Gehakt, rookworst en spekjes gaan standaard vega naar het mandje

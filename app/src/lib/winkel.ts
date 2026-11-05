@@ -1,6 +1,6 @@
 import { bouwMandjeLink, kiesVariant, zoekLink, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
 import { bouwJumboLink, jumboSku, jumboZoekLink } from './jumbo'
-import { useAhVerpakkingen, useJumboVerpakkingen } from './queries2'
+import { useAhPrijzen, useAhVerpakkingen, useJumboPrijzen, useJumboVerpakkingen } from './queries2'
 import type { Verpakking } from './eenheden'
 import { useAhMapping, useJumboMapping, useVoorkeuren } from './queries'
 import type { BoodschapItem, Voorkeuren } from './database.types'
@@ -10,6 +10,9 @@ import type { BoodschapItem, Voorkeuren } from './database.types'
  * boodschappenscherm niet overal hoeft te vragen of het AH of Jumbo is.
  * De keuze staat in gebruiker_voorkeuren.voorkeurswinkel.
  */
+/** Genoeg om een product te zoeken; een ingrediënt uit een recept heeft geen boodschapregel nodig. */
+export type ProductZoek = Pick<BoodschapItem, 'ingredient_key' | 'naam'>
+
 export interface Winkel {
   id: 'ah' | 'jumbo'
   /** Voluit, voor lopende tekst: "Albert Heijn", "Jumbo". */
@@ -20,9 +23,11 @@ export interface Winkel {
   heeftProduct: (item: BoodschapItem) => boolean
   mandjeLink: (items: MandjeItem[]) => MandjeResultaat
   /** Het productnummer dat voor dit item in het mandje gaat (AH-id of Jumbo-SKU), of null. */
-  productVoor: (item: BoodschapItem) => string | null
+  productVoor: (item: ProductZoek) => string | null
   /** Inhoud van het product dat voor dit item in het mandje gaat, als we die kennen. */
-  verpakkingVoor: (item: BoodschapItem) => Verpakking | undefined
+  verpakkingVoor: (item: ProductZoek) => Verpakking | undefined
+  /** Gewone prijs (vóór bonus) van die verpakking, als we die kennen. */
+  prijsVoor: (item: ProductZoek) => number | undefined
   zoekLink: (naam: string) => string
 }
 
@@ -35,6 +40,8 @@ export function useWinkel(): Winkel {
   const jumbo = useJumboMapping(id === 'jumbo')
   const verpakkingen = useJumboVerpakkingen(id === 'jumbo')
   const ahVerpakkingen = useAhVerpakkingen(id === 'ah')
+  const jumboPrijzen = useJumboPrijzen(id === 'jumbo')
+  const ahPrijzen = useAhPrijzen(id === 'ah')
 
   if (id === 'jumbo') {
     const mapping = jumbo.data ?? {}
@@ -53,12 +60,17 @@ export function useWinkel(): Winkel {
         const sku = product && jumboSku(product, voorkeur)
         return sku ? verpakkingen.data?.[sku] : undefined
       },
+      prijsVoor: (item) => {
+        const product = zoekProduct(item, mapping)
+        const sku = product && jumboSku(product, voorkeur)
+        return sku ? jumboPrijzen.data?.[sku] : undefined
+      },
       zoekLink: jumboZoekLink,
     }
   }
 
   const mapping = ah.data ?? {}
-  const productVoor = (item: BoodschapItem) => {
+  const productVoor = (item: ProductZoek) => {
     const product = zoekProduct(item, mapping)
     const id = product && kiesVariant({
       standaard: product.standaard_product_id, bio: product.bio_product_id, huismerk: product.huismerk_product_id,
@@ -75,6 +87,10 @@ export function useWinkel(): Winkel {
     verpakkingVoor: (item) => {
       const id = productVoor(item)
       return id ? ahVerpakkingen.data?.[id] : undefined
+    },
+    prijsVoor: (item) => {
+      const id = productVoor(item)
+      return id ? ahPrijzen.data?.[id] : undefined
     },
     zoekLink,
   }
