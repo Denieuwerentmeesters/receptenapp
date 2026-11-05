@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { bouwMandjeLink, kiesVariant, zoekLink, zoekProduct, type MandjeItem, type MandjeResultaat, type Productvoorkeur } from './ah'
 import { bouwJumboLink, jumboSku, jumboZoekLink } from './jumbo'
 import { useAhPrijzen, useAhVerpakkingen, useJumboPrijzen, useJumboVerpakkingen } from './queries2'
@@ -34,7 +35,6 @@ export interface Winkel {
 export function useWinkel(): Winkel {
   const voorkeuren = useVoorkeuren()
   const id = voorkeuren.data?.voorkeurswinkel ?? 'ah'
-  const voorkeur = productvoorkeur(voorkeuren.data)
 
   const ah = useAhMapping(id === 'ah')
   const jumbo = useJumboMapping(id === 'jumbo')
@@ -43,57 +43,62 @@ export function useWinkel(): Winkel {
   const jumboPrijzen = useJumboPrijzen(id === 'jumbo')
   const ahPrijzen = useAhPrijzen(id === 'ah')
 
-  if (id === 'jumbo') {
-    const mapping = jumbo.data ?? {}
+  // Eén object per stand van de gegevens, zodat wat ervan afhangt (receptprijzen
+  // van alle recepten) niet bij elke render opnieuw rekent.
+  return useMemo<Winkel>(() => {
+    const voorkeur = productvoorkeur(voorkeuren.data)
+    if (id === 'jumbo') {
+      const mapping = jumbo.data ?? {}
+      return {
+        id,
+        naam: 'Jumbo',
+        kort: 'Jumbo',
+        heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
+        mandjeLink: (items) => bouwJumboLink(items, mapping, voorkeur),
+        productVoor: (item) => {
+          const product = zoekProduct(item, mapping)
+          return product ? jumboSku(product, voorkeur) : null
+        },
+        verpakkingVoor: (item) => {
+          const product = zoekProduct(item, mapping)
+          const sku = product && jumboSku(product, voorkeur)
+          return sku ? verpakkingen.data?.[sku] : undefined
+        },
+        prijsVoor: (item) => {
+          const product = zoekProduct(item, mapping)
+          const sku = product && jumboSku(product, voorkeur)
+          return sku ? jumboPrijzen.data?.[sku] : undefined
+        },
+        zoekLink: jumboZoekLink,
+      }
+    }
+
+    const mapping = ah.data ?? {}
+    const productVoor = (item: ProductZoek) => {
+      const product = zoekProduct(item, mapping)
+      const id = product && kiesVariant({
+        standaard: product.standaard_product_id, bio: product.bio_product_id, huismerk: product.huismerk_product_id,
+      }, voorkeur)
+      return id ? String(id) : null
+    }
     return {
       id,
-      naam: 'Jumbo',
-      kort: 'Jumbo',
+      naam: 'Albert Heijn',
+      kort: 'AH',
       heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
-      mandjeLink: (items) => bouwJumboLink(items, mapping, voorkeur),
-      productVoor: (item) => {
-        const product = zoekProduct(item, mapping)
-        return product ? jumboSku(product, voorkeur) : null
-      },
+      mandjeLink: (items) => bouwMandjeLink(items, mapping, voorkeur),
+      productVoor,
       verpakkingVoor: (item) => {
-        const product = zoekProduct(item, mapping)
-        const sku = product && jumboSku(product, voorkeur)
-        return sku ? verpakkingen.data?.[sku] : undefined
+        const id = productVoor(item)
+        return id ? ahVerpakkingen.data?.[id] : undefined
       },
       prijsVoor: (item) => {
-        const product = zoekProduct(item, mapping)
-        const sku = product && jumboSku(product, voorkeur)
-        return sku ? jumboPrijzen.data?.[sku] : undefined
+        const id = productVoor(item)
+        return id ? ahPrijzen.data?.[id] : undefined
       },
-      zoekLink: jumboZoekLink,
+      zoekLink,
     }
-  }
-
-  const mapping = ah.data ?? {}
-  const productVoor = (item: ProductZoek) => {
-    const product = zoekProduct(item, mapping)
-    const id = product && kiesVariant({
-      standaard: product.standaard_product_id, bio: product.bio_product_id, huismerk: product.huismerk_product_id,
-    }, voorkeur)
-    return id ? String(id) : null
-  }
-  return {
-    id,
-    naam: 'Albert Heijn',
-    kort: 'AH',
-    heeftProduct: (item) => Boolean(zoekProduct(item, mapping)),
-    mandjeLink: (items) => bouwMandjeLink(items, mapping, voorkeur),
-    productVoor,
-    verpakkingVoor: (item) => {
-      const id = productVoor(item)
-      return id ? ahVerpakkingen.data?.[id] : undefined
-    },
-    prijsVoor: (item) => {
-      const id = productVoor(item)
-      return id ? ahPrijzen.data?.[id] : undefined
-    },
-    zoekLink,
-  }
+  }, [id, voorkeuren.data, ah.data, jumbo.data, verpakkingen.data, ahVerpakkingen.data, jumboPrijzen.data, ahPrijzen.data])
 }
 
 /** Bio en huismerk uit de voorkeuren; zolang die laden, gewoon de standaard. */

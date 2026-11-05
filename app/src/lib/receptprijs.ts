@@ -6,8 +6,10 @@ import { naarEenheid, type Verpakking } from './eenheden'
 import { voegSamen, verpakkingenPerRegel, type LijstRegel } from './lijst'
 import { DROGE_KRUIDEN_KEY, isDroogKruid } from './kruiden'
 import { schatIngredient } from './prijsschatting'
-import { useVoorraad } from './queries2'
-import { ingredientKey } from './schaal'
+import { useReceptenVoorPrijs, useVoorraad } from './queries2'
+import { useVoorkeuren } from './queries'
+import { schaalIngredienten, ingredientKey } from './schaal'
+import { standaardPersonen } from './menu'
 import { inVoorraad } from './voorraad'
 import { useWinkel, type Winkel } from './winkel'
 import { goedkoperOpties } from './goedkoper'
@@ -96,6 +98,9 @@ export function receptRegels(regels: PrijsRegel[]): LijstRegel[] {
   return voegSamen(items)
 }
 
+/** Wat een regel kost waar we niets van weten: een gemiddeld ingrediënt, € 1,50. */
+const ONBEKEND = 1.5
+
 export function receptPrijs(
   regels: PrijsRegel[],
   personen: number,
@@ -131,10 +136,9 @@ export function receptPrijs(
         eenheid: item.eenheid,
       }) ?? 0
     }
-    if (schatting > 0) {
-      totaal += schatting
-      geschat++
-    }
+    // Geen product, geen prijs en geen klasse: dan niet doen alsof het niets kost.
+    totaal += schatting > 0 ? schatting : ONBEKEND
+    geschat++
   }
 
   const p = personen > 0 ? personen : 1
@@ -177,4 +181,32 @@ export function besparingTip(
   if (!beste) return null
   const p = personen > 0 ? personen : 1
   return { regel: beste.regel, alternatief: beste.alternatief, scheeltPerPersoon: Math.round((beste.scheelt / p) * 100) / 100 }
+}
+
+/**
+ * De prijs p.p. van alle recepten, voor het filter Budget en het sorteren in
+ * Ontdekken. Rekent in één keer en alleen opnieuw als winkel, voorraadkast of
+ * personen veranderen; null zolang de gegevens laden.
+ */
+export function useReceptPrijzen(aan: boolean): Record<string, number> | null {
+  const winkel = useWinkel()
+  const voorraad = useVoorraad()
+  const voorkeuren = useVoorkeuren()
+  const recepten = useReceptenVoorPrijs(aan)
+  const standaard = voorkeuren.data?.aantal_personen ?? 4
+  return useMemo(() => {
+    if (!aan || !recepten.data || !voorraad.data || !voorkeuren.data) return null
+    const kruidenThuis = voorraad.data.some((v) => v.ingredient_key === DROGE_KRUIDEN_KEY && v.in_huis)
+    const thuis = new Set(voorraad.data
+      .filter((v) => v.in_huis && v.ingredient_key !== DROGE_KRUIDEN_KEY).map((v) => v.ingredient_key))
+    const uit: Record<string, number> = {}
+    for (const r of recepten.data) {
+      const personen = standaardPersonen(r, standaard)
+      const regels = schaalIngredienten(r.ingredienten, r.personen, personen)
+        .map((i) => ({ naam: i.naam, eenheid: i.eenheid, geschaald: i.geschaald }))
+      const p = receptPrijs(regels, personen, winkel, thuis, kruidenThuis).perPersoon
+      if (p > 0) uit[r.id] = p
+    }
+    return uit
+  }, [aan, recepten.data, voorraad.data, voorkeuren.data, winkel, standaard])
 }

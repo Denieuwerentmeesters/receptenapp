@@ -89,3 +89,12 @@ describe('droge kruiden', () => {
     expect(receptPrijs([regel('kurkuma', 0.5, 'el'), regel('komijnzaad', 1, 'tl')], 4, kruidBron).totaal).toBe(0)
   })
 })
+
+describe('regel zonder product of klasse', () => {
+  test('kost niet niets: een gemiddeld ingrediënt', () => {
+    const leeg: PrijsBron = { productVoor: () => null, verpakkingVoor: () => undefined, prijsVoor: () => undefined }
+    const p = receptPrijs([regel('zeldzame fantasiedelicatesse', 1, 'st')], 1, leeg)
+    expect(p.totaal).toBeGreaterThan(0)
+    expect(p.geschat).toBe(1)
+  })
+})
