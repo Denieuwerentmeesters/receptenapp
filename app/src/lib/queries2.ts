@@ -656,15 +656,31 @@ export function useAhVerpakkingen(aan = true) {
   })
 }
 
-export function useJumboPrijzen() {
+export function useJumboPrijzen(aan = true) {
   return useQuery({
     queryKey: ['jumbo-prijzen'],
+    enabled: aan,
     staleTime: 60 * 60 * 1000,
     queryFn: async (): Promise<Record<string, number>> => {
       const { data, error } = await db.from('jumbo_prijs').select('sku, prijs')
       if (error) throw error
       return Object.fromEntries((data as { sku: string; prijs: number | string }[])
         .map((p) => [p.sku, Number(p.prijs)]))
+    },
+  })
+}
+
+/** Gewone AH-prijs (vóór bonus) per productnummer (ah_prijs, scripts/ah_verpakkingen.py). */
+export function useAhPrijzen(aan = true) {
+  return useQuery({
+    queryKey: ['ah-prijzen'],
+    enabled: aan,
+    staleTime: 60 * 60 * 1000,
+    queryFn: async (): Promise<Record<string, number>> => {
+      const { data, error } = await db.from('ah_prijs').select('product_id, prijs')
+      if (error) throw error
+      return Object.fromEntries((data as { product_id: number; prijs: number | string }[])
+        .map((p) => [String(p.product_id), Number(p.prijs)]))
     },
   })
 }
