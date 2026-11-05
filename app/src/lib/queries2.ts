@@ -9,8 +9,9 @@ import { volgendeWeek } from './week'
 import type { Bestelling, BronType, DeelStatus, Recept } from './database.types'
 import type { Concept } from './extractie'
 import { isImport } from './importeren'
-import { BUDGET_PER_PERSOON, schatPrijsPerPersoon } from './prijsschatting'
+import { schatPrijsPerPersoon } from './prijsschatting'
 import { maaltijdboxKosten } from './besparing'
+import { BUDGET_MANDJE_PP } from './budget'
 import type { Verpakking } from './eenheden'
 import type { Dieet } from './dieet'
 
@@ -24,6 +25,8 @@ export interface OntdekFilters {
   /** Alle gekozen diëten moeten kloppen (lib/dieet.ts). */
   dieet: Dieet[]
   alleenBudget: boolean
+  /** 'prijs': goedkoopste eerst (mandjeprijs p.p.); null: willekeurig. */
+  sorteer?: 'prijs' | null
   /**
    * Alleen recepten waar jij een 8 of hoger voor gaf (lib/beoordeling.ts): de ids,
    * of null als het filter uit staat. Leeg betekent dat er niets is dat past.
@@ -88,6 +91,15 @@ function geschud(sleutel: string, haalOp: () => PromiseLike<{ data: unknown; err
   return volgorde
 }
 
+/** Budget en sorteren op de mandjeprijs; zonder prijs (nog niet te rekenen) valt een recept bij Budget af en staat het onderaan. */
+function metPrijzen(ids: string[], filters: OntdekFilters, prijzen: Record<string, number> | null): string[] {
+  if (!prijzen) return ids
+  let uit = ids
+  if (filters.alleenBudget) uit = uit.filter((id) => prijzen[id] !== undefined && prijzen[id] <= BUDGET_MANDJE_PP)
+  if (filters.sorteer === 'prijs') uit = [...uit].sort((a, b) => (prijzen[a] ?? 99) - (prijzen[b] ?? 99))
+  return uit
+}
+
 /** Het stukje van de PostgREST-builder dat de filters nodig hebben. */
 interface Filterbaar {
   or(filter: string): Filterbaar
@@ -120,7 +132,6 @@ function metFilters<T>(vraag: T, filters: OntdekFilters, userId: string | null):
   if (filters.dieet.includes('vegetarisch')) v = v.contains('tags', ['vegetarisch'])
   const afgeleid = filters.dieet.filter((d) => d !== 'vegetarisch')
   if (afgeleid.length > 0) v = v.contains('dieet', afgeleid)
-  if (filters.alleenBudget) v = v.lte('prijs_pp_schatting', BUDGET_PER_PERSOON)
   if (filters.hoogCijferIds) {
     v = v.in('id', filters.hoogCijferIds.length > 0 ? filters.hoogCijferIds : ['00000000-0000-0000-0000-000000000000'])
   }
@@ -193,10 +204,14 @@ interface OntdekPagina {
  * daarna — elk deel in de gewone volgorde. Met een keukenfilter aan doet de
  * voorkeur er niet toe.
  */
-export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []) {
-  const voorkeur = filters.keukens.length > 0 ? [] : voorkeurKeukens
+export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = [], prijzen: Record<string, number> | null = null) {
+  // Gesorteerd op prijs telt de keukenvoorkeur niet: de goedkoopste staat bovenaan.
+  const voorkeur = filters.keukens.length > 0 || filters.sorteer === 'prijs' ? [] : voorkeurKeukens
+  const wachtOpPrijzen = (filters.alleenBudget || filters.sorteer === 'prijs') && !prijzen
   return useInfiniteQuery({
-    queryKey: ['ontdek', SESSIE, filters, voorkeur],
+    enabled: !wachtOpPrijzen,
+    // De prijzen zelf horen niet in de sleutel (honderden getallen); wel dat ze er zijn en voor welke stand.
+    queryKey: ['ontdek', SESSIE, filters, voorkeur, prijzen ? Object.keys(prijzen).length + ':' + Math.round(Object.values(prijzen).reduce((a, b) => a + b, 0)) : null],
     initialPageParam: { fase: voorkeur.length > 0 ? 'voorkeur' : 'rest', van: 0 } as OntdekPlek,
     getNextPageParam: (laatste: OntdekPagina) => laatste.volgende,
     queryFn: async ({ pageParam }): Promise<OntdekPagina> => {
@@ -212,7 +227,8 @@ export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []
         const ids = await geschud(JSON.stringify([SESSIE, filters, voorkeur, fase, gekookt, userId]), () =>
           vraag.range(0, 999),
         )
-        const pagina = ids.slice(van, van + PER_PAGINA)
+        const gefilterd = metPrijzen(ids, filters, prijzen)
+        const pagina = gefilterd.slice(van, van + PER_PAGINA)
         if (pagina.length === 0) return []
         const { data, error } = await db.from('recepten').select('*').in('id', pagina)
         if (error) throw error
@@ -253,16 +269,39 @@ export function useOntdek(filters: OntdekFilters, voorkeurKeukens: string[] = []
  * Hoeveel recepten er binnen deze filters zijn — het getal bovenaan Ontdekken.
  * Los van de pagina's: je wilt "475 recepten" zien, niet "30+".
  */
-export function useOntdekTelling(filters: OntdekFilters) {
+export function useOntdekTelling(filters: OntdekFilters, prijzen: Record<string, number> | null = null) {
+  const opPrijs = filters.alleenBudget
   return useQuery({
-    queryKey: ['ontdek-telling', filters],
+    enabled: !opPrijs || Boolean(prijzen),
+    queryKey: ['ontdek-telling', filters, opPrijs && prijzen ? Object.keys(prijzen).length : null],
     queryFn: async (): Promise<number> => {
       const userId = filters.mijn ? await huidigeUserId() : null
+      if (opPrijs && prijzen) {
+        // Budget rekent op de mandjeprijs, die de database niet kent: de ids ophalen en hier tellen.
+        const { data, error } = await metFilters(db.from('recepten').select('id'), filters, userId).range(0, 999)
+        if (error) throw error
+        return metPrijzen((data as { id: string }[]).map((r) => r.id), filters, prijzen).length
+      }
       const { count, error } = await metFilters(
         db.from('recepten').select('id', { count: 'exact', head: true }), filters, userId,
       )
       if (error) throw error
       return count ?? 0
+    },
+  })
+}
+
+/** Alle recepten met wat de prijsberekening nodig heeft, voor Budget en sorteren op prijs. Eén keer per sessie. */
+export function useReceptenVoorPrijs(aan: boolean) {
+  return useQuery({
+    queryKey: ['recepten-voor-prijs'],
+    enabled: aan,
+    staleTime: 60 * 60 * 1000,
+    queryFn: async (): Promise<Pick<Recept, 'id' | 'personen' | 'bron_type' | 'ingredienten'>[]> => {
+      const { data, error } = await db.from('recepten').select('id, personen, bron_type, ingredienten')
+        .in('bron_type', [...ONTDEK_BRON_TYPES, 'samengesteld']).range(0, 999)
+      if (error) throw error
+      return data as Pick<Recept, 'id' | 'personen' | 'bron_type' | 'ingredienten'>[]
     },
   })
 }

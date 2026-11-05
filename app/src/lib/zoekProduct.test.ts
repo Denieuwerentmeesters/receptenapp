@@ -25,3 +25,11 @@ describe('keuze met streep of schuine streep', () => {
   test('broccoli- of romanescoroosjes pakt broccoli', () => expect(zoek('broccoli- of romanescoroosjes')).toEqual({ id: 'B' }))
   test('kippen- of groentebouillon wordt geen kip', () => expect(zoek('kippen- of groentebouillon')).toBeUndefined())
 })
+
+describe('bijvoeglijke naamwoorden vallen weg', () => {
+  const mapping = { ricotta: { id: 'R' }, appel: { id: 'A' }, boter: { id: 'B' } }
+  const zoek = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, mapping)
+  test('gezouten ricotta is ricotta', () => expect(zoek('gezouten ricotta')).toEqual({ id: 'R' }))
+  test('grote stevige appel is appel', () => expect(zoek('grote stevige appel')).toEqual({ id: 'A' }))
+  test('gezouten boter blijft een ander product', () => expect(zoek('gezouten boter')).toBeUndefined())
+})

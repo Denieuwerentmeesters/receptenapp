@@ -182,6 +182,8 @@ const ONSCHULDIG = new Set(`
   kaas pasta sla zout zeezout water olie erover jus uit blik blikje pot
   jong julienne wilde trosrijpe mini gedopte dubbel
   handje handjes virgin
+  groot grote grotere kleine klein kleinere stevig stevige mooie mooi goede flinke ruime beetje
+  stevigere stevigste stevige
 `.split(/\s+/).filter(Boolean))
 
 /**
@@ -193,6 +195,8 @@ const ONSCHULDIG = new Set(`
 function onschuldig(woord: string, sleutel: string): boolean {
   if (UIT_BLIK.test(woord)) return !VERS_OF_BLIK.test(sleutel)
   if (GEROOSTERD.test(woord)) return NOOT_OF_ZAAD.test(sleutel)
+  // "gezouten ricotta" is ricotta; gezouten boter, noten en pinda's zijn wél een ander product.
+  if (woord === 'gezouten') return !/boter|noot|noten|pinda|cashew|amandel|pistache|walnoten|chips|kaas$/.test(sleutel)
   // De mapping heeft voor noten, miso en pita het gewone product; de
   // variant erbij (ongezouten noten, lichte miso, volkoren pita) koop je
   // gewoon als dat product (Reinoud, 5 nov 2026).

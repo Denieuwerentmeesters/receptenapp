@@ -7,8 +7,8 @@ import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../
 import { useFases, type FaseRecept } from '../lib/fases'
 import { useHartje } from '../components/Hartje'
 import type { Recept } from '../lib/database.types'
-import { isBudget } from '../lib/prijsschatting'
-import { useReceptPrijs } from '../lib/receptprijs'
+import { useReceptPrijs, useReceptPrijzen } from '../lib/receptprijs'
+import { BUDGET_MANDJE_PP } from '../lib/budget'
 import { schaalIngredienten } from '../lib/schaal'
 import { standaardPersonen } from '../lib/menu'
 import { euro } from '../lib/besparing'
@@ -53,6 +53,7 @@ const onthouden = {
   keukens: [] as string[],
   dieet: [] as Dieet[],
   alleenBudget: false,
+  sorteer: null as 'prijs' | null,
   hoogCijfer: false,
   // Het allergiefilter begint met je allergieën uit Instellingen (null = nog
   // niet aangeraakt). Wat je hier aan- of uitvinkt geldt tot een herstart:
@@ -97,13 +98,14 @@ export function Ontdekken() {
   const [keukens, setKeukens] = useState(onthouden.keukens)
   const [dieet, setDieet] = useState(onthouden.dieet)
   const [alleenBudget, setAlleenBudget] = useState(onthouden.alleenBudget)
+  const [sorteer, setSorteer] = useState(onthouden.sorteer)
   const [hoogCijfer, setHoogCijfer] = useState(onthouden.hoogCijfer)
   const [zonder, setZonder] = useState(onthouden.zonder)
   const [mijn, setMijn] = useState(onthouden.mijn)
   const [toevoegenOpen, setToevoegenOpen] = useState(false)
   const [uitlegOpen, setUitlegOpen] = useState(false)
   // Welke keuzelijst onderin openstaat: kooktijd, dieet of allergieën.
-  const [open, setOpen] = useState<'tijd' | 'keuken' | 'dieet' | 'allergie' | null>(null)
+  const [open, setOpen] = useState<'tijd' | 'keuken' | 'dieet' | 'allergie' | 'sorteer' | null>(null)
   const allergieen = useAllergieen()
   const zonderAllergenen = zonder ?? allergieen
   const voorkeurKeukens = useVoorkeuren().data?.favoriete_keukens ?? GEEN
@@ -118,8 +120,8 @@ export function Ontdekken() {
   )
 
   const filters: OntdekFilters = useMemo(
-    () => ({ zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn, hoogCijferIds }),
-    [zoek, maxTijd, keukens, dieet, alleenBudget, zonderAllergenen, mijn, hoogCijferIds],
+    () => ({ zoek, maxTijd, keukens, dieet, alleenBudget, sorteer, zonderAllergenen, mijn, hoogCijferIds }),
+    [zoek, maxTijd, keukens, dieet, alleenBudget, sorteer, zonderAllergenen, mijn, hoogCijferIds],
   )
 
   // Ander filter = andere lijst: dan hoort de oude scrollpositie er niet meer bij.
@@ -127,12 +129,14 @@ export function Ontdekken() {
   useEffect(() => {
     if (vorigeFilters.current === filters) return
     vorigeFilters.current = filters
-    Object.assign(onthouden, { zoek, maxTijd, keukens, dieet, alleenBudget, hoogCijfer, zonder, mijn, scrollTop: 0 })
+    Object.assign(onthouden, { zoek, maxTijd, keukens, dieet, alleenBudget, sorteer, hoogCijfer, zonder, mijn, scrollTop: 0 })
     scroller.current?.scrollTo({ top: 0 })
-  }, [filters, zoek, maxTijd, keukens, dieet, alleenBudget, hoogCijfer, zonder, mijn])
+  }, [filters, zoek, maxTijd, keukens, dieet, alleenBudget, sorteer, hoogCijfer, zonder, mijn])
 
-  const resultaten = useOntdek(filters, mijn ? GEEN : voorkeurKeukens)
-  const telling = useOntdekTelling(filters)
+  // Budget en sorteren rekenen op de mandjeprijs van alle recepten; die laden we alleen als je ze nodig hebt.
+  const prijzen = useReceptPrijzen(alleenBudget || sorteer === 'prijs')
+  const resultaten = useOntdek(filters, mijn ? GEEN : voorkeurKeukens, prijzen)
+  const telling = useOntdekTelling(filters, prijzen)
   const keukenPool = useKeukens()
   // Je voorkeurskeukens vooraan in de rij; daarbinnen blijft de volgorde op aantal.
   const keukenChips = useMemo(() => {
@@ -255,6 +259,9 @@ export function Ontdekken() {
           </Chip>
           <Chip selected={maxTijd !== null} onClick={() => setOpen('tijd')}>
             {maxTijd ? `Binnen ${maxTijd} min` : 'Kooktijd'} ▾
+          </Chip>
+          <Chip selected={sorteer !== null} onClick={() => setOpen('sorteer')}>
+            {sorteer === 'prijs' ? 'Goedkoopste eerst' : 'Sorteren'} ▾
           </Chip>
           <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
           <Chip selected={hoogCijfer} onClick={() => setHoogCijfer(!hoogCijfer)}>Hoog cijfer</Chip>
@@ -382,6 +389,20 @@ export function Ontdekken() {
         acties={TOEVOEGEN.map((k, i) => ({ label: k.label, hoofd: i === 0, onClick: () => { setToevoegenOpen(false); navigeer(k.naar) } }))}
         onSluit={() => setToevoegenOpen(false)}
       />
+
+      <Dialoog
+        open={open === 'sorteer'}
+        kop="Sorteren"
+        tekst="De prijs is wat je mandje voor dit recept kost per persoon, zonder wat je al in huis hebt."
+        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        onSluit={() => setOpen(null)}
+      >
+        <Keuzelijst
+          keuzes={[{ id: 'prijs', label: 'Goedkoopste eerst' }]}
+          gekozen={sorteer ? [sorteer] : []}
+          onWissel={() => setSorteer(sorteer === 'prijs' ? null : 'prijs')}
+        />
+      </Dialoog>
 
       <Dialoog
         open={open === 'tijd'}
@@ -574,7 +595,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
         <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
           {meta}
           {prijsTekst && <>{meta ? ' · ' : ''}{prijsTekst}</>}
-          {isBudget(recept) && <BudgetLabel />}
+          {prijs && prijs.perPersoon > 0 && prijs.perPersoon <= BUDGET_MANDJE_PP && <BudgetLabel />}
         </span>
         {bevat.length > 0 && (
           <span style={{
