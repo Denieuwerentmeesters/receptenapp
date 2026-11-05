@@ -204,7 +204,7 @@ export function Recept() {
                       </span>
                       <span>{r.ingredienten.length} ingrediënten</span>
                       {prijs && prijs.perPersoon > 0 && (
-                        <span title={prijs.inHuis > 0 ? `Zonder ${prijs.inHuis} producten uit je voorraadkast` : undefined}>
+                        <span title={prijs.inHuis > 0 ? `Mandje voor dit recept, zonder ${prijs.inHuis} producten uit je voorraadkast` : undefined}>
                           ± {euro(prijs.perPersoon, true)} p.p.
                         </span>
                       )}

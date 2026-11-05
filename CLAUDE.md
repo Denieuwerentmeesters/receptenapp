@@ -343,12 +343,18 @@ per ingrediënt: een bio- of huismerkvariant heeft een eigen prijs.
   en de migraties in één PR. Een bestaande migratie pas je nooit aan. Het
   AH-script meldt ook wat niet meer te koop is: herstel dat in de mapping.
 - **Receptprijs** (`src/lib/receptprijs.ts`, op het receptscherm als "± € x,xx
-  p.p."): het *aandeel* van de pakprijs dat het recept verbruikt (150 g uit 500 g
-  is 30%), niet hele verpakkingen zoals Bespaard! (`mandjeKosten`). In de prijzen
-  van jouw winkel (`Winkel.prijsVoor`). Wat in je voorraadkast staat en de
-  basisvoorraad tellen niet. Kan de hoeveelheid niet omgerekend worden (el, tl,
-  een bos) of is er geen prijs of inhoud, dan de klassenschatting uit
-  `lib/prijsschatting.ts`; `geschat` telt die regels.
+  p.p."): wat het mandje voor dit recept kost, dus hele verpakkingen
+  (`verpakkingenPerRegel`, een kwart speling, per product geteld) in de prijzen
+  van jouw winkel (`Winkel.prijsVoor`), zonder bezorging. Dezelfde som als de
+  mandjeknop. Niet het aandeel dat het recept verbruikt: een pot miso betaal je
+  helemaal, en miso in je voorraadkast scheelt dus de hele pot (Reinoud, 5 nov
+  2026). Een klein huishouden is per persoon duurder, net als aan de kassa. Wat
+  in je voorraadkast staat en de basisvoorraad tellen niet. Zonder prijs of
+  product de klassenschatting uit `lib/prijsschatting.ts`; `geschat` telt die
+  regels. **Bewaarbare toevoegingen** (`lib/bewaarbaar.ts`: miso, chipotle,
+  sauzen, pasta's, kruidenpotjes) tellen naar gebruik, niet de hele pot: die
+  gaat naar meer gerechten (Reinoud, 5 nov 2026). Meer dan één pot, of niet om
+  te rekenen: gewoon hele potten. Gewone prijs, zonder bonus: het mandje bij AH kan daardoor iets lager uitvallen.
 - **Waarom niet PrijsProfeet:** daar is alleen de bonus te halen
   (`lib/bonus/`); de gewone prijs per product niet.
 

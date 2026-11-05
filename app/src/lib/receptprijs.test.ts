@@ -6,8 +6,11 @@ import { ingredientKey } from './schaal'
 const WINKEL: Record<string, { prijs: number; inhoud: number; eenheid: 'g' | 'ml' | 'stuks' }> = {
   rijst: { prijs: 2.0, inhoud: 500, eenheid: 'g' },
   kipfilet: { prijs: 6.0, inhoud: 400, eenheid: 'g' },
-  bloemkool: { prijs: 2.0, inhoud: 1, eenheid: 'stuks' },
   ui: { prijs: 1.2, inhoud: 1000, eenheid: 'g' },
+  prei: { prijs: 0.59, inhoud: 1, eenheid: 'stuks' },
+  misopasta: { prijs: 3.99, inhoud: 200, eenheid: 'g' },
+  'verse lasagnebladen': { prijs: 1.75, inhoud: 500, eenheid: 'g' },
+  gorgonzola: { prijs: 2.69, inhoud: 200, eenheid: 'g' },
 }
 const bron: PrijsBron = {
   productVoor: (i) => (WINKEL[i.ingredient_key] ? i.ingredient_key : null),
@@ -16,45 +19,60 @@ const bron: PrijsBron = {
 }
 const regel = (naam: string, geschaald: number | null, eenheid: string | null) => ({ naam, geschaald, eenheid })
 
-describe('receptPrijs', () => {
-  test('rekent het aandeel van de pakprijs, niet het hele pak', () => {
-    // 200 g uit 500 g rijst van € 2 = € 0,80; voor twee personen € 0,40 p.p.
+describe('receptPrijs: wat het mandje kost', () => {
+  test('een heel pak, ook als het recept er maar een deel van gebruikt', () => {
+    // 200 g uit 500 g rijst: het pak van € 2 gaat in het mandje. Twee personen: € 1 p.p.
     const p = receptPrijs([regel('rijst', 200, 'g')], 2, bron)
-    expect(p.totaal).toBe(0.8)
-    expect(p.perPersoon).toBe(0.4)
+    expect(p.totaal).toBe(2)
+    expect(p.perPersoon).toBe(1)
     expect(p.opPrijs).toBe(1)
     expect(p.geschat).toBe(0)
   })
 
-  test('kilo en gram gaan goed om', () => {
-    expect(receptPrijs([regel('kipfilet', 0.4, 'kg')], 1, bron).totaal).toBe(6)
+  test('wat je bewaart (miso) telt naar gebruik: twee eetlepels van een pot van 200 g', () => {
+    // 30 g van 200 g = 15% van € 3,99.
+    expect(receptPrijs([regel('misopasta', 2, 'el')], 4, bron).totaal).toBe(0.6)
   })
 
-  test('wat in de voorraadkast staat kost niets', () => {
-    const thuis = new Set([ingredientKey('rijst')])
-    const p = receptPrijs([regel('rijst', 200, 'g'), regel('kipfilet', 200, 'g')], 1, bron, thuis)
-    expect(p.totaal).toBe(3)
-    expect(p.inHuis).toBe(1)
+  test('bewaarbaar, maar meer dan een pot: dan gewoon hele potten', () => {
+    expect(receptPrijs([regel('misopasta', 300, 'g')], 4, bron).totaal).toBe(7.98)
+  })
+
+  test('bewaarbaar zonder te kunnen omrekenen blijft een hele pot', () => {
+    expect(receptPrijs([regel('misopasta', null, null)], 4, bron).totaal).toBe(3.99)
+  })
+
+  test('meer dan een pak, met een kwart speling', () => {
+    // 500 g kip uit 400 g: 1,25 pak telt als één, 520 g als twee.
+    expect(receptPrijs([regel('kipfilet', 500, 'g')], 1, bron).totaal).toBe(6)
+    expect(receptPrijs([regel('kipfilet', 520, 'g')], 1, bron).totaal).toBe(12)
+  })
+
+  test('prei per stuk: vier preien, vier keer de stukprijs', () => {
+    expect(receptPrijs([regel('prei', 4, 'st')], 4, bron).totaal).toBe(2.36)
+  })
+
+  test('wat in de voorraadkast staat kost niets: gorgonzola in huis scheelt het pak', () => {
+    const regels = [regel('rijst', 200, 'g'), regel('gorgonzola', 200, 'g')]
+    const zonder = receptPrijs(regels, 4, bron)
+    const met = receptPrijs(regels, 4, bron, new Set([ingredientKey('gorgonzola')]))
+    expect(zonder.totaal).toBe(4.69)
+    expect(met.totaal).toBe(2)
+    expect(zonder.perPersoon - met.perPersoon).toBeCloseTo(0.67, 2)
+    expect(met.inHuis).toBe(1)
+  })
+
+  test('twee regels uit één pak vragen samen één pak', () => {
+    expect(receptPrijs([regel('rijst', 200, 'g'), regel('rijst', 100, 'g')], 1, bron).totaal).toBe(2)
   })
 
   test('basisvoorraad en olie tellen niet', () => {
     const p = receptPrijs([regel('zout', null, null), regel('olijfolie', 2, 'el'), regel('water', 500, 'ml')], 2, bron)
     expect(p.totaal).toBe(0)
-    expect(p.inHuis).toBe(0)
   })
 
-  test('een prijs per stuk met gewicht in het recept gaat via het stukgewicht', () => {
-    // Een bloemkool weegt 800 g: 400 g is een halve.
-    expect(receptPrijs([regel('bloemkool', 400, 'g')], 1, bron).totaal).toBe(1)
-  })
-
-  test('stuks tegenover een pak in gram gaat via het stukgewicht', () => {
-    // 2 uien = 300 g van 1 kg à € 1,20 = € 0,36.
-    expect(receptPrijs([regel('ui', 2, null)], 1, bron).totaal).toBe(0.36)
-  })
-
-  test('zonder prijs of met een eetlepel valt het terug op de klassenschatting', () => {
-    const p = receptPrijs([regel('sojasaus', 2, 'el'), regel('kipfilet', 3, 'el')], 1, bron)
+  test('zonder prijs of product valt het terug op de klassenschatting', () => {
+    const p = receptPrijs([regel('sojasaus', 2, 'el'), regel('limoenblaadjes', 3, 'st')], 1, bron)
     expect(p.opPrijs).toBe(0)
     expect(p.geschat).toBe(2)
     expect(p.totaal).toBeGreaterThan(0)
