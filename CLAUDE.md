@@ -238,7 +238,7 @@ zoeklink, vul dan die lijst aan of geef het ingrediënt een eigen regel.
   plakken zijn (`weergavenaam` met "plak").
 - **Uit blik of pot** is bij tomaten en paprika een ander product, bij
   kikkererwten en kokosmelk niet (`VERS_OF_BLIK`).
-- **Een keuze** ("tamari of sojasaus"): de eerste die een product heeft. Ook
+- **Een keuze** ("tamari of sojasaus"): de eerste die een product heeft, behalve dure snitten (ossenhaas, ribeye, entrecote): die kies je nooit uit een keuze, anders werd "ossenhaas of runderlende" een stuk ossenhaas van € 11 (`DUUR_VLEES`). Ook
   tussen haakjes: "geraspte kaas (cheddar of jong belegen)" wordt geraspte
   cheddar, de bereiding ervoor gaat mee en het soortwoord valt weg. Bij
   "(of …)" is het ingrediënt zelf de eerste keuze. Staat geen van de keuzes in
@@ -351,7 +351,7 @@ per ingrediënt: een bio- of huismerkvariant heeft een eigen prijs.
   2026). Een klein huishouden is per persoon duurder, net als aan de kassa. Wat
   in je voorraadkast staat en de basisvoorraad tellen niet. Zonder prijs of
   product de klassenschatting uit `lib/prijsschatting.ts`; `geschat` telt die
-  regels. **Droge kruiden en specerijen tellen nooit mee** (Reinoud, 5 nov 2026; `isKruid`).
+  regels. **Droge kruiden, specerijen en koffie tellen nooit mee** (Reinoud, 5 nov 2026; `telNietMee`).
   **Bewaarbare toevoegingen** (`lib/bewaarbaar.ts`: miso, chipotle,
   sauzen, pasta's) tellen naar gebruik, niet de hele pot: die
   gaat naar meer gerechten (Reinoud, 5 nov 2026). Meer dan één pot, of niet om

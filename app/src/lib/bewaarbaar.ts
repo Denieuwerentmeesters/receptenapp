@@ -23,3 +23,12 @@ const BEWAARBAAR = new RegExp([
 export function bewaarbaar(key: string): boolean {
   return isKruid(key) || BEWAARBAAR.test(key)
 }
+
+/**
+ * Dit telt niet mee in de receptprijs: droge kruiden en specerijen, en koffie
+ * (koffiebonen, espresso). Een potje of zak gaat naar tientallen gerechten en
+ * koffie heb je al (Reinoud, 5 nov 2026).
+ */
+export function telNietMee(key: string): boolean {
+  return isKruid(key) || /koffie|espresso/.test(key)
+}
