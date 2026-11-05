@@ -137,3 +137,12 @@ describe('gedroogd en geraspt zijn een eigen product', () => {
     ['geraspte Parmezaanse kaas', 'ah parmigiano reggiano'], ['gember, geraspt', 'ah gember'],
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
 })
+
+describe('varianten die gewoon het mapping-product zijn', () => {
+  const M: Record<string, string> = { miso: 'Miso', cashewnoten: 'Cashews', pitabroodje: 'Pita', 'gezouten cashewnoten': 'Gezouten' }
+  const zoek = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, M)
+  test.each([
+    ['lichte miso', 'Miso'], ['ongezouten cashewnoten', 'Cashews'], ['volkoren pitabroodjes', 'Pita'],
+  ])('%s → %s', (naam, product) => { expect(zoek(naam)).toBe(product) })
+  test('lichte tomaten blijft zoeklink', () => { expect(zoekProduct({ ingredient_key: 'lichte tomaten', naam: 'lichte tomaten' }, { tomaten: 'T' })).toBeUndefined() })
+})
