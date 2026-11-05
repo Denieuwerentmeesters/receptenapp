@@ -8,6 +8,10 @@ import { useFases, type FaseRecept } from '../lib/fases'
 import { useHartje } from '../components/Hartje'
 import type { Recept } from '../lib/database.types'
 import { isBudget } from '../lib/prijsschatting'
+import { useReceptPrijs } from '../lib/receptprijs'
+import { schaalIngredienten } from '../lib/schaal'
+import { standaardPersonen } from '../lib/menu'
+import { euro } from '../lib/besparing'
 import { tokoIngredienten } from '../lib/toko'
 import { TokoLabel } from '../components/TokoLabel'
 import { BonusLabel } from '../components/Bonus'
@@ -492,6 +496,16 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
     recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
     label === 'vegan' || label === 'vegetarisch' ? label : recept.keuken,
   ].filter(Boolean).join(' · ')
+  // Wat het mandje voor dit recept kost per persoon (jouw winkel, jouw voorraadkast), zodat je het label Budget kunt beoordelen.
+  const voorkeuren = useVoorkeuren()
+  const personen = standaardPersonen(recept, voorkeuren.data?.aantal_personen ?? 4)
+  const prijsRegels = useMemo(
+    () => schaalIngredienten(recept.ingredienten, recept.personen, personen)
+      .map((i) => ({ naam: i.naam, eenheid: i.eenheid, geschaald: i.geschaald })),
+    [recept.ingredienten, recept.personen, personen],
+  )
+  const prijs = useReceptPrijs(prijsRegels, personen)
+  const prijsTekst = prijs && prijs.perPersoon > 0 ? `± ${euro(prijs.perPersoon, true)} p.p.` : null
   const status = fase?.besteldOp ? 'Te koken' : fase?.opLijst ? 'Op je lijst' : fase ? 'Nog bestellen' : null
   // Jouw cijfer gaat voor; heb je het niet gekookt, dan het gemiddelde van alle koks (vanaf genoeg cijfers).
   const gemiddeld = mijn?.cijfer == null ? gemiddeldeOpKaart(recept) : null
@@ -559,6 +573,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
         }}>{recept.titel_nl ?? recept.titel}</span>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
           {meta}
+          {prijsTekst && <>{meta ? ' · ' : ''}{prijsTekst}</>}
           {isBudget(recept) && <BudgetLabel />}
         </span>
         {bevat.length > 0 && (
