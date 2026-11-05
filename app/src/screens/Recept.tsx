@@ -12,7 +12,9 @@ import { useOpLijst } from '../components/OpLijst'
 import { sleutels, useRecept, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { deel, deelLink, heeftDeelvenster, heeftLink, maakDeellink, magDelen, whatsappLink } from '../lib/delen'
 import { foutTekst } from '../lib/fouten'
+import { euro } from '../lib/besparing'
 import { isBudget } from '../lib/prijsschatting'
+import { useReceptPrijs } from '../lib/receptprijs'
 import { ingredientKey, schaalIngredienten } from '../lib/schaal'
 import { tokoIngredienten, tokoProduct } from '../lib/toko'
 import { openBijWinkel } from '../lib/ah'
@@ -81,6 +83,14 @@ export function Recept() {
   // personen zonder je vaste voorkeur te veranderen.
   const [lokaalPersonen, setLokaalPersonen] = useState<number | null>(null)
   const personen = lokaalPersonen ?? standaardPersonen(recept.data, voorkeuren.data?.aantal_personen ?? 4)
+  // Wat het recept ongeveer kost per persoon, zonder wat in je voorraadkast staat.
+  const prijs = useReceptPrijs(
+    recept.data
+      ? schaalIngredienten(recept.data.ingredienten, recept.data.personen, personen)
+        .map((i) => ({ naam: i.naam, eenheid: i.eenheid, geschaald: i.geschaald }))
+      : null,
+    personen,
+  )
 
   return (
     <Scherm>
@@ -193,6 +203,11 @@ export function Recept() {
                         <Icon name="users" size={14} />{personen} {personen === 1 ? 'persoon' : 'personen'}
                       </span>
                       <span>{r.ingredienten.length} ingrediënten</span>
+                      {prijs && prijs.perPersoon > 0 && (
+                        <span title={prijs.inHuis > 0 ? `Zonder ${prijs.inHuis} producten uit je voorraadkast` : undefined}>
+                          ± {euro(prijs.perPersoon, true)} p.p.
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
