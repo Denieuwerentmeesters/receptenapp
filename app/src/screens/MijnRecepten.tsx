@@ -605,7 +605,11 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
             }}>{cijfer}</span>
           )}
           {/* Een samengesteld recept krijgt nooit een foto: dan ook geen belofte. */}
-          {recept.afbeelding_url || recept.bron_type === 'samengesteld' ? '' : 'foto'}
+          {recept.afbeelding_url || recept.bron_type === 'samengesteld'
+            ? ''
+            : recept.user_id
+              ? <span style={{ padding: '0 10px', textAlign: 'center', lineHeight: 1.3 }}>Afbeelding wordt vannacht toegevoegd</span>
+              : 'foto'}
         </div>
         {/* Het gele bonuslabel staat linksonder over de kaart: laat er ruimte voor als er een metaregel is. */}
         <div style={{ padding: `10px 12px ${metaRegel && bonus.length > 0 ? 40 : 12}px`, width: '100%', boxSizing: 'border-box' }}>

@@ -169,7 +169,7 @@ export function Recept() {
                       {/* Een eigen recept krijgt vannacht een foto (api/afbeeldingen.ts); een samengesteld menu niet. */}
                       {r.user_id && r.bron_type !== 'samengesteld' && (
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>
-                          De foto komt vannacht
+                          Afbeelding wordt vannacht toegevoegd
                         </span>
                       )}
                     </div>
