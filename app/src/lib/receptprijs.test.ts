@@ -29,8 +29,17 @@ describe('receptPrijs: wat het mandje kost', () => {
     expect(p.geschat).toBe(0)
   })
 
-  test('een eetlepel miso is toch een hele pot', () => {
-    expect(receptPrijs([regel('misopasta', 1, 'el')], 4, bron).totaal).toBe(3.99)
+  test('wat je bewaart (miso) telt naar gebruik: twee eetlepels van een pot van 200 g', () => {
+    // 30 g van 200 g = 15% van € 3,99.
+    expect(receptPrijs([regel('misopasta', 2, 'el')], 4, bron).totaal).toBe(0.6)
+  })
+
+  test('bewaarbaar, maar meer dan een pot: dan gewoon hele potten', () => {
+    expect(receptPrijs([regel('misopasta', 300, 'g')], 4, bron).totaal).toBe(7.98)
+  })
+
+  test('bewaarbaar zonder te kunnen omrekenen blijft een hele pot', () => {
+    expect(receptPrijs([regel('misopasta', null, null)], 4, bron).totaal).toBe(3.99)
   })
 
   test('meer dan een pak, met een kwart speling', () => {
@@ -43,13 +52,13 @@ describe('receptPrijs: wat het mandje kost', () => {
     expect(receptPrijs([regel('prei', 4, 'st')], 4, bron).totaal).toBe(2.36)
   })
 
-  test('wat in de voorraadkast staat kost niets: miso in huis scheelt de pot', () => {
-    const regels = [regel('misopasta', 1, 'el'), regel('gorgonzola', 200, 'g')]
+  test('wat in de voorraadkast staat kost niets: gorgonzola in huis scheelt het pak', () => {
+    const regels = [regel('rijst', 200, 'g'), regel('gorgonzola', 200, 'g')]
     const zonder = receptPrijs(regels, 4, bron)
-    const met = receptPrijs(regels, 4, bron, new Set([ingredientKey('misopasta')]))
-    expect(zonder.totaal).toBe(6.68)
-    expect(met.totaal).toBe(2.69)
-    expect(zonder.perPersoon - met.perPersoon).toBeCloseTo(1, 1)
+    const met = receptPrijs(regels, 4, bron, new Set([ingredientKey('gorgonzola')]))
+    expect(zonder.totaal).toBe(4.69)
+    expect(met.totaal).toBe(2)
+    expect(zonder.perPersoon - met.perPersoon).toBeCloseTo(0.67, 2)
     expect(met.inHuis).toBe(1)
   })
 

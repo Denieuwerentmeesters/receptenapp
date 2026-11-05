@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { altijdInHuis } from './altijdInHuis'
 import type { BoodschapItem } from './database.types'
-import type { Verpakking } from './eenheden'
+import { bewaarbaar } from './bewaarbaar'
+import { naarEenheid, type Verpakking } from './eenheden'
 import { voegSamen, verpakkingenPerRegel, type LijstRegel } from './lijst'
 import { DROGE_KRUIDEN_KEY, isDroogKruid } from './kruiden'
 import { schatIngredient } from './prijsschatting'
@@ -22,6 +23,9 @@ import { useWinkel } from './winkel'
  * hele bedrag. Voor een klein huishouden is het per persoon duurder, zoals
  * aan de kassa. Een restant gebruik je een andere avond, dus vergelijk
  * recepten met dit getal alleen als je gelijk kookt.
+ *
+ * Behalve wat je bewaart (miso, chipotle, sauzen; lib/bewaarbaar.ts): daarvan
+ * tellen we wat het recept gebruikt, want die pot gaat naar meer gerechten.
  *
  * Per ingrediënt: basisvoorraad (water, zout, olie) en wat in je voorraadkast
  * staat telt niet. Een product met prijs: aantal verpakkingen maal de prijs,
@@ -55,6 +59,27 @@ export interface ReceptPrijs {
   inHuis: number
 }
 
+/** Een eetlepel en een theelepel in g of ml; voor sauzen en pasta's bijna goed genoeg. */
+const LEPEL: Record<string, number> = { el: 15, eetlepel: 15, eetlepels: 15, tl: 5, theelepel: 5, theelepels: 5 }
+
+/**
+ * Welk deel van de verpakking de regel gebruikt (0 tot 1), of null als dat
+ * niet te zeggen is of het meer dan een pak is. Alleen voor bewaarbare producten.
+ */
+function gebruiktDeel(regel: LijstRegel, verpakking: Verpakking): number | null {
+  if (!bewaarbaar(regel.key) || verpakking.eenheid === 'stuks') return null
+  let nodig = 0
+  for (const item of regel.items) {
+    if (item.hoeveelheid === null) return null
+    const lepel = LEPEL[(item.eenheid ?? '').trim().toLowerCase()]
+    const waarde = lepel ? item.hoeveelheid * lepel : naarEenheid(item.hoeveelheid, item.eenheid, regel.key, verpakking.eenheid)
+    if (waarde === null) return null
+    nodig += waarde
+  }
+  const deel = nodig / verpakking.inhoud
+  return deel <= 1 ? deel : null
+}
+
 export function receptPrijs(
   regels: PrijsRegel[],
   personen: number,
@@ -86,7 +111,9 @@ export function receptPrijs(
   for (const regel of kopen) {
     const prijs = productVan(regel) ? bron.prijsVoor(regel.voorbeeld) : undefined
     if (prijs !== undefined) {
-      totaal += prijs * (aantallen.get(regel.key)?.aantal ?? 1)
+      const verpakking = bron.verpakkingVoor(regel.voorbeeld)
+      const deel = verpakking ? gebruiktDeel(regel, verpakking) : null
+      totaal += prijs * (deel ?? aantallen.get(regel.key)?.aantal ?? 1)
       opPrijs++
       continue
     }

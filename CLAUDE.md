@@ -351,7 +351,10 @@ per ingrediënt: een bio- of huismerkvariant heeft een eigen prijs.
   2026). Een klein huishouden is per persoon duurder, net als aan de kassa. Wat
   in je voorraadkast staat en de basisvoorraad tellen niet. Zonder prijs of
   product de klassenschatting uit `lib/prijsschatting.ts`; `geschat` telt die
-  regels. Gewone prijs, zonder bonus: het mandje bij AH kan daardoor iets lager uitvallen.
+  regels. **Bewaarbare toevoegingen** (`lib/bewaarbaar.ts`: miso, chipotle,
+  sauzen, pasta's, kruidenpotjes) tellen naar gebruik, niet de hele pot: die
+  gaat naar meer gerechten (Reinoud, 5 nov 2026). Meer dan één pot, of niet om
+  te rekenen: gewoon hele potten. Gewone prijs, zonder bonus: het mandje bij AH kan daardoor iets lager uitvallen.
 - **Waarom niet PrijsProfeet:** daar is alleen de bonus te halen
   (`lib/bonus/`); de gewone prijs per product niet.
 
