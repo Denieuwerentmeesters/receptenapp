@@ -209,6 +209,14 @@ export function Recept() {
                         </span>
                       )}
                     </div>
+                    {prijs?.tip && prijs.tip.scheeltPerPersoon >= 0.25 && (
+                      <div style={{ marginTop: 8, fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, color: 'var(--c-green)', fontWeight: 700 }}>
+                        Tip: kies {prijs.tip.alternatief} in plaats van {prijs.tip.regel.toLowerCase()} en je scheelt ± {euro(prijs.tip.scheeltPerPersoon, true)} p.p.
+                        <span style={{ display: 'block', fontWeight: 400, fontSize: 12, color: 'rgba(43,20,32,0.55)' }}>
+                          Dat kies je op je boodschappenlijst.
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
