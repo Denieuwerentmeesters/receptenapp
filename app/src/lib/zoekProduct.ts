@@ -85,12 +85,20 @@ export function zoekProduct<P>(
   item: Pick<BoodschapItem, 'ingredient_key' | 'naam'>,
   mapping: Record<string, P>,
 ): P | undefined {
-  for (const keuze of keuzes(item.naam)) {
+  const opties = keuzes(item.naam)
+  // Een dure snit uit een keuze ("ossenhaas of runderlende") slaan we over: de
+  // goedkope kant staat er meestal niet in de mapping, en dan leverde de keuze
+  // ossenhaas op (€ 44 voor 500 g) waar het recept ook iets gewoons toelaat.
+  // Bij twijfel een zoeklink. Alleen genoemd (zonder "of") telt ossenhaas gewoon.
+  for (const keuze of opties.length > 1 ? opties.filter((k) => !DUUR_VLEES.test(ingredientKey(k))) : opties) {
     const product = zoekZonderKeuze({ ingredient_key: ingredientKey(keuze), naam: keuze }, mapping)
     if (product) return product
   }
   return zoekZonderKeuze(item, mapping)
 }
+
+/** Dure snitten die je niet uit een keuze wilt kiezen; zie zoekProduct. */
+const DUUR_VLEES = /ossenhaas|ribeye|entrecote|tournedos|ossenhaaspunt/
 
 /**
  * Alle mogelijkheden uit een keuze in het recept, op volgorde; leeg als het
