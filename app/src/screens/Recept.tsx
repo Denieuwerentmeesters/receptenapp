@@ -209,18 +209,22 @@ export function Recept() {
                         </span>
                       )}
                     </div>
-                    {prijs?.tip && prijs.tip.scheeltPerPersoon >= 0.25 && (
-                      <div style={{ marginTop: 8, fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, color: 'var(--c-green)', fontWeight: 700 }}>
-                        Tip: kies {prijs.tip.alternatief} in plaats van {prijs.tip.regel.toLowerCase()} en je scheelt ± {euro(prijs.tip.scheeltPerPersoon, true)} p.p.
-                        <span style={{ display: 'block', fontWeight: 400, fontSize: 12, color: 'rgba(43,20,32,0.55)' }}>
-                          Dat kies je op je boodschappenlijst.
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '20px 22px 8px' }}>
+                {/* Besparingstip: onder de foto, op een lichte achtergrond; op de foto was hij niet te lezen. */}
+                {prijs?.tip && prijs.tip.scheeltPerPersoon >= 0.25 && (
+                  <div style={{
+                    background: 'var(--c-paper)', borderRadius: 'var(--radius-sm)', padding: '11px 14px',
+                    marginBottom: 6, fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4, color: 'var(--c-ink)',
+                  }}>
+                    <strong>Tip:</strong> kies {prijs.tip.alternatief} in plaats van {prijs.tip.regel.toLowerCase()} en je scheelt ± {euro(prijs.tip.scheeltPerPersoon, true)} p.p.
+                    <span style={{ display: 'block', fontSize: 12, color: 'rgba(43,20,32,0.6)', marginTop: 2 }}>
+                      Dat kies je op je boodschappenlijst.
+                    </span>
+                  </div>
+                )}
                 {/* Geïmporteerd: de maker en de link naar de bron, zoals afgesproken (plan, auteursrecht). */}
                 {bron && (
                   <div style={{
