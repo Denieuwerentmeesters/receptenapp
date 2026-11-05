@@ -8377,5 +8377,176 @@
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
+ },
+ {
+  "key": "lange vinger",
+  "naam": "Jumbo Lange Vingers 200 g",
+  "standaard": "675679PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "cottage cheese light",
+  "naam": "Jumbo Cottage Cheese Light 200 g",
+  "standaard": "779590CUP",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "surinaamse sambal",
+  "naam": "Koningsvogel Surinaamse Sambal 270 g",
+  "standaard": "696482POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "fijne havermout",
+  "naam": "Jumbo Havermout Fijne Vlokken Volkoren 500 g",
+  "standaard": "676476TAS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "groene pesto",
+  "naam": "Jumbo Groene Pesto 100 g",
+  "standaard": "393186CUP",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gerookte kipfilet",
+  "naam": "Jumbo Gerookte Kipfilet ca. 165 g",
+  "standaard": "700195KGR",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gezouten cashewnoten",
+  "naam": "Jumbo Gezouten Cashewnoten 130 g",
+  "standaard": "578021CUP",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "volkoren tortilla",
+  "naam": "Jumbo Large Tortilla Volkoren 6 Stuks",
+  "standaard": "779112ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "comte",
+  "naam": "JuraFlore Comté ca. 190 g",
+  "standaard": "715824KGR",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "langkorrelige witte rijst",
+  "naam": "Jumbo Basmati Rijst 400 g",
+  "standaard": "186181PAK",
+  "bio": "265621PAK",
+  "bio_naam": "Jumbo Biologisch Witte Rijst 400 g",
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zoute sojasaus",
+  "naam": "Jumbo Sojasaus 150 ml",
+  "standaard": "348749FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gezeefde poedersuiker",
+  "naam": "Van Gilse Poedersuiker 250 g",
+  "standaard": "67633PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "carpaccio vlee",
+  "naam": "Jumbo Carpaccio 120 g",
+  "standaard": "655555STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "nieuwe aardappelen",
+  "naam": "Jumbo Aardappelen Vastkokend 3 kg",
+  "standaard": "380106ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "cherry trostomaten",
+  "naam": "Jumbo Cherry Tomaten 250 g",
+  "standaard": "302232BAK",
+  "bio": "579478TRA",
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "knapperig stokbrood",
+  "naam": "Jumbo Frans Stokbrood Wit 220 g",
+  "standaard": "660528STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zure appel",
+  "naam": "Jumbo Jonagold Appels 1,5 kg",
+  "standaard": "772466ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gemengde tomaten",
+  "naam": "Jumbo Tomaten 500g",
+  "standaard": "415609BAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zachtgekookte eieren",
+  "naam": "Jumbo Vrije Uitloop Eieren M/L 10 Stuks",
+  "standaard": "602670DS",
+  "bio": "610308BAK",
+  "bio_naam": "Jumbo Biologisch Witte Eieren 6 Stuks",
+  "huismerk": null,
+  "huismerk_naam": null
  }
 ]
