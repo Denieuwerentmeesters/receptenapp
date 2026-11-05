@@ -82,3 +82,10 @@ describe('receptPrijs: wat het mandje kost', () => {
     expect(receptPrijs([regel('kipfilet', 800, 'g')], 4, bron).perPersoon).toBe(3)
   })
 })
+
+describe('droge kruiden', () => {
+  test('tellen nooit mee, ook niet zonder voorraad', () => {
+    const kruidBron: PrijsBron = { productVoor: () => 'x', verpakkingVoor: () => undefined, prijsVoor: () => 3.29 }
+    expect(receptPrijs([regel('kurkuma', 0.5, 'el'), regel('komijnzaad', 1, 'tl')], 4, kruidBron).totaal).toBe(0)
+  })
+})

@@ -4,7 +4,7 @@ import type { BoodschapItem } from './database.types'
 import { bewaarbaar } from './bewaarbaar'
 import { naarEenheid, type Verpakking } from './eenheden'
 import { voegSamen, verpakkingenPerRegel, type LijstRegel } from './lijst'
-import { DROGE_KRUIDEN_KEY, isDroogKruid } from './kruiden'
+import { DROGE_KRUIDEN_KEY, isDroogKruid, isKruid } from './kruiden'
 import { schatIngredient } from './prijsschatting'
 import { useVoorraad } from './queries2'
 import { ingredientKey } from './schaal'
@@ -28,8 +28,8 @@ import { goedkoperOpties } from './goedkoper'
  * Behalve wat je bewaart (miso, chipotle, sauzen; lib/bewaarbaar.ts): daarvan
  * tellen we wat het recept gebruikt, want die pot gaat naar meer gerechten.
  *
- * Per ingrediënt: basisvoorraad (water, zout, olie) en wat in je voorraadkast
- * staat telt niet. Een product met prijs: aantal verpakkingen maal de prijs,
+ * Per ingrediënt: basisvoorraad (water, zout, olie), droge kruiden en wat in je
+ * voorraadkast staat telt niet. Een product met prijs: aantal verpakkingen maal de prijs,
  * per product geteld (twee regels uit één pot vragen samen één pot). Zonder
  * prijs of product: de klassenschatting uit lib/prijsschatting.ts; `geschat`
  * telt die regels, zodat het scherm niet doet alsof het exact is.
@@ -105,7 +105,8 @@ export function receptPrijs(
 ): ReceptPrijs {
   const alle = receptRegels(regels)
   const inHuisRegel = (r: LijstRegel) => (kruidenThuis && isDroogKruid(r.key)) || inVoorraad(r.key, voorraad)
-  const kopen = alle.filter((r) => !inHuisRegel(r))
+  // Droge kruiden en specerijen tellen nooit mee (Reinoud, 5 nov 2026): een potje gaat naar tientallen gerechten.
+  const kopen = alle.filter((r) => !inHuisRegel(r) && !isKruid(r.key))
 
   const productVan = (r: LijstRegel) => bron.productVoor(r.voorbeeld)
   const aantallen = verpakkingenPerRegel(kopen, productVan, (r) => bron.verpakkingVoor(r.voorbeeld))
