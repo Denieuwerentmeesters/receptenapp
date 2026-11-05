@@ -82,3 +82,14 @@ describe('receptPrijs: wat het mandje kost', () => {
     expect(receptPrijs([regel('kipfilet', 800, 'g')], 4, bron).perPersoon).toBe(3)
   })
 })
+
+describe('kruidenpotjes zonder inhoud', () => {
+  test('een halve eetlepel kurkuma kost een stukje van het potje, niet het hele potje', () => {
+    const kruidBron: PrijsBron = {
+      productVoor: () => 'x', verpakkingVoor: () => undefined, prijsVoor: () => 3.29,
+    }
+    const p = receptPrijs([regel('kurkuma', 0.5, 'el')], 4, kruidBron)
+    expect(p.totaal).toBeGreaterThan(0.2)
+    expect(p.totaal).toBeLessThan(0.5)
+  })
+})

@@ -4,7 +4,7 @@ import type { BoodschapItem } from './database.types'
 import { bewaarbaar } from './bewaarbaar'
 import { naarEenheid, type Verpakking } from './eenheden'
 import { voegSamen, verpakkingenPerRegel, type LijstRegel } from './lijst'
-import { DROGE_KRUIDEN_KEY, isDroogKruid } from './kruiden'
+import { DROGE_KRUIDEN_KEY, isDroogKruid, isKruid } from './kruiden'
 import { schatIngredient } from './prijsschatting'
 import { useVoorraad } from './queries2'
 import { ingredientKey } from './schaal'
@@ -96,6 +96,24 @@ export function receptRegels(regels: PrijsRegel[]): LijstRegel[] {
   return voegSamen(items)
 }
 
+/**
+ * Een potje kruiden heeft in onze data geen inhoud (de mandjeregel telt er één).
+ * Voor de prijs rekenen we met wat het recept gebruikt van een potje van
+ * ± 40 g (een eetlepel ± 7 g, een theelepel ± 2,5 g), minstens 5%: een potje
+ * gaat naar tientallen gerechten. Geen lepelmaat bekend: 10%.
+ */
+function kruidDeel(regel: LijstRegel): number | null {
+  if (!isKruid(regel.key)) return null
+  let gram = 0
+  for (const item of regel.items) {
+    const eenheid = (item.eenheid ?? '').trim().toLowerCase()
+    const lepel = LEPEL[eenheid]
+    if (item.hoeveelheid === null || !lepel) return 0.1
+    gram += item.hoeveelheid * (lepel === 15 ? 7 : 2.5)
+  }
+  return Math.min(1, Math.max(0.05, gram / 40))
+}
+
 export function receptPrijs(
   regels: PrijsRegel[],
   personen: number,
@@ -117,7 +135,7 @@ export function receptPrijs(
     const prijs = productVan(regel) ? bron.prijsVoor(regel.voorbeeld) : undefined
     if (prijs !== undefined) {
       const verpakking = bron.verpakkingVoor(regel.voorbeeld)
-      const deel = verpakking ? gebruiktDeel(regel, verpakking) : null
+      const deel = verpakking ? gebruiktDeel(regel, verpakking) : kruidDeel(regel)
       totaal += prijs * (deel ?? aantallen.get(regel.key)?.aantal ?? 1)
       opPrijs++
       continue
