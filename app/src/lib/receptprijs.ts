@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { altijdInHuis } from './altijdInHuis'
 import type { BoodschapItem } from './database.types'
-import { naarEenheid, stukgewicht, type Verpakking } from './eenheden'
+import type { Verpakking } from './eenheden'
+import { voegSamen, verpakkingenPerRegel, type LijstRegel } from './lijst'
 import { DROGE_KRUIDEN_KEY, isDroogKruid } from './kruiden'
 import { schatIngredient } from './prijsschatting'
 import { useVoorraad } from './queries2'
@@ -10,22 +11,23 @@ import { inVoorraad } from './voorraad'
 import { useWinkel } from './winkel'
 
 /**
- * Wat een recept ongeveer kost per persoon, in de prijzen van jouw winkel
- * (AH of Jumbo), met wat je in de voorraadkast hebt eraf.
+ * Wat een recept ongeveer kost per persoon aan de kassa: de hele verpakkingen
+ * die je ervoor koopt, in de prijzen van jouw winkel (AH of Jumbo), met wat je
+ * in de voorraadkast hebt eraf. Dezelfde som als de mandjeknop en Bespaard!
+ * (verpakkingenPerRegel, een kwart speling), zonder bezorgkosten.
  *
- * Anders dan Bespaard! (mandjeKosten: hele verpakkingen, want die ga je
- * kopen) rekenen we hier het aandeel: 150 g uit een pak van 500 g kost 30% van
- * de pakprijs. Een recept kost wat het verbruikt; wat er overblijft heb je
- * een andere avond nodig. Zo zijn recepten onderling te vergelijken.
+ * Dus niet het aandeel dat het recept verbruikt: een pot miso van € 3,99
+ * betaal je helemaal, ook als het recept er één eetlepel van vraagt. Dat is
+ * ook waarom "heb je het al in huis?" ertoe doet: miso in de kast scheelt dat
+ * hele bedrag. Voor een klein huishouden is het per persoon duurder, zoals
+ * aan de kassa. Een restant gebruik je een andere avond, dus vergelijk
+ * recepten met dit getal alleen als je gelijk kookt.
  *
- * Per ingrediënt, in deze volgorde:
- *  - basisvoorraad (water, zout, olie) of wat in je voorraadkast staat: telt niet;
- *  - product met prijs én bekende inhoud, en de hoeveelheid is om te rekenen:
- *    aandeel van de pakprijs;
- *  - anders de klassenschatting uit lib/prijsschatting.ts (el, tl, een bos,
- *    producten zonder prijs of inhoud).
- * `geschat` zegt hoeveel regels op die schatting rekenden, zodat het scherm
- * niet doet alsof het exact is.
+ * Per ingrediënt: basisvoorraad (water, zout, olie) en wat in je voorraadkast
+ * staat telt niet. Een product met prijs: aantal verpakkingen maal de prijs,
+ * per product geteld (twee regels uit één pot vragen samen één pot). Zonder
+ * prijs of product: de klassenschatting uit lib/prijsschatting.ts; `geschat`
+ * telt die regels, zodat het scherm niet doet alsof het exact is.
  */
 
 /** De drie dingen die een winkel (lib/winkel.ts) over een product weet. */
@@ -42,7 +44,7 @@ export interface PrijsRegel {
 }
 
 export interface ReceptPrijs {
-  /** Totaal voor het gevraagde aantal personen, in euro's. */
+  /** Wat het mandje voor dit recept kost, voor het gevraagde aantal personen, in euro's. */
   totaal: number
   perPersoon: number
   /** Regels met een echte prijs. */
@@ -53,24 +55,6 @@ export interface ReceptPrijs {
   inHuis: number
 }
 
-/** Meer dan tien verpakkingen voor één regel is een fout in de data, geen recept. */
-const MAX_AANDEEL = 10
-
-/** Het aandeel van een verpakking dat deze regel verbruikt, of null als dat niet te zeggen is. */
-function aandeel(regel: PrijsRegel, key: string, verpakking: Verpakking): number | null {
-  if (regel.geschaald === null) return null
-  let nodig = naarEenheid(regel.geschaald, regel.eenheid, key, verpakking.eenheid)
-  // Een prijs per stuk (bloemkool) tegenover een recept in gram: via het stukgewicht.
-  if (nodig === null && verpakking.eenheid === 'stuks') {
-    const gram = naarEenheid(regel.geschaald, regel.eenheid, key, 'g')
-    const gewicht = stukgewicht(key)
-    if (gram !== null && gewicht) nodig = gram / gewicht
-  }
-  if (nodig === null) return null
-  const deel = nodig / verpakking.inhoud
-  return deel > MAX_AANDEEL ? null : deel
-}
-
 export function receptPrijs(
   regels: PrijsRegel[],
   personen: number,
@@ -78,35 +62,43 @@ export function receptPrijs(
   voorraad: ReadonlySet<string> = new Set(),
   kruidenThuis = false,
 ): ReceptPrijs {
+  // Dezelfde samenvoeging als de boodschappenlijst, zodat "ui" en "uien" één product zijn.
+  const items: BoodschapItem[] = regels
+    .filter((r) => {
+      const key = ingredientKey(r.naam ?? '')
+      return key && !altijdInHuis(key) && !/olie/.test(key)
+    })
+    .map((r, i) => ({
+      id: String(i), user_id: '', week_start_datum: '', naam: r.naam, ingredient_key: ingredientKey(r.naam),
+      hoeveelheid: r.geschaald, eenheid: r.eenheid, categorie: null, bron_type: 'recept' as const,
+      bron_recept_id: null, is_afgevinkt: false, aangemaakt_op: '',
+    }))
+  const alle = voegSamen(items)
+  const inHuisRegel = (r: LijstRegel) => (kruidenThuis && isDroogKruid(r.key)) || inVoorraad(r.key, voorraad)
+  const kopen = alle.filter((r) => !inHuisRegel(r))
+
+  const productVan = (r: LijstRegel) => bron.productVoor(r.voorbeeld)
+  const aantallen = verpakkingenPerRegel(kopen, productVan, (r) => bron.verpakkingVoor(r.voorbeeld))
+
   let totaal = 0
   let opPrijs = 0
   let geschat = 0
-  let inHuis = 0
-
-  for (const regel of regels) {
-    const key = ingredientKey(regel.naam ?? '')
-    if (!key || altijdInHuis(key) || /olie/.test(key)) continue
-    if ((kruidenThuis && isDroogKruid(key)) || inVoorraad(key, voorraad)) {
-      inHuis++
-      continue
-    }
-
-    const item = { ingredient_key: key, naam: regel.naam }
-    const prijs = bron.productVoor(item) ? bron.prijsVoor(item) : undefined
-    const verpakking = bron.verpakkingVoor(item)
-    const deel = prijs !== undefined && verpakking ? aandeel(regel, key, verpakking) : null
-    if (prijs !== undefined && deel !== null) {
-      totaal += prijs * deel
+  for (const regel of kopen) {
+    const prijs = productVan(regel) ? bron.prijsVoor(regel.voorbeeld) : undefined
+    if (prijs !== undefined) {
+      totaal += prijs * (aantallen.get(regel.key)?.aantal ?? 1)
       opPrijs++
       continue
     }
-
-    const schatting = schatIngredient({
-      naam: regel.naam,
-      hoeveelheid: regel.geschaald === null ? null : String(regel.geschaald),
-      eenheid: regel.eenheid,
-    })
-    if (schatting !== null) {
+    let schatting = 0
+    for (const item of regel.items) {
+      schatting += schatIngredient({
+        naam: item.naam,
+        hoeveelheid: item.hoeveelheid === null ? null : String(item.hoeveelheid),
+        eenheid: item.eenheid,
+      }) ?? 0
+    }
+    if (schatting > 0) {
       totaal += schatting
       geschat++
     }
@@ -116,7 +108,7 @@ export function receptPrijs(
   return {
     totaal: Math.round(totaal * 100) / 100,
     perPersoon: Math.round((totaal / p) * 100) / 100,
-    opPrijs, geschat, inHuis,
+    opPrijs, geschat, inHuis: alle.length - kopen.length,
   }
 }
 
