@@ -1,3 +1,4 @@
+import { receptTitel, receptBereiding, ingredientNaam, ingredientWeergave } from '../lib/receptTaal'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
@@ -104,7 +105,7 @@ export function Kookmodus() {
     }
   }, [loopt, resterend])
 
-  const titel = recept.data ? (recept.data.titel_nl ?? recept.data.titel) : ''
+  const titel = recept.data ? (receptTitel(recept.data)) : ''
 
   function startTimer(seconden: number, label: string, bijStap: number) {
     bereidGeluidVoor()
@@ -135,10 +136,11 @@ export function Kookmodus() {
       <Grens query={recept} ladenTekst={t('Recept ophalen')}>
         {recept.data && (() => {
           const r = recept.data
-          const stappen = r.bereiding_nl.length > 0 ? r.bereiding_nl : [t('Voor dit recept is nog geen bereiding vastgelegd.')]
+          const stappen = r.bereiding_nl.length > 0 ? receptBereiding(r) : [t('Voor dit recept is nog geen bereiding vastgelegd.')]
           const laatste = stap === stappen.length - 1
           const personen = standaardPersonen(r, voorkeuren.data?.aantal_personen ?? 4)
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
+            .map((ing, idx) => ({ ...ing, naam: ingredientNaam(r, idx), weergave: ingredientWeergave(r, idx, ing.weergave) }))
 
           // Ingrediënten die in deze stap genoemd worden, tonen we als chips —
           // dan hoef je niet terug te bladeren voor de hoeveelheid.
@@ -172,7 +174,7 @@ export function Kookmodus() {
                   flex: 1, fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                   letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--c-yellow)',
                 }}>
-                  {r.titel_nl ?? r.titel} · {t('stap {n} van {totaal}', { n: stap + 1, totaal: stappen.length })}
+                  {receptTitel(r)} · {t('stap {n} van {totaal}', { n: stap + 1, totaal: stappen.length })}
                 </span>
               </div>
 

@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Chip, Icon } from '../ds'
@@ -506,7 +507,7 @@ export function MijnRecepten() {
         open={Boolean(wegVraag)}
         kop={t('Weghalen?')}
         tekst={wegVraag
-          ? t('{titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.', { titel: wegVraag.titel_nl ?? wegVraag.titel })
+          ? t('{titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.', { titel: receptTitel(wegVraag) })
           : undefined}
         onSluit={() => setWegVraag(null)}
         acties={[
@@ -619,7 +620,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
             margin: 0, textTransform: 'uppercase', minHeight: '2em',
             // Twee regels, dan afkappen: alle kaarten even hoog, vier in beeld.
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-          }}>{recept.titel_nl ?? recept.titel}</h3>
+          }}>{receptTitel(recept)}</h3>
           <div style={{ display: 'flex', gap: 12, marginTop: 6, opacity: 0.85 }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
               <Icon name="clock" size={13} />{t('{n} min', { n: recept.bereidingstijd_minuten ?? '?' })}

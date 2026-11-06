@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Chip, Icon } from '../ds'
@@ -545,7 +546,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
       }}>
         <button
           onClick={onOpen}
-          aria-label={recept.titel_nl ?? recept.titel}
+          aria-label={receptTitel(recept)}
           style={{
             display: 'block', width: '100%', aspectRatio: '1 / 1', border: 'none', padding: 0,
             borderRadius: 'var(--radius-md)', cursor: 'pointer', overflow: 'hidden',
@@ -592,7 +593,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
           fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, lineHeight: 1.25,
           color: 'var(--color-ink)', display: '-webkit-box', WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical', overflow: 'hidden',
-        }}>{recept.titel_nl ?? recept.titel}</span>
+        }}>{receptTitel(recept)}</span>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
           {meta}
           {prijsTekst && <>{meta ? ' · ' : ''}{prijsTekst}</>}

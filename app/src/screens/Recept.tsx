@@ -1,3 +1,4 @@
+import { receptTitel, receptBereiding, ingredientNaam, ingredientWeergave } from '../lib/receptTaal'
 import { useState } from 'react'
 import { useHartje } from '../components/Hartje'
 import { useFases } from '../lib/fases'
@@ -59,11 +60,11 @@ export function Recept() {
         .catch((e) => setDeelStap({ fout: t('De link werkt nog niet: {fout}', { fout: foutTekst(e) }) }))
     }
     if (via === 'whatsapp') {
-      void openBijWinkel(whatsappLink(r.titel_nl ?? r.titel, url))
+      void openBijWinkel(whatsappLink(receptTitel(r), url))
       setDeelStap((stap) => (stap === 'vraag' ? null : stap))
       return
     }
-    void deel(r.titel_nl ?? r.titel, url).then((uitkomst) => {
+    void deel(receptTitel(r), url).then((uitkomst) => {
       if (uitkomst === 'gekopieerd') setDeelStap('gekopieerd')
       else if (uitkomst === 'mislukt') setDeelStap({ fout: t('Delen lukte niet. De link is {url}', { url }) })
       else setDeelStap((stap) => (stap === 'vraag' ? null : stap))
@@ -191,7 +192,7 @@ export function Recept() {
                       {r.keuken ?? t('Recept')}{dieet.map((d) => ` · ${t(d)}`).join('')}{isBudget(r) ? ` · ${t('budget')}` : ''}{toko.length > 0 ? ` · ${t('toko nodig')}` : ''}
                     </Label>
                     <div style={{ marginTop: 8, textShadow: '0 2px 12px rgba(0,0,0,0.35)' }}>
-                      <Titel grootte={30}>{r.titel_nl ?? r.titel}</Titel>
+                      <Titel grootte={30}>{receptTitel(r)}</Titel>
                     </div>
                     <div style={{
                       display: 'flex', gap: 16, marginTop: 12,
@@ -292,9 +293,9 @@ export function Recept() {
                     <span style={{
                       flex: 'none', width: 88, fontFamily: 'var(--font-body)', fontSize: 14,
                       fontWeight: 700, color: 'var(--c-red-bright)',
-                    }}>{ing.weergave}</span>
+                    }}>{ingredientWeergave(r, i, ing.weergave)}</span>
                     <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-body)', fontSize: 15 }}>
-                      {ing.naam}
+                      {ingredientNaam(r, i)}
                       {actie && (
                         <span style={{
                           display: 'block', marginTop: 3, fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
@@ -329,7 +330,7 @@ export function Recept() {
                 }}>{t('Zo maak je het')}</div>
                 )}
 
-                {!teKoken && r.bereiding_nl.map((stap, i) => (
+                {!teKoken && receptBereiding(r).map((stap, i) => (
                   <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0' }}>
                     <span style={{
                       flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',

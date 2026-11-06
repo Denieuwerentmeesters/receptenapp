@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { Icon } from '../ds'
 import type { Recept } from '../lib/database.types'
 import { tokoIngredienten } from '../lib/toko'
@@ -51,7 +52,7 @@ export function ReceptRegel({ recept, index = 0, favoriet, onOpen, onFavoriet, a
         <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--color-ink)',
-          }}>{recept.titel_nl ?? recept.titel}</span>
+          }}>{receptTitel(recept)}</span>
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)',
           }}>{meta}</span>

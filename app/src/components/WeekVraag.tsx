@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useEffect, useRef, useState } from 'react'
 import { Dialoog } from './Dialoog'
 import { Icon } from '../ds'
@@ -110,7 +111,7 @@ export function WeekVraag() {
                 background: aan ? 'var(--c-red)' : 'transparent', color: 'var(--c-paper)',
                 border: aan ? 'none' : '1.5px solid rgba(43,20,32,0.3)',
               }}>{aan && <Icon name="check" size={14} />}</span>
-              <span style={{ flex: 1, minWidth: 0 }}>{r.titel_nl ?? r.titel}</span>
+              <span style={{ flex: 1, minWidth: 0 }}>{receptTitel(r)}</span>
             </button>
           )
         })}

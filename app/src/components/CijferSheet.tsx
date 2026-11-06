@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useState } from 'react'
 import { Button } from '../ds'
 import { cijferBetekenis } from '../lib/beoordeling'
@@ -28,7 +29,7 @@ function dagLabel(nu = new Date()): string {
  * als er een recept is (`key` per recept).
  */
 export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, beginNotitie = '', onKlaar, onOverslaan, onSluit, bezig = false }: {
-  recept: { titel: string; titel_nl: string | null; afbeelding_url: string | null }
+  recept: { titel: string; titel_nl: string | null; titel_en?: string | null; afbeelding_url: string | null }
   personen: number
   /** Voor een cijfer achteraf: de dag waarop je kookte. Standaard vandaag. */
   gekooktOp?: Date
@@ -41,7 +42,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
 }) {
   const [cijfer, setCijfer] = useState<number | null>(beginCijfer)
   const [notitie, setNotitie] = useState(beginNotitie)
-  const titel = recept.titel_nl ?? recept.titel
+  const titel = receptTitel(recept)
 
   return (
     <div

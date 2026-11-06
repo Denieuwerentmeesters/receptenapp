@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { Button } from '../ds'
 import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
@@ -51,7 +52,7 @@ export function Beoordelen() {
                 <div>
                   <h3 style={{
                     fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700, margin: 0,
-                  }}>{r.titel_nl ?? r.titel}</h3>
+                  }}>{receptTitel(r)}</h3>
                   <p style={{
                     fontFamily: 'var(--font-body)', fontSize: 13, margin: '4px 0 0',
                     color: 'rgba(43,20,32,0.6)',

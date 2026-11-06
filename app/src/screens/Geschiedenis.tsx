@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useNavigate } from 'react-router-dom'
 import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
@@ -64,7 +65,7 @@ export function Geschiedenis() {
                     >
                       <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>
-                          {recept.titel_nl ?? recept.titel}
+                          {receptTitel(recept)}
                         </span>
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)' }}>
                           {t('{n} min', { n: recept.bereidingstijd_minuten ?? '?' })}
