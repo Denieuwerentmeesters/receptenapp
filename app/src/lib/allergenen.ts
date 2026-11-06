@@ -3,6 +3,7 @@ import { db } from './db'
 import { ingredientKey } from './schaal'
 import { useVoorkeuren } from './queries'
 import type { AllergeenRegel, BoodschapItem } from './database.types'
+import { t as vertaal } from './taal'
 
 /**
  * Allergieën (migratie 20260930233000_allergieen.sql). Je stelt ze één keer in
@@ -21,15 +22,16 @@ import type { AllergeenRegel, BoodschapItem } from './database.types'
  */
 
 export const ALLERGENEN = [
-  { id: 'gluten', label: 'Gluten' },
-  { id: 'koemelk', label: 'Koemelk' },
-  { id: 'ei', label: 'Ei' },
-  { id: 'noten', label: 'Noten' },
-  { id: 'pinda', label: "Pinda's" },
-  { id: 'vis', label: 'Vis' },
-  { id: 'schaaldieren', label: 'Schaaldieren' },
-  { id: 'soja', label: 'Soja' },
-  { id: 'sesam', label: 'Sesam' },
+  // Getters: de naam wordt pas bij het tonen vertaald, want de taal kan wisselen.
+  { id: 'gluten', get label() { return vertaal('Gluten') } },
+  { id: 'koemelk', get label() { return vertaal('Koemelk') } },
+  { id: 'ei', get label() { return vertaal('Ei') } },
+  { id: 'noten', get label() { return vertaal('Noten') } },
+  { id: 'pinda', get label() { return vertaal("Pinda's") } },
+  { id: 'vis', get label() { return vertaal('Vis') } },
+  { id: 'schaaldieren', get label() { return vertaal('Schaaldieren') } },
+  { id: 'soja', get label() { return vertaal('Soja') } },
+  { id: 'sesam', get label() { return vertaal('Sesam') } },
 ] as const
 
 /**
@@ -52,7 +54,7 @@ export function opsomming(ids: readonly string[]): string {
   const namen = ids.map(allergeenNaam)
   return namen.length <= 1
     ? namen.join('')
-    : `${namen.slice(0, -1).join(', ')} en ${namen[namen.length - 1]}`
+    : vertaal('{rest} en {laatste}', { rest: namen.slice(0, -1).join(', '), laatste: namen[namen.length - 1] })
 }
 
 /** Welke van jouw allergieën dit recept vast bevat (zonder vervanger). */

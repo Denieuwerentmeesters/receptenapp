@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'vitest'
 import { formatteerDuur, tijdenUitStap } from './kookmodus'
+import { zetTaal } from './taal'
+
+// De knoppen zijn vertaald; de verwachtingen hieronder zijn Nederlands.
+zetTaal('nl')
 
 /** Echte stappen uit data/recepten.json, met de knoppen die we verwachten. */
 const STAPPEN: Array<[string, string[]]> = [

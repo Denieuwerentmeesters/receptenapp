@@ -6,6 +6,7 @@ import { MAALTIJDBOX, euro, totaalBespaard } from '../lib/besparing'
 import { useVoorkeuren } from '../lib/queries'
 import { logUit } from '../lib/auth'
 import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
+import { t } from '../lib/taal'
 
 export function Profiel() {
   const navigeer = useNavigate()
@@ -29,33 +30,33 @@ export function Profiel() {
   // onderbalk. Het hartje zet een recept bij Nog bestellen; de oude Favorieten
   // staan niet meer in het menu (de route /favorieten bestaat nog).
   const rijen = [
-    { label: 'Instellingen', sub: `Voor ${voorkeuren.data?.aantal_personen ?? 4} personen`, pad: '/instellingen' },
+    { label: t('Instellingen'), sub: t('Voor {n} personen', { n: voorkeuren.data?.aantal_personen ?? 4 }), pad: '/instellingen' },
     {
-      label: 'Bespaard!',
+      label: t('Bespaard!'),
       sub: bespaard.length > 0
-        ? `${euro(totaalBespaard(bespaard))} minder dan bij ${MAALTIJDBOX.naam}`
-        : `Wat je bespaart ten opzichte van ${MAALTIJDBOX.naam}`,
+        ? t('{bedrag} minder dan bij {naam}', { bedrag: euro(totaalBespaard(bespaard)), naam: t(MAALTIJDBOX.naam) })
+        : t('Wat je bespaart ten opzichte van {naam}', { naam: t(MAALTIJDBOX.naam) }),
       pad: '/bespaard',
     },
-    { label: 'Voorraadkast', sub: `${voorraad.data?.filter((v) => v.in_huis).length ?? 0} producten in huis`, pad: '/voorraadkast' },
-    { label: 'Geschiedenis', sub: `${weken.length} ${weken.length === 1 ? 'week' : 'weken'}`, pad: '/geschiedenis' },
-    { label: 'Recept toevoegen', sub: 'Uit een kookboek of je eigen recept', pad: '/toevoegen' },
+    { label: t('Voorraadkast'), sub: t('{n} producten in huis', { n: voorraad.data?.filter((v) => v.in_huis).length ?? 0 }), pad: '/voorraadkast' },
+    { label: t('Geschiedenis'), sub: weken.length === 1 ? t('{n} week', { n: weken.length }) : t('{n} weken', { n: weken.length }), pad: '/geschiedenis' },
+    { label: t('Recept toevoegen'), sub: t('Uit een kookboek of je eigen recept'), pad: '/toevoegen' },
     // Alleen zichtbaar als je admin bent (plan §7.7).
     ...(isAdmin.data
       ? [{
-          label: 'Te beoordelen',
-          sub: `${aanmeldingen.data?.length ?? 0} in de wachtrij`,
+          label: t('Te beoordelen'),
+          sub: t('{n} in de wachtrij', { n: aanmeldingen.data?.length ?? 0 }),
           pad: '/beoordelen',
         }]
       : []),
     {
       label: 'Kookmaatje Plus',
       sub: plusStand.data?.plus
-        ? 'Actief: AI-recepten zonder limiet'
-        : `${plusStand.data?.gebruikt ?? 0} van ${GRATIS_RECEPTEN} gratis AI-recepten gebruikt`,
+        ? t('Actief: AI-recepten zonder limiet')
+        : t('{n} van {max} gratis AI-recepten gebruikt', { n: plusStand.data?.gebruikt ?? 0, max: GRATIS_RECEPTEN }),
       pad: '/plus',
     },
-    { label: 'Account', sub: 'Privacy, hulp en account verwijderen', pad: '/account' },
+    { label: t('Account'), sub: t('Privacy, hulp en account verwijderen'), pad: '/account' },
   ]
 
   return (
@@ -70,22 +71,22 @@ export function Profiel() {
           <Icon name="chefHat" size={28} />
         </span>
         <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-          <Titel grootte={22}>Mijn keuken</Titel>
+          <Titel grootte={22}>{t('Mijn keuken')}</Titel>
         </span>
       </Kop>
 
       <Inhoud style={{ gap: 18 }}>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Stat getal={String(gekookt.length)} label="gerechten gekookt" />
-          <Stat getal={`${vegaPct}%`} label="vegetarisch" />
-          <Stat getal={String(weken.length)} label={weken.length === 1 ? 'week actief' : 'weken actief'} />
+          <Stat getal={String(gekookt.length)} label={t('gerechten gekookt')} />
+          <Stat getal={`${vegaPct}%`} label={t('vegetarisch')} />
+          <Stat getal={String(weken.length)} label={weken.length === 1 ? t('week actief') : t('weken actief')} />
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
             textTransform: 'uppercase', color: 'var(--c-red)', paddingBottom: 6,
-          }}>Jouw app</span>
+          }}>{t('Jouw app')}</span>
 
           {rijen.map((rij) => (
             <button
@@ -113,7 +114,7 @@ export function Profiel() {
             padding: '2px 2px 20px', cursor: 'pointer',
             fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'rgba(43,20,32,0.6)',
           }}
-        >Uitloggen</button>
+        >{t('Uitloggen')}</button>
       </Inhoud>
 
       <OnderBalk />

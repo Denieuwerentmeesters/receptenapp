@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { useVoorkeuren } from './queries'
 import { eersteBezorgdag, isoDatum } from './bonusRegels'
+import { t, locale } from './taal'
 
 /**
  * Op welke dag je boodschappen er zijn: de peildatum voor alles rond bonus
@@ -59,14 +60,14 @@ export function bezorgdagen(vandaag: Date = new Date(), aantal = 7): string[] {
   return uit
 }
 
-const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
+const dagNaam = (i: number) => t(['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'][i])
 
 /** "vandaag", "morgen" of "maandag 5 oktober". */
 export function dagLabel(iso: string, vandaag: Date = new Date()): string {
   const d = new Date(`${iso}T12:00:00`)
-  if (iso === isoDatum(vandaag)) return 'vandaag'
+  if (iso === isoDatum(vandaag)) return t('vandaag')
   const morgen = new Date(vandaag)
   morgen.setDate(morgen.getDate() + 1)
-  if (iso === isoDatum(morgen)) return 'morgen'
-  return `${DAGEN[d.getDay()]} ${d.getDate()} ${d.toLocaleDateString('nl-NL', { month: 'long' })}`
+  if (iso === isoDatum(morgen)) return t('morgen')
+  return `${dagNaam(d.getDay())} ${d.getDate()} ${d.toLocaleDateString(locale(), { month: 'long' })}`
 }

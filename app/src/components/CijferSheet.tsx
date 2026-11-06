@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button } from '../ds'
 import { cijferBetekenis } from '../lib/beoordeling'
+import { t, locale } from '../lib/taal'
 
 export interface CijferAntwoord {
   cijfer: number | null
@@ -9,7 +10,7 @@ export interface CijferAntwoord {
 
 /** "di 27 okt": de dag waarop je kookte. */
 function dagLabel(nu = new Date()): string {
-  return nu.toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '')
+  return nu.toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '')
 }
 
 /**
@@ -55,7 +56,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Viel het in de smaak?"
+        aria-label={t('Viel het in de smaak?')}
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%', maxWidth: 520, background: 'var(--c-cream)', boxSizing: 'border-box',
@@ -67,11 +68,11 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
             textTransform: 'uppercase', color: 'var(--c-red)',
-          }}>Gekookt</span>
+          }}>{t('Gekookt')}</span>
           <h2 style={{
             fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 22, lineHeight: 1,
             margin: '6px 0 0', textTransform: 'uppercase', color: 'var(--color-ink)',
-          }}>Viel het in de smaak?</h2>
+          }}>{t('Viel het in de smaak?')}</h2>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -85,13 +86,15 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
               textTransform: 'uppercase', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>{titel}</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)', marginTop: 2 }}>
-              Gekookt op {dagLabel(gekooktOp)} · {personen} {personen === 1 ? 'persoon' : 'personen'}
+              {personen === 1
+                ? t('Gekookt op {dag} · 1 persoon', { dag: dagLabel(gekooktOp) })
+                : t('Gekookt op {dag} · {n} personen', { dag: dagLabel(gekooktOp), n: personen })}
             </div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div role="group" aria-label="Cijfer van 1 tot 10" style={{
+          <div role="group" aria-label={t('Cijfer van 1 tot 10')} style={{
             display: 'grid', gridTemplateColumns: 'repeat(5, 44px)', gap: 8, flex: 'none',
           }}>
             {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
@@ -120,19 +123,19 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
               color: 'var(--c-red)', minHeight: 44,
             }}>{cijfer ?? ''}</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.3, color: 'rgba(43,20,32,0.6)', marginTop: 4 }}>
-              {cijfer ? cijferBetekenis(cijfer) : 'Tik een cijfer, of laat het leeg'}
+              {cijfer ? cijferBetekenis(cijfer) : t('Tik een cijfer, of laat het leeg')}
             </div>
           </div>
         </div>
 
         <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>Notitie voor de volgende keer</span>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>{t('Notitie voor de volgende keer')}</span>
           <textarea
             value={notitie}
             onChange={(e) => setNotitie(e.target.value)}
             maxLength={1000}
             rows={2}
-            placeholder="Bijvoorbeeld: minder chili, dubbele bonen"
+            placeholder={t('Bijvoorbeeld: minder chili, dubbele bonen')}
             style={{
               // 16px: kleiner zoomt iOS Safari in bij focus.
               fontFamily: 'var(--font-body)', fontSize: 16, padding: '10px 12px', resize: 'none',
@@ -147,7 +150,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
           disabled={bezig}
           onClick={() => onKlaar({ cijfer, notitie })}
           style={{ width: '100%', padding: '15px 24px' }}
-        >Klaar</Button>
+        >{t('Klaar')}</Button>
         <button
           onClick={onOverslaan}
           disabled={bezig}
@@ -155,7 +158,7 @@ export function CijferSheet({ recept, personen, gekooktOp, beginCijfer = null, b
             alignSelf: 'center', background: 'none', border: 'none', padding: '4px 16px', cursor: 'pointer',
             fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'rgba(43,20,32,0.6)',
           }}
-        >Sla over</button>
+        >{t('Sla over')}</button>
       </div>
     </div>
   )

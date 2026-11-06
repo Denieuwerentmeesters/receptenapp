@@ -3,6 +3,7 @@ import { Chip } from '../../ds'
 import { ALLERGENEN } from '../../lib/allergenen'
 import { ingredientKey } from '../../lib/schaal'
 import { VOORRAAD_SUGGESTIES, voorraadNaam } from '../../lib/voorraad'
+import { t } from '../../lib/taal'
 
 /**
  * De invoer voor keukens en allergieën, gedeeld door Instellingen en de
@@ -61,7 +62,7 @@ export function AllergieKeuze({ gekozen, metGeen = false, groot, onWijzig }: {
   return (
     <div style={rijStijl}>
       {metGeen && (
-        <Chip selected={gekozen.length === 0} groot={groot} onClick={() => onWijzig([])}>Geen</Chip>
+        <Chip selected={gekozen.length === 0} groot={groot} onClick={() => onWijzig([])}>{t('Geen')}</Chip>
       )}
       {ALLERGENEN.map((a) => {
         const aan = gekozen.includes(a.id)
@@ -136,8 +137,8 @@ export function VoorraadKeuze({ gekozen, bekend, onZet }: {
         <input
           value={tekst}
           onChange={(e) => setTekst(e.target.value)}
-          placeholder="Of typ zelf iets, zoals miso"
-          aria-label="Zelf een product toevoegen"
+          placeholder={t('Of typ zelf iets, zoals miso')}
+          aria-label={t('Zelf een product toevoegen')}
           enterKeyHint="done"
           autoCapitalize="sentences"
           style={{
@@ -155,11 +156,11 @@ export function VoorraadKeuze({ gekozen, bekend, onZet }: {
             background: 'var(--c-red)', color: 'var(--c-cream)', cursor: tekst.trim() ? 'pointer' : 'not-allowed',
             opacity: tekst.trim() ? 1 : 0.45, fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700,
           }}
-        >Voeg toe</button>
+        >{t('Voeg toe')}</button>
       </form>
 
       {treffers.length > 0 && (
-        <div style={rijStijl} aria-label="Bedoel je">
+        <div style={rijStijl} aria-label={t('Bedoel je')}>
           {treffers.map((n) => <Chip key={n} groot onClick={() => voegToe(n)}>+ {n}</Chip>)}
         </div>
       )}

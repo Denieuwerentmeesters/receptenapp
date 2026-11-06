@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { db } from './db'
 import { huidigeUserId } from './auth'
+import { t, locale } from './taal'
 
 /**
  * Cijfer en notitie na het koken. Eén rij per keer koken (tabel `beoordeling`);
@@ -33,14 +34,14 @@ export const isLaagCijfer = (cijfer: number | null | undefined) => cijfer != nul
 
 /** Eén regel bij het gekozen cijfer: wat het betekent. */
 export function cijferBetekenis(cijfer: number): string {
-  if (cijfer >= 9) return 'Geweldig, dit komt vaak terug'
-  if (cijfer === 8) return 'Heel lekker, dit komt terug'
-  if (cijfer >= 6) return 'Prima, niets bijzonders'
-  return 'Niet lekker, dit zie je niet meer'
+  if (cijfer >= 9) return t('Geweldig, dit komt vaak terug')
+  if (cijfer === 8) return t('Heel lekker, dit komt terug')
+  if (cijfer >= 6) return t('Prima, niets bijzonders')
+  return t('Niet lekker, dit zie je niet meer')
 }
 
 /** "8,4" — met komma, zoals in de rest van de app. */
-export const cijferTekst = (cijfer: number) => String(Math.round(cijfer * 10) / 10).replace('.', ',')
+export const cijferTekst = (cijfer: number) => (Math.round(cijfer * 10) / 10).toLocaleString(locale(), { maximumFractionDigits: 1 })
 
 /**
  * Het laatste beoordeelde moment per recept: voor het cijfer telt de laatste rij

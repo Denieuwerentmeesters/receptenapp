@@ -4,6 +4,7 @@ import { Inhoud, Kop, Label, OnderBalk, Scherm, TerugKnop, Titel } from '../comp
 import { huidigeSessie, logUit, verwijderAccount } from '../lib/auth'
 import { PRIVACY_URL, SUPPORT_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
+import { t } from '../lib/taal'
 
 /**
  * Je account: waarmee je bent ingelogd, privacybeleid en voorwaarden, en verwijderen.
@@ -36,43 +37,40 @@ export function Account() {
       <Kop style={{ paddingBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <TerugKnop />
-          <Label>Jouw gegevens</Label>
+          <Label>{t('Jouw gegevens')}</Label>
         </div>
-        <div style={{ marginTop: 14 }}><Titel>Account</Titel></div>
+        <div style={{ marginTop: 14 }}><Titel>{t('Account')}</Titel></div>
         {email && (
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
-            Ingelogd als {email}
+            {t('Ingelogd als {email}', { email })}
           </p>
         )}
       </Kop>
 
       <Inhoud style={{ gap: 24 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Sectiekop>Privacy en hulp</Sectiekop>
+          <Sectiekop>{t('Privacy en hulp')}</Sectiekop>
           <Tekst>
-            We bewaren je e-mailadres, je voorkeuren en wat je in de app doet: weekmenu's, je lijst,
-            je voorraadkast en je eigen recepten. Geen advertenties, geen volgsoftware.
+            {t("We bewaren je e-mailadres, je voorkeuren en wat je in de app doet: weekmenu's, je lijst, je voorraadkast en je eigen recepten. Geen advertenties, geen volgsoftware.")}
           </Tekst>
-          <Link href={PRIVACY_URL}>Privacybeleid</Link>
-          <Link href={VOORWAARDEN_URL}>Algemene voorwaarden</Link>
-          <Link href={SUPPORT_URL}>Hulp en contact</Link>
+          <Link href={PRIVACY_URL}>{t('Privacybeleid')}</Link>
+          <Link href={VOORWAARDEN_URL}>{t('Algemene voorwaarden')}</Link>
+          <Link href={SUPPORT_URL}>{t('Hulp en contact')}</Link>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Sectiekop>Uitloggen</Sectiekop>
+          <Sectiekop>{t('Uitloggen')}</Sectiekop>
           <Button
             variant="secondary"
             onClick={() => { void logUit().then(() => window.location.reload()) }}
             style={{ alignSelf: 'flex-start' }}
-          >Uitloggen</Button>
+          >{t('Uitloggen')}</Button>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 12 }}>
-          <Sectiekop>Account verwijderen</Sectiekop>
+          <Sectiekop>{t('Account verwijderen')}</Sectiekop>
           <Tekst>
-            Je account en al je gegevens worden direct en definitief gewist: voorkeuren, weekmenu's,
-            lijst, voorraadkast, favorieten, bestellingen en je eigen recepten. Recepten die je
-            deelde en die zijn goedgekeurd, blijven voor anderen staan, zonder jouw naam eraan.
+            {t("Je account en al je gegevens worden direct en definitief gewist: voorkeuren, weekmenu's, lijst, voorraadkast, favorieten, bestellingen en je eigen recepten. Recepten die je deelde en die zijn goedgekeurd, blijven voor anderen staan, zonder jouw naam eraan.")}
           </Tekst>
 
           {fout && (
@@ -84,17 +82,17 @@ export function Account() {
 
           {bevestigen ? (
             <>
-              <Tekst><b>Weet je het zeker?</b> Dit kun je niet terugdraaien.</Tekst>
+              <Tekst><b>{t('Weet je het zeker?')}</b> {t('Dit kun je niet terugdraaien.')}</Tekst>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <Button disabled={bezig} onClick={() => void verwijder()}>
-                  {bezig ? 'Bezig met verwijderen' : 'Ja, verwijder alles'}
+                  {bezig ? t('Bezig met verwijderen') : t('Ja, verwijder alles')}
                 </Button>
-                <Button variant="secondary" disabled={bezig} onClick={() => setBevestigen(false)}>Annuleren</Button>
+                <Button variant="secondary" disabled={bezig} onClick={() => setBevestigen(false)}>{t('Annuleren')}</Button>
               </div>
             </>
           ) : (
             <Button variant="secondary" onClick={() => setBevestigen(true)} style={{ alignSelf: 'flex-start' }}>
-              Account verwijderen
+              {t('Account verwijderen')}
             </Button>
           )}
         </div>

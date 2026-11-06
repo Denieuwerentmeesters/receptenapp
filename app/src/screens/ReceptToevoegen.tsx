@@ -13,6 +13,7 @@ import { openBijWinkel } from '../lib/ah'
 import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
 import { LaadScherm } from '../components/Laadanimatie'
 import type { BronType } from '../lib/database.types'
+import { t } from '../lib/taal'
 
 type Stap = 'kiezen' | 'invoer' | 'bezig' | 'concept'
 
@@ -124,12 +125,12 @@ export function ReceptToevoegen() {
   }
 
   const linkGeldig = normaliseerUrl(link) !== null
-  const titel = stap === 'kiezen' ? 'Waar komt het vandaan?'
-    : stap === 'concept' ? 'Klopt dit?'
-    : stap === 'bezig' ? 'Even geduld'
-    : route === 'link' ? 'Van een link'
-    : route === 'screenshots' ? 'Van screenshots'
-    : kookboek ? 'Uit je kookboek' : 'Je eigen recept'
+  const titel = stap === 'kiezen' ? t('Waar komt het vandaan?')
+    : stap === 'concept' ? t('Klopt dit?')
+    : stap === 'bezig' ? t('Even geduld')
+    : route === 'link' ? t('Van een link')
+    : route === 'screenshots' ? t('Van screenshots')
+    : kookboek ? t('Uit je kookboek') : t('Je eigen recept')
 
   return (
     <Scherm>
@@ -142,14 +143,14 @@ export function ReceptToevoegen() {
               if (((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0) navigeer(-1)
               else navigeer('/ontdekken')
             }}
-            aria-label="Terug"
+            aria-label={t('Terug')}
             style={{
               border: 'none', background: 'rgba(243,205,214,0.25)', color: 'var(--c-pink-soft)',
               width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           ><Icon name="chevronLeft" size={18} /></button>
-          <Label>Recept toevoegen</Label>
+          <Label>{t('Recept toevoegen')}</Label>
         </div>
         <div style={{ marginTop: 14 }}>
           <Titel grootte={26}>{titel}</Titel>
@@ -170,9 +171,9 @@ export function ReceptToevoegen() {
           lineHeight: 1.4, color: 'var(--c-ink-600, inherit)',
         }}>
           {plusStand.over > 0
-            ? `${plusStand.gebruikt} van ${GRATIS_RECEPTEN} gratis recepten gebruikt. Daarna kost AI-recepten maken € 3 per maand met Kookmaatje Plus.`
-            : `Je ${GRATIS_RECEPTEN} gratis recepten zijn op. Meer laten maken kan met Kookmaatje Plus (€ 3 per maand).`}
-          {' '}<a href="#/plus" style={{ color: 'inherit', fontWeight: 700 }}>Bekijk Plus</a>
+            ? t('{gebruikt} van {max} gratis recepten gebruikt. Daarna kost AI-recepten maken € 3 per maand met Kookmaatje Plus.', { gebruikt: plusStand.gebruikt, max: GRATIS_RECEPTEN })
+            : t('Je {max} gratis recepten zijn op. Meer laten maken kan met Kookmaatje Plus (€ 3 per maand).', { max: GRATIS_RECEPTEN })}
+          {' '}<a href="#/plus" style={{ color: 'inherit', fontWeight: 700 }}>{t('Bekijk Plus')}</a>
         </div>
       )}
 
@@ -180,32 +181,32 @@ export function ReceptToevoegen() {
         <Inhoud style={{ gap: 12 }}>
           <Keuze
             icoon="share"
-            kop="Plak een link"
-            tekst="Van Instagram of een receptensite. We halen het recept op en zetten het om naar jouw lijst."
+            kop={t('Plak een link')}
+            tekst={t('Van Instagram of een receptensite. We halen het recept op en zetten het om naar jouw lijst.')}
             onClick={() => { setRoute('link'); setStap('invoer') }}
           />
           <Keuze
             icoon="grid"
-            kop="Kies screenshots"
-            tekst={`Tot ${MAX_SCREENSHOTS} screenshots van één recept, bijvoorbeeld uit een app of een story.`}
+            kop={t('Kies screenshots')}
+            tekst={t('Tot {max} screenshots van één recept, bijvoorbeeld uit een app of een story.', { max: MAX_SCREENSHOTS })}
             onClick={() => { setRoute('screenshots'); setStap('invoer') }}
           />
           <Keuze
             icoon="chefHat"
-            kop="Foto van een kookboek"
-            tekst="We lezen 'm uit; de foto zelf bewaren we niet. Het recept blijft van jou alleen."
+            kop={t('Foto van een kookboek')}
+            tekst={t("We lezen 'm uit; de foto zelf bewaren we niet. Het recept blijft van jou alleen.")}
             onClick={() => { setRoute('prive_kookboek'); setStap('invoer') }}
           />
           <Keuze
             icoon="pencil"
-            kop="Typ zelf"
-            tekst="In eigen woorden hoe je het maakt. Geen vaste vorm nodig."
+            kop={t('Typ zelf')}
+            tekst={t('In eigen woorden hoe je het maakt. Geen vaste vorm nodig.')}
             onClick={() => { setRoute('eigen'); setStap('invoer') }}
           />
           <Keuze
             icoon="utensils"
-            kop="Laat Kookmaatje een menu samenstellen"
-            tekst="Kies een keuken en het aantal personen; Kookmaatje bedenkt de gerechten."
+            kop={t('Laat Kookmaatje een menu samenstellen')}
+            tekst={t('Kies een keuken en het aantal personen; Kookmaatje bedenkt de gerechten.')}
             onClick={() => navigeer('/samenstellen')}
           />
         </Inhoud>
@@ -215,15 +216,12 @@ export function ReceptToevoegen() {
         <Inhoud style={{ gap: 14 }}>
           {kookboek && (
             <Toelichting>
-              Dit recept komt uit een kookboek en blijft alleen voor jou zichtbaar. Delen
-              kan niet — het boek is niet van jou om te herpubliceren.
+              {t('Dit recept komt uit een kookboek en blijft alleen voor jou zichtbaar. Delen kan niet — het boek is niet van jou om te herpubliceren.')}
             </Toelichting>
           )}
           {route === 'link' && (
             <Toelichting>
-              Werkt met openbare posts en reels op Instagram en met receptensites. Het recept
-              komt in het Nederlands en met hoeveelheden in grammen; de maker en de link
-              staan erbij. Het blijft alleen voor jou zichtbaar.
+              {t('Werkt met openbare posts en reels op Instagram en met receptensites. Het recept komt in het Nederlands en met hoeveelheden in grammen; de maker en de link staan erbij. Het blijft alleen voor jou zichtbaar.')}
             </Toelichting>
           )}
 
@@ -242,9 +240,9 @@ export function ReceptToevoegen() {
                 />
                 {typeof navigator !== 'undefined' && navigator.clipboard?.readText && (
                   <button
-                    onClick={() => navigator.clipboard.readText().then((t) => { if (t.trim()) setLink(t.trim()) }, () => undefined)}
+                    onClick={() => navigator.clipboard.readText().then((klad) => { if (klad.trim()) setLink(klad.trim()) }, () => undefined)}
                     style={{ ...tekstKnop, alignSelf: 'center', flex: 'none', padding: '8px 10px' }}
-                  >Plak</button>
+                  >{t('Plak')}</button>
                 )}
               </div>
               <Button
@@ -253,7 +251,7 @@ export function ReceptToevoegen() {
                 disabled={!linkGeldig}
                 onClick={() => { const url = normaliseerUrl(link); if (url) void verwerk((opStap) => leesLink(url, opStap)) }}
                 style={{ width: '100%', padding: '17px 24px' }}
-              >{linkGeldig && isInstagramUrl(normaliseerUrl(link) ?? '') ? 'Haal het recept van Instagram' : 'Haal het recept op'}</Button>
+              >{linkGeldig && isInstagramUrl(normaliseerUrl(link) ?? '') ? t('Haal het recept van Instagram') : t('Haal het recept op')}</Button>
             </>
           )}
 
@@ -268,7 +266,7 @@ export function ReceptToevoegen() {
                 onChange={(e) => {
                   const bestanden = [...(e.target.files ?? [])]
                   if (bestanden.length > MAX_SCREENSHOTS) {
-                    setFout(`Kies hooguit ${MAX_SCREENSHOTS} screenshots van één recept.`)
+                    setFout(t('Kies hooguit {max} screenshots van één recept.', { max: MAX_SCREENSHOTS }))
                     return
                   }
                   if (bestanden.length > 0) void verwerk((opStap) => leesScreenshots(bestanden, opStap))
@@ -279,10 +277,9 @@ export function ReceptToevoegen() {
                 icon="grid"
                 onClick={() => bestandKiezer.current?.click()}
                 style={{ width: '100%', padding: '17px 24px' }}
-              >Kies screenshots</Button>
+              >{t('Kies screenshots')}</Button>
               <p style={uitlegStijl}>
-                Staat het recept op meerdere schermen, kies ze dan allemaal tegelijk, in volgorde.
-                De screenshots bewaren we niet.
+                {t('Staat het recept op meerdere schermen, kies ze dan allemaal tegelijk, in volgorde. De screenshots bewaren we niet.')}
               </p>
             </>
           )}
@@ -304,7 +301,7 @@ export function ReceptToevoegen() {
                 icon="chefHat"
                 onClick={() => bestandKiezer.current?.click()}
                 style={{ width: '100%', padding: '17px 24px' }}
-              >Foto maken of kiezen</Button>
+              >{t('Foto maken of kiezen')}</Button>
             </>
           )}
 
@@ -314,7 +311,7 @@ export function ReceptToevoegen() {
                 value={tekst}
                 onChange={(e) => setTekst(e.target.value)}
                 rows={9}
-                placeholder="Bijvoorbeeld: ui, knoflook en gehakt in de pan, tomatenblokjes erbij, 20 minuten laten sudderen. Voor 4 personen."
+                placeholder={t('Bijvoorbeeld: ui, knoflook en gehakt in de pan, tomatenblokjes erbij, 20 minuten laten sudderen. Voor 4 personen.')}
                 style={{
                   width: '100%', background: 'var(--c-paper)', borderRadius: 14,
                   border: '1.5px solid rgba(43,20,32,0.14)', padding: '14px 16px',
@@ -326,22 +323,22 @@ export function ReceptToevoegen() {
                 disabled={tekst.trim().length < 20}
                 onClick={() => void verwerk((opStap) => leesTekst(tekst, opStap))}
                 style={{ width: '100%', padding: '17px 24px' }}
-              >Laat uitlezen</Button>
+              >{t('Laat uitlezen')}</Button>
             </>
           )}
 
           <button
             onClick={() => { setConcept(LEEG); setScanId(null); setStap('concept') }}
             style={tekstKnop}
-          >Liever zelf invullen</button>
+          >{t('Liever zelf invullen')}</button>
         </Inhoud>
       )}
 
       {stap === 'bezig' && (
         <LaadScherm
           kleur="paars"
-          tekst={stapTekst || 'We lezen je recept uit'}
-          subtekst={route === 'link' ? 'Een video duurt het langst: tot een minuut.' : 'Duurt een paar seconden.'}
+          tekst={stapTekst || t('We lezen je recept uit')}
+          subtekst={route === 'link' ? t('Een video duurt het langst: tot een minuut.') : t('Duurt een paar seconden.')}
         />
       )}
 
@@ -349,8 +346,8 @@ export function ReceptToevoegen() {
         <>
           <Inhoud style={{ gap: 14 }}>
             <p style={{ ...uitlegStijl, margin: 0 }}>
-              Controleer en verbeter waar nodig. Pas na jouw akkoord slaan we het op.
-              {' '}Een foto maken we vannacht; morgen staat hij erbij.
+              {t('Controleer en verbeter waar nodig. Pas na jouw akkoord slaan we het op.')}
+              {' '}{t('Een foto maken we vannacht; morgen staat hij erbij.')}
             </p>
 
             {concept.bron?.url && (
@@ -359,44 +356,44 @@ export function ReceptToevoegen() {
                 background: 'var(--c-paper)', borderRadius: 'var(--radius-sm)', padding: '12px 14px',
                 fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4,
               }}>
-                <span>Recept van <strong>{concept.bron.maker ?? siteNaam(concept.bron.url)}</strong></span>
+                <span>{t('Recept van')} <strong>{concept.bron.maker ?? siteNaam(concept.bron.url)}</strong></span>
                 <a
                   href={concept.bron.url}
                   onClick={(e) => { e.preventDefault(); void openBijWinkel(concept.bron!.url!) }}
                   style={{ ...tekstKnop, padding: 0, whiteSpace: 'nowrap' }}
-                >{concept.bron.soort === 'instagram' ? 'Bekijk post' : 'Bekijk'}</a>
+                >{concept.bron.soort === 'instagram' ? t('Bekijk post') : t('Bekijk')}</a>
               </div>
             )}
 
-            <Veld label="Titel" waarde={concept.titel} onChange={(v) => setConcept({ ...concept, titel: v })} />
+            <Veld label={t('Titel')} waarde={concept.titel} onChange={(v) => setConcept({ ...concept, titel: v })} />
 
             <div style={{ display: 'flex', gap: 10 }}>
               <Veld
-                label="Personen" type="number" waarde={String(concept.personen)}
+                label={t('Personen')} type="number" waarde={String(concept.personen)}
                 onChange={(v) => setConcept({ ...concept, personen: Math.max(1, Number(v) || 1) })}
               />
               <Veld
-                label="Minuten" type="number" waarde={String(concept.bereidingstijd_minuten ?? '')}
+                label={t('Minuten')} type="number" waarde={String(concept.bereidingstijd_minuten ?? '')}
                 onChange={(v) => setConcept({ ...concept, bereidingstijd_minuten: Number(v) || undefined })}
               />
             </div>
 
             <Lijst
-              label="Ingrediënten"
+              label={t('Ingrediënten')}
               regels={concept.ingredienten.map((i) =>
                 [i.hoeveelheid, i.eenheid, i.naam].filter(Boolean).join(' '))}
               onChange={(regels) => setConcept({
                 ...concept,
                 ingredienten: regels.map(ontleedIngredient),
               })}
-              plaatshouder="250 g pasta"
+              plaatshouder={t('250 g pasta')}
             />
 
             <Lijst
-              label="Bereiding"
+              label={t('Bereiding')}
               regels={concept.bereiding_nl}
               onChange={(regels) => setConcept({ ...concept, bereiding_nl: regels })}
-              plaatshouder="Kook de pasta beetgaar."
+              plaatshouder={t('Kook de pasta beetgaar.')}
               groot
             />
 
@@ -410,17 +407,16 @@ export function ReceptToevoegen() {
                   style={{ marginTop: 3, width: 20, height: 20, accentColor: 'var(--c-purple)' }}
                 />
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5 }}>
-                  <strong>Aanmelden om te delen</strong><br />
+                  <strong>{t('Aanmelden om te delen')}</strong><br />
                   <span style={{ color: 'rgba(43,20,32,0.6)' }}>
-                    Het recept gaat eerst langs een beoordeling voordat anderen het zien.
+                    {t('Het recept gaat eerst langs een beoordeling voordat anderen het zien.')}
                   </span>
                 </span>
               </label>
             )}
             {!magDelen && !kookboek && concept.bron && (
               <p style={uitlegStijl}>
-                Dit recept is van de maker en blijft alleen voor jou zichtbaar. Je kunt het wel op
-                je lijst zetten en bewerken.
+                {t('Dit recept is van de maker en blijft alleen voor jou zichtbaar. Je kunt het wel op je lijst zetten en bewerken.')}
               </p>
             )}
           </Inhoud>
@@ -430,7 +426,7 @@ export function ReceptToevoegen() {
               disabled={!concept.titel.trim() || concept.ingredienten.length === 0 || opslaan.isPending}
               onClick={bewaar}
               style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-            >{opslaan.isPending ? 'Opslaan' : 'Recept opslaan'}</Button>
+            >{opslaan.isPending ? t('Opslaan') : t('Recept opslaan')}</Button>
           </Voet>
         </>
       )}
@@ -519,7 +515,7 @@ function Lijst({ label, regels, onChange, plaatshouder, groot }: {
           )}
           <button
             onClick={() => onChange(zichtbaar.filter((_, n) => n !== i))}
-            aria-label="Regel verwijderen"
+            aria-label={t('Regel verwijderen')}
             style={{
               flex: 'none', width: 32, height: 32, marginTop: 6, border: 'none',
               background: 'transparent', color: 'rgba(43,20,32,0.45)', cursor: 'pointer',
@@ -528,7 +524,7 @@ function Lijst({ label, regels, onChange, plaatshouder, groot }: {
           ><Icon name="x" size={14} /></button>
         </div>
       ))}
-      <button onClick={() => onChange([...zichtbaar, ''])} style={tekstKnop}>+ Regel toevoegen</button>
+      <button onClick={() => onChange([...zichtbaar, ''])} style={tekstKnop}>{t('+ Regel toevoegen')}</button>
     </div>
   )
 }

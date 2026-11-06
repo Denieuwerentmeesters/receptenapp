@@ -1,4 +1,5 @@
 import type { Recept } from './database.types'
+import { t } from './taal'
 
 /**
  * Dieetfilters. Vegetarisch is de tag op het recept; de andere vier leidt de
@@ -12,12 +13,13 @@ export type Dieet = 'vegetarisch' | 'vegan' | 'pescotarisch' | 'koolhydraatarm' 
  * Binnen een groep kies je er één: vegan is al vegetarisch, keto is al
  * koolhydraatarm. Tussen de groepen combineer je: vegetarisch én koolhydraatarm.
  */
+// `label` is een getter: de taal kan wisselen, dus de vertaling gebeurt bij het lezen.
 export const DIETEN: { id: Dieet; label: string; groep: 'dierlijk' | 'koolhydraten' }[] = [
-  { id: 'vegetarisch', label: 'Vegetarisch', groep: 'dierlijk' },
-  { id: 'vegan', label: 'Vegan', groep: 'dierlijk' },
-  { id: 'pescotarisch', label: 'Pescotarisch', groep: 'dierlijk' },
-  { id: 'koolhydraatarm', label: 'Koolhydraatarm', groep: 'koolhydraten' },
-  { id: 'keto', label: 'Keto', groep: 'koolhydraten' },
+  { id: 'vegetarisch', get label() { return t('Vegetarisch') }, groep: 'dierlijk' },
+  { id: 'vegan', get label() { return t('Vegan') }, groep: 'dierlijk' },
+  { id: 'pescotarisch', get label() { return t('Pescotarisch') }, groep: 'dierlijk' },
+  { id: 'koolhydraatarm', get label() { return t('Koolhydraatarm') }, groep: 'koolhydraten' },
+  { id: 'keto', get label() { return t('Keto') }, groep: 'koolhydraten' },
 ]
 
 export function pastBijDieet(recept: Pick<Recept, 'tags' | 'dieet'>, dieet: Dieet): boolean {

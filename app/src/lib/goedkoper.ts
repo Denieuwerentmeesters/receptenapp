@@ -1,6 +1,7 @@
 import type { BoodschapItem } from './database.types'
 import { aantalVerpakkingen, type LijstRegel } from './lijst'
 import type { Winkel } from './winkel'
+import { t } from './taal'
 
 /**
  * Goedkoper alternatief op de lijst, voor producten waar het verschil groot is
@@ -17,12 +18,12 @@ import type { Winkel } from './winkel'
 export interface Alternatief { key: string; naam: string; label: string; uitleg: string }
 
 const GRANA: Alternatief = {
-  key: 'grana padano', naam: 'grana padano', label: 'Grana Padano',
-  uitleg: 'Grana Padano is bijna dezelfde harde Italiaanse kaas en smaakt in een gerecht vrijwel hetzelfde.',
+  key: 'grana padano', naam: 'grana padano', get label() { return t('Grana Padano') },
+  get uitleg() { return t('Grana Padano is bijna dezelfde harde Italiaanse kaas en smaakt in een gerecht vrijwel hetzelfde.') },
 }
 const PARMEZAAN_ZAKJE: Alternatief = {
-  key: 'parmezaan zakje', naam: 'biologische parmigiano reggiano (zakje)', label: 'Parmigiano in zakje',
-  uitleg: 'Het zakje is echte parmigiano reggiano in een kleine verpakking; handig als het recept maar een beetje vraagt.',
+  key: 'parmezaan zakje', naam: 'biologische parmigiano reggiano (zakje)', get label() { return t('Parmigiano in zakje') },
+  get uitleg() { return t('Het zakje is echte parmigiano reggiano in een kleine verpakking; handig als het recept maar een beetje vraagt.') },
 }
 
 const PARMEZAAN = /^(geraspte )?(parmezaan|parmezaanse kaas|parmigiano reggiano)$/

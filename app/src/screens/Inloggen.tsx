@@ -4,6 +4,7 @@ import { Titel } from '../components/Layout'
 import { heeftAccountOpToestel, logIn, maakAccount, resetWachtwoord, vraagWachtwoordResetAan } from '../lib/auth'
 import { PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
+import { t } from '../lib/taal'
 
 /**
  * Eén keer per toestel. E-mailadres en wachtwoord, en een schakelaar tussen
@@ -45,7 +46,7 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
         // Token weg uit de adresbalk, anders staat het er bij de volgende start nog.
         window.history.replaceState(null, '', window.location.pathname)
         setToken(''); setWachtwoord(''); setModus('inloggen')
-        setFout('Gelukt! Log in met je nieuwe wachtwoord.')
+        setFout(t('Gelukt! Log in met je nieuwe wachtwoord.'))
       } else {
         await (nieuw ? maakAccount(email, wachtwoord) : logIn(email, wachtwoord))
         onKlaar()
@@ -70,19 +71,19 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
 
         {/* 'Thuisbezorging' past op 32 niet op één regel. */}
         <Titel grootte={modus === 'inloggen' ? 27 : 32}>{
-          nieuw ? 'Maak een account'
-            : modus === 'vergeten' ? 'Wachtwoord vergeten'
-            : modus === 'verstuurd' ? 'Check je mail'
-            : modus === 'reset' ? 'Nieuw wachtwoord'
-            : 'Van recept tot thuisbezorging'
+          nieuw ? t('Maak een account')
+            : modus === 'vergeten' ? t('Wachtwoord vergeten')
+            : modus === 'verstuurd' ? t('Check je mail')
+            : modus === 'reset' ? t('Nieuw wachtwoord')
+            : t('Van recept tot thuisbezorging')
         }</Titel>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.5, margin: 0, maxWidth: 300 }}>
           {nieuw
-            ? 'Kies een wachtwoord van minstens 8 tekens. Daarna hoef je hier nooit meer te zijn op dit toestel.'
-            : modus === 'vergeten' ? 'Vul je e-mailadres in, dan sturen we je een link om een nieuw wachtwoord te kiezen.'
-            : modus === 'verstuurd' ? `Staat er een account bij ${email.trim()}, dan ligt er een mail met een link. Die is een uur geldig. Kijk ook in je spam.`
-            : modus === 'reset' ? 'Kies een wachtwoord van minstens 8 tekens.'
-            : 'Veelzijdiger, goedkoper, lekkerder'}
+            ? t('Kies een wachtwoord van minstens 8 tekens. Daarna hoef je hier nooit meer te zijn op dit toestel.')
+            : modus === 'vergeten' ? t('Vul je e-mailadres in, dan sturen we je een link om een nieuw wachtwoord te kiezen.')
+            : modus === 'verstuurd' ? t('Staat er een account bij {email}, dan ligt er een mail met een link. Die is een uur geldig. Kijk ook in je spam.', { email: email.trim() })
+            : modus === 'reset' ? t('Kies een wachtwoord van minstens 8 tekens.')
+            : t('Veelzijdiger, goedkoper, lekkerder')}
         </p>
 
         {fout && (
@@ -105,7 +106,7 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="jouw@email.nl"
+            placeholder={t('jouw@email.nl')}
             style={veldStijl}
           />
         )}
@@ -117,14 +118,14 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
             minLength={kiesNieuw ? 8 : undefined}
             value={wachtwoord}
             onChange={(e) => setWachtwoord(e.target.value)}
-            placeholder={modus === 'reset' ? 'Nieuw wachtwoord' : 'Wachtwoord'}
+            placeholder={modus === 'reset' ? t('Nieuw wachtwoord') : t('Wachtwoord')}
             style={veldStijl}
           />
         )}
 
         {teKort && (
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, opacity: 0.85 }}>
-            Nog {8 - wachtwoord.length} tekens te gaan.
+            {t('Nog {n} tekens te gaan.', { n: 8 - wachtwoord.length })}
           </span>
         )}
 
@@ -135,17 +136,17 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
             disabled={bezig || teKort}
             style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
           >
-            {bezig ? 'Even geduld'
-              : nieuw ? 'Account aanmaken'
-              : modus === 'vergeten' ? 'Stuur me een link'
-              : modus === 'reset' ? 'Wachtwoord opslaan'
-              : 'Inloggen'}
+            {bezig ? t('Even geduld')
+              : nieuw ? t('Account aanmaken')
+              : modus === 'vergeten' ? t('Stuur me een link')
+              : modus === 'reset' ? t('Wachtwoord opslaan')
+              : t('Inloggen')}
           </Button>
         )}
 
         {modus === 'inloggen' && (
           <button type="button" onClick={() => { setModus('vergeten'); setFout('') }} style={tekstKnop}>
-            Wachtwoord vergeten?
+            {t('Wachtwoord vergeten?')}
           </button>
         )}
 
@@ -154,20 +155,20 @@ export function Inloggen({ onKlaar }: { onKlaar: () => void }) {
           onClick={() => { setModus(nieuw ? 'inloggen' : modus === 'inloggen' ? 'nieuw' : 'inloggen'); setFout('') }}
           style={eerste && nieuw ? kleineTekstKnop : tekstKnop}
         >
-          {modus === 'inloggen' ? 'Nog geen account? Maak er een'
-            : modus === 'reset' ? 'Terug naar inloggen'
-            : modus === 'nieuw' ? (eerste ? 'Heb je al een account? Inloggen' : 'Ik heb al een account')
-            : 'Terug naar inloggen'}
+          {modus === 'inloggen' ? t('Nog geen account? Maak er een')
+            : modus === 'reset' ? t('Terug naar inloggen')
+            : modus === 'nieuw' ? (eerste ? t('Heb je al een account? Inloggen') : t('Ik heb al een account'))
+            : t('Terug naar inloggen')}
         </button>
 
         <p style={{
           fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.5, margin: 0,
           textAlign: 'center', opacity: 0.85,
         }}>
-          Met een account ga je akkoord met de{' '}
-          <a href={VOORWAARDEN_URL} target="_blank" rel="noopener noreferrer" style={linkStijl}>voorwaarden</a>
-          {' '}en het{' '}
-          <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" style={linkStijl}>privacybeleid</a>.
+          {t('Met een account ga je akkoord met de')}{' '}
+          <a href={VOORWAARDEN_URL} target="_blank" rel="noopener noreferrer" style={linkStijl}>{t('voorwaarden')}</a>
+          {' '}{t('en het')}{' '}
+          <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" style={linkStijl}>{t('privacybeleid')}</a>.
         </p>
       </form>
     </div>

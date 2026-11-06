@@ -13,19 +13,26 @@ import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
 import { ingredientKey } from '../lib/schaal'
 import { zoekProduct } from '../lib/zoekProduct'
 import {
-  KEUKEN_KEUZES, MAX_GERECHTEN, MAX_PERSONEN, MAX_WENSEN, menuNaam,
+  KEUKEN_KEUZES, MAX_GERECHTEN, MAX_PERSONEN, MAX_WENSEN,
   type Menu, type MenuGerecht, type SamenstelVerzoek,
 } from '../lib/menu'
 import {
   receptenVanMenu, stelSamen, useMenuKosten, useEerdereMenus, useMenuOpslaan, useSamengesteldeRecepten, type EerderMenu,
 } from '../lib/samenstellen'
 import type { Ingredient } from '../lib/database.types'
+import { locale, t } from '../lib/taal'
 
 /** Zelfde perzik als Ontdekken: daar kom je vandaan. */
 const ACHTERGROND = 'var(--c-cream)'
 
-const WENS_KEUZES = ['vegetarisch', 'niet te duur', 'snel klaar', 'kindvriendelijk', 'zonder noten']
-const BIJSTUREN = ['Goedkoper', 'Iets vegetarisch erbij', 'Minder pittig']
+// Functies, geen constanten: de taal kan wisselen nadat de module is geladen.
+const wensKeuzes = () => [t('vegetarisch'), t('niet te duur'), t('snel klaar'), t('kindvriendelijk'), t('zonder noten')]
+const bijsturen = () => [t('Goedkoper'), t('Iets vegetarisch erbij'), t('Minder pittig')]
+
+/** "Midden-Oosters voor 10": de naam van het menu, in de taal van nu (zie menuNaam in lib/menu.ts). */
+function menuTitel(menu: Pick<Menu, 'keuken' | 'personen'>): string {
+  return t('{keuken} voor {n}', { keuken: t(menu.keuken), n: menu.personen })
+}
 
 type Fase = 'vragen' | 'bezig' | 'menu'
 
@@ -215,7 +222,7 @@ export function Samenstellen() {
     const alle = eerdere.data ?? []
     if (!term) return alle
     return alle.filter((e) => [
-      menuNaam(e.menu), e.wensen, datumTekst(e.aangemaaktOp), datumCijfers(e.aangemaaktOp),
+      menuTitel(e.menu), e.wensen, datumTekst(e.aangemaaktOp), datumCijfers(e.aangemaaktOp),
       ...e.menu.gerechten.map((g) => g.titel),
     ].join(' ').toLowerCase().includes(term))
   }, [eerdere.data, zoekEerder])
@@ -263,36 +270,36 @@ export function Samenstellen() {
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px 16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <TerugKnop anders="/ontdekken" />
-              <Titel grootte={22}>Stel je eigen menu samen</Titel>
+              <Titel grootte={22}>{t('Stel je eigen menu samen')}</Titel>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {(mijnRecepten.data?.length ?? 0) > 0 && (
                 <button onClick={() => setReceptenOpen(true)} style={KOPKNOP}>
-                  Mijn recepten ({mijnRecepten.data!.length}) ▾
+                  {t('Mijn recepten')} ({mijnRecepten.data!.length}) ▾
                 </button>
               )}
               {(eerdere.data?.length ?? 0) > 0 && (
                 <button onClick={() => setEerdereOpen(true)} style={KOPKNOP}>
-                  Eerdere menu's ({eerdere.data!.length}) ▾
+                  {t("Eerdere menu's")} ({eerdere.data!.length}) ▾
                 </button>
               )}
             </div>
           </div>
         </Kop>
         <Inhoud style={{ gap: 10 }}>
-          <p style={LEAD}>Vier vragen, daarna maakt Kookmaatje de recepten en zet de boodschappen klaar.</p>
+          <p style={LEAD}>{t('Vier vragen, daarna maakt Kookmaatje de recepten en zet de boodschappen klaar.')}</p>
 
-          <Vraag nummer={1} tekst="Welke keuken?" />
+          <Vraag nummer={1} tekst={t('Welke keuken?')} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {KEUKEN_KEUZES.map((k) => (
-              <Chip key={k} selected={keuken === k} onClick={() => setKeuken(k)}>{k}</Chip>
+              <Chip key={k} selected={keuken === k} onClick={() => setKeuken(k)}>{t(k)}</Chip>
             ))}
           </div>
 
-          <Vraag nummer={2} tekst="Voor hoeveel personen?" />
+          <Vraag nummer={2} tekst={t('Voor hoeveel personen?')} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <IconButton
-              icon="minus" label="Minder personen" size={44}
+              icon="minus" label={t('Minder personen')} size={44}
               onClick={() => setPersonen(Math.max(1, personen - 1))}
               style={{ background: 'var(--c-paper)', color: 'var(--c-ink)', border: '1.5px solid var(--c-ink)' }}
             />
@@ -301,17 +308,17 @@ export function Samenstellen() {
               textAlign: 'center', fontVariantNumeric: 'tabular-nums',
             }}>{personen}</output>
             <IconButton
-              icon="plus" label="Meer personen" size={44}
+              icon="plus" label={t('Meer personen')} size={44}
               onClick={() => setPersonen(Math.min(MAX_PERSONEN, personen + 1))}
               style={{ background: 'var(--c-paper)', color: 'var(--c-ink)', border: '1.5px solid var(--c-ink)' }}
             />
-            <span style={{ ...KLEIN, fontSize: 14 }}>{personen === 1 ? 'persoon' : 'personen'}</span>
+            <span style={{ ...KLEIN, fontSize: 14 }}>{personen === 1 ? t('persoon') : t('personen')}</span>
           </div>
 
-          <Vraag nummer={3} tekst="Hoeveel gerechten?" />
+          <Vraag nummer={3} tekst={t('Hoeveel gerechten?')} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <IconButton
-              icon="minus" label="Minder gerechten" size={44}
+              icon="minus" label={t('Minder gerechten')} size={44}
               onClick={() => setGerechten(Math.max(1, aantalGerechten - 1))}
               style={{ background: 'var(--c-paper)', color: 'var(--c-ink)', border: '1.5px solid var(--c-ink)' }}
             />
@@ -320,22 +327,22 @@ export function Samenstellen() {
               textAlign: 'center', fontVariantNumeric: 'tabular-nums',
             }}>{aantalGerechten}</output>
             <IconButton
-              icon="plus" label="Meer gerechten" size={44}
+              icon="plus" label={t('Meer gerechten')} size={44}
               onClick={() => setGerechten(Math.min(MAX_GERECHTEN, aantalGerechten + 1))}
               style={{ background: 'var(--c-paper)', color: 'var(--c-ink)', border: '1.5px solid var(--c-ink)' }}
             />
             <span style={{ ...KLEIN, fontSize: 14 }}>
-              {aantalGerechten === 1 ? 'gerecht: alleen een hoofdgerecht' : 'gerechten: hoofdgerecht en bijgerechten'}
+              {aantalGerechten === 1 ? t('gerecht: alleen een hoofdgerecht') : t('gerechten: hoofdgerecht en bijgerechten')}
             </span>
           </div>
 
-          <Vraag nummer={4} tekst="Nog wensen?" bij="mag leeg blijven (of laat ons weten wat je nog in huis hebt)" />
+          <Vraag nummer={4} tekst={t('Nog wensen?')} bij={t('mag leeg blijven (of laat ons weten wat je nog in huis hebt)')} />
           <textarea
             value={wensen}
             maxLength={MAX_WENSEN}
             onChange={(e) => setWensen(e.target.value)}
-            aria-label="Wensen"
-            placeholder="Bijvoorbeeld vegetarisch, keto, niet te duur, een allergie, of een salade en iets met vis"
+            aria-label={t('Wensen')}
+            placeholder={t('Bijvoorbeeld vegetarisch, keto, niet te duur, een allergie, of een salade en iets met vis')}
             style={{
               width: '100%', minHeight: 96, resize: 'none', boxSizing: 'border-box',
               border: '2px solid var(--c-ink)', borderRadius: 16, padding: 14,
@@ -345,7 +352,7 @@ export function Samenstellen() {
             }}
           />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {WENS_KEUZES.map((w) => (
+            {wensKeuzes().map((w) => (
               <Chip key={w} onClick={() => {
                 if (wensen.toLowerCase().includes(w)) return
                 const basis = wensen.trim().replace(/[,.]$/, '')
@@ -354,66 +361,66 @@ export function Samenstellen() {
             ))}
           </div>
           {allergieen.length > 0 && (
-            <p style={KLEIN}>Je allergie-instelling geldt ook hier: zonder {opsomming(allergieen)}.</p>
+            <p style={KLEIN}>{t('Je allergie-instelling geldt ook hier: zonder {x}.', { x: opsomming(allergieen) })}</p>
           )}
           {plusStand && !plusStand.plus && (
             <Melding toon="rustig">
               {plusStand.over > 0
-                ? `${plusStand.gebruikt} van ${GRATIS_RECEPTEN} gratis recepten gebruikt. Elk gerecht in het menu telt als één recept; daarna kost AI-recepten maken € 3 per maand met Kookmaatje Plus.`
-                : `Je ${GRATIS_RECEPTEN} gratis recepten zijn op. Meer laten maken kan met Kookmaatje Plus (€ 3 per maand).`}
-              {' '}<a href="#/plus" style={{ color: 'inherit', fontWeight: 700 }}>Bekijk Plus</a>
+                ? t('{gebruikt} van {max} gratis recepten gebruikt. Elk gerecht in het menu telt als één recept; daarna kost AI-recepten maken € 3 per maand met Kookmaatje Plus.', { gebruikt: plusStand.gebruikt, max: GRATIS_RECEPTEN })
+                : t('Je {max} gratis recepten zijn op. Meer laten maken kan met Kookmaatje Plus (€ 3 per maand).', { max: GRATIS_RECEPTEN })}
+              {' '}<a href="#/plus" style={{ color: 'inherit', fontWeight: 700 }}>{t('Bekijk Plus')}</a>
             </Melding>
           )}
           {fout && <Melding>{fout}</Melding>}
         </Inhoud>
         <Dialoog
           open={eerdereOpen}
-          kop="Eerdere menu's"
-          tekst="Alles wat je liet samenstellen, nieuwste eerst. Tik er een aan om 'm terug te halen."
-          acties={[{ label: 'Sluiten', onClick: () => setEerdereOpen(false) }]}
+          kop={t("Eerdere menu's")}
+          tekst={t("Alles wat je liet samenstellen, nieuwste eerst. Tik er een aan om 'm terug te halen.")}
+          acties={[{ label: t('Sluiten'), onClick: () => setEerdereOpen(false) }]}
           onSluit={() => setEerdereOpen(false)}
         >
           <input
             value={zoekEerder}
             onChange={(e) => setZoekEerder(e.target.value)}
-            aria-label="Zoek in eerdere menu's"
-            placeholder="Zoek op datum, keuken of gerecht"
+            aria-label={t("Zoek in eerdere menu's")}
+            placeholder={t('Zoek op datum, keuken of gerecht')}
             style={ZOEKVELD}
           />
           <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
-            {gevondenEerdere.length === 0 && <p style={{ ...KLEIN, padding: '12px 2px' }}>Niets gevonden.</p>}
+            {gevondenEerdere.length === 0 && <p style={{ ...KLEIN, padding: '12px 2px' }}>{t('Niets gevonden.')}</p>}
             {gevondenEerdere.map((e) => (
               <button key={e.id} onClick={() => void haalTerug(e)} style={LIJSTKNOP}>
                 <span style={{ fontSize: 16, fontWeight: 700 }}>
-                  {menuNaam(e.menu)} <span style={{ fontWeight: 500, color: 'rgba(43,20,32,0.6)' }}>· {datumTekst(e.aangemaaktOp)}</span>
+                  {menuTitel(e.menu)} <span style={{ fontWeight: 500, color: 'rgba(43,20,32,0.6)' }}>· {datumTekst(e.aangemaaktOp)}</span>
                 </span>
                 <span style={KLEIN}>{e.menu.gerechten.map((g) => g.titel).join(' · ')}</span>
-                {e.wensen && <span style={{ ...KLEIN, fontStyle: 'italic' }}>{e.aangepast ? 'Aangepast: ' : ''}“{e.wensen}”</span>}
+                {e.wensen && <span style={{ ...KLEIN, fontStyle: 'italic' }}>{e.aangepast ? t('Aangepast:') + ' ' : ''}“{e.wensen}”</span>}
               </button>
             ))}
           </div>
         </Dialoog>
         <Dialoog
           open={receptenOpen}
-          kop="Mijn recepten"
-          tekst="De recepten die je uit je menu's hebt opgeslagen."
-          acties={[{ label: 'Sluiten', onClick: () => setReceptenOpen(false) }]}
+          kop={t('Mijn recepten')}
+          tekst={t("De recepten die je uit je menu's hebt opgeslagen.")}
+          acties={[{ label: t('Sluiten'), onClick: () => setReceptenOpen(false) }]}
           onSluit={() => setReceptenOpen(false)}
         >
           <input
             value={zoekRecept}
             onChange={(e) => setZoekRecept(e.target.value)}
-            aria-label="Zoek in je recepten"
-            placeholder="Zoek op gerecht, ingrediënt of datum"
+            aria-label={t('Zoek in je recepten')}
+            placeholder={t('Zoek op gerecht, ingrediënt of datum')}
             style={ZOEKVELD}
           />
           <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '45dvh', overflowY: 'auto' }}>
-            {gevondenRecepten.length === 0 && <p style={{ ...KLEIN, padding: '12px 2px' }}>Niets gevonden.</p>}
+            {gevondenRecepten.length === 0 && <p style={{ ...KLEIN, padding: '12px 2px' }}>{t('Niets gevonden.')}</p>}
             {gevondenRecepten.map((r) => (
               <button key={r.id} onClick={() => navigeer(`/recept/${r.id}`)} style={LIJSTKNOP}>
                 <span style={{ fontSize: 16, fontWeight: 700 }}>{r.titel}</span>
                 <span style={KLEIN}>
-                  {[r.keuken, `voor ${r.personen}`, r.bereidingstijd_minuten ? `${r.bereidingstijd_minuten} min` : null,
+                  {[r.keuken ? t(r.keuken) : r.keuken, t('voor {n}', { n: r.personen }), r.bereidingstijd_minuten ? t('{n} min', { n: r.bereidingstijd_minuten }) : null,
                     datumTekst(r.aangemaakt_op)].filter(Boolean).join(' · ')}
                 </span>
               </button>
@@ -425,7 +432,7 @@ export function Samenstellen() {
             disabled={!keuken}
             onClick={() => void vraagAan({})}
             style={{ width: '100%', padding: '17px 24px' }}
-          >{keuken ? 'Stel samen' : 'Kies eerst een keuken'}</Button>
+          >{keuken ? t('Stel samen') : t('Kies eerst een keuken')}</Button>
         </Voet>
       </Scherm>
     )
@@ -434,10 +441,10 @@ export function Samenstellen() {
   const bezig = fase === 'bezig'
   const vast = receptIds !== null
   const labels = [
-    `${menu.personen} ${menu.personen === 1 ? 'persoon' : 'personen'}`,
+    menu.personen === 1 ? t('{n} persoon', { n: menu.personen }) : t('{n} personen', { n: menu.personen }),
     // Het aantal personen en gerechten tellen we zelf; anders staat het er dubbel.
     ...menu.begrepen.filter((b) => !/^\d+\s+(gerecht|gang|perso)/i.test(b)),
-    ...(bezig ? [] : [`${menu.gerechten.length} ${menu.gerechten.length === 1 ? 'gerecht' : 'gerechten'}`]),
+    ...(bezig ? [] : [menu.gerechten.length === 1 ? t('{n} gerecht', { n: 1 }) : t('{n} gerechten', { n: menu.gerechten.length })]),
   ]
 
   return (
@@ -449,7 +456,7 @@ export function Samenstellen() {
             display: 'flex', alignItems: 'center', gap: 6,
             fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
           }}>
-            <Icon name="chevronLeft" size={16} />{vast ? 'Nieuw menu' : 'Vragen aanpassen'}
+            <Icon name="chevronLeft" size={16} />{vast ? t('Nieuw menu') : t('Vragen aanpassen')}
           </button>
           {/* Weg ermee en opnieuw beginnen. Wat al is opgeslagen of op je lijst staat blijft. */}
           <button onClick={wis} style={{
@@ -458,10 +465,10 @@ export function Samenstellen() {
             display: 'flex', alignItems: 'center', gap: 6,
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
           }}>
-            <Icon name="trash" size={14} />Wis recepten
+            <Icon name="trash" size={14} />{t('Wis recepten')}
           </button>
         </div>
-        <Titel grootte={22}>{menuNaam(menu)}</Titel>
+        <Titel grootte={22}>{menuTitel(menu)}</Titel>
         {wensen.trim() && (
           <p style={{
             fontFamily: 'var(--font-body)', fontSize: 13, fontStyle: 'italic', margin: '10px 0 0',
@@ -503,14 +510,15 @@ export function Samenstellen() {
           <>
             {Array.from({ length: Math.max(1, verwacht - menu.gerechten.length) }, (_, i) => <Skelet key={i} />)}
             <p style={KLEIN}>
-              Kookmaatje schrijft de recepten voor {menu.personen} {menu.personen === 1 ? 'persoon' : 'personen'}.
-              Dat duurt ongeveer een halve minuut.
+              {menu.personen === 1
+                ? t('Kookmaatje schrijft de recepten voor {n} persoon. Dat duurt ongeveer een halve minuut.', { n: menu.personen })
+                : t('Kookmaatje schrijft de recepten voor {n} personen. Dat duurt ongeveer een halve minuut.', { n: menu.personen })}
             </p>
           </>
         )}
 
         {!bezig && menu.draaiboek.length > 0 && (
-          <Blok kop="Draaiboek">
+          <Blok kop={t('Draaiboek')}>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 8 }}>
               {menu.draaiboek.map((r, i) => (
                 <li key={i} style={{
@@ -526,7 +534,7 @@ export function Samenstellen() {
         )}
 
         {!bezig && !vast && (
-          <Blok kop="Pas het menu aan">
+          <Blok kop={t('Pas het menu aan')}>
             <form
               onSubmit={(e) => {
                 e.preventDefault()
@@ -538,8 +546,8 @@ export function Samenstellen() {
                 value={wijziging}
                 maxLength={MAX_WENSEN}
                 onChange={(e) => setWijziging(e.target.value)}
-                aria-label="Wat moet er anders?"
-                placeholder="Bijvoorbeeld: er komen ook kinderen"
+                aria-label={t('Wat moet er anders?')}
+                placeholder={t('Bijvoorbeeld: er komen ook kinderen')}
                 autoComplete="off"
                 style={{
                   flex: 1, minWidth: 0, border: '1.5px solid var(--c-ink)', borderRadius: 'var(--radius-full)',
@@ -547,24 +555,24 @@ export function Samenstellen() {
                   background: 'var(--c-cream)', color: 'var(--color-ink)',
                 }}
               />
-              <Button type="submit" tone="ink" size="sm" disabled={!wijziging.trim() || onderweg !== null}>Pas aan</Button>
+              <Button type="submit" tone="ink" size="sm" disabled={!wijziging.trim() || onderweg !== null}>{t('Pas aan')}</Button>
             </form>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-              {BIJSTUREN.map((b) => (
+              {bijsturen().map((b) => (
                 <Chip key={b} onClick={() => { if (onderweg === null) void vraagAan({ vorig: menu, wijziging: b }) }}>{b}</Chip>
               ))}
             </div>
-            {onderweg === 'menu' && <p style={{ ...KLEIN, marginTop: 10 }}>Kookmaatje past het menu aan…</p>}
+            {onderweg === 'menu' && <p style={{ ...KLEIN, marginTop: 10 }}>{t('Kookmaatje past het menu aan…')}</p>}
           </Blok>
         )}
 
         {vast && !opLijst && (
           <Melding toon="rustig">
-            Opgeslagen. Je vindt ze terug onder Zelf samenstellen, bij "Mijn recepten".
+            {t('Opgeslagen. Je vindt ze terug onder Zelf samenstellen, bij "Mijn recepten".')}
           </Melding>
         )}
         {fout && <Melding>{fout}</Melding>}
-        {!bezig && <p style={{ ...KLEIN, textAlign: 'center' }}>Gemaakt met Claude</p>}
+        {!bezig && <p style={{ ...KLEIN, textAlign: 'center' }}>{t('Gemaakt met Claude')}</p>}
       </Inhoud>
 
       {!bezig && (
@@ -574,19 +582,19 @@ export function Samenstellen() {
             fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.65)',
           }}>
             <span>
-              <b style={{ color: 'var(--color-ink)' }}>{producten} producten</b>
-              {zoek.size > 0 && `, waarvan ${zoek.size} als zoeklink`}
-              {inHuis > 0 && ` · ${inHuis} heb je in huis`}
+              <b style={{ color: 'var(--color-ink)' }}>{t('{n} producten', { n: producten })}</b>
+              {zoek.size > 0 && t(', waarvan {n} als zoeklink', { n: zoek.size })}
+              {inHuis > 0 && t(' · {n} heb je in huis', { n: inHuis })}
             </span>
             {kosten !== null && (
               <span style={{ whiteSpace: 'nowrap' }}>
-                ca. <b style={{ color: 'var(--color-ink)' }}>{euro(kosten)}</b> · {euro(kosten / menu.personen, true)} p.p.
+                {t('ca.')} <b style={{ color: 'var(--color-ink)' }}>{euro(kosten)}</b> · {euro(kosten / menu.personen, true)} {t('p.p.')}
               </span>
             )}
           </div>
           {opLijst ? (
             <Button onClick={() => navigeer('/boodschappen')} style={{ width: '100%', padding: '17px 24px' }}>
-              Naar je lijst
+              {t('Naar je lijst')}
             </Button>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -594,14 +602,14 @@ export function Samenstellen() {
                 disabled={bewaren || onderweg !== null}
                 onClick={() => void bewaar(true)}
                 style={{ width: '100%', padding: '17px 24px' }}
-              >{bewaren ? 'Even geduld' : 'Zet op mijn lijst'}</Button>
+              >{bewaren ? t('Even geduld') : t('Zet op mijn lijst')}</Button>
               {!vast && (
                 <Button
                   variant="secondary" tone="ink"
                   disabled={bewaren || onderweg !== null}
                   onClick={() => void bewaar(false)}
                   style={{ width: '100%', padding: '13px 24px' }}
-                >Bewaar alleen de recepten</Button>
+                >{t('Bewaar alleen de recepten')}</Button>
               )}
             </div>
           )}
@@ -613,13 +621,13 @@ export function Samenstellen() {
 
 /** "4 okt 14:05": wanneer je het menu liet maken. */
 function datumTekst(iso: string): string {
-  return new Date(iso).toLocaleString('nl-NL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleString(locale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 }
 
 /** "04-10-2026" en "4 oktober": zodat zoeken op een datum op elke schrijfwijze lukt. */
 function datumCijfers(iso: string): string {
   const d = new Date(iso)
-  return `${d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`
+  return `${d.toLocaleDateString(locale(), { day: '2-digit', month: '2-digit', year: 'numeric' })} ${d.toLocaleDateString(locale(), { day: 'numeric', month: 'long' })}`
 }
 
 /** Zelfde witte pil als "Zelf samenstellen" in de kop van Ontdekken. */
@@ -686,7 +694,10 @@ function hoeveelheid(ing: Ingredient): string {
   if (!ing.hoeveelheid) return ''
   const getal = Number(ing.hoeveelheid.replace(',', '.'))
   if (!Number.isFinite(getal)) return [ing.hoeveelheid, ing.eenheid].filter(Boolean).join(' ')
-  const nl = (x: number) => String(Math.round(x * 10) / 10).replace('.', ',')
+  const nl = (x: number) => {
+    const tekst = String(Math.round(x * 10) / 10)
+    return locale() === 'nl-NL' ? tekst.replace('.', ',') : tekst
+  }
   if (ing.eenheid === 'g' && getal >= 1000) return `${nl(getal / 1000)} kg`
   if (ing.eenheid === 'ml' && getal >= 1000) return `${nl(getal / 1000)} l`
   return [nl(getal), ing.eenheid].filter(Boolean).join(' ')
@@ -715,9 +726,9 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
   onRecept: (id: string) => void
 }) {
   const meta = [
-    gerecht.bereidingstijd_minuten ? `${gerecht.bereidingstijd_minuten} min` : null,
-    `${gerecht.ingredienten.length} ingrediënten`,
-    gerecht.vooraf ? `vooraf: ${gerecht.vooraf}` : null,
+    gerecht.bereidingstijd_minuten ? t('{n} min', { n: gerecht.bereidingstijd_minuten }) : null,
+    t('{n} ingrediënten', { n: gerecht.ingredienten.length }),
+    gerecht.vooraf ? t('vooraf: {wat}', { wat: gerecht.vooraf }) : null,
   ].filter(Boolean).join(' · ')
   const allergenen = [...new Set(bevat.flatMap((b) => b.allergenen))]
 
@@ -732,7 +743,7 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}><Icon name="utensils" size={24} /></div>
         <div style={{ minWidth: 0 }}>
-          <Label kleur="var(--c-red)">{gerecht.rol}</Label>
+          <Label kleur="var(--c-red)">{t(gerecht.rol)}</Label>
           <h3 style={{
             fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700, lineHeight: 1.25,
             margin: '3px 0 4px', color: 'var(--color-ink)',
@@ -746,23 +757,23 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
           margin: '0 12px 10px', padding: '8px 10px', borderRadius: 8, background: 'var(--c-red-100)',
           fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4,
         }}>
-          <b>Bevat {opsomming(allergenen.map(allergeenNaam))}</b> ({bevat.map((b) => b.naam).join(', ')}).
-          {onAnder && ' Laat dit gerecht vervangen.'}
+          <b>{t('Bevat {x}', { x: opsomming(allergenen.map(allergeenNaam)) })}</b> ({bevat.map((b) => b.naam).join(', ')}).
+          {onAnder && ' ' + t('Laat dit gerecht vervangen.')}
         </div>
       )}
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '0 12px 12px' }}>
         <button onClick={onOpen} aria-expanded={open} style={KAART_KNOP}>
-          {open ? 'Verberg recept' : 'Bekijk recept'}
+          {open ? t('Verberg recept') : t('Bekijk recept')}
         </button>
         {onAnder && (
           <button onClick={onAnder} style={{ ...KAART_KNOP, borderColor: 'rgba(43,20,32,0.25)' }}>
-            {allergenen.length > 0 ? 'Vervang dit gerecht' : 'Ander voorstel'}
+            {allergenen.length > 0 ? t('Vervang dit gerecht') : t('Ander voorstel')}
           </button>
         )}
         {receptId && (
           <button onClick={() => onRecept(receptId)} style={{ ...KAART_KNOP, borderColor: 'rgba(43,20,32,0.25)' }}>
-            Open recept
+            {t('Open recept')}
           </button>
         )}
       </div>
@@ -772,7 +783,7 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
           borderTop: '1px solid rgba(43,20,32,0.1)', padding: '12px 14px 14px',
           fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45, color: 'var(--color-ink)',
         }}>
-          <Label kleur="rgba(43,20,32,0.6)">Ingrediënten voor {personen}</Label>
+          <Label kleur="rgba(43,20,32,0.6)">{t('Ingrediënten voor {n}', { n: personen })}</Label>
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 14px', display: 'grid', gap: 3 }}>
             {gerecht.ingredienten.map((ing, i) => (
               <li key={i} style={{ display: 'grid', gridTemplateColumns: '72px 1fr', gap: 8 }}>
@@ -780,13 +791,13 @@ function GerechtKaart({ gerecht, personen, open, bezig, bevat, zoek, receptId, o
                 <span>
                   {ing.naam}
                   {zoek.has(ing.naam) && (
-                    <span style={{ color: 'var(--c-orange)', fontSize: 12, fontWeight: 700 }}> · zoeklink</span>
+                    <span style={{ color: 'var(--c-orange)', fontSize: 12, fontWeight: 700 }}> · {t('zoeklink')}</span>
                   )}
                 </span>
               </li>
             ))}
           </ul>
-          <Label kleur="rgba(43,20,32,0.6)">Bereiding</Label>
+          <Label kleur="rgba(43,20,32,0.6)">{t('Bereiding')}</Label>
           <ol style={{ margin: '6px 0 0', paddingLeft: 20, display: 'grid', gap: 6 }}>
             {gerecht.bereiding_nl.map((stap, i) => <li key={i}>{stap}</li>)}
           </ol>

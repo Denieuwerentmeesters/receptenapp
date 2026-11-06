@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core'
 import { huidigeUserId } from './auth'
+import { t } from './taal'
 
 /**
  * Kookmaatje Plus kopen: een abonnement via Apple of Google Play, beheerd door RevenueCat.
@@ -42,7 +43,7 @@ async function purchases() {
 
 /** Configureert RevenueCat één keer en logt in met het Neon-id van deze gebruiker. */
 async function verbind(): Promise<void> {
-  if (!kanKopen()) throw new Error('Kopen kan alleen in de Kookmaatje-app.')
+  if (!kanKopen()) throw new Error(t('Kopen kan alleen in de Kookmaatje-app.'))
   const userId = await huidigeUserId()
   if (verbondenMet === userId) return
   const Purchases = await purchases()
@@ -72,7 +73,7 @@ export async function koop(aanbod: PlusAanbod): Promise<Aankoop> {
     return 'gelukt'
   } catch (e) {
     if ((e as { userCancelled?: boolean }).userCancelled) return 'geannuleerd'
-    throw new Error('De aankoop is niet gelukt. Er is niets afgeschreven; probeer het later opnieuw.')
+    throw new Error(t('De aankoop is niet gelukt. Er is niets afgeschreven; probeer het later opnieuw.'))
   }
 }
 
@@ -82,6 +83,6 @@ export async function herstel(): Promise<void> {
   try {
     await (await purchases()).restorePurchases()
   } catch {
-    throw new Error('Herstellen lukte niet. Probeer het later opnieuw.')
+    throw new Error(t('Herstellen lukte niet. Probeer het later opnieuw.'))
   }
 }

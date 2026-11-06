@@ -4,6 +4,7 @@ import { Icon } from '../ds'
 import { useActieveWeek, useDezeWeek, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { nogTeKoken, oudeBestelling, useWeekWissel, weekVoorbij } from '../lib/weekwissel'
 import { weekStart } from '../lib/week'
+import { t } from '../lib/taal'
 
 const LATER = 'pinch-weekvraag-later'
 const DAG = 24 * 60 * 60 * 1000
@@ -66,13 +67,13 @@ export function WeekVraag() {
     return (
       <Dialoog
         open
-        kop="Alles van je bestelling gekookt?"
-        tekst="Dan halen we het weg bij Te koken. Je vindt het terug bij Nog bestellen, onder Eerder gekookt."
+        kop={t('Alles van je bestelling gekookt?')}
+        tekst={t('Dan halen we het weg bij Te koken. Je vindt het terug bij Nog bestellen, onder Eerder gekookt.')}
         onSluit={later}
         acties={[
-          { label: 'Ja, alles gekookt', hoofd: true, onClick: () => { rondAf.mutate([]); setStap('dicht') } },
-          { label: 'Nee, nog niet alles', onClick: () => setStap('kies') },
-          { label: 'Vraag het later', onClick: later },
+          { label: t('Ja, alles gekookt'), hoofd: true, onClick: () => { rondAf.mutate([]); setStap('dicht') } },
+          { label: t('Nee, nog niet alles'), onClick: () => setStap('kies') },
+          { label: t('Vraag het later'), onClick: later },
         ]}
       />
     )
@@ -80,12 +81,12 @@ export function WeekVraag() {
   return (
     <Dialoog
       open
-      kop="Wat ga je nog koken?"
-      tekst="Dat blijft bij Te koken staan. De rest zetten we bij Eerder gekookt."
+      kop={t('Wat ga je nog koken?')}
+      tekst={t('Dat blijft bij Te koken staan. De rest zetten we bij Eerder gekookt.')}
       onSluit={later}
       acties={[
-        { label: 'Verder', hoofd: true, onClick: () => { rondAf.mutate(gekozen); setStap('dicht') } },
-        { label: 'Terug', onClick: () => setStap('vraag') },
+        { label: t('Verder'), hoofd: true, onClick: () => { rondAf.mutate(gekozen); setStap('dicht') } },
+        { label: t('Terug'), onClick: () => setStap('vraag') },
       ]}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: '36dvh', overflowY: 'auto', marginBottom: 6 }}>

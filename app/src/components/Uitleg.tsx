@@ -5,6 +5,7 @@ import mijnRecepten from '../assets/uitleg/mijn-recepten.webp'
 import teKoken from '../assets/uitleg/te-koken.webp'
 import voorraadkast from '../assets/uitleg/voorraadkast.webp'
 import lijst from '../assets/uitleg/lijst.webp'
+import { t } from '../lib/taal'
 
 /**
  * De uitleg in zes kaarten: wat Kookmaatje doet, van zoeken tot mandje. Staat in
@@ -24,7 +25,7 @@ interface Kaart {
   kop: string
   tekst: string
   beeld: string
-  /** Wat de afbeelding laat zien, voor wie hem niet ziet. */
+  /** Wat de afbeelding laat zien, voor wie hem niet ziet. De Nederlandse tekst is ook de sleutel voor t(). */
   alt: string
   /** Hoogte gedeeld door breedte van de afbeelding. */
   verhouding: number
@@ -113,7 +114,7 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
       }}
     >
       <div style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <IconButton icon="chevronLeft" label="Terug" onClick={vorige} />
+        <IconButton icon="chevronLeft" label={t('Terug')} onClick={vorige} />
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} aria-hidden>
           {KAARTEN.map((k, i) => (
             <span key={k.kop} style={{
@@ -136,17 +137,17 @@ export function Uitleg({ start = 0, laatsteKnop, overslaanTekst, onKlaar, onOver
 
       <div style={{ flex: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.1em', color: 'var(--c-ink-500)' }}>
-          STAP {kaart + 1} VAN {KAARTEN.length}
+          {t('STAP {n} VAN {max}', { n: kaart + 1, max: KAARTEN.length })}
         </span>
         <h1 style={{
           fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, lineHeight: 1.1,
           margin: 0, textTransform: 'uppercase',
-        }}>{huidig.kop}</h1>
-        <p style={{ margin: 0, fontSize: 17, lineHeight: 1.5 }}>{huidig.tekst}</p>
+        }}>{t(huidig.kop)}</h1>
+        <p style={{ margin: 0, fontSize: 17, lineHeight: 1.5 }}>{t(huidig.tekst)}</p>
       </div>
 
       <Button size="lg" onClick={volgende} style={{ flex: 'none', marginTop: 'auto', width: '100%', fontSize: 16 }}>
-        {laatste ? laatsteKnop : 'Volgende'}
+        {laatste ? laatsteKnop : t('Volgende')}
       </Button>
     </div>
   )
@@ -192,7 +193,7 @@ function Beelden({ kaart }: { kaart: number }) {
   const klaar = (src: string) => setGeladen((oud) => (oud.has(src) ? oud : new Set(oud).add(src)))
   return (
     <div
-      role="img" aria-label={KAARTEN[kaart].alt}
+      role="img" aria-label={t(KAARTEN[kaart].alt)}
       style={{
         flex: '1 1 0', minHeight: 0, maxHeight: 440, position: 'relative', overflow: 'hidden',
         borderRadius: 24, background: 'var(--c-red-100)',

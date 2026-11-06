@@ -18,6 +18,8 @@ const SLEUTEL = 'kookmaatje-taal'
 const luisteraars = new Set<() => void>()
 
 function beginTaal(): Taal {
+  // Server en tests hebben geen scherm: Nederlands.
+  if (typeof window === 'undefined') return 'nl'
   try {
     const opgeslagen = window.localStorage.getItem(SLEUTEL)
     if (opgeslagen === 'nl' || opgeslagen === 'en') return opgeslagen

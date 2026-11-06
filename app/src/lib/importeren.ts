@@ -1,3 +1,4 @@
+import { t } from './taal'
 import type { BronType, Ingredient, Recept } from './database.types'
 
 /**
@@ -157,8 +158,8 @@ export function siteNaam(url: string): string {
 export function bronVermelding(recept: Pick<Recept, 'bron_type' | 'bron_maker' | 'url'>): { tekst: string; bekijk: string; url: string } | null {
   if (!isImport(recept.bron_type)) return null
   const maker = recept.bron_maker?.trim() || (recept.url ? siteNaam(recept.url) : null)
-  const tekst = maker ? `Recept van ${maker}` : 'Geïmporteerd recept'
+  const tekst = maker ? t('Recept van {maker}', { maker }) : t('Geïmporteerd recept')
   if (!recept.url) return { tekst, bekijk: '', url: '' }
-  const bekijk = recept.bron_type === 'instagram' ? 'Bekijk op Instagram' : `Bekijk op ${siteNaam(recept.url)}`
+  const bekijk = recept.bron_type === 'instagram' ? t('Bekijk op Instagram') : t('Bekijk op {site}', { site: siteNaam(recept.url) })
   return { tekst, bekijk, url: recept.url }
 }

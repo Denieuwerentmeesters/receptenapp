@@ -1,3 +1,5 @@
+import { t } from './taal'
+
 /**
  * Haalt een leesbare melding uit wat een laag ook maar teruggeeft.
  *
@@ -26,5 +28,5 @@ export function foutTekst(fout: unknown): string {
     }
   }
 
-  return 'Onbekende fout.'
+  return t('Onbekende fout.')
 }

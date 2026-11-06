@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Dialoog } from './Dialoog'
 import { useLijstActies } from '../lib/queries'
+import { t } from '../lib/taal'
 
 /** Wat we van een recept moeten weten om te beslissen of we eerst iets vragen. */
 export interface LijstStatus {
@@ -35,13 +36,13 @@ export function useOpLijst(week?: string) {
   const dialoog = (
     <Dialoog
       open={Boolean(vraag)}
-      kop="Staat al op je lijst"
-      tekst={vraag ? `Heb je ${vraag.titel} al op je lijst gezet? Wil je deze ${nogEens}x?` : undefined}
+      kop={t('Staat al op je lijst')}
+      tekst={vraag ? t('Heb je {titel} al op je lijst gezet? Wil je deze {n}x?', { titel: vraag.titel, n: nogEens }) : undefined}
       onSluit={sluit}
       acties={[
-        { label: `Ja, ${nogEens}x`, hoofd: true, onClick: () => { if (vraag) zetOpLijst.mutate(vraag.id); sluit() } },
-        { label: 'Haal van mijn lijst', onClick: () => { if (vraag) haalVanLijst.mutate(vraag.id); sluit() } },
-        { label: 'Laat maar', onClick: sluit },
+        { label: t('Ja, {n}x', { n: nogEens }), hoofd: true, onClick: () => { if (vraag) zetOpLijst.mutate(vraag.id); sluit() } },
+        { label: t('Haal van mijn lijst'), onClick: () => { if (vraag) haalVanLijst.mutate(vraag.id); sluit() } },
+        { label: t('Laat maar'), onClick: sluit },
       ]}
     />
   )
