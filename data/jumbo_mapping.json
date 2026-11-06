@@ -8548,5 +8548,95 @@
   "bio_naam": "Jumbo Biologisch Witte Eieren 6 Stuks",
   "huismerk": null,
   "huismerk_naam": null
+ },
+ {
+  "key": "plantaardige yoghurt",
+  "naam": "Alpro Mild & Creamy Naturel Plantaardige Variatie Op Yoghurt 755g",
+  "standaard": "486574PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vegan yoghurt",
+  "naam": "Alpro Mild & Creamy Naturel Plantaardige Variatie Op Yoghurt 755g",
+  "standaard": "486574PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "veganistische yoghurt",
+  "naam": "Alpro Mild & Creamy Naturel Plantaardige Variatie Op Yoghurt 755g",
+  "standaard": "486574PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "dikke plantaardige yoghurt",
+  "naam": "Jumbo Plantaardige Griekse Stijl Naturel 10% Vet 1 kg",
+  "standaard": "644855TRA",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "plantaardige griekse yoghurt",
+  "naam": "Jumbo Plantaardige Griekse Stijl Naturel 10% Vet 1 kg",
+  "standaard": "644855TRA",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "plantaardige mayonaise",
+  "naam": "Remia Mayolijn 500 ml",
+  "standaard": "425241FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "plantaardige mayo",
+  "naam": "Remia Mayolijn 500 ml",
+  "standaard": "425241FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vegan mayonaise",
+  "naam": "Remia Mayolijn 500 ml",
+  "standaard": "425241FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vegan mayo",
+  "naam": "Remia Mayolijn 500 ml",
+  "standaard": "425241FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "veganistische mayonaise",
+  "naam": "Remia Mayolijn 500 ml",
+  "standaard": "425241FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
  }
 ]

@@ -33,3 +33,22 @@ describe('bijvoeglijke naamwoorden vallen weg', () => {
   test('grote stevige appel is appel', () => expect(zoek('grote stevige appel')).toEqual({ id: 'A' }))
   test('gezouten boter blijft een ander product', () => expect(zoek('gezouten boter')).toBeUndefined())
 })
+
+describe('plantaardige yoghurt en mayo', () => {
+  const mapping = {
+    'volle yoghurt': { id: 'V' },
+    mayonaise: { id: 'M' },
+    'plantaardige yoghurt': { id: 'PY' },
+    'plantaardige griekse yoghurt': { id: 'PG' },
+    'dikke plantaardige yoghurt': { id: 'PG' },
+    'plantaardige mayonaise': { id: 'PM' },
+    'plantaardige mayo': { id: 'PM' },
+  }
+  const zoek = (naam: string) => zoekProduct({ ingredient_key: ingredientKey(naam), naam }, mapping)
+  test('plantaardige yoghurt is niet de volle yoghurt', () => expect(zoek('plantaardige yoghurt')).toEqual({ id: 'PY' }))
+  test('dikke plantaardige yoghurt pakt het Griekse alternatief', () => expect(zoek('dikke plantaardige yoghurt')).toEqual({ id: 'PG' }))
+  test('plantaardige mayo(naise) is niet de gewone mayonaise', () => {
+    expect(zoek('plantaardige mayonaise')).toEqual({ id: 'PM' })
+    expect(zoek('plantaardige mayo')).toEqual({ id: 'PM' })
+  })
+})

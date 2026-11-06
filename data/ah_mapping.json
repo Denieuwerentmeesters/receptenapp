@@ -6140,5 +6140,65 @@
   "naam": "ah vrije uitloop eieren l",
   "standaard": 30030,
   "bio": 168502
+ },
+ {
+  "key": "plantaardige yoghurt",
+  "naam": "ah terra plantaardig alternatief voor yoghurt",
+  "standaard": 570908,
+  "bio": null
+ },
+ {
+  "key": "vegan yoghurt",
+  "naam": "ah terra plantaardig alternatief voor yoghurt",
+  "standaard": 570908,
+  "bio": null
+ },
+ {
+  "key": "veganistische yoghurt",
+  "naam": "ah terra plantaardig alternatief voor yoghurt",
+  "standaard": 570908,
+  "bio": null
+ },
+ {
+  "key": "dikke plantaardige yoghurt",
+  "naam": "ah terra plantaardig alternatief voor griekse",
+  "standaard": 601557,
+  "bio": null
+ },
+ {
+  "key": "plantaardige griekse yoghurt",
+  "naam": "ah terra plantaardig alternatief voor griekse",
+  "standaard": 601557,
+  "bio": null
+ },
+ {
+  "key": "plantaardige mayonaise",
+  "naam": "remia mayolijn 100 plantaardig 0,5 l",
+  "standaard": 437725,
+  "bio": null
+ },
+ {
+  "key": "plantaardige mayo",
+  "naam": "remia mayolijn 100 plantaardig 0,5 l",
+  "standaard": 437725,
+  "bio": null
+ },
+ {
+  "key": "vegan mayonaise",
+  "naam": "remia mayolijn 100 plantaardig 0,5 l",
+  "standaard": 437725,
+  "bio": null
+ },
+ {
+  "key": "vegan mayo",
+  "naam": "remia mayolijn 100 plantaardig 0,5 l",
+  "standaard": 437725,
+  "bio": null
+ },
+ {
+  "key": "veganistische mayonaise",
+  "naam": "remia mayolijn 100 plantaardig 0,5 l",
+  "standaard": 437725,
+  "bio": null
  }
 ]
