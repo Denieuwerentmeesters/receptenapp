@@ -2,7 +2,7 @@ import { EN_ALGEMEEN } from './en.algemeen'
 import { EN_A } from './en.a'
 import { EN_B } from './en.b'
 import { EN_C } from './en.c'
-import { EN_D } from './en.d'
+import { EN_D } from './en.boodschappen'
 import { EN_E } from './en.e'
 import { EN_GELIJK } from './en.gelijk'
 
