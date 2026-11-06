@@ -8,6 +8,8 @@ import { BonusBron } from '../components/Bonus'
 import { AllergieKeuze, KeukenKeuze } from '../components/voorkeuren'
 import { HuishoudenBlok } from '../components/Huishouden'
 import { useKeukens } from '../lib/queries2'
+import { TaalKeuze } from '../components/TaalKeuze'
+import { t } from '../lib/taal'
 import { vegaDoel, vegaMinimumVoor } from '../lib/weekvullen'
 
 const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
@@ -100,6 +102,12 @@ export function Instellingen() {
                   <div style={{ paddingBottom: 14 }}>
                     <AllergieKeuze gekozen={v.allergieen ?? []} onWijzig={(nieuw) => zet({ allergieen: nieuw })} />
                   </div>
+                </Sectie>
+
+                <Sectie naam={t('Taal')}>
+                  <Rij label={t('Taal')} sub="Nederlands / English">
+                    <TaalKeuze />
+                  </Rij>
                 </Sectie>
 
                 <Sectie naam="Boodschappen">

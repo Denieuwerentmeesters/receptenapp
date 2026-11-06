@@ -31,6 +31,7 @@ import { vergeetHuishouden } from './lib/huishouden'
 import { foutTekst } from './lib/fouten'
 import { useQueryClient } from '@tanstack/react-query'
 import { useVoorkeuren } from './lib/queries'
+import { TaalGrens } from './components/TaalGrens'
 
 type Status = 'bezig' | 'uitgelogd' | 'klaar' | 'fout'
 
@@ -40,6 +41,10 @@ type Status = 'bezig' | 'uitgelogd' | 'klaar' | 'fout'
  * zonder geldige JWT en krijg je een 401 waar je niets aan hebt.
  */
 export default function App() {
+  return <TaalGrens><AppInhoud /></TaalGrens>
+}
+
+function AppInhoud() {
   const [status, setStatus] = useState<Status>('bezig')
   const [fout, setFout] = useState('')
   const qc = useQueryClient()

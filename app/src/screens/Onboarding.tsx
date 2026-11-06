@@ -17,6 +17,7 @@ import { foutTekst } from '../lib/fouten'
 import { meet } from '../lib/meten'
 import { planWeekmenuMelding } from '../lib/weekmenuMelding'
 import type { Voorkeuren } from '../lib/database.types'
+import { TaalKeuze } from '../components/TaalKeuze'
 
 /**
  * De onboarding: één keer na het aanmaken van een account. Eerst de uitleg,
@@ -283,7 +284,10 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
         padding: 'calc(env(safe-area-inset-top) + 28px) 26px calc(env(safe-area-inset-bottom) + 20px)',
       }}>
         <UitlegVoorladen />
-        <Woordmerk hoogte={40} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <Woordmerk hoogte={40} />
+          <TaalKeuze opRood />
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Label>Welkom bij Kookmaatje</Label>
           <Titel grootte={32}>Kook als met een box.</Titel>
