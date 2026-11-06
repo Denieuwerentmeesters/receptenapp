@@ -7,6 +7,7 @@ import { Capacitor } from '@capacitor/core'
 import { PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
 import { foutTekst } from '../lib/fouten'
 import { GRATIS_RECEPTEN, usePlusStand } from '../lib/plus'
+import { locale, t } from '../lib/taal'
 
 /**
  * Kookmaatje Plus: meer dan vijf recepten door AI laten maken, € 3 per maand.
@@ -66,23 +67,21 @@ export function Plus() {
       <Kop style={{ paddingBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <TerugKnop />
-          <Label>Meer recepten</Label>
+          <Label>{t('Meer recepten')}</Label>
         </div>
         <div style={{ marginTop: 14 }}><Titel>Kookmaatje Plus</Titel></div>
       </Kop>
 
       <Inhoud style={{ gap: 20 }}>
         <Tekst>
-          Kookmaatje blijft gratis. Je weekmenu, je lijst en je mandje kosten niets, en de eerste {GRATIS_RECEPTEN} recepten
-          die AI voor je maakt ook niet: uit een link, screenshots, een kookboekfoto of een menu van Zelf samenstellen.
-          Wil je er meer, dan is dat Kookmaatje Plus, omdat elk recept ons geld kost.
+          {t('Kookmaatje blijft gratis. Je weekmenu, je lijst en je mandje kosten niets, en de eerste {n} recepten die AI voor je maakt ook niet: uit een link, screenshots, een kookboekfoto of een menu van Zelf samenstellen. Wil je er meer, dan is dat Kookmaatje Plus, omdat elk recept ons geld kost.', { n: GRATIS_RECEPTEN })}
         </Tekst>
 
         {stand && (
           <Kader>
             {actief
-              ? <><b>Plus is actief</b>{stand.tot ? ` tot ${stand.tot.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}. Laat zoveel recepten maken als je wilt.</>
-              : <><b>{stand.gebruikt} van {GRATIS_RECEPTEN}</b> gratis recepten gebruikt.</>}
+              ? <><b>{t('Plus is actief')}</b>{stand.tot ? ` ${t('tot {datum}', { datum: stand.tot.toLocaleDateString(locale(), { day: 'numeric', month: 'long', year: 'numeric' }) })}` : ''}. {t('Laat zoveel recepten maken als je wilt.')}</>
+              : <><b>{t('{n} van {max}', { n: stand.gebruikt, max: GRATIS_RECEPTEN })}</b> {t('gratis recepten gebruikt.')}</>}
           </Kader>
         )}
 
@@ -95,25 +94,20 @@ export function Plus() {
                 disabled={laden || bezig || wacht || !aanbod}
                 onClick={() => aanbod && void doe(() => koop(aanbod))}
               >
-                {wacht ? 'Even wachten, we ronden af…'
-                  : laden ? 'Prijs ophalen…'
-                  : aanbod ? `Neem Plus voor ${aanbod.prijs} per maand`
-                  : 'Plus is nu niet beschikbaar'}
+                {wacht ? t('Even wachten, we ronden af…')
+                  : laden ? t('Prijs ophalen…')
+                  : aanbod ? t('Neem Plus voor {prijs} per maand', { prijs: aanbod.prijs })
+                  : t('Plus is nu niet beschikbaar')}
               </Button>
               <Tekst klein>
                 {Capacitor.getPlatform() === 'android'
-                  ? <>Je betaalt via Google Play. Het abonnement verlengt zichzelf elke maand tot je opzegt;
-                    opzeggen kan op elk moment in de Play Store: tik op je profielfoto → Betalingen en
-                    abonnementen → Abonnementen. Je houdt Plus tot het eind van de periode die je betaalde.</>
-                  : <>Je betaalt via je Apple-account. Het abonnement verlengt zichzelf elke maand tot je opzegt;
-                    opzeggen kan minstens een dag voor de verlenging in de Instellingen van je iPhone,
-                    onder je naam → Abonnementen. Je houdt Plus tot het eind van de periode die je betaalde.</>}
+                  ? t('Je betaalt via Google Play. Het abonnement verlengt zichzelf elke maand tot je opzegt; opzeggen kan op elk moment in de Play Store: tik op je profielfoto → Betalingen en abonnementen → Abonnementen. Je houdt Plus tot het eind van de periode die je betaalde.')
+                  : t('Je betaalt via je Apple-account. Het abonnement verlengt zichzelf elke maand tot je opzegt; opzeggen kan minstens een dag voor de verlenging in de Instellingen van je iPhone, onder je naam → Abonnementen. Je houdt Plus tot het eind van de periode die je betaalde.')}
               </Tekst>
             </div>
           ) : (
             <Kader>
-              Kookmaatje Plus neem je af in de Kookmaatje-app voor iPhone of Android. Open de app, ga naar Profiel →
-              Kookmaatje Plus en log in met hetzelfde account.
+              {t('Kookmaatje Plus neem je af in de Kookmaatje-app voor iPhone of Android. Open de app, ga naar Profiel → Kookmaatje Plus en log in met hetzelfde account.')}
             </Kader>
           )
         )}
@@ -124,12 +118,12 @@ export function Plus() {
             disabled={bezig || wacht}
             onClick={() => void doe(herstel)}
             style={{ alignSelf: 'flex-start' }}
-          >Herstel mijn aankoop</Button>
+          >{t('Herstel mijn aankoop')}</Button>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 12 }}>
-          <Link href={VOORWAARDEN_URL}>Algemene voorwaarden</Link>
-          <Link href={PRIVACY_URL}>Privacybeleid</Link>
+          <Link href={VOORWAARDEN_URL}>{t('Algemene voorwaarden')}</Link>
+          <Link href={PRIVACY_URL}>{t('Privacybeleid')}</Link>
         </div>
       </Inhoud>
 

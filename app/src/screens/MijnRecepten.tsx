@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Chip, Icon } from '../ds'
@@ -25,13 +26,14 @@ import {
   type LaatsteBeoordeling,
 } from '../lib/beoordeling'
 import type { Recept } from '../lib/database.types'
+import { t, locale } from '../lib/taal'
 
 type Tab = 'koken' | 'bestellen' | 'gekookt'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'koken', label: 'Te koken' },
-  { id: 'bestellen', label: 'Nog bestellen' },
-  { id: 'gekookt', label: 'Eerder gekookt' },
+const TABS: { id: Tab; label: () => string }[] = [
+  { id: 'koken', label: () => t('Te koken') },
+  { id: 'bestellen', label: () => t('Nog bestellen') },
+  { id: 'gekookt', label: () => t('Eerder gekookt') },
 ]
 
 type Sortering = 'nieuwste' | 'cijfer' | 'notitie'
@@ -78,7 +80,7 @@ const ROOSTER: React.CSSProperties = {
 
 /** "14 okt": de dag van je bestelling. */
 function datumLabel(iso: string): string {
-  return new Date(iso).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' }).replace('.', '')
+  return new Date(iso).toLocaleDateString(locale(), { day: 'numeric', month: 'short' }).replace('.', '')
 }
 
 /** Een recept van elders (eerder gekookt) in de vorm van een kaart. */
@@ -143,7 +145,7 @@ export function MijnRecepten() {
   const zetTerug = useLaagCijferWissen()
   const hartje = useHartje()
 
-  const plek = (doel: Tab) => TABS.findIndex((t) => t.id === doel)
+  const plek = (doel: Tab) => TABS.findIndex((tb) => tb.id === doel)
 
   // Kom je ergens vandaan met een onderdeel ("Nog bestellen"), dan sta je er meteen, zonder schuiven.
   useLayoutEffect(() => {
@@ -250,10 +252,10 @@ export function MijnRecepten() {
       recept={recept}
       vlak={VLAKKEN[i % VLAKKEN.length]}
       personen={standaardPersonen(recept, personen)}
-      knop={{ tekst: 'Koken', icoon: 'chefHat' }}
+      knop={{ tekst: t('Koken'), icoon: 'chefHat' }}
       onOpen={() => open(recept.id)}
       onKnop={() => navigeer(`/koken/${recept.id}`)}
-      cijferKnop={{ label: 'Gekookt', onClick: () => setCijferVoor({ soort: 'koken', recept }) }}
+      cijferKnop={{ label: t('Gekookt'), onClick: () => setCijferVoor({ soort: 'koken', recept }) }}
     />
   )
 
@@ -268,7 +270,7 @@ export function MijnRecepten() {
       onOpen={() => open(recept.id)}
       onKnop={() => lijst(recept).voegToe({ ...recept, titel: recept.titel_nl ?? recept.titel })}
       weg={{
-        label: 'Weghalen',
+        label: t('Weghalen'),
         onClick: () => (recept.opLijst ? setWegVraag(recept) : acties(recept).haalUitWeek.mutate(recept.id)),
       }}
     />
@@ -293,11 +295,11 @@ export function MijnRecepten() {
         vlak={VLAKKEN[i % VLAKKEN.length]}
         bonus={bonusPerRecept.get(recept.id) ?? []}
         personen={standaardPersonen(recept, personen)}
-        knop={laag ? { tekst: 'Zet terug', icoon: 'arrowRight' } : undefined}
+        knop={laag ? { tekst: t('Zet terug'), icoon: 'arrowRight' } : undefined}
         onOpen={() => open(recept.id)}
         onKnop={() => zetTerug.mutate(recept.id)}
         weg={{
-          label: 'Weghalen',
+          label: t('Weghalen'),
           links: true,
           onClick: () => mijn?.cijfer == null
             ? setCijferVoor({ soort: 'achteraf', recept, gekooktOp, daarnaWeg: true })
@@ -305,9 +307,9 @@ export function MijnRecepten() {
         }}
         hartje={laag ? undefined : { aan: hartje.bewaard.has(recept.id), onClick: () => hartje.tik(recept) }}
         cijfer={mijn?.cijfer ?? null}
-        metaRegel={[`Gekookt ${datumLabel(gekooktOp)}`, mijn?.cijfer != null ? `Cijfer ${mijn.cijfer}` : null, mijn?.notitie].filter(Boolean).join(' · ')}
+        metaRegel={[t('Gekookt {datum}', { datum: datumLabel(gekooktOp) }), mijn?.cijfer != null ? t('Cijfer {n}', { n: mijn.cijfer }) : null, mijn?.notitie].filter(Boolean).join(' · ')}
         gedempt={laag}
-        cijferKnop={mijn?.cijfer == null ? { label: 'Cijfer', onClick: () => setCijferVoor({ soort: 'achteraf', recept, gekooktOp }) } : undefined}
+        cijferKnop={mijn?.cijfer == null ? { label: t('Cijfer'), onClick: () => setCijferVoor({ soort: 'achteraf', recept, gekooktOp }) } : undefined}
       />
     )
   }
@@ -316,32 +318,32 @@ export function MijnRecepten() {
 
   const laatsteBestelling = teKoken.map((r) => r.besteldOp!).sort().at(-1)
   const opLijst = nogBestellen.filter((r) => r.opLijst).length
-  const voor = `voor ${personen} ${personen === 1 ? 'persoon' : 'personen'}`
+  const voor = personen === 1 ? t('voor 1 persoon') : t('voor {n} personen', { n: personen })
   const kop: Record<Tab, { label: string | null; titel: string; sub: string }> = {
     koken: {
-      label: laatsteBestelling ? `Besteld ${datumLabel(laatsteBestelling)}` : null,
-      titel: 'Wat kook jij vanavond?',
-      sub: `${teKoken.length} te koken · ${voor}`,
+      label: laatsteBestelling ? t('Besteld {datum}', { datum: datumLabel(laatsteBestelling) }) : null,
+      titel: t('Wat kook jij vanavond?'),
+      sub: `${t('{n} te koken', { n: teKoken.length })} · ${voor}`,
     },
     bestellen: {
       label: null,
-      titel: 'Wat eet jij hierna?',
-      sub: `${nogBestellen.length} nog te bestellen · ${voor}`,
+      titel: t('Wat eet jij hierna?'),
+      sub: `${t('{n} nog te bestellen', { n: nogBestellen.length })} · ${voor}`,
     },
     gekookt: {
       label: null,
-      titel: 'Wat kook jij nog eens?',
-      sub: `${eerderGekookt.length} eerder gekookt${gemiddeldCijfer != null ? ` · gemiddeld ${cijferTekst(gemiddeldCijfer)}` : ''}`,
+      titel: t('Wat kook jij nog eens?'),
+      sub: `${t('{n} eerder gekookt', { n: eerderGekookt.length })}${gemiddeldCijfer != null ? ` · ${t('gemiddeld {cijfer}', { cijfer: cijferTekst(gemiddeldCijfer) })}` : ''}`,
     },
   }
 
   return (
     <Scherm>
       <BespaardMelding />
-      <Grens query={fases.query} ladenTekst="Je recepten ophalen">
+      <Grens query={fases.query} ladenTekst={t('Je recepten ophalen')}>
         {/* Compact: de recepten zijn waar het om gaat, niet de kop. */}
         <Kop kleur="var(--c-red-bright)" style={{ paddingBottom: 14 }}>
-          <Label>{kop[tab].label ?? 'Mijn recepten'}</Label>
+          <Label>{kop[tab].label ?? t('Mijn recepten')}</Label>
           <div style={{ marginTop: 6 }}>
             <Titel grootte={22}>{kop[tab].titel}</Titel>
           </div>
@@ -351,8 +353,8 @@ export function MijnRecepten() {
         </Kop>
 
         <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '12px 22px 4px', overflowX: 'auto' }}>
-          {TABS.map((t) => (
-            <Chip key={t.id} selected={tab === t.id} onClick={() => naar(t.id)}>{t.label}</Chip>
+          {TABS.map((tb) => (
+            <Chip key={tb.id} selected={tab === tb.id} onClick={() => naar(tb.id)}>{tb.label()}</Chip>
           ))}
         </div>
 
@@ -374,14 +376,14 @@ export function MijnRecepten() {
             {teKoken.length === 0 ? (
               <Leeg
                 icoon="chefHat"
-                kop="Niets te koken"
-                tekst="Zodra je boodschappen binnen zijn, staan de recepten hier. Kies bij Nog bestellen wat je wilt eten."
-                knop="Naar Nog bestellen"
+                kop={t('Niets te koken')}
+                tekst={t('Zodra je boodschappen binnen zijn, staan de recepten hier. Kies bij Nog bestellen wat je wilt eten.')}
+                knop={t('Naar Nog bestellen')}
                 onKnop={() => naar('bestellen')}
               />
             ) : (
               <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
-                <span style={{ ...KOPJE, paddingBottom: 10 }}>{teKoken.length} te koken</span>
+                <span style={{ ...KOPJE, paddingBottom: 10 }}>{t('{n} te koken', { n: teKoken.length })}</span>
                 <div style={ROOSTER}>{teKoken.map(kaartTeKoken)}</div>
               </Inhoud>
             )}
@@ -391,17 +393,17 @@ export function MijnRecepten() {
             {fases.komendeQuery.isError ? (
               <Leeg
                 icoon="utensils"
-                kop="Dat lukte niet"
-                tekst="We konden je recepten niet ophalen. Er is niets kwijt."
-                knop="Probeer opnieuw"
+                kop={t('Dat lukte niet')}
+                tekst={t('We konden je recepten niet ophalen. Er is niets kwijt.')}
+                knop={t('Probeer opnieuw')}
                 onKnop={() => void fases.komendeQuery.refetch()}
               />
             ) : nogBestellen.length + suggesties.length === 0 ? (
               <Leeg
                 icoon="utensils"
-                kop={fases.komendeQuery.isLoading ? 'Even zoeken…' : 'Nog niets om te bestellen'}
-                tekst="Zoek in Ontdekken wat je wilt eten en tik op het hartje: dan staat het hier."
-                knop="Naar Ontdekken"
+                kop={fases.komendeQuery.isLoading ? t('Even zoeken…') : t('Nog niets om te bestellen')}
+                tekst={t('Zoek in Ontdekken wat je wilt eten en tik op het hartje: dan staat het hier.')}
+                knop={t('Naar Ontdekken')}
                 onKnop={() => navigeer('/ontdekken')}
               />
             ) : (
@@ -411,15 +413,15 @@ export function MijnRecepten() {
                     variant="secondary" icon="shuffle" disabled={vullen || !voorkeuren.data}
                     onClick={() => void vulMijnWeek()}
                     style={{ width: '100%', marginBottom: 16 }}
-                  >{vullen ? 'Even kiezen…' : 'Vul mijn week'}</Button>
+                  >{vullen ? t('Even kiezen…') : t('Vul mijn week')}</Button>
                 )}
                 {nogBestellen.length > 0 && (
                   <>
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingBottom: 10 }}>
-                      <span style={KOPJE}>{nogBestellen.length} nog te bestellen</span>
+                      <span style={KOPJE}>{t('{n} nog te bestellen', { n: nogBestellen.length })}</span>
                       {opLijst > 0 && (
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)' }}>
-                          {opLijst} op je lijst
+                          {t('{n} op je lijst', { n: opLijst })}
                         </span>
                       )}
                     </div>
@@ -428,7 +430,7 @@ export function MijnRecepten() {
                 )}
                 {suggesties.length > 0 && (
                   <>
-                    <span style={{ ...KOPJE, paddingBottom: 10 }}>Suggesties · {suggesties.length}</span>
+                    <span style={{ ...KOPJE, paddingBottom: 10 }}>{t('Suggesties')} · {suggesties.length}</span>
                     <div style={ROOSTER}>{suggesties.map((r, i) => kaartBestellen(r, i + nogBestellen.length))}</div>
                   </>
                 )}
@@ -440,9 +442,9 @@ export function MijnRecepten() {
             {eerderGekookt.length === 0 ? (
               <Leeg
                 icoon="chefHat"
-                kop="Nog niets gekookt"
-                tekst="Zodra je een recept als gekookt aftikt, staat het hier, met je cijfer en notitie voor de volgende keer."
-                knop="Naar Te koken"
+                kop={t('Nog niets gekookt')}
+                tekst={t('Zodra je een recept als gekookt aftikt, staat het hier, met je cijfer en notitie voor de volgende keer.')}
+                knop={t('Naar Te koken')}
                 onKnop={() => naar('koken')}
               />
             ) : (
@@ -450,7 +452,7 @@ export function MijnRecepten() {
                 {/* Buiten de scroll, zodat de kaarten er nooit overheen schuiven. */}
                 {eerderGekookt.length >= SORTEER_VANAF && (
                   <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '8px 22px 4px', overflowX: 'auto' }}>
-                    {([['nieuwste', 'Nieuwste eerst'], ['cijfer', 'Hoogste cijfer'], ['notitie', 'Met notitie']] as const).map(([id, label]) => (
+                    {([['nieuwste', t('Nieuwste eerst')], ['cijfer', t('Hoogste cijfer')], ['notitie', t('Met notitie')]] as const).map(([id, label]) => (
                       <Chip key={id} selected={sortering === id} onClick={() => setSortering(id)}>{label}</Chip>
                     ))}
                   </div>
@@ -495,22 +497,22 @@ export function MijnRecepten() {
       )}
       <Dialoog
         open={bewaar.isError}
-        kop="Cijfer bewaren lukte niet"
-        tekst={`Je recept staat wel bij gekookt. Probeer het cijfer straks nog eens via Cijfer op de kaart.${
-          bewaar.error ? ` (${(bewaar.error as { message?: string }).message ?? 'onbekende fout'})` : ''}`}
+        kop={t('Cijfer bewaren lukte niet')}
+        tekst={`${t('Je recept staat wel bij gekookt. Probeer het cijfer straks nog eens via Cijfer op de kaart.')}${
+          bewaar.error ? ` (${(bewaar.error as { message?: string }).message ?? t('onbekende fout')})` : ''}`}
         onSluit={() => bewaar.reset()}
-        acties={[{ label: 'Oké', hoofd: true, onClick: () => bewaar.reset() }]}
+        acties={[{ label: t('Oké'), hoofd: true, onClick: () => bewaar.reset() }]}
       />
       <Dialoog
         open={Boolean(wegVraag)}
-        kop="Weghalen?"
+        kop={t('Weghalen?')}
         tekst={wegVraag
-          ? `${wegVraag.titel_nl ?? wegVraag.titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.`
+          ? t('{titel} staat op je boodschappenlijst. De ingrediënten gaan er dan ook af.', { titel: receptTitel(wegVraag) })
           : undefined}
         onSluit={() => setWegVraag(null)}
         acties={[
-          { label: 'Ja, haal weg', hoofd: true, onClick: () => { if (wegVraag) acties(wegVraag).haalUitWeek.mutate(wegVraag.id); setWegVraag(null) } },
-          { label: 'Laat maar', onClick: () => setWegVraag(null) },
+          { label: t('Ja, haal weg'), hoofd: true, onClick: () => { if (wegVraag) acties(wegVraag).haalUitWeek.mutate(wegVraag.id); setWegVraag(null) } },
+          { label: t('Laat maar'), onClick: () => setWegVraag(null) },
         ]}
       />
       <OnderBalk />
@@ -540,8 +542,8 @@ function Paneel({ children, verborgen }: { children: React.ReactNode; verborgen:
  * Staat het nog niet op je lijst, dan zegt de knop wat een tik doet.
  */
 function knopTekst(recept: WeekRecept): string {
-  if (recept.opLijst) return recept.aantal > 1 ? `Op je lijst · ${recept.aantal}x` : 'Op je lijst'
-  return 'Zet op je lijst'
+  if (recept.opLijst) return recept.aantal > 1 ? t('Op je lijst · {n}x', { n: recept.aantal }) : t('Op je lijst')
+  return t('Zet op je lijst')
 }
 
 function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop, weg, hartje, cijfer = null, metaRegel, gedempt = false, cijferKnop }: {
@@ -597,7 +599,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
           position: 'relative',
         }}>
           {cijfer != null && (
-            <span aria-label={`Jouw cijfer: ${cijfer}`} style={{
+            <span aria-label={t('Jouw cijfer: {n}', { n: cijfer })} style={{
               position: 'absolute', right: 8, bottom: 8, minWidth: 28, height: 28, boxSizing: 'border-box', padding: '0 6px',
               borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, opacity: 1,
@@ -608,8 +610,8 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
           {recept.afbeelding_url || recept.bron_type === 'samengesteld'
             ? ''
             : recept.user_id
-              ? <span style={{ padding: '0 10px', textAlign: 'center', lineHeight: 1.3 }}>Afbeelding wordt vannacht toegevoegd</span>
-              : 'foto'}
+              ? <span style={{ padding: '0 10px', textAlign: 'center', lineHeight: 1.3 }}>{t('Afbeelding wordt vannacht toegevoegd')}</span>
+              : t('foto')}
         </div>
         {/* Het gele bonuslabel staat linksonder over de kaart: laat er ruimte voor als er een metaregel is. */}
         <div style={{ padding: `10px 12px ${metaRegel && bonus.length > 0 ? 40 : 12}px`, width: '100%', boxSizing: 'border-box' }}>
@@ -618,10 +620,10 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
             margin: 0, textTransform: 'uppercase', minHeight: '2em',
             // Twee regels, dan afkappen: alle kaarten even hoog, vier in beeld.
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-          }}>{recept.titel_nl ?? recept.titel}</h3>
+          }}>{receptTitel(recept)}</h3>
           <div style={{ display: 'flex', gap: 12, marginTop: 6, opacity: 0.85 }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
-              <Icon name="clock" size={13} />{recept.bereidingstijd_minuten ?? '?'} min
+              <Icon name="clock" size={13} />{t('{n} min', { n: recept.bereidingstijd_minuten ?? '?' })}
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
               <Icon name="users" size={13} />{personen}
@@ -647,7 +649,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
       ><Icon name="x" size={16} /></button>}
       {hartje && <button
         onClick={hartje.onClick}
-        aria-label={hartje.aan ? 'Haal uit Nog bestellen' : 'Zet bij Nog bestellen'}
+        aria-label={hartje.aan ? t('Haal uit Nog bestellen') : t('Zet bij Nog bestellen')}
         aria-pressed={hartje.aan}
         style={{
           position: 'absolute', top: 10, right: 10, width: 32, height: 32,

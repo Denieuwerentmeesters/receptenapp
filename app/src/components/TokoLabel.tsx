@@ -1,3 +1,5 @@
+import { t } from '../lib/taal'
+
 /**
  * Klein label op een receptfoto: voor dit recept heb je iets van de toko nodig,
  * dat AH en Jumbo niet hebben. Zo weet je het al bij het kiezen, niet pas als
@@ -10,6 +12,6 @@ export function TokoLabel({ links = 8 }: { links?: number }) {
       background: 'var(--c-ink)', color: 'var(--c-yellow)', borderRadius: 'var(--radius-full)',
       padding: '4px 9px', fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
       letterSpacing: '.06em', textTransform: 'uppercase',
-    }}>Toko</span>
+    }}>{t('Toko')}</span>
   )
 }

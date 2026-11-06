@@ -3,6 +3,7 @@ import { Button } from '../ds'
 import { Dialoog } from './Dialoog'
 import { useHuishouden, useHuishoudenActies } from '../lib/huishouden'
 import { foutTekst } from '../lib/fouten'
+import { locale, t } from '../lib/taal'
 
 /**
  * Instellingen → Huishouden: je lijst delen met je huisgenoot.
@@ -20,15 +21,15 @@ export function HuishoudenBlok() {
   const [verwijder, setVerwijder] = useState<{ id: string; email: string | null } | 'zelf' | null>(null)
 
   const h = huishouden.data
-  if (!h) return <Tekst>Huishouden ophalen…</Tekst>
+  if (!h) return <Tekst>{t('Huishouden ophalen…')}</Tekst>
 
   async function controleer() {
     setFout(null)
     const schoon = code.replace(/\s/g, '').toUpperCase()
-    if (!/^[A-Z0-9]{8}$/.test(schoon)) { setFout('Een code heeft 8 letters en cijfers.'); return }
+    if (!/^[A-Z0-9]{8}$/.test(schoon)) { setFout(t('Een code heeft 8 letters en cijfers.')); return }
     try {
       const eigenaar = await bekijkCode(schoon)
-      if (!eigenaar) { setFout('Deze code bestaat niet of is verlopen. Vraag een nieuwe.'); return }
+      if (!eigenaar) { setFout(t('Deze code bestaat niet of is verlopen. Vraag een nieuwe.')); return }
       setBevestig({ code: schoon, ...eigenaar })
     } catch (e) {
       setFout(foutTekst(e))
@@ -39,16 +40,16 @@ export function HuishoudenBlok() {
   if (h.eigenaar) {
     return (
       <>
-        <Tekst>Je deelt de week en boodschappenlijst van <b>{h.eigenaar.email ?? 'je huisgenoot'}</b>. Favorieten en eigen recepten blijven van jezelf.</Tekst>
-        <Button variant="secondary" onClick={() => setVerwijder('zelf')} style={{ alignSelf: 'flex-start' }}>Huishouden verlaten</Button>
+        <Tekst>{t('Je deelt de week en boodschappenlijst van')} <b>{h.eigenaar.email ?? t('je huisgenoot')}</b>. {t('Favorieten en eigen recepten blijven van jezelf.')}</Tekst>
+        <Button variant="secondary" onClick={() => setVerwijder('zelf')} style={{ alignSelf: 'flex-start' }}>{t('Huishouden verlaten')}</Button>
         <Dialoog
           open={verwijder === 'zelf'}
-          kop="Huishouden verlaten?"
-          tekst="Je ziet dan weer je eigen week en boodschappenlijst, zoals je die had voordat je ging delen."
+          kop={t('Huishouden verlaten?')}
+          tekst={t('Je ziet dan weer je eigen week en boodschappenlijst, zoals je die had voordat je ging delen.')}
           onSluit={() => setVerwijder(null)}
           acties={[
-            { label: 'Ja, verlaten', hoofd: true, onClick: () => { verlaat.mutate(undefined); setVerwijder(null) } },
-            { label: 'Laat maar', onClick: () => setVerwijder(null) },
+            { label: t('Ja, verlaten'), hoofd: true, onClick: () => { verlaat.mutate(undefined); setVerwijder(null) } },
+            { label: t('Laat maar'), onClick: () => setVerwijder(null) },
           ]}
         />
       </>
@@ -59,35 +60,35 @@ export function HuishoudenBlok() {
     <>
       {h.leden.length > 0 ? (
         <>
-          <Tekst>Je deelt je week en boodschappenlijst met:</Tekst>
+          <Tekst>{t('Je deelt je week en boodschappenlijst met:')}</Tekst>
           {h.leden.map((lid) => (
             <div key={lid.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0' }}>
-              <span style={{ flex: 1, fontFamily: 'var(--font-body)', fontSize: 15 }}>{lid.email ?? 'Huisgenoot'}</span>
-              <button onClick={() => setVerwijder(lid)} style={linkKnop}>verwijderen</button>
+              <span style={{ flex: 1, fontFamily: 'var(--font-body)', fontSize: 15 }}>{lid.email ?? t('Huisgenoot')}</span>
+              <button onClick={() => setVerwijder(lid)} style={linkKnop}>{t('verwijderen')}</button>
             </div>
           ))}
         </>
       ) : (
-        <Tekst>Deel je week en boodschappenlijst met je huisgenoot. Samen afvinken in de winkel, samen het mandje vullen.</Tekst>
+        <Tekst>{t('Deel je week en boodschappenlijst met je huisgenoot. Samen afvinken in de winkel, samen het mandje vullen.')}</Tekst>
       )}
 
       {h.uitnodiging ? (
         <div style={{ background: 'var(--c-paper)', borderRadius: 14, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>Geef deze code aan je huisgenoot</span>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>{t('Geef deze code aan je huisgenoot')}</span>
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 26, letterSpacing: '.12em', userSelect: 'all' }}>{h.uitnodiging.code}</span>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
-            Geldig t/m {new Date(h.uitnodiging.verloopt_op).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}. Je huisgenoot vult hem in bij Instellingen → Huishouden.
+            {t('Geldig t/m {datum}. Je huisgenoot vult hem in bij Instellingen → Huishouden.', { datum: new Date(h.uitnodiging.verloopt_op).toLocaleDateString(locale(), { day: 'numeric', month: 'long' }) })}
           </span>
         </div>
       ) : (
         <Button onClick={() => maakUitnodiging.mutate()} disabled={maakUitnodiging.isPending} style={{ alignSelf: 'flex-start' }}>
-          {maakUitnodiging.isPending ? 'Code maken…' : 'Deel je lijst'}
+          {maakUitnodiging.isPending ? t('Code maken…') : t('Deel je lijst')}
         </Button>
       )}
 
       {h.leden.length === 0 && (
         <form onSubmit={(e) => { e.preventDefault(); void controleer() }} style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-          <label htmlFor="huishouden-code" style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>Kreeg je een code?</label>
+          <label htmlFor="huishouden-code" style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>{t('Kreeg je een code?')}</label>
           <div style={{ display: 'flex', gap: 8 }}>
             <input
               id="huishouden-code"
@@ -101,7 +102,7 @@ export function HuishoudenBlok() {
                 borderRadius: 14, padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 16, letterSpacing: '.08em',
               }}
             />
-            <Button type="submit" variant="secondary">Invullen</Button>
+            <Button type="submit" variant="secondary">{t('Invullen')}</Button>
           </div>
           {fout && <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--c-red)' }}>{fout}</span>}
         </form>
@@ -109,30 +110,30 @@ export function HuishoudenBlok() {
 
       <Dialoog
         open={Boolean(bevestig)}
-        kop="Samen één lijst?"
+        kop={t('Samen één lijst?')}
         tekst={bevestig
-          ? `Je ziet dan de week en boodschappenlijst van ${bevestig.email ?? 'je huisgenoot'}, en jullie vullen die samen. Je eigen lijst blijft bewaard: verlaat je het huishouden, dan is die terug.`
+          ? t('Je ziet dan de week en boodschappenlijst van {naam}, en jullie vullen die samen. Je eigen lijst blijft bewaard: verlaat je het huishouden, dan is die terug.', { naam: bevestig.email ?? t('je huisgenoot') })
           : undefined}
         onSluit={() => setBevestig(null)}
         acties={[
           {
-            label: 'Ja, samen', hoofd: true,
+            label: t('Ja, samen'), hoofd: true,
             onClick: () => {
               if (bevestig) wordLid.mutate({ code: bevestig.code, eigenaarId: bevestig.id, eigenaarEmail: bevestig.email }, { onError: (e) => setFout(foutTekst(e)) })
               setBevestig(null); setCode('')
             },
           },
-          { label: 'Laat maar', onClick: () => setBevestig(null) },
+          { label: t('Laat maar'), onClick: () => setBevestig(null) },
         ]}
       />
       <Dialoog
         open={Boolean(verwijder && verwijder !== 'zelf')}
-        kop="Uit je huishouden halen?"
-        tekst={verwijder && verwijder !== 'zelf' ? `${verwijder.email ?? 'Je huisgenoot'} ziet dan weer de eigen week en lijst van vóór het delen.` : undefined}
+        kop={t('Uit je huishouden halen?')}
+        tekst={verwijder && verwijder !== 'zelf' ? t('{naam} ziet dan weer de eigen week en lijst van vóór het delen.', { naam: verwijder.email ?? t('Je huisgenoot') }) : undefined}
         onSluit={() => setVerwijder(null)}
         acties={[
-          { label: 'Ja, verwijderen', hoofd: true, onClick: () => { if (verwijder && verwijder !== 'zelf') verlaat.mutate(verwijder.id); setVerwijder(null) } },
-          { label: 'Laat maar', onClick: () => setVerwijder(null) },
+          { label: t('Ja, verwijderen'), hoofd: true, onClick: () => { if (verwijder && verwijder !== 'zelf') verlaat.mutate(verwijder.id); setVerwijder(null) } },
+          { label: t('Laat maar'), onClick: () => setVerwijder(null) },
         ]}
       />
     </>

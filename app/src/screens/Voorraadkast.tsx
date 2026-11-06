@@ -4,10 +4,11 @@ import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel, Voet } from '../component
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { useVoorraad, useVoorraadMuteren, type VoorraadItem } from '../lib/queries2'
-import { DROGE_KRUIDEN_KEY, DROGE_KRUIDEN_UITLEG } from '../lib/kruiden'
+import { DROGE_KRUIDEN_KEY, droogKruidenUitleg } from '../lib/kruiden'
 import { VOORRAAD_SUGGESTIES } from '../lib/voorraad'
 import { ingredientKey } from '../lib/schaal'
 import { useBoodschappen } from '../lib/queries'
+import { t } from '../lib/taal'
 
 /**
  * Wat altijd in huis is en dus nooit op de lijst komt (lib/altijdInHuis.ts).
@@ -52,23 +53,22 @@ export function Voorraadkast() {
           border: '1.5px solid rgba(43,20,32,0.14)', background: 'transparent',
           borderRadius: 'var(--radius-full)', padding: '8px 14px',
           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-        }}>+ {s}</button>
+        }}>+ {t(s)}</button>
       ))}
     </div>
   )
 
   return (
     <Scherm>
-      <Grens query={voorraad} ladenTekst="Voorraadkast ophalen">
+      <Grens query={voorraad} ladenTekst={t('Voorraadkast ophalen')}>
         <Kop kleur="var(--c-red)" style={{ paddingBottom: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <TerugKnop />
-            <Label kleur="var(--c-pink-soft)">In huis</Label>
+            <Label kleur="var(--c-pink-soft)">{t('In huis')}</Label>
           </div>
-          <div style={{ marginTop: 14 }}><Titel grootte={26}>Voorraadkast</Titel></div>
+          <div style={{ marginTop: 14 }}><Titel grootte={26}>{t('Voorraadkast')}</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
-            Wat hier aan staat, laten we van je boodschappenlijst af. Iets op? Tik op
-            "in huis", dan zetten we het op je lijst.
+            {t('Wat hier aan staat, laten we van je boodschappenlijst af. Iets op? Tik op "in huis", dan zetten we het op je lijst.')}
           </p>
         </Kop>
 
@@ -80,7 +80,7 @@ export function Voorraadkast() {
             <input
               value={nieuw}
               onChange={(e) => setNieuw(e.target.value)}
-              placeholder="Voeg iets toe dat je in huis hebt"
+              placeholder={t('Voeg iets toe dat je in huis hebt')}
               style={{
                 flex: 1, minWidth: 0, background: 'var(--c-paper)',
                 border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 14,
@@ -91,15 +91,15 @@ export function Voorraadkast() {
               flex: 'none', border: 'none', borderRadius: 14, padding: '0 18px',
               background: 'var(--c-red)', color: 'var(--c-cream)',
               fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, cursor: 'pointer',
-            }}>Toevoegen</button>
+            }}>{t('Toevoegen')}</button>
           </form>
 
           {items.length === 0 ? (
             <>
               <Leeg
                 icoon="list"
-                kop="Je kast is nog leeg"
-                tekst="Voeg toe wat je standaard in huis hebt. Die producten laten we dan van je lijst af."
+                kop={t('Je kast is nog leeg')}
+                tekst={t('Voeg toe wat je standaard in huis hebt. Die producten laten we dan van je lijst af.')}
               />
               {suggestieKnoppen}
             </>
@@ -111,9 +111,9 @@ export function Voorraadkast() {
                   <span style={{
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                     textTransform: 'uppercase', color: 'var(--c-red)',
-                  }}>{groep.naam}</span>
+                  }}>{t(groep.naam)}</span>
                   <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(43,20,32,0.6)' }}>
-                    {groep.items.filter((i) => i.in_huis).length} van {groep.items.length}
+                    {t('{n} van {totaal}', { n: groep.items.filter((i) => i.in_huis).length, totaal: groep.items.length })}
                   </span>
                 </div>
 
@@ -126,13 +126,13 @@ export function Voorraadkast() {
                       flex: 1, minWidth: 0, fontFamily: 'var(--font-body)', fontSize: 15,
                       color: item.in_huis ? 'var(--color-ink)' : 'rgba(43,20,32,0.45)',
                     }}>
-                      {item.naam}
+                      {t(item.naam)}
                       {item.ingredient_key === DROGE_KRUIDEN_KEY ? (
                         <span style={subStijl}>
-                          {item.in_huis ? 'Wel op je lijst, niet in je mandje' : 'Gaan weer mee naar je mandje'}
+                          {item.in_huis ? t('Wel op je lijst, niet in je mandje') : t('Gaan weer mee naar je mandje')}
                         </span>
                       ) : !item.in_huis && opLijst.has(item.ingredient_key) && (
-                        <span style={subStijl}>Op je boodschappenlijst</span>
+                        <span style={subStijl}>{t('Op je boodschappenlijst')}</span>
                       )}
                     </span>
 
@@ -145,11 +145,11 @@ export function Voorraadkast() {
                         color: item.in_huis ? 'var(--c-cream)' : 'rgba(43,20,32,0.6)',
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       }}
-                    >{item.in_huis ? 'in huis' : 'op'}</button>
+                    >{item.in_huis ? t('in huis') : t('op')}</button>
 
                     <button
                       onClick={() => verwijderen.mutate(item.ingredient_key)}
-                      aria-label={`${item.naam} verwijderen`}
+                      aria-label={t('{naam} verwijderen', { naam: item.naam })}
                       style={{
                         flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',
                         border: 'none', background: 'transparent', color: 'rgba(43,20,32,0.45)',
@@ -162,14 +162,14 @@ export function Voorraadkast() {
             ))}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <span style={{ ...kopStijl, paddingBottom: 6 }}>Altijd in huis</span>
+              <span style={{ ...kopStijl, paddingBottom: 6 }}>{t('Altijd in huis')}</span>
               {ALTIJD_IN_HUIS.map((naam) => {
                 const op = opLijst.has(ingredientKey(naam))
                 return (
                   <div key={naam} style={rijStijl}>
                     <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-body)', fontSize: 15 }}>
-                      {naam}
-                      <span style={subStijl}>{op ? 'Op je boodschappenlijst' : 'Komt nooit vanzelf op je lijst'}</span>
+                      {t(naam)}
+                      <span style={subStijl}>{op ? t('Op je boodschappenlijst') : t('Komt nooit vanzelf op je lijst')}</span>
                     </span>
                     <button
                       onClick={() => altijdOp.mutate({ naam, op: !op })}
@@ -180,7 +180,7 @@ export function Voorraadkast() {
                         color: op ? 'var(--c-cream)' : 'var(--c-ink)',
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       }}
-                    >{op ? 'op je lijst' : 'op?'}</button>
+                    >{op ? t('op je lijst') : t('op?')}</button>
                   </div>
                 )
               })}
@@ -191,7 +191,7 @@ export function Voorraadkast() {
                 <span style={{
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                   textTransform: 'uppercase', color: 'var(--c-red)',
-                }}>Snel toevoegen</span>
+                }}>{t('Snel toevoegen')}</span>
                 {suggestieKnoppen}
               </div>
             )}
@@ -205,7 +205,7 @@ export function Voorraadkast() {
               fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4, margin: 0,
               textAlign: 'center', color: 'rgba(43,20,32,0.6)',
             }}>
-              {inHuis} {inHuis === 1 ? 'product' : 'producten'} in huis · deze laten we van je lijst af
+              {inHuis === 1 ? t('{n} product in huis · deze laten we van je lijst af', { n: inHuis }) : t('{n} producten in huis · deze laten we van je lijst af', { n: inHuis })}
             </p>
           </Voet>
         )}
@@ -213,10 +213,10 @@ export function Voorraadkast() {
 
       <Dialoog
         open={kruidenUitleg}
-        kop="Droge kruiden in huis"
-        tekst={`${DROGE_KRUIDEN_UITLEG} Ze blijven op je boodschappenlijst staan, zodat je ziet wat een recept vraagt, maar we zetten ze niet meer in je mandje. Bijzondere kruiden, zoals sumak of kardemom, vragen we na.`}
+        kop={t('Droge kruiden in huis')}
+        tekst={`${droogKruidenUitleg()} ${t('Ze blijven op je boodschappenlijst staan, zodat je ziet wat een recept vraagt, maar we zetten ze niet meer in je mandje. Bijzondere kruiden, zoals sumak of kardemom, vragen we na.')}`}
         onSluit={() => setKruidenUitleg(false)}
-        acties={[{ label: 'Begrepen', hoofd: true, onClick: () => setKruidenUitleg(false) }]}
+        acties={[{ label: t('Begrepen'), hoofd: true, onClick: () => setKruidenUitleg(false) }]}
       />
     </Scherm>
   )

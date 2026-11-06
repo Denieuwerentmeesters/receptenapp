@@ -6,6 +6,7 @@ import { ingredientKey } from './schaal'
 import { lijstSleutel } from './synoniemen'
 import { schapVoor } from './winkelindeling'
 import type { Ingredient } from './database.types'
+import { t, locale } from './taal'
 
 /**
  * Regels rond bonus en aanbiedingen, zonder React of database: gedeeld door
@@ -24,9 +25,9 @@ import type { Ingredient } from './database.types'
 
 /** Bronvermelding: verplicht onder alle bonusinformatie (PrijsProfeet, API-voorwaarden art. 6). */
 export const BONUS_BRON = {
-  kort: 'Aanbiedingen via PrijsProfeet',
+  get kort() { return t('Aanbiedingen via PrijsProfeet') },
   url: 'https://www.prijsprofeet.nl',
-  uitleg: 'Bonus en aanbiedingen komen van PrijsProfeet. Prijzen zijn indicatief; de prijs in je mandje bij AH of Jumbo is leidend.',
+  get uitleg() { return t('Bonus en aanbiedingen komen van PrijsProfeet. Prijzen zijn indicatief; de prijs in je mandje bij AH of Jumbo is leidend.') },
 }
 
 export interface BonusActie {
@@ -59,14 +60,14 @@ export function isoDatum(d: Date): string {
   return `${d.getFullYear()}-${tw(d.getMonth() + 1)}-${tw(d.getDate())}`
 }
 
-const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
+const dagNaam = (i: number) => t(['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'][i])
 
 /** "t/m zondag" binnen een week, anders "t/m 12 oktober". */
 export function totTekst(geldigTot: string, vandaag: Date = new Date()): string {
   const tot = new Date(`${geldigTot}T12:00:00`)
   const dagen = Math.round((tot.getTime() - vandaag.getTime()) / 86_400_000)
-  if (dagen >= 0 && dagen < 7) return `t/m ${DAGEN[tot.getDay()]}`
-  return `t/m ${tot.getDate()} ${tot.toLocaleDateString('nl-NL', { month: 'long' })}`
+  if (dagen >= 0 && dagen < 7) return t('t/m {dag}', { dag: dagNaam(tot.getDay()) })
+  return t('t/m {dag} {maand}', { dag: tot.getDate(), maand: tot.toLocaleDateString(locale(), { month: 'long' }) })
 }
 
 /** De acties voor één ingrediënt, met dezelfde zoekregels als de mandjelink. */
@@ -123,8 +124,9 @@ export function receptBonusProducten(ingredienten: Ingredient[], bonus: BonusMap
 
 /** "Kipfilet 1 kg · 2e halve prijs t/m zondag · € 4,99 (was € 6,49)" */
 export function actieTekst(a: BonusActie): string {
+  const bedrag = (n: number) => n.toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const prijs = a.prijs_nu !== null
-    ? ` · € ${a.prijs_nu.toFixed(2).replace('.', ',')}${a.prijs_was !== null && a.prijs_was > a.prijs_nu ? ` (was € ${a.prijs_was.toFixed(2).replace('.', ',')})` : ''}`
+    ? ` · € ${bedrag(a.prijs_nu)}${a.prijs_was !== null && a.prijs_was > a.prijs_nu ? ` (${t('was')} € ${bedrag(a.prijs_was)})` : ''}`
     : ''
   return `${a.titel}${a.mechanisme ? ` · ${a.mechanisme}` : ''} ${totTekst(a.geldig_tot)}${prijs}`
 }

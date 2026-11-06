@@ -1,3 +1,4 @@
+import { receptTitel, receptBereiding, ingredientNaam, ingredientWeergave } from '../lib/receptTaal'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../ds'
@@ -13,6 +14,7 @@ import { schaalIngredienten } from '../lib/schaal'
 import { formatteerDuur, tijdenUitStap } from '../lib/kookmodus'
 import { bereidGeluidVoor, houdSchermAan, planWekker, trekWekkerIn, wekkerAfgelopen } from '../lib/kookwekker'
 import { standaardPersonen } from '../lib/menu'
+import { t } from '../lib/taal'
 
 /**
  * Eén timer tegelijk. Loopt hij, dan onthouden we het eindtijdstip in plaats
@@ -99,11 +101,11 @@ export function Kookmodus() {
   useEffect(() => {
     if (loopt && resterend === 0) {
       wekkerAfgelopen()
-      setTimer((t) => t && { ...t, eindOp: null, resterend: 0 })
+      setTimer((vorige) => vorige && { ...vorige, eindOp: null, resterend: 0 })
     }
   }, [loopt, resterend])
 
-  const titel = recept.data ? (recept.data.titel_nl ?? recept.data.titel) : ''
+  const titel = recept.data ? (receptTitel(recept.data)) : ''
 
   function startTimer(seconden: number, label: string, bijStap: number) {
     bereidGeluidVoor()
@@ -131,13 +133,14 @@ export function Kookmodus() {
 
   return (
     <Scherm achtergrond="var(--c-purple)">
-      <Grens query={recept} ladenTekst="Recept ophalen">
+      <Grens query={recept} ladenTekst={t('Recept ophalen')}>
         {recept.data && (() => {
           const r = recept.data
-          const stappen = r.bereiding_nl.length > 0 ? r.bereiding_nl : ['Voor dit recept is nog geen bereiding vastgelegd.']
+          const stappen = r.bereiding_nl.length > 0 ? receptBereiding(r) : [t('Voor dit recept is nog geen bereiding vastgelegd.')]
           const laatste = stap === stappen.length - 1
           const personen = standaardPersonen(r, voorkeuren.data?.aantal_personen ?? 4)
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
+            .map((ing, idx) => ({ ...ing, naam: ingredientNaam(r, idx), weergave: ingredientWeergave(r, idx, ing.weergave) }))
 
           // Ingrediënten die in deze stap genoemd worden, tonen we als chips —
           // dan hoef je niet terug te bladeren voor de hoeveelheid.
@@ -149,7 +152,7 @@ export function Kookmodus() {
 
           // Tijden uit de stap eerst, de vaste 5/10/15 erachter als terugval.
           const stapTijden = tijdenUitStap(stappen[stap]).slice(0, 3)
-          const terugval = [5, 10, 15].filter((m) => !stapTijden.some((t) => t.seconden === m * 60))
+          const terugval = [5, 10, 15].filter((m) => !stapTijden.some((x) => x.seconden === m * 60))
           const deTimer = timer?.stap === stap ? timer : null
 
           return (
@@ -160,7 +163,7 @@ export function Kookmodus() {
               }}>
                 <button
                   onClick={() => navigeer(-1)}
-                  aria-label="Kookmodus sluiten"
+                  aria-label={t('Kookmodus sluiten')}
                   style={{
                     border: 'none', background: 'rgba(243,205,214,0.25)', color: 'var(--c-pink-soft)',
                     width: 36, height: 36, borderRadius: 'var(--radius-full)', cursor: 'pointer',
@@ -171,7 +174,7 @@ export function Kookmodus() {
                   flex: 1, fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                   letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--c-yellow)',
                 }}>
-                  {r.titel_nl ?? r.titel} · stap {stap + 1} van {stappen.length}
+                  {receptTitel(r)} · {t('stap {n} van {totaal}', { n: stap + 1, totaal: stappen.length })}
                 </span>
               </div>
 
@@ -198,12 +201,12 @@ export function Kookmodus() {
                     }}
                   >
                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18 }}>
-                      {resterend === 0 ? 'Klaar' : formatteer(resterend)}
+                      {resterend === 0 ? t('Klaar') : formatteer(resterend)}
                     </span>
                     <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {timer.label} · stap {timer.stap + 1}
+                      {timer.label} · {t('stap {n}', { n: timer.stap + 1 })}
                     </span>
-                    {!loopt && resterend > 0 && <span>gepauzeerd</span>}
+                    {!loopt && resterend > 0 && <span>{t('gepauzeerd')}</span>}
                   </button>
                 </div>
               )}
@@ -236,7 +239,7 @@ export function Kookmodus() {
                     <span style={{
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                       letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--c-yellow)',
-                    }}>{deTimer ? deTimer.label : 'Timer'}</span>
+                    }}>{deTimer ? deTimer.label : t('Timer')}</span>
                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 34, lineHeight: 1 }}>
                       {deTimer && resterend !== null ? formatteer(resterend) : '––:––'}
                     </span>
@@ -246,16 +249,16 @@ export function Kookmodus() {
                       <>
                         {resterend > 0 && (
                           <button onClick={loopt ? pauzeer : hervat} style={timerKnop}>
-                            {loopt ? 'Pauze' : 'Start'}
+                            {loopt ? t('Pauze') : t('Start')}
                           </button>
                         )}
-                        <button onClick={zetUit} style={timerKnop}>{resterend === 0 ? 'Klaar' : 'Uit'}</button>
+                        <button onClick={zetUit} style={timerKnop}>{resterend === 0 ? t('Klaar') : t('Uit')}</button>
                       </>
                     ) : (
                       <>
-                        {stapTijden.map((t) => (
-                          <button key={t.seconden} onClick={() => startTimer(t.seconden, t.label, stap)} style={timerKnop}>
-                            {t.label}
+                        {stapTijden.map((x) => (
+                          <button key={x.seconden} onClick={() => startTimer(x.seconden, x.label, stap)} style={timerKnop}>
+                            {x.label}
                           </button>
                         ))}
                         {terugval.map((m) => (
@@ -263,7 +266,7 @@ export function Kookmodus() {
                             key={m}
                             onClick={() => startTimer(m * 60, formatteerDuur(m * 60), stap)}
                             style={stapTijden.length > 0 ? timerKnopStil : timerKnop}
-                          >{m}m</button>
+                          >{t('{m}m', { m })}</button>
                         ))}
                       </>
                     )}
@@ -278,7 +281,7 @@ export function Kookmodus() {
                 <button
                   onClick={() => setStap(Math.max(0, stap - 1))}
                   disabled={stap === 0}
-                  aria-label="Vorige stap"
+                  aria-label={t('Vorige stap')}
                   style={{
                     flex: 'none', width: 56, height: 56, borderRadius: 'var(--radius-full)',
                     border: '1.5px solid rgba(248,241,236,0.5)', background: 'transparent',
@@ -300,7 +303,7 @@ export function Kookmodus() {
                     background: 'var(--c-yellow)', color: 'var(--c-ink)',
                     fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700, cursor: 'pointer',
                   }}
-                >{!laatste ? 'Volgende stap' : inFase ? 'Gekookt' : 'Klaar — eet smakelijk'}</button>
+                >{!laatste ? t('Volgende stap') : inFase ? t('Gekookt') : t('Klaar — eet smakelijk')}</button>
               </div>
             </div>
           )
@@ -308,11 +311,11 @@ export function Kookmodus() {
       </Grens>
       <Dialoog
         open={bewaarMislukt}
-        kop="Cijfer bewaren lukte niet"
-        tekst={`Je recept staat wel bij gekookt. Geef het cijfer straks nog via Cijfer bij Eerder gekookt.${
-          bewaar.error ? ` (${(bewaar.error as { message?: string }).message ?? 'onbekende fout'})` : ''}`}
+        kop={t('Cijfer bewaren lukte niet')}
+        tekst={`${t('Je recept staat wel bij gekookt. Geef het cijfer straks nog via Cijfer bij Eerder gekookt.')}${
+          bewaar.error ? ` (${(bewaar.error as { message?: string }).message ?? t('onbekende fout')})` : ''}`}
         onSluit={() => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } })}
-        acties={[{ label: 'Oké', hoofd: true, onClick: () => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } }) }]}
+        acties={[{ label: t('Oké'), hoofd: true, onClick: () => navigeer('/mijn-recepten', { state: { tab: 'gekookt' } }) }]}
       />
       {cijferOpen && recept.data && (
         <CijferSheet

@@ -3,6 +3,7 @@ import { Button, Icon } from '../ds'
 import { Titel, useOnderRuimte } from './Layout'
 import { LaadScherm } from './Laadanimatie'
 import { foutTekst } from '../lib/fouten'
+import { t } from '../lib/taal'
 
 /**
  * Systeemschermen uit `Systeemschermen.dc.html`. Ze zijn hier één component met
@@ -111,13 +112,13 @@ export function Fout({ kop, tekst, stappen, onOpnieuw, onTerug }: {
       </div>
       <div style={{ flex: 'none', padding: `22px 26px ${44 + ruimte}px`, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <Button tone="yellow" onClick={onOpnieuw} style={{ width: '100%', padding: '17px 24px' }}>
-          Opnieuw proberen
+          {t('Opnieuw proberen')}
         </Button>
         {onTerug && (
           <button onClick={onTerug} style={{
             fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--c-cream)',
             background: 'transparent', border: 'none', padding: 12, cursor: 'pointer',
-          }}>Terug naar mijn lijst</button>
+          }}>{t('Terug naar mijn lijst')}</button>
         )}
       </div>
     </div>
@@ -133,7 +134,7 @@ export function Grens({ query, children, ladenTekst }: {
   if (query.isError) {
     return (
       <Fout
-        kop="Even geen verbinding"
+        kop={t('Even geen verbinding')}
         tekst={foutTekst(query.error)}
         onOpnieuw={() => query.refetch()}
       />

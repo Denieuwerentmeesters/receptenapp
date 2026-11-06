@@ -33,6 +33,10 @@ export interface Recept {
   tags: string[]
   ingredienten: Ingredient[]
   bereiding_nl: string[]
+  /** Engelse versie voor weergave (lib/receptTaal.ts); null = nog niet vertaald. */
+  titel_en?: string | null
+  ingredienten_en?: { eenheid: string | null; naam: string }[] | null
+  bereiding_en?: string[] | null
   afbeelding_url: string | null
   afbeelding_bron: AfbeeldingBron | null
   bron_type: BronType

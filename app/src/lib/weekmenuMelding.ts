@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core'
 import { LocalNotifications } from '@capacitor/local-notifications'
 import type { Voorkeuren } from './database.types'
+import { t } from './taal'
 
 /**
  * De wekelijkse herinnering om recepten te zoeken voor komende week, op de
@@ -55,8 +56,8 @@ export async function planWeekmenuMelding(v: Pick<Voorkeuren, 'pushbericht_aan' 
     await LocalNotifications.schedule({
       notifications: [{
         id: MELDING_ID,
-        title: 'Zoek weer nieuwe recepten voor komende week',
-        body: 'Open Kookmaatje en zet met het hartje klaar wat je komende week kookt.',
+        title: t('Zoek weer nieuwe recepten voor komende week'),
+        body: t('Open Kookmaatje en zet met het hartje klaar wat je komende week kookt.'),
         // `on` zonder datum herhaalt elke week op deze dag en tijd.
         schedule: { on: moment, allowWhileIdle: true },
       }],

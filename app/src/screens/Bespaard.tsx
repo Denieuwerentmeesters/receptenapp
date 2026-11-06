@@ -5,8 +5,9 @@ import { useBestellingen } from '../lib/queries2'
 import { useVoorkeuren } from '../lib/queries'
 import { BonusBron } from '../components/Bonus'
 import { BEZORGING_MANDJE, MAALTIJDBOX, bespaardMet, euro, prijsPerPortie, totaalBespaard } from '../lib/besparing'
+import { t, locale } from '../lib/taal'
 
-const DATUM = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'short' })
+const datum = (d: Date) => new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'short' }).format(d)
 
 /**
  * "Bespaard!": elke bevestigde bestelling naast wat dezelfde maaltijden bij
@@ -29,46 +30,46 @@ export function Bespaard() {
       <Kop kleur="var(--c-green)" style={{ paddingBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <TerugKnop />
-          <Label>Bespaard!</Label>
+          <Label>{t('Bespaard!')}</Label>
         </div>
         <div style={{ marginTop: 14, color: 'var(--c-yellow)' }}>
           <Titel grootte={lijst.length > 0 ? 56 : 26}>
-            {lijst.length > 0 ? euro(totaal) : 'Nog niets bespaard'}
+            {lijst.length > 0 ? euro(totaal) : t('Nog niets bespaard')}
           </Titel>
         </div>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
           {lijst.length > 0
-            ? `Minder uitgegeven dan bij ${MAALTIJDBOX.naam}, over ${lijst.length} ` +
-              `${lijst.length === 1 ? 'bestelling' : 'bestellingen'}.`
-            : `Wat je bespaart ten opzichte van ${MAALTIJDBOX.naam}.`}
+            ? (lijst.length === 1
+              ? t('Minder uitgegeven dan bij {naam}, over 1 bestelling.', { naam: MAALTIJDBOX.naam })
+              : t('Minder uitgegeven dan bij {naam}, over {n} bestellingen.', { naam: MAALTIJDBOX.naam, n: lijst.length }))
+            : t('Wat je bespaart ten opzichte van {naam}.', { naam: MAALTIJDBOX.naam })}
         </p>
         {bonusTotaal > 0 && (
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, lineHeight: 1.5, margin: '6px 0 0', color: 'var(--c-yellow)' }}>
-            Plus {euro(bonusTotaal, true)} met de bonus.
+            {t('Plus {bedrag} met de bonus.', { bedrag: euro(bonusTotaal, true) })}
           </p>
         )}
       </Kop>
 
-      <Grens query={bestellingen} ladenTekst="Besparingen ophalen">
+      <Grens query={bestellingen} ladenTekst={t('Besparingen ophalen')}>
         {lijst.length === 0 ? (
           <Leeg
             icoon="piggyBank"
-            kop="Je eerste besparing komt eraan"
-            tekst={'Stuur je boodschappen naar je mandje en bevestig dat ze aankwamen. ' +
-              `Dan rekenen we uit wat je bespaarde ten opzichte van ${MAALTIJDBOX.naam}.`}
-            knop="Naar mijn lijst"
+            kop={t('Je eerste besparing komt eraan')}
+            tekst={t('Stuur je boodschappen naar je mandje en bevestig dat ze aankwamen. Dan rekenen we uit wat je bespaarde ten opzichte van {naam}.', { naam: MAALTIJDBOX.naam })}
+            knop={t('Naar mijn lijst')}
             onKnop={() => navigeer('/boodschappen')}
           />
         ) : (
           <Inhoud style={{ gap: 20 }}>
             <div style={{ display: 'flex', gap: 10 }}>
-              <Stat getal={String(lijst.length)} label={lijst.length === 1 ? 'bestelling' : 'bestellingen'} />
-              <Stat getal={String(maaltijden)} label="maaltijden" />
-              <Stat getal={euro(totaal / lijst.length)} label="per bestelling" />
+              <Stat getal={String(lijst.length)} label={lijst.length === 1 ? t('bestelling') : t('bestellingen')} />
+              <Stat getal={String(maaltijden)} label={t('maaltijden')} />
+              <Stat getal={euro(totaal / lijst.length)} label={t('per bestelling')} />
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Sectiekop>Per bestelling</Sectiekop>
+              <Sectiekop>{t('Per bestelling')}</Sectiekop>
               {lijst.map((b) => {
                 const bedrag = bespaardMet(b)
                 return (
@@ -78,12 +79,13 @@ export function Bespaard() {
                   }}>
                     <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                       <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>
-                        {DATUM.format(new Date(b.besteld_op))} · {b.maaltijden}{' '}
-                        {b.maaltijden === 1 ? 'maaltijd' : 'maaltijden'} voor {b.personen}
+                        {b.maaltijden === 1
+                          ? t('{datum} · 1 maaltijd voor {p}', { datum: datum(new Date(b.besteld_op)), p: b.personen })
+                          : t('{datum} · {n} maaltijden voor {p}', { datum: datum(new Date(b.besteld_op)), n: b.maaltijden, p: b.personen })}
                       </span>
                       <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)' }}>
-                        Mandje {euro(b.mandje_kosten, true)} · Maaltijdbox {euro(b.maaltijdbox_kosten, true)}
-                        {b.bonus_voordeel > 0 && ` · bonus ${euro(b.bonus_voordeel, true)}`}
+                        {t('Mandje')} {euro(b.mandje_kosten, true)} · {t('Maaltijdbox')} {euro(b.maaltijdbox_kosten, true)}
+                        {b.bonus_voordeel > 0 && ` · ${t('bonus')} ${euro(b.bonus_voordeel, true)}`}
                       </span>
                     </span>
                     <span style={{
@@ -96,25 +98,28 @@ export function Bespaard() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 12 }}>
-              <Sectiekop>Hoe we rekenen</Sectiekop>
+              <Sectiekop>{t('Hoe we rekenen')}</Sectiekop>
               <Uitleg>
-                <b>Je mandje</b> in gewone Jumbo-prijzen, ook als je bij AH bestelt, zonder
-                aanbiedingen, plus {euro(BEZORGING_MANDJE)} bezorging. We tellen hele verpakkingen, ook als je die niet in één week opmaakt.
-                Wat je voorraadkast al heeft en wat je zelf aan je lijst toevoegde, telt niet mee.
+                <b>{t('Je mandje')}</b>{' '}
+                {t('in gewone Jumbo-prijzen, ook als je bij AH bestelt, zonder aanbiedingen, plus {bezorging} bezorging. We tellen hele verpakkingen, ook als je die niet in één week opmaakt. Wat je voorraadkast al heeft en wat je zelf aan je lijst toevoegde, telt niet mee.', { bezorging: euro(BEZORGING_MANDJE) })}
               </Uitleg>
               <Uitleg>
-                <b>Maaltijdbox</b>: {euro(prijsPerPortie(personen), true)} per portie
-                voor {personen} {personen === 1 ? 'persoon' : 'personen'}, plus{' '}
-                {euro(MAALTIJDBOX.bezorging, true)} bezorging per week. Prijzen
-                van {MAALTIJDBOX.peildatum}, zonder toeslagen voor premiumgerechten.
+                <b>{t('Maaltijdbox')}</b>:{' '}
+                {personen === 1
+                  ? t('{prijs} per portie voor 1 persoon, plus {bezorging} bezorging per week. Prijzen van {datum}, zonder toeslagen voor premiumgerechten.', {
+                    prijs: euro(prijsPerPortie(personen), true), bezorging: euro(MAALTIJDBOX.bezorging, true), datum: MAALTIJDBOX.peildatum,
+                  })
+                  : t('{prijs} per portie voor {p} personen, plus {bezorging} bezorging per week. Prijzen van {datum}, zonder toeslagen voor premiumgerechten.', {
+                    prijs: euro(prijsPerPortie(personen), true), p: personen, bezorging: euro(MAALTIJDBOX.bezorging, true), datum: MAALTIJDBOX.peildatum,
+                  })}
               </Uitleg>
               <Uitleg>
-                Een recept telt één keer per week, ook als je in twee keer bestelt.
+                {t('Een recept telt één keer per week, ook als je in twee keer bestelt.')}
               </Uitleg>
               <Uitleg>
-                <b>De bonus</b> staat er los onder, niet in het grote getal. Die telt alleen als het
-                product in je mandje zelf in de actie zat, en je genoeg stuks kocht: bij 1 + 1 gratis
-                twee. We rekenen met de actie op je bezorgdag. <BonusBron klein />
+                <b>{t('De bonus')}</b>{' '}
+                {t('staat er los onder, niet in het grote getal. Die telt alleen als het product in je mandje zelf in de actie zat, en je genoeg stuks kocht: bij 1 + 1 gratis twee. We rekenen met de actie op je bezorgdag.')}{' '}
+                <BonusBron klein />
               </Uitleg>
             </div>
           </Inhoud>

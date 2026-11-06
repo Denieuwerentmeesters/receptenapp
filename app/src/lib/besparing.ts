@@ -4,6 +4,7 @@ import { schatIngredient } from './prijsschatting'
 import type { JumboProduct } from './database.types'
 import { verpakkingenPerRegel, type LijstRegel } from './lijst'
 import type { Verpakking } from './eenheden'
+import { t, locale } from './taal'
 
 /**
  * "Bespaard!": wat je mandje kost naast wat dezelfde avondmaaltijden bij een
@@ -29,8 +30,8 @@ import type { Verpakking } from './eenheden'
  */
 export const MAALTIJDBOX = {
   /** Hoe we het in de tekst noemen: nooit een merknaam. De prijzen zijn die van HelloFresh. */
-  naam: 'een maaltijdbox',
-  peildatum: 'september 2026',
+  get naam() { return t('een maaltijdbox') },
+  get peildatum() { return t('september 2026') },
   perPortie: { 1: 13.33, 2: 7.67, 3: 6.44, 4: 5.31, 5: 4.9, 6: 4.49 } as Record<number, number>,
   /** Eén keer per week, bij de eerste bestelling. */
   bezorging: 5.99,
@@ -115,7 +116,7 @@ export function mandjeKosten(
 
 /** "€ 34": hele euro's leest als een score. Met centen voor de uitleg per bestelling. */
 export function euro(bedrag: number, centen = false): string {
-  return new Intl.NumberFormat('nl-NL', {
+  return new Intl.NumberFormat(locale(), {
     style: 'currency', currency: 'EUR',
     minimumFractionDigits: centen ? 2 : 0,
     maximumFractionDigits: centen ? 2 : 0,

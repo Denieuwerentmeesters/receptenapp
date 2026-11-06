@@ -1,5 +1,6 @@
 import { GEHAKT_PRODUCT } from './synoniemen'
 import type { BoodschapItem } from './database.types'
+import { t } from './taal'
 
 /**
  * Vlees met een goede vega-versie gaat standaard vega naar het mandje: gehakt,
@@ -21,15 +22,15 @@ export type Variant = { key: string; naam: string; label: string }
  */
 export type VegaKeuze = string
 
-export const VEGAGEHAKT: Variant = { key: 'vegagehakt', naam: 'vegagehakt', label: 'Vegagehakt' }
-export const VEGA_ROOKWORST: Variant = { key: 'vega rookworst', naam: 'vega rookworst', label: 'Vega rookworst' }
-export const VEGA_SPEKJES: Variant = { key: 'vega spekjes', naam: 'vega spekjes', label: 'Vega spekjes' }
+export const VEGAGEHAKT: Variant = { key: 'vegagehakt', naam: 'vegagehakt', get label() { return t('Vegagehakt') } }
+export const VEGA_ROOKWORST: Variant = { key: 'vega rookworst', naam: 'vega rookworst', get label() { return t('Vega rookworst') } }
+export const VEGA_SPEKJES: Variant = { key: 'vega spekjes', naam: 'vega spekjes', get label() { return t('Vega spekjes') } }
 
-const RUNDERGEHAKT: Variant = { key: 'rundergehakt', naam: 'rundergehakt', label: 'Rundergehakt' }
-const KIPGEHAKT: Variant = { key: 'kipgehakt', naam: 'kipgehakt', label: 'Kipgehakt' }
-const ROOKWORST: Variant = { key: 'rookworst', naam: 'rookworst', label: 'Rookworst' }
-const SPEKBLOKJES: Variant = { key: 'spekblokje', naam: 'spekblokjes', label: 'Spekblokjes' }
-const KIPSCHNITZEL: Variant = { key: 'kipschnitzel', naam: 'kipschnitzel', label: 'Kipschnitzel' }
+const RUNDERGEHAKT: Variant = { key: 'rundergehakt', naam: 'rundergehakt', get label() { return t('Rundergehakt') } }
+const KIPGEHAKT: Variant = { key: 'kipgehakt', naam: 'kipgehakt', get label() { return t('Kipgehakt') } }
+const ROOKWORST: Variant = { key: 'rookworst', naam: 'rookworst', get label() { return t('Rookworst') } }
+const SPEKBLOKJES: Variant = { key: 'spekblokje', naam: 'spekblokjes', get label() { return t('Spekblokjes') } }
+const KIPSCHNITZEL: Variant = { key: 'kipschnitzel', naam: 'kipschnitzel', get label() { return t('Kipschnitzel') } }
 
 /**
  * Vlees-gehakt uit een recept: "gehakt", "rundergehakt", "mager kipgehakt",

@@ -1,7 +1,9 @@
+import { receptTitel } from '../lib/receptTaal'
 import { Button } from '../ds'
 import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useAanmeldingen, useBeoordelen } from '../lib/queries2'
+import { t } from '../lib/taal'
 
 /**
  * Adminscherm uit plan §7.7: recepten die anderen hebben aangemeld om te delen.
@@ -21,22 +23,24 @@ export function Beoordelen() {
       <Kop kleur="var(--c-black)" style={{ paddingBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <TerugKnop />
-          <Label>Alleen voor admins</Label>
+          <Label>{t('Alleen voor admins')}</Label>
         </div>
-        <div style={{ marginTop: 14 }}><Titel grootte={26}>Te beoordelen</Titel></div>
+        <div style={{ marginTop: 14 }}><Titel grootte={26}>{t('Te beoordelen')}</Titel></div>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
           {lijst.length === 0
-            ? 'Niets in de wachtrij.'
-            : `${lijst.length} ${lijst.length === 1 ? 'recept wacht' : 'recepten wachten'} op een reactie.`}
+            ? t('Niets in de wachtrij.')
+            : lijst.length === 1
+              ? t('1 recept wacht op een reactie.')
+              : t('{n} recepten wachten op een reactie.', { n: lijst.length })}
         </p>
       </Kop>
 
-      <Grens query={aanmeldingen} ladenTekst="Wachtrij ophalen">
+      <Grens query={aanmeldingen} ladenTekst={t('Wachtrij ophalen')}>
         {lijst.length === 0 ? (
           <Leeg
             icoon="circleCheck"
-            kop="Niets te doen"
-            tekst="Zodra iemand een eigen recept aanmeldt om te delen, staat het hier."
+            kop={t('Niets te doen')}
+            tekst={t('Zodra iemand een eigen recept aanmeldt om te delen, staat het hier.')}
           />
         ) : (
           <Inhoud style={{ gap: 14 }}>
@@ -48,13 +52,13 @@ export function Beoordelen() {
                 <div>
                   <h3 style={{
                     fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700, margin: 0,
-                  }}>{r.titel_nl ?? r.titel}</h3>
+                  }}>{receptTitel(r)}</h3>
                   <p style={{
                     fontFamily: 'var(--font-body)', fontSize: 13, margin: '4px 0 0',
                     color: 'rgba(43,20,32,0.6)',
                   }}>
-                    {r.bereidingstijd_minuten ? `${r.bereidingstijd_minuten} min · ` : ''}
-                    voor {r.personen} · {r.ingredienten.length} ingrediënten
+                    {r.bereidingstijd_minuten ? `${t('{n} min', { n: r.bereidingstijd_minuten })} · ` : ''}
+                    {t('voor {p} · {n} ingrediënten', { p: r.personen, n: r.ingredienten.length })}
                   </p>
                 </div>
 
@@ -62,7 +66,7 @@ export function Beoordelen() {
                   <summary style={{
                     fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
                     color: 'var(--c-red)', cursor: 'pointer',
-                  }}>Bekijk ingrediënten en bereiding</summary>
+                  }}>{t('Bekijk ingrediënten en bereiding')}</summary>
                   <div style={{ paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <ul style={{
                       margin: 0, paddingLeft: 18, fontFamily: 'var(--font-body)',
@@ -87,13 +91,13 @@ export function Beoordelen() {
                     disabled={beoordelen.isPending}
                     onClick={() => beoordelen.mutate({ receptId: r.id, goedkeuren: true })}
                     style={{ flex: 1 }}
-                  >Goedkeuren</Button>
+                  >{t('Goedkeuren')}</Button>
                   <Button
                     variant="secondary"
                     disabled={beoordelen.isPending}
                     onClick={() => beoordelen.mutate({ receptId: r.id, goedkeuren: false })}
                     style={{ flex: 'none' }}
-                  >Afwijzen</Button>
+                  >{t('Afwijzen')}</Button>
                 </div>
               </div>
             ))}

@@ -31,6 +31,8 @@ import { vergeetHuishouden } from './lib/huishouden'
 import { foutTekst } from './lib/fouten'
 import { useQueryClient } from '@tanstack/react-query'
 import { useVoorkeuren } from './lib/queries'
+import { TaalGrens } from './components/TaalGrens'
+import { t } from './lib/taal'
 
 type Status = 'bezig' | 'uitgelogd' | 'klaar' | 'fout'
 
@@ -40,6 +42,10 @@ type Status = 'bezig' | 'uitgelogd' | 'klaar' | 'fout'
  * zonder geldige JWT en krijg je een 401 waar je niets aan hebt.
  */
 export default function App() {
+  return <TaalGrens><AppInhoud /></TaalGrens>
+}
+
+function AppInhoud() {
   const [status, setStatus] = useState<Status>('bezig')
   const [fout, setFout] = useState('')
   const qc = useQueryClient()
@@ -101,12 +107,12 @@ export default function App() {
   if (status === 'fout') {
     return (
       <Fout
-        kop="De app kan niet starten"
+        kop={t('De app kan niet starten')}
         tekst={fout}
         stappen={[
-          'Controleer of app/.env.local is ingevuld met je Neon-gegevens.',
-          'Controleer of de Data API en Auth aan staan op de Neon-branch.',
-          'Controleer of de migraties in db/migrations gedraaid zijn.',
+          t('Controleer of app/.env.local is ingevuld met je Neon-gegevens.'),
+          t('Controleer of de Data API en Auth aan staan op de Neon-branch.'),
+          t('Controleer of de migraties in db/migrations gedraaid zijn.'),
         ]}
         onOpnieuw={() => void start()}
       />
@@ -179,7 +185,7 @@ function Poort() {
 function UitlegTerugkijken() {
   const navigeer = useNavigate()
   const terug = () => navigeer('/instellingen', { replace: true })
-  return <Uitleg laatsteKnop="Klaar" overslaanTekst="Sluit" onKlaar={terug} onOverslaan={terug} onTerug={terug} />
+  return <Uitleg laatsteKnop={t('Klaar')} overslaanTekst={t('Sluit')} onKlaar={terug} onOverslaan={terug} onTerug={terug} />
 }
 
 /**

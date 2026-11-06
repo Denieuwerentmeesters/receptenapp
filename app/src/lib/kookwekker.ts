@@ -2,6 +2,7 @@ import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, NotificationType } from '@capacitor/haptics'
 import { LocalNotifications } from '@capacitor/local-notifications'
+import { t } from './taal'
 
 /**
  * Het native deel van de kookmodus: scherm aan, en een timer die je ook hoort
@@ -43,7 +44,7 @@ export async function planWekker(eindOp: number, wat: string): Promise<void> {
     await LocalNotifications.schedule({
       notifications: [{
         id: MELDING_ID,
-        title: 'Timer klaar',
+        title: t('Timer klaar'),
         body: wat,
         schedule: { at: new Date(eindOp), allowWhileIdle: true },
       }],

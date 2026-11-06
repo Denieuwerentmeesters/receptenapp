@@ -8,6 +8,7 @@ import { Icon } from '../ds'
 import { useBoodschappen } from '../lib/queries'
 import { useFases } from '../lib/fases'
 import { voegSamen } from '../lib/lijst'
+import { t } from '../lib/taal'
 
 /**
  * Scroll je naar beneden, dan schuiven de onderbalk en een meeschuivende Voet
@@ -190,7 +191,7 @@ export function TerugKnop({ anders = '/profiel', donker = false, onClick }: {
   return (
     <button
       onClick={onClick ?? (() => (heeftVorige ? navigeer(-1) : navigeer(anders)))}
-      aria-label="Terug"
+      aria-label={t('Terug')}
       style={{
         flex: 'none', border: 'none', width: 36, height: 36, borderRadius: 'var(--radius-full)',
         background: donker ? 'rgba(43,20,32,0.1)' : 'rgba(243,205,214,0.25)',
@@ -314,8 +315,8 @@ export function OnderBalk() {
     [boodschappen.data],
   )
   const tellers: Record<string, { aantal: number; label: string }> = {
-    '/mijn-recepten': { aantal: teKoken.length, label: 'recepten te koken' },
-    '/boodschappen': { aantal: producten, label: 'producten op je lijst' },
+    '/mijn-recepten': { aantal: teKoken.length, label: t('recepten te koken') },
+    '/boodschappen': { aantal: producten, label: t('producten op je lijst') },
   }
 
   if (!balkPlek) return null
@@ -342,7 +343,7 @@ export function OnderBalk() {
             <Icon name={tab.icoon} size={22} />
             {tellers[tab.pad] && <Teller {...tellers[tab.pad]} />}
           </span>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 400 }}>{tab.label}</span>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 400 }}>{t(tab.label)}</span>
         </NavLink>
       ))}
     </nav>,

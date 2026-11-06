@@ -17,6 +17,8 @@ import { foutTekst } from '../lib/fouten'
 import { meet } from '../lib/meten'
 import { planWeekmenuMelding } from '../lib/weekmenuMelding'
 import type { Voorkeuren } from '../lib/database.types'
+import { TaalKeuze } from '../components/TaalKeuze'
+import { t } from '../lib/taal'
 
 /**
  * De onboarding: één keer na het aanmaken van een account. Eerst de uitleg,
@@ -42,7 +44,7 @@ type Winkel = Voorkeuren['voorkeurswinkel']
 const MAX_PERSONEN = 8
 
 /** De dagen van de week zoals de kolom ze telt (0 = zondag), in de volgorde waarin je ze kiest. */
-const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
+const dagen = () => [t('zondag'), t('maandag'), t('dinsdag'), t('woensdag'), t('donderdag'), t('vrijdag'), t('zaterdag')]
 const DAG_VOLGORDE = [1, 2, 3, 4, 5, 6, 0]
 
 interface Antwoorden {
@@ -103,13 +105,14 @@ export function Onboarding() {
   // Zodra de voorkeuren er zijn blijft het verloop staan, ook als opnieuw
   // ophalen even mislukt: anders ben je midden in een vraag je scherm kwijt.
   if (voorkeuren.data) return <Verloop voorkeuren={voorkeuren.data} />
-  return <Grens query={voorkeuren} ladenTekst="Even alles klaarzetten">{null}</Grens>
+  return <Grens query={voorkeuren} ladenTekst={t('Even alles klaarzetten')}>{null}</Grens>
 }
 
 type Scherm = 'welkom' | 'uitleg' | 'vraag' | 'klaar' | 'vullen'
 
 function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   const navigeer = useNavigate()
+  const DAGEN = dagen()
   const qc = useQueryClient()
   const week = weekStart()
   const opslaan = useVoorkeurenOpslaan()
@@ -272,7 +275,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     }
   }
 
-  if (scherm === 'vullen') return <Laden tekst="We vullen je week" />
+  if (scherm === 'vullen') return <Laden tekst={t('We vullen je week')} />
 
   if (scherm === 'welkom') {
     return (
@@ -283,24 +286,26 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
         padding: 'calc(env(safe-area-inset-top) + 28px) 26px calc(env(safe-area-inset-bottom) + 20px)',
       }}>
         <UitlegVoorladen />
-        <Woordmerk hoogte={40} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <Woordmerk hoogte={40} />
+          <TaalKeuze opRood />
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <Label>Welkom bij Kookmaatje</Label>
-          <Titel grootte={32}>Kook als met een box.</Titel>
+          <Label>{t('Welkom bij Kookmaatje')}</Label>
+          <Titel grootte={32}>{t('Kook als met een box.')}</Titel>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 17, lineHeight: 1.5, margin: 0 }}>
-            Betaal als bij de supermarkt. Jij kiest de recepten, Kookmaatje maakt de boodschappenlijst
-            en zet alles klaar bij AH of Jumbo.
+            {t('Betaal als bij de supermarkt. Jij kiest de recepten, Kookmaatje maakt de boodschappenlijst en zet alles klaar bij AH of Jumbo.')}
           </p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <Button
             tone="yellow" size="lg" style={{ width: '100%', fontSize: 16 }}
             onClick={() => { setUitlegStart(0); setScherm('uitleg') }}
-          >Laat zien hoe het werkt</Button>
+          >{t('Laat zien hoe het werkt')}</Button>
           <button
             onClick={() => { meet('uitleg_overgeslagen', { kaart: 0 }); setScherm('vraag') }}
             style={{ ...linkStijl, color: 'var(--c-cream)' }}
-          >Sla uitleg over</button>
+          >{t('Sla uitleg over')}</button>
         </div>
       </div>
     )
@@ -311,8 +316,8 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       <Uitleg
         key={uitlegStart}
         start={uitlegStart}
-        laatsteKnop="Naar de vragen"
-        overslaanTekst="Sla uitleg over"
+        laatsteKnop={t('Naar de vragen')}
+        overslaanTekst={t('Sla uitleg over')}
         onKlaar={() => setScherm('vraag')}
         onOverslaan={(kaart) => { meet('uitleg_overgeslagen', { kaart }); setScherm('vraag') }}
         onTerug={() => setScherm('welkom')}
@@ -323,11 +328,11 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   if (scherm === 'klaar') {
     const p = antw.personen
     const chips: [Vraag, string][] = [
-      ['personen', `${p} ${p === 1 ? 'persoon' : 'personen'}`],
-      ['allergieen', antw.allergieen.length > 0 ? `Zonder ${opsomming(antw.allergieen)}` : 'Geen allergieën'],
-      ['voorraad', voorraadGekozen.length === 0 ? 'Voorraadkast leeg'
-        : `${voorraadGekozen.length} ${voorraadGekozen.length === 1 ? 'product' : 'producten'} in huis`],
-      ['melding', `Herinnering ${DAGEN[antw.meldingDag]} ${antw.meldingTijd}`],
+      ['personen', p === 1 ? t('{n} persoon', { n: p }) : t('{n} personen', { n: p })],
+      ['allergieen', antw.allergieen.length > 0 ? t('Zonder {lijst}', { lijst: opsomming(antw.allergieen) }) : t('Geen allergieën')],
+      ['voorraad', voorraadGekozen.length === 0 ? t('Voorraadkast leeg')
+        : voorraadGekozen.length === 1 ? t('{n} product in huis', { n: 1 }) : t('{n} producten in huis', { n: voorraadGekozen.length })],
+      ['melding', t('Herinnering {dag} {tijd}', { dag: DAGEN[antw.meldingDag], tijd: antw.meldingTijd })],
       ['winkel', antw.winkel === 'ah' ? 'Albert Heijn' : 'Jumbo'],
     ]
     return (
@@ -337,10 +342,10 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
           padding: 'calc(env(safe-area-inset-top) + 28px) 22px 24px',
           display: 'flex', flexDirection: 'column', gap: 12,
         }}>
-          <Label>Klaar</Label>
-          <Titel grootte={30}>Je week staat klaar</Titel>
+          <Label>{t('Klaar')}</Label>
+          <Titel grootte={30}>{t('Je week staat klaar')}</Titel>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.5, margin: 0 }}>
-            Hiermee kiest Kookmaatje je recepten.
+            {t('Hiermee kiest Kookmaatje je recepten.')}
           </p>
         </div>
 
@@ -362,13 +367,13 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
             ))}
           </div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: 0, color: 'var(--c-ink-500)' }}>
-            Tik op een antwoord om het te wijzigen. Alles pas je later aan in Instellingen.
+            {t('Tik op een antwoord om het te wijzigen. Alles pas je later aan in Instellingen.')}
           </p>
           {fout && (
             <div role="alert" style={{
               background: 'var(--c-yellow)', color: 'var(--c-ink)', borderRadius: 'var(--radius-sm)',
               padding: '12px 14px', fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4,
-            }}>Dat lukte niet: {fout} Probeer het nog een keer.</div>
+            }}>{t('Dat lukte niet: {fout} Probeer het nog een keer.', { fout })}</div>
           )}
         </div>
 
@@ -377,12 +382,12 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
           padding: '8px 22px calc(env(safe-area-inset-bottom) + 20px)',
         }}>
           <Button size="lg" disabled={bezig} style={{ width: '100%', fontSize: 16 }} onClick={() => void rondAf(true)}>
-            Vul mijn week
+            {t('Vul mijn week')}
           </Button>
           <Button
             variant="secondary" tone="ink" size="lg" disabled={bezig}
             style={{ width: '100%', fontSize: 15 }} onClick={() => void rondAf(false)}
-          >Zelf kiezen in Ontdekken</Button>
+          >{t('Zelf kiezen in Ontdekken')}</Button>
         </div>
       </div>
     )
@@ -391,11 +396,11 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   /* ------------------------------------------------------------ de vragen */
 
   const kop: Record<Vraag, [string, string]> = {
-    personen: ['Voor hoeveel mensen kook je meestal?', 'Dan kloppen de hoeveelheden meteen.'],
-    allergieen: ['Moet Kookmaatje ergens rekening mee houden?', 'Kies de allergieën bij jou thuis.'],
-    voorraad: ['Wat heb je standaard in huis?', 'Dat laat Kookmaatje van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.'],
-    melding: ['Op welke dag wil je een herinnering om recepten te zoeken?', 'Elke week op die dag krijg je een melding op je telefoon: tijd om komende week te vullen.'],
-    winkel: ['Waar doe je je boodschappen?', 'Naar deze supermarkt stuurt Kookmaatje je boodschappenlijst.'],
+    personen: [t('Voor hoeveel mensen kook je meestal?'), t('Dan kloppen de hoeveelheden meteen.')],
+    allergieen: [t('Moet Kookmaatje ergens rekening mee houden?'), t('Kies de allergieën bij jou thuis.')],
+    voorraad: [t('Wat heb je standaard in huis?'), t('Dat laat Kookmaatje van je boodschappenlijst af. Tik aan wat je hebt, er komt steeds iets bij.')],
+    melding: [t('Op welke dag wil je een herinnering om recepten te zoeken?'), t('Elke week op die dag krijg je een melding op je telefoon: tijd om komende week te vullen.')],
+    winkel: [t('Waar doe je je boodschappen?'), t('Naar deze supermarkt stuurt Kookmaatje je boodschappenlijst.')],
   }
 
   return (
@@ -405,11 +410,11 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       padding: 'calc(env(safe-area-inset-top) + 16px) 22px calc(env(safe-area-inset-bottom) + 12px)',
     }}>
       <div style={{ flex: 'none', display: 'flex', alignItems: 'center', gap: 14 }}>
-        <IconButton icon="chevronLeft" label="Terug" onClick={terug} />
+        <IconButton icon="chevronLeft" label={t('Terug')} onClick={terug} />
         <div style={{ flex: 1 }}>
           <ProgressBar value={vraag + 1} max={VRAGEN.length} trackTone="onLight" />
         </div>
-        <span style={{ fontSize: 14, fontWeight: 700 }} aria-label={`Vraag ${vraag + 1} van ${VRAGEN.length}`}>
+        <span style={{ fontSize: 14, fontWeight: 700 }} aria-label={t('Vraag {n} van {max}', { n: vraag + 1, max: VRAGEN.length })}>
           {vraag + 1}/{VRAGEN.length}
         </span>
       </div>
@@ -424,17 +429,17 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {naam === 'personen' && (
           <>
-            <div role="radiogroup" aria-label="Aantal personen" style={lijstStijl}>
-              {([[1, 'Alleen ik'], [2, 'Met z’n tweeën'], [3, '3 personen'], [4, '4 personen']] as const).map(([n, label]) => (
+            <div role="radiogroup" aria-label={t('Aantal personen')} style={lijstStijl}>
+              {([[1, t('Alleen ik')], [2, t('Met z’n tweeën')], [3, t('{n} personen', { n: 3 })], [4, t('{n} personen', { n: 4 })]] as const).map(([n, label]) => (
                 <Optie key={n} gekozen={antw.personen === n} onClick={() => setAntw({ ...antw, personen: n })}>{label}</Optie>
               ))}
               <Optie gekozen={antw.personen >= 5} onClick={() => setAntw({ ...antw, personen: Math.max(antw.personen, 5) })}>
-                5 of meer
+                {t('5 of meer')}
               </Optie>
             </div>
             {antw.personen >= 5 && (
               <TellerRij
-                label="Hoeveel precies?" eenheid="personen"
+                label={t('Hoeveel precies?')} eenheid={t('personen')}
                 waarde={antw.personen} min={5} max={MAX_PERSONEN}
                 onWijzig={(n) => setAntw({ ...antw, personen: n })}
               />
@@ -450,11 +455,10 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
               display: 'flex', flexDirection: 'column', gap: 8,
             }}>
               <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5 }}>
-                Recepten met een allergeen zie je niet meer, voor gluten en koemelk krijg je een
-                vervanger op je lijst. Op Ontdekken zet je het filter met één tik uit.
+                {t('Recepten met een allergeen zie je niet meer, voor gluten en koemelk krijg je een vervanger op je lijst. Op Ontdekken zet je het filter met één tik uit.')}
               </p>
               <p style={{ ...kleinStijl, fontSize: 13 }}>
-                Kookmaatje gebruikt dit alleen om recepten te filteren en je lijst aan te passen. Wissen kan in Instellingen.
+                {t('Kookmaatje gebruikt dit alleen om recepten te filteren en je lijst aan te passen. Wissen kan in Instellingen.')}
               </p>
             </div>
           </>
@@ -465,7 +469,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
             <VoorraadKeuze gekozen={voorraadGekozen} bekend={kastNamen} onZet={zetVoorraad} />
             {voorraadGekozen.includes(DROGE_KRUIDEN) && (
               <p style={{ ...kleinStijl, flex: 'none', marginTop: 4 }}>
-                Droge kruiden staat voor je hele kruidenrek. Die blijven op je lijst staan, maar gaan niet in je mandje.
+                {t('Droge kruiden staat voor je hele kruidenrek. Die blijven op je lijst staan, maar gaan niet in je mandje.')}
               </p>
             )}
           </>
@@ -473,7 +477,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
 
         {naam === 'melding' && (
           <>
-            <div role="radiogroup" aria-label="Dag van de herinnering" style={{ ...lijstStijl, gap: 8 }}>
+            <div role="radiogroup" aria-label={t('Dag van de herinnering')} style={{ ...lijstStijl, gap: 8 }}>
               {DAG_VOLGORDE.map((dag) => (
                 <Optie key={dag} gekozen={antw.meldingDag === dag} onClick={() => setAntw({ ...antw, meldingDag: dag })}>
                   {DAGEN[dag][0].toUpperCase() + DAGEN[dag].slice(1)}
@@ -485,7 +489,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
               fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700,
             }}>
-              Hoe laat
+              {t('Hoe laat')}
               <input
                 type="time"
                 value={antw.meldingTijd}
@@ -498,14 +502,14 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
               />
             </label>
             <p style={{ ...kleinStijl, flex: 'none', marginTop: 4 }}>
-              Je telefoon vraagt zo om toestemming voor meldingen. Dag en tijd pas je altijd aan in Instellingen.
+              {t('Je telefoon vraagt zo om toestemming voor meldingen. Dag en tijd pas je altijd aan in Instellingen.')}
             </p>
           </>
         )}
 
         {naam === 'winkel' && (
           <>
-            <div role="radiogroup" aria-label="Supermarkt" style={lijstStijl}>
+            <div role="radiogroup" aria-label={t('Supermarkt')} style={lijstStijl}>
               {([['ah', 'Albert Heijn'], ['jumbo', 'Jumbo']] as const).map(([w, label]) => (
                 <Optie
                   key={w} hoog pijl gekozen={klaarBereikt && antw.winkel === w}
@@ -513,7 +517,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
                 >{label}</Optie>
               ))}
             </div>
-            <p style={{ ...kleinStijl, flex: 'none', marginTop: 4 }}>Wisselen kan altijd in Instellingen.</p>
+            <p style={{ ...kleinStijl, flex: 'none', marginTop: 4 }}>{t('Wisselen kan altijd in Instellingen.')}</p>
           </>
         )}
       </div>
@@ -522,13 +526,13 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
       {naam !== 'winkel' && (
         <div style={{ flex: 'none', display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Button size="lg" style={{ width: '100%', fontSize: 16 }} onClick={() => beantwoord()}>
-            {wijzigen ? 'Klaar' : 'Volgende'}
+            {wijzigen ? t('Klaar') : t('Volgende')}
           </Button>
           {wijzigen
             ? <div style={{ height: 44 }} />
             : (
               <button onClick={slaOver} style={{ ...linkStijl, color: 'var(--c-red)', textDecoration: 'none', fontSize: 14 }}>
-                {naam === 'allergieen' || naam === 'voorraad' ? 'Sla over' : 'Sla over, kies voor mij'}
+                {naam === 'allergieen' || naam === 'voorraad' ? t('Sla over') : t('Sla over, kies voor mij')}
               </button>
             )}
         </div>
@@ -608,11 +612,11 @@ function TellerRij({ label, eenheid, waarde, min, max, onWijzig }: {
     }}>
       <span style={{ fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 700 }}>{label}</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {knop('−', Math.max(min, waarde - 1), waarde <= min, `Minder ${eenheid}`)}
+        {knop('−', Math.max(min, waarde - 1), waarde <= min, t('Minder {eenheid}', { eenheid }))}
         <span aria-live="polite" style={{
           width: 32, textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 22,
         }}>{waarde}</span>
-        {knop('+', Math.min(max, waarde + 1), waarde >= max, `Meer ${eenheid}`)}
+        {knop('+', Math.min(max, waarde + 1), waarde >= max, t('Meer {eenheid}', { eenheid }))}
       </div>
     </div>
   )

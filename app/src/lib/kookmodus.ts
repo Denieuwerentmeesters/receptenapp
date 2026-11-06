@@ -1,3 +1,5 @@
+import { t, taal } from './taal'
+
 /**
  * Tijden uit een bereidingsstap halen, zodat de kookmodus de timer al klaar
  * heeft staan: "laat 15 minuten sudderen" wordt een knop "15 min sudderen".
@@ -72,11 +74,13 @@ function handelingNa(tekst: string, eind: number): string | null {
 }
 
 export function formatteerDuur(seconden: number): string {
-  if (seconden < 60) return `${seconden} sec`
-  if (seconden % 3600 === 0) return `${seconden / 3600} uur`
-  if (seconden > 3600 && seconden % 1800 === 0) return `${(seconden / 3600).toString().replace('.', ',')} uur`
-  if (seconden < 3600 && seconden % 30 === 0) return `${(seconden / 60).toString().replace('.', ',')} min`
-  return `${Math.round(seconden / 60)} min`
+  // Decimaalteken volgens de taal: 1,5 uur in het Nederlands, 1.5 hr in het Engels.
+  const dec = (n: number) => (taal() === 'nl' ? n.toString().replace('.', ',') : n.toString())
+  if (seconden < 60) return t('{n} sec', { n: seconden })
+  if (seconden % 3600 === 0) return t('{n} uur', { n: seconden / 3600 })
+  if (seconden > 3600 && seconden % 1800 === 0) return t('{n} uur', { n: dec(seconden / 3600) })
+  if (seconden < 3600 && seconden % 30 === 0) return t('{n} min', { n: dec(seconden / 60) })
+  return t('{n} min', { n: Math.round(seconden / 60) })
 }
 
 export function tijdenUitStap(tekst: string): StapTijd[] {

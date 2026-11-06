@@ -15,6 +15,7 @@ import { DROGE_KRUIDEN_KEY, isDroogKruid } from './kruiden'
 import { inVoorraad } from './voorraad'
 import { ingredientKey } from './schaal'
 import { productvoorkeur } from './winkel'
+import { t } from './taal'
 import { leesMenu, type Menu, type MenuGebeurtenis, type MenuGerecht, type SamenstelVerzoek } from './menu'
 import type { BoodschapItem, Recept, SamenstellingRij } from './database.types'
 
@@ -54,7 +55,7 @@ export async function stelSamen(
   })
   if (!respons.ok) {
     const { fout } = (await respons.json().catch(() => ({}))) as { fout?: string }
-    throw new Error(fout ?? 'Het samenstellen is niet gelukt. Probeer het opnieuw.')
+    throw new Error(fout ?? t('Het samenstellen is niet gelukt. Probeer het opnieuw.'))
   }
 
   let klaar: Samengesteld | null = null
@@ -83,7 +84,7 @@ export async function stelSamen(
     verwerk(rest)
   }
 
-  if (!klaar) throw new Error('De verbinding viel weg voordat het menu af was. Probeer het opnieuw.')
+  if (!klaar) throw new Error(t('De verbinding viel weg voordat het menu af was. Probeer het opnieuw.'))
   return klaar
 }
 

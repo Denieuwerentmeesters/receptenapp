@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
 import { useBestellingen } from '../lib/queries2'
 import { MAALTIJDBOX, euro, totaalBespaard } from '../lib/besparing'
+import { t } from '../lib/taal'
 
 /**
  * Niet elke keer: bij de eerste keer openen, en daarna eens per drie keer.
@@ -85,9 +86,9 @@ export function BespaardMelding() {
           <span style={{
             fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 20, lineHeight: 1,
             color: 'var(--c-yellow)', textTransform: 'uppercase',
-          }}>{euro(totaal)} bespaard</span>
+          }}>{t('{bedrag} bespaard', { bedrag: euro(totaal) })}</span>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.3 }}>
-            ten opzichte van {MAALTIJDBOX.naam}, sinds je deze app gebruikt
+            {t('ten opzichte van {naam}, sinds je deze app gebruikt', { naam: MAALTIJDBOX.naam })}
           </span>
         </span>
         <Icon name="chevronRight" size={18} />

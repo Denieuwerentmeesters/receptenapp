@@ -20,6 +20,7 @@ import { groepeerOpSchap, verpakkingenPerRegel, voegSamen, type LijstRegel } fro
 import { inhoudTekst } from '../lib/eenheden'
 import { bonusVoor, bonusVoordeel, totTekst, useBonus } from '../lib/bonus'
 import { bezorgdagen, dagLabel, useBezorgkeuze } from '../lib/bezorgdag'
+import { t } from '../lib/taal'
 import { BonusBron } from '../components/Bonus'
 import {
   bewaarAllergieKeuzes, leesAllergieKeuzes, metAllergieKeuze, opsomming, treffers,
@@ -199,8 +200,8 @@ export function Boodschappen() {
     })))
     if (gemapt.length === 0) {
       setMelding(
-        `Geen van deze producten heeft nog een ${winkel.kort}-productnummer. ` +
-        'Gebruik de zoeklinks bij de producten.',
+        t('Geen van deze producten heeft nog een {winkel}-productnummer.', { winkel: winkel.kort }) + ' ' +
+        t('Gebruik de zoeklinks bij de producten.'),
       )
       return
     }
@@ -252,19 +253,19 @@ export function Boodschappen() {
         ).totaal,
       })
     } catch {
-      setMandjeFout('Het mandje is niet aangekomen. Je lijst is bewaard — er is niets kwijt.')
+      setMandjeFout(t('Het mandje is niet aangekomen. Je lijst is bewaard — er is niets kwijt.'))
     }
   }
 
   if (mandjeFout && open.length > 0) {
     return (
       <Fout
-        kop="Je mandje is niet aangekomen"
+        kop={t('Je mandje is niet aangekomen')}
         tekst={mandjeFout}
         stappen={[
-          `Log eerst in bij ${winkel.naam} — uitgelogd kan je mandje leeg blijven, zonder melding.`,
-          'Probeer het daarna opnieuw.',
-          'Lukt het niet? Vink de lijst zelf af in de winkel.',
+          t('Log eerst in bij {winkel} — uitgelogd kan je mandje leeg blijven, zonder melding.', { winkel: winkel.naam }),
+          t('Probeer het daarna opnieuw.'),
+          t('Lukt het niet? Vink de lijst zelf af in de winkel.'),
         ]}
         onOpnieuw={() => { void naarMandje() }}
         onTerug={() => setMandjeFout(null)}
@@ -274,10 +275,10 @@ export function Boodschappen() {
 
   return (
     <Scherm>
-      <Grens query={boodschappen} ladenTekst="Boodschappenlijst ophalen">
+      <Grens query={boodschappen} ladenTekst={t('Boodschappenlijst ophalen')}>
         <Kop kleur="var(--c-green)">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <Label>{receptenOpLijst} {receptenOpLijst === 1 ? 'recept' : 'recepten'}</Label>
+            <Label>{receptenOpLijst === 1 ? t('{n} recept', { n: receptenOpLijst }) : t('{n} recepten', { n: receptenOpLijst })}</Label>
             {items.length > 0 && (
               <button
                 onClick={() => setWisVraag(true)}
@@ -287,23 +288,23 @@ export function Boodschappen() {
                   padding: '6px 12px', cursor: 'pointer',
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                 }}
-              ><Icon name="trash" size={13} />Alles wissen</button>
+              ><Icon name="trash" size={13} />{t('Alles wissen')}</button>
             )}
           </div>
-          <div style={{ marginTop: 14 }}><Titel>Boodschappen</Titel></div>
+          <div style={{ marginTop: 14 }}><Titel>{t('Boodschappen')}</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
             {regels.length === 0
-              ? 'Nog niets op je lijst.'
-              : `${naarWinkel.length} van de ${regels.length} producten nog nodig · op volgorde van de winkel`}
+              ? t('Nog niets op je lijst.')
+              : t('{n} van de {totaal} producten nog nodig · op volgorde van de winkel', { n: naarWinkel.length, totaal: regels.length })}
           </p>
         </Kop>
 
         {regels.length === 0 ? (
           <Leeg
             icoon="cart"
-            kop="Je lijst is leeg"
-            tekst="Zet een recept op je lijst, dan komen de ingrediënten hier vanzelf te staan."
-            knop="Naar Mijn recepten"
+            kop={t('Je lijst is leeg')}
+            tekst={t('Zet een recept op je lijst, dan komen de ingrediënten hier vanzelf te staan.')}
+            knop={t('Naar Mijn recepten')}
             onKnop={() => navigeer('/mijn-recepten', { state: { tab: 'bestellen' } })}
           />
         ) : (
@@ -321,9 +322,9 @@ export function Boodschappen() {
                   <span style={{
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                     textTransform: 'uppercase', color: 'var(--c-green)',
-                  }}>{groep.schap}</span>
+                  }}>{t(groep.schap)}</span>
                   <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(43,20,32,0.6)' }}>
-                    {groep.regels.filter((r) => !r.afgevinkt).length} van {groep.regels.length}
+                    {t('{n} van {totaal}', { n: groep.regels.filter((r) => !r.afgevinkt).length, totaal: groep.regels.length })}
                   </span>
                 </div>
 
@@ -356,7 +357,7 @@ export function Boodschappen() {
                                 value={vegaKeuze(regel.key)}
                                 onChange={(e) => kiesVega(regel.key, e.target.value as VegaKeuze)}
                                 onClick={(e) => e.stopPropagation()}
-                                aria-label={`Vega of vlees voor ${regel.naam}`}
+                                aria-label={t('Vega of vlees voor {naam}', { naam: regel.naam })}
                                 style={keuzeInRegel}
                               >
                                 {opties.map((o) => <option key={o.keuze} value={o.keuze}>{o.label ?? receptNaam}</option>)}
@@ -369,7 +370,7 @@ export function Boodschappen() {
                         <span style={{
                           display: 'block', marginLeft: 36, marginTop: 3,
                           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
-                        }}>Komt niet in je mandje · koop zelf</span>
+                        }}>{t('Komt niet in je mandje · koop zelf')}</span>
                       )}
                       {!regel.afgevinkt && !blijftThuis(regel.key) && (() => {
                         // "Bonus: 3 voor 4.99 t/m zondag": alleen als tip, het mandje verandert niet.
@@ -381,7 +382,7 @@ export function Boodschappen() {
                             display: 'block', marginLeft: 36, marginTop: 3,
                             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
                           }}>
-                            Bonus: {a.mechanisme ?? 'in de aanbieding'} {totTekst(a.geldig_tot)}
+                            {t('Bonus:')} {a.mechanisme ?? t('in de aanbieding')} {totTekst(a.geldig_tot)}
                             <span style={{ fontWeight: 400 }}> · <BonusBron klein /></span>
                           </span>
                         )
@@ -397,7 +398,7 @@ export function Boodschappen() {
                             fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.55)',
                           }}>
                             {aantal.totaal}× {inhoudTekst(verpakking)}
-                            {aantal.samenMet.length > 0 && ` · samen met ${aantal.samenMet.join(' en ')}`}
+                            {aantal.samenMet.length > 0 && t(' · samen met {namen}', { namen: aantal.samenMet.join(` ${t('en')} `) })}
                           </span>
                         )
                       })()}
@@ -416,13 +417,13 @@ export function Boodschappen() {
                             <select
                               value={gekozen ?? 'recept'}
                               onChange={(e) => kiesGoedkoper(regel.key, e.target.value)}
-                              aria-label={`Goedkoper alternatief voor ${regel.naam}`}
+                              aria-label={t('Goedkoper alternatief voor {naam}', { naam: regel.naam })}
                               style={keuzeStijl}
                             >
                               <option value="recept">{naam.charAt(0).toUpperCase() + naam.slice(1)}</option>
                               {lijst.map((o) => (
                                 <option key={o.key} value={o.key}>
-                                  {o.label}{o.scheelt > 0 ? ` · scheelt ${euro(o.scheelt, true)}` : ''}
+                                  {o.label}{o.scheelt > 0 ? t(' · scheelt {bedrag}', { bedrag: euro(o.scheelt, true) }) : ''}
                                 </option>
                               ))}
                             </select>
@@ -431,8 +432,8 @@ export function Boodschappen() {
                               fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.55)',
                             }}>
                               {huidig
-                                ? `${huidig.uitleg} Je koos het goedkopere product.`
-                                : `Duur product: kies een alternatief dat bij ${winkel.naam} minder kost. ${lijst[0].uitleg}`}
+                                ? `${huidig.uitleg} ${t('Je koos het goedkopere product.')}`
+                                : `${t('Duur product: kies een alternatief dat bij {winkel} minder kost.', { winkel: winkel.naam })} ${lijst[0].uitleg}`}
                             </span>
                           </>
                         )
@@ -444,7 +445,7 @@ export function Boodschappen() {
                             <select
                               value={allergieKeuze(regel.key)}
                               onChange={(e) => kiesAllergie(regel.key, e.target.value as AllergieKeuze)}
-                              aria-label={`Vervanger of origineel voor ${regel.naam}`}
+                              aria-label={t('Vervanger of origineel voor {naam}', { naam: regel.naam })}
                               style={keuzeStijl}
                             >
                               <option value="vervanger">{vervanger.charAt(0).toUpperCase() + vervanger.slice(1)}</option>
@@ -453,9 +454,9 @@ export function Boodschappen() {
                           )
                         }
                         // Geen vervanger: zeggen wat erin zit, of dat het etiket beslist.
-                        const mijn = treffers(regel.naam, allergieRegels).filter((t) => allergieen.includes(t.allergeen))
+                        const mijn = treffers(regel.naam, allergieRegels).filter((tr) => allergieen.includes(tr.allergeen))
                         if (mijn.length === 0) return null
-                        const zeker = mijn.filter((t) => t.zeker).map((t) => t.allergeen)
+                        const zeker = mijn.filter((tr) => tr.zeker).map((tr) => tr.allergeen)
                         return (
                           <span style={{
                             display: 'block', marginLeft: 36, marginTop: 3,
@@ -463,8 +464,8 @@ export function Boodschappen() {
                             color: zeker.length > 0 ? 'var(--c-red)' : 'rgba(43,20,32,0.6)',
                           }}>
                             {zeker.length > 0
-                              ? `Bevat ${opsomming(zeker)}`
-                              : `Check het etiket op ${opsomming(mijn.map((t) => t.allergeen))}`}
+                              ? t('Bevat {x}', { x: opsomming(zeker) })
+                              : t('Check het etiket op {x}', { x: opsomming(mijn.map((tr) => tr.allergeen)) })}
                           </span>
                         )
                       })()}
@@ -472,7 +473,7 @@ export function Boodschappen() {
                     {blijftThuis(regel.key) ? (
                       <span style={{
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(43,20,32,0.5)',
-                      }}>thuis</span>
+                      }}>{t('thuis')}</span>
                     ) : !winkel.heeftProduct(voorWinkel(regel)) && (() => {
                       // Niet bij de winkel, wel bij de toko? Dan daarheen in plaats van zoeken.
                       const toko = tokoProduct(regel.voorbeeld)
@@ -481,14 +482,14 @@ export function Boodschappen() {
                         <a
                           href={url}
                           onClick={(e) => { e.preventDefault(); void openBijWinkel(url) }}
-                          aria-label={toko ? `${toko.naam} bij Tjin's Toko` : undefined}
+                          aria-label={toko ? t("{naam} bij Tjin's Toko", { naam: toko.naam }) : undefined}
                           style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
-                        >{toko ? 'toko' : 'zoek'}</a>
+                        >{toko ? t('toko') : t('zoek')}</a>
                       )
                     })()}
                     <button
                       onClick={() => verwijderen.mutate(regel.ids)}
-                      aria-label={`${regel.naam} verwijderen`}
+                      aria-label={t('{naam} verwijderen', { naam: regel.naam })}
                       style={{
                         flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',
                         border: 'none', background: 'transparent', color: 'rgba(43,20,32,0.45)',
@@ -504,7 +505,7 @@ export function Boodschappen() {
               <span style={{
                 fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                 textTransform: 'uppercase', color: 'var(--c-green)',
-              }}>Zelf toevoegen</span>
+              }}>{t('Zelf toevoegen')}</span>
 
               <form
                 onSubmit={(e) => { e.preventDefault(); toevoegen.mutate(nieuw); setNieuw('') }}
@@ -513,7 +514,7 @@ export function Boodschappen() {
                 <input
                   value={nieuw}
                   onChange={(e) => setNieuw(e.target.value)}
-                  placeholder="Bijv. koffiebonen"
+                  placeholder={t('Bijv. koffiebonen')}
                   style={{
                     flex: 1, minWidth: 0, background: 'var(--c-paper)',
                     border: '1.5px solid rgba(43,20,32,0.14)', borderRadius: 14,
@@ -524,7 +525,7 @@ export function Boodschappen() {
                   flex: 'none', border: 'none', borderRadius: 14, padding: '0 18px',
                   background: 'var(--c-red)', color: 'var(--c-cream)',
                   fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                }}>Toevoegen</button>
+                }}>{t('Toevoegen')}</button>
               </form>
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -536,7 +537,7 @@ export function Boodschappen() {
                       border: '1.5px solid rgba(43,20,32,0.14)', background: 'transparent',
                       borderRadius: 'var(--radius-full)', padding: '8px 14px',
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                    }}>+ {s}</button>
+                    }}>+ {t(s)}</button>
                   ))}
               </div>
             </div>
@@ -551,7 +552,7 @@ export function Boodschappen() {
                 tone="green"
                 onClick={boodschappenGedaan}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-              >Boodschappen gedaan</Button>
+              >{t('Boodschappen gedaan')}</Button>
             ) : (
               <>
               {!bonus.peildatum.zelfHalen && (metBonus.length > 0 || verloopt.length > 0) && (
@@ -560,19 +561,20 @@ export function Boodschappen() {
                   display: 'flex', flexDirection: 'column', gap: 4, textAlign: 'center',
                 }}>
                   <span>
-                    Bezorging op: <strong>{dagLabel(bonus.peildatum.peil)}</strong> ·{' '}
+                    {t('Bezorging op:')} <strong>{dagLabel(bonus.peildatum.peil)}</strong> ·{' '}
                     <button
                       onClick={() => setBezorgVraag(true)}
                       style={{
                         border: 'none', background: 'none', padding: 0, cursor: 'pointer', color: 'var(--c-red)',
                         fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700, textDecoration: 'underline',
                       }}
-                    >wijzig</button>
+                    >{t('wijzig')}</button>
                   </span>
                   {verloopt.slice(0, 2).map((v) => (
                     <span key={v.naam} style={{ color: 'var(--c-red)', fontWeight: 700 }}>
-                      {v.naam.charAt(0).toUpperCase() + v.naam.slice(1)} is nog {totTekst(v.tot)} in de bonus.
-                      Laat je eerder bezorgen?
+                      {t('{naam} is nog {tot} in de bonus. Laat je eerder bezorgen?', {
+                        naam: v.naam.charAt(0).toUpperCase() + v.naam.slice(1), tot: totTekst(v.tot),
+                      })}
                     </span>
                   ))}
                 </div>
@@ -584,22 +586,24 @@ export function Boodschappen() {
                   fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4,
                 }}>
                   <strong style={{ color: 'var(--c-red)' }}>
-                    {nietGevonden.length === 1 ? '1 product komt' : `${nietGevonden.length} producten komen`} niet in je mandje:
+                    {nietGevonden.length === 1
+                      ? t('1 product komt niet in je mandje:')
+                      : t('{n} producten komen niet in je mandje:', { n: nietGevonden.length })}
                   </strong>{' '}
-                  {nietGevonden.map((r) => r.naam.toLowerCase()).join(', ')}. Koop {nietGevonden.length === 1 ? 'dit' : 'deze'} zelf.
+                  {nietGevonden.map((r) => r.naam.toLowerCase()).join(', ')}. {nietGevonden.length === 1 ? t('Koop dit zelf.') : t('Koop deze zelf.')}
                 </div>
               )}
               <Button
                 onClick={() => { void naarMandje() }}
                 style={{ width: '100%', padding: '17px 24px', fontSize: 16 }}
-              >{`Naar ${winkel.kort}-mandje (${naarWinkel.length - nietGevonden.length})`}</Button>
+              >{t('Naar {winkel}-mandje ({n})', { winkel: winkel.kort, n: naarWinkel.length - nietGevonden.length })}</Button>
               {/* Wie zelf haalt bestelt niet: dan zeg je hier dat de boodschappen in huis zijn. */}
               {voorkeuren.data?.zelf_halen && (
                 <Button
                   variant="secondary" tone="green"
                   onClick={boodschappenGedaan}
                   style={{ width: '100%', padding: '15px 24px', fontSize: 15, marginTop: 8 }}
-                >Boodschappen gedaan</Button>
+                >{t('Boodschappen gedaan')}</Button>
               )}
               </>
             )}
@@ -608,10 +612,10 @@ export function Boodschappen() {
               textAlign: 'center', color: 'rgba(43,20,32,0.6)',
             }}>
               {naarWinkel.length === 0
-                ? 'Je lijst wordt leeggemaakt. Je recepten gaan naar Te koken.'
+                ? t('Je lijst wordt leeggemaakt. Je recepten gaan naar Te koken.')
                 : thuisOpen > 0
-                  ? 'Afgevinkte producten en wat je in huis hebt laten we uit je mandje. Check wel even je kruidenrek.'
-                  : 'Afgevinkte producten laten we uit je mandje.'}
+                  ? t('Afgevinkte producten en wat je in huis hebt laten we uit je mandje. Check wel even je kruidenrek.')
+                  : t('Afgevinkte producten laten we uit je mandje.')}
             </p>
           </Voet>
         )}
@@ -619,8 +623,8 @@ export function Boodschappen() {
 
       <Dialoog
         open={bezorgVraag}
-        kop="Wanneer laat je bezorgen?"
-        tekst="De bonus geldt voor de dag van bezorgen. Kies de dag die je bij je winkel kiest, dan kloppen de bonuslabels."
+        kop={t('Wanneer laat je bezorgen?')}
+        tekst={t('De bonus geldt voor de dag van bezorgen. Kies de dag die je bij je winkel kiest, dan kloppen de bonuslabels.')}
         onSluit={() => setBezorgVraag(false)}
         acties={bezorgdagen().map((dag, i) => ({
           label: dagLabel(dag),
@@ -630,15 +634,17 @@ export function Boodschappen() {
       />
       <Dialoog
         open={Boolean(kruidVraag)}
-        kop="Heb je deze kruiden in huis?"
+        kop={t('Heb je deze kruiden in huis?')}
         tekst={kruidVraag
-          ? `${naamLijst(kruidVraag.map((r) => r.naam))} heeft niet iedereen staan. Zullen we ${kruidVraag.length === 1 ? 'het' : 'ze'} in je mandje doen?`
+          ? (kruidVraag.length === 1
+            ? t('{namen} heeft niet iedereen staan. Zullen we het in je mandje doen?', { namen: naamLijst(kruidVraag.map((r) => r.naam)) })
+            : t('{namen} heeft niet iedereen staan. Zullen we ze in je mandje doen?', { namen: naamLijst(kruidVraag.map((r) => r.naam)) }))
           : undefined}
         onSluit={() => setKruidVraag(null)}
         acties={[
-          { label: 'Ja, doe in mijn mandje', hoofd: true, onClick: () => { setKruidVraag(null); void naarMandje(new Set(), true) } },
+          { label: t('Ja, doe in mijn mandje'), hoofd: true, onClick: () => { setKruidVraag(null); void naarMandje(new Set(), true) } },
           {
-            label: 'Nee, heb ik al',
+            label: t('Nee, heb ik al'),
             onClick: () => {
               const zonder = new Set((kruidVraag ?? []).map((r) => r.key))
               setKruidVraag(null)
@@ -649,19 +655,21 @@ export function Boodschappen() {
       />
       <Dialoog
         open={Boolean(doorgestuurd)}
-        kop={`Staat alles in je ${winkel.kort}-mandje?`}
+        kop={t('Staat alles in je {winkel}-mandje?', { winkel: winkel.kort })}
         tekst={doorgestuurd
-          ? `${doorgestuurd.gemapt} product${doorgestuurd.gemapt === 1 ? '' : 'en'} doorgestuurd naar ${winkel.naam}. ` +
-            'Zie je ze in je mandje, dan halen we ze van je lijst.' +
-            (winkel.id === 'ah' ? ' Is je mandje leeg? Log dan één keer in op ah.nl in Safari en probeer het opnieuw.' : '') +
+          ? (doorgestuurd.gemapt === 1
+              ? t('{n} product doorgestuurd naar {winkel}.', { n: doorgestuurd.gemapt, winkel: winkel.naam })
+              : t('{n} producten doorgestuurd naar {winkel}.', { n: doorgestuurd.gemapt, winkel: winkel.naam })) + ' ' +
+            t('Zie je ze in je mandje, dan halen we ze van je lijst.') +
+            (winkel.id === 'ah' ? ' ' + t('Is je mandje leeg? Log dan één keer in op ah.nl in Safari en probeer het opnieuw.') : '') +
             (doorgestuurd.nietMee.length > 0
-              ? ` LET OP, níét doorgestuurd: ${doorgestuurd.nietMee.join(', ')}. Die blijven op je lijst; koop ze zelf.`
+              ? ' ' + t('LET OP, níét doorgestuurd: {lijst}. Die blijven op je lijst; koop ze zelf.', { lijst: doorgestuurd.nietMee.join(', ') })
               : '')
           : undefined}
         onSluit={() => setDoorgestuurd(null)}
         acties={[
           {
-            label: 'Ja, haal van mijn lijst',
+            label: t('Ja, haal van mijn lijst'),
             hoofd: true,
             onClick: () => {
               if (doorgestuurd) {
@@ -684,15 +692,12 @@ export function Boodschappen() {
             },
           },
           {
-            label: 'Nee, mijn mandje is leeg',
+            label: t('Nee, mijn mandje is leeg'),
             onClick: () => {
               setDoorgestuurd(null)
               setMelding(winkel.id === 'jumbo'
-                ? 'Kijk ook in Safari op jumbo.com: staat de Jumbo-app los van Safari, dan kan je mandje ' +
-                  'daar terechtgekomen zijn. Log in Safari in bij Jumbo en tik opnieuw op Naar Jumbo-mandje. ' +
-                  'Je lijst is niet veranderd.'
-                : 'Dan ben je bij AH waarschijnlijk niet ingelogd — dan voegt AH niets toe, zonder melding. ' +
-                  'Log daar in en tik opnieuw op Naar AH-mandje. Je lijst is niet veranderd.',
+                ? t('Kijk ook in Safari op jumbo.com: staat de Jumbo-app los van Safari, dan kan je mandje daar terechtgekomen zijn. Log in Safari in bij Jumbo en tik opnieuw op Naar Jumbo-mandje. Je lijst is niet veranderd.')
+                : t('Dan ben je bij AH waarschijnlijk niet ingelogd — dan voegt AH niets toe, zonder melding. Log daar in en tik opnieuw op Naar AH-mandje. Je lijst is niet veranderd.'),
               )
             },
           },
@@ -701,42 +706,50 @@ export function Boodschappen() {
 
       <Dialoog
         open={Boolean(nietMee)}
-        kop="Let op: dit moet je zelf nog kopen"
+        kop={t('Let op: dit moet je zelf nog kopen')}
         tekst={nietMee
-          ? `Deze producten zitten níét in je ${winkel.kort}-mandje: ${nietMee.join(', ')}. ` +
-            `Ze blijven op je lijst. Koop ze los — bij ${winkel.kort} via 'zoek', of in een andere winkel.`
+          ? t("Deze producten zitten níét in je {winkel}-mandje: {lijst}. Ze blijven op je lijst. Koop ze los — bij {winkel} via 'zoek', of in een andere winkel.", { winkel: winkel.kort, lijst: nietMee.join(', ') })
           : undefined}
         onSluit={() => setNietMee(null)}
-        acties={[{ label: 'Oké, ik koop ze zelf', hoofd: true, onClick: () => setNietMee(null) }]}
+        acties={[{ label: t('Oké, ik koop ze zelf'), hoofd: true, onClick: () => setNietMee(null) }]}
       />
 
       <Dialoog
         open={Boolean(bespaard) && !nietMee}
-        kop={bespaard ? `${euro(bespaardMet(bespaard))} bespaard!` : ''}
+        kop={bespaard ? t('{bedrag} bespaard!', { bedrag: euro(bespaardMet(bespaard)) }) : ''}
         tekst={bespaard
-          ? `Deze boodschappen kosten zo'n ${euro(bespaard.mandje_kosten)}, ${euro(BEZORGING_MANDJE)} bezorging inbegrepen. ` +
-            `Dezelfde ${bespaard.maaltijden} ${bespaard.maaltijden === 1 ? 'maaltijd' : 'maaltijden'} voor ` +
-            `${bespaard.personen} bij ${MAALTIJDBOX.naam}: ${euro(bespaard.maaltijdbox_kosten)}. ` +
+          ? t("Deze boodschappen kosten zo'n {kosten}, {bezorging} bezorging inbegrepen.", {
+              kosten: euro(bespaard.mandje_kosten), bezorging: euro(BEZORGING_MANDJE),
+            }) + ' ' +
+            (bespaard.maaltijden === 1
+              ? t('Dezelfde {n} maaltijd voor {personen} bij {box}: {kosten}.', {
+                n: bespaard.maaltijden, personen: bespaard.personen, box: t(MAALTIJDBOX.naam), kosten: euro(bespaard.maaltijdbox_kosten),
+              })
+              : t('Dezelfde {n} maaltijden voor {personen} bij {box}: {kosten}.', {
+                n: bespaard.maaltijden, personen: bespaard.personen, box: t(MAALTIJDBOX.naam), kosten: euro(bespaard.maaltijdbox_kosten),
+              })) + ' ' +
             // De lijst kan nog aan het verversen zijn; deze bestelling telt hoe dan ook mee.
-            `Totaal bespaard met de app: ${euro(totaalBespaard([
-              ...(bestellingen.data ?? []).filter((b) => b.id !== bespaard.id), bespaard,
-            ]))}.`
+            t('Totaal bespaard met de app: {bedrag}.', {
+              bedrag: euro(totaalBespaard([
+                ...(bestellingen.data ?? []).filter((b) => b.id !== bespaard.id), bespaard,
+              ])),
+            })
           : undefined}
         onSluit={() => setBespaard(null)}
         acties={[
-          { label: 'Top!', hoofd: true, onClick: () => setBespaard(null) },
-          { label: 'Bekijk wat je bespaarde', onClick: () => { setBespaard(null); navigeer('/bespaard') } },
+          { label: t('Top!'), hoofd: true, onClick: () => setBespaard(null) },
+          { label: t('Bekijk wat je bespaarde'), onClick: () => { setBespaard(null); navigeer('/bespaard') } },
         ]}
       />
 
       <Dialoog
         open={wisVraag}
-        kop="Weet je het zeker?"
-        tekst="Alle producten gaan van je lijst. Je recepten blijven in Deze week staan, zonder gele rand."
+        kop={t('Weet je het zeker?')}
+        tekst={t('Alle producten gaan van je lijst. Je recepten blijven in Deze week staan, zonder gele rand.')}
         onSluit={() => setWisVraag(false)}
         acties={[
-          { label: 'Ja, alles wissen', hoofd: true, onClick: () => { allesWissen.mutate(); setWisVraag(false) } },
-          { label: 'Annuleer', onClick: () => setWisVraag(false) },
+          { label: t('Ja, alles wissen'), hoofd: true, onClick: () => { allesWissen.mutate(); setWisVraag(false) } },
+          { label: t('Annuleer'), onClick: () => setWisVraag(false) },
         ]}
       />
 
@@ -749,5 +762,5 @@ export function Boodschappen() {
 function naamLijst(namen: string[]): string {
   const eerste = namen[0].charAt(0).toUpperCase() + namen[0].slice(1)
   const rest = [eerste, ...namen.slice(1)]
-  return rest.length === 1 ? rest[0] : `${rest.slice(0, -1).join(', ')} en ${rest[rest.length - 1]}`
+  return rest.length === 1 ? rest[0] : t('{lijst} en {laatste}', { lijst: rest.slice(0, -1).join(', '), laatste: rest[rest.length - 1] })
 }

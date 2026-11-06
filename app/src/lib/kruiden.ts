@@ -1,5 +1,6 @@
 import { ingredientKey } from './schaal'
 import { schapVoor } from './winkelindeling'
+import { t } from './taal'
 
 /**
  * "Droge kruiden" in je voorraadkast staat voor het hele kruidenrek: peper,
@@ -10,9 +11,17 @@ import { schapVoor } from './winkelindeling'
 export const DROGE_KRUIDEN = 'Droge kruiden'
 export const DROGE_KRUIDEN_KEY = ingredientKey(DROGE_KRUIDEN)
 
-export const DROGE_KRUIDEN_UITLEG =
+const UITLEG_NL =
   'We gaan er vanuit dat je veel standaard kruiden thuis hebt (peper, kurkuma, paprikapoeder, ' +
   'chilipoeder etc). Let er soms op om deze in huis te halen.'
+
+/** De uitleg in de taal van nu; roep 'm bij het renderen aan. */
+export function droogKruidenUitleg(): string {
+  return t(UITLEG_NL)
+}
+
+/** @deprecated Altijd Nederlands; gebruik droogKruidenUitleg() voor de weergave. */
+export const DROGE_KRUIDEN_UITLEG = UITLEG_NL
 
 /**
  * Wat via "zout" of "poeder" bij de specerijen landt, maar geen kruid is:

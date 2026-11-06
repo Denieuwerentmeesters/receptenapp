@@ -1,3 +1,4 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Chip, Icon } from '../ds'
@@ -23,13 +24,14 @@ import {
 } from '../lib/beoordeling'
 import { useVoorkeuren } from '../lib/queries'
 import { DIETEN, dieetLabels, wisselDieet, type Dieet } from '../lib/dieet'
+import { t } from '../lib/taal'
 
 const GEEN: string[] = []
 
 const TIJDEN = [
-  { label: 'Binnen 20 min', waarde: 20 },
-  { label: 'Binnen 30 min', waarde: 30 },
-  { label: 'Binnen 45 min', waarde: 45 },
+  { waarde: 20 },
+  { waarde: 30 },
+  { waarde: 45 },
 ]
 
 /**
@@ -199,7 +201,7 @@ export function Ontdekken() {
               background: 'var(--c-paper)', color: 'var(--c-ink)',
               fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 800,
             }}
-          ><Icon name="plus" size={16} />Toevoegen</button>
+          ><Icon name="plus" size={16} />{t('Toevoegen')}</button>
         </div>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10, marginTop: 16,
@@ -209,7 +211,7 @@ export function Ontdekken() {
           <input
             value={zoek}
             onChange={(e) => setZoek(e.target.value)}
-            placeholder="Zoek op gerecht of ingrediënt"
+            placeholder={t('Zoek op gerecht of ingrediënt')}
             style={{
               flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
               fontFamily: 'var(--font-body)', fontSize: 16, color: 'var(--color-ink)',
@@ -218,7 +220,7 @@ export function Ontdekken() {
           {zoek && (
             <button
               onClick={() => setZoek('')}
-              aria-label="Zoekterm wissen"
+              aria-label={t('Zoekterm wissen')}
               style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'rgba(43,20,32,0.45)', display: 'flex' }}
             ><Icon name="x" size={16} /></button>
           )}
@@ -227,7 +229,7 @@ export function Ontdekken() {
 
       <div style={{ flex: 'none', padding: '14px 22px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
         {/* Alle recepten of alleen die van jou: wat je toevoegde, importeerde of liet samenstellen. */}
-        <div role="tablist" aria-label="Welke recepten" style={{
+        <div role="tablist" aria-label={t('Welke recepten')} style={{
           display: 'flex', background: 'rgba(43,20,32,0.08)', borderRadius: 'var(--radius-full)', padding: 3,
         }}>
           {([false, true] as const).map((waarde) => (
@@ -246,33 +248,33 @@ export function Ontdekken() {
                 color: 'var(--c-ink)', fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 800,
                 boxShadow: mijn === waarde ? '0 1px 4px rgba(43,20,32,0.12)' : 'none',
               }}
-            >{waarde ? 'Mijn recepten' : 'Alle recepten'}</button>
+            >{waarde ? t('Mijn recepten') : t('Alle recepten')}</button>
           ))}
         </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
           {/* Geen chip "Alles": niets aangevinkt ís alles. Volgorde: wat je het vaakst kiest vooraan. */}
           <Chip selected={keukens.length > 0} onClick={() => setOpen('keuken')}>
-            {keukens.length > 0 ? keukens.join(' · ') : 'Keuken'} ▾
+            {keukens.length > 0 ? keukens.join(' · ') : t('Keuken')} ▾
           </Chip>
           <Chip selected={dieet.length > 0} onClick={() => setOpen('dieet')}>
-            {dieet.length > 0 ? DIETEN.filter((d) => dieet.includes(d.id)).map((d) => d.label).join(' · ') : 'Dieet'} ▾
+            {dieet.length > 0 ? DIETEN.filter((d) => dieet.includes(d.id)).map((d) => d.label).join(' · ') : t('Dieet')} ▾
           </Chip>
           <Chip selected={maxTijd !== null} onClick={() => setOpen('tijd')}>
-            {maxTijd ? `Binnen ${maxTijd} min` : 'Kooktijd'} ▾
+            {maxTijd ? t('Binnen {n} min', { n: maxTijd }) : t('Kooktijd')} ▾
           </Chip>
           <Chip selected={sorteer !== null} onClick={() => setOpen('sorteer')}>
-            {sorteer === 'prijs' ? 'Goedkoopste eerst' : 'Sorteren'} ▾
+            {sorteer === 'prijs' ? t('Goedkoopste eerst') : t('Sorteren')} ▾
           </Chip>
-          <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>Budget</Chip>
-          <Chip selected={hoogCijfer} onClick={() => setHoogCijfer(!hoogCijfer)}>Hoog cijfer</Chip>
+          <Chip selected={alleenBudget} onClick={() => setAlleenBudget(!alleenBudget)}>{t('Budget')}</Chip>
+          <Chip selected={hoogCijfer} onClick={() => setHoogCijfer(!hoogCijfer)}>{t('Hoog cijfer')}</Chip>
           <Chip selected={zonderAllergenen.length > 0} onClick={() => setOpen('allergie')}>
-            {zonderAllergenen.length > 0 ? `Zonder ${opsomming(zonderAllergenen)}` : 'Allergieën'} ▾
+            {zonderAllergenen.length > 0 ? t('Zonder {lijst}', { lijst: opsomming(zonderAllergenen) }) : t('Allergieën')} ▾
           </Chip>
         </div>
 
       </div>
 
-      <Grens query={resultaten} ladenTekst="Recepten ophalen">
+      <Grens query={resultaten} ladenTekst={t('Recepten ophalen')}>
         {/* Pas "niets gevonden" tonen als er ook echt niets meer onderweg is —
             anders zie je 'm even bij elke filterwissel, en na een herstart uit
             de cache zelfs terwijl de goede uitslag nog binnenkomt. */}
@@ -280,19 +282,19 @@ export function Ontdekken() {
           mijn && !zoek && !heeftFilter && zonderAllergenen.length === 0 ? (
             <Leeg
               icoon="plus"
-              kop="Nog geen eigen recepten"
-              tekst="Zet je eerste recept erbij. Plak een link van Instagram of een website, of kies screenshots."
-              knop="Plak een link"
+              kop={t('Nog geen eigen recepten')}
+              tekst={t('Zet je eerste recept erbij. Plak een link van Instagram of een website, of kies screenshots.')}
+              knop={t('Plak een link')}
               onKnop={() => navigeer('/toevoegen?route=link')}
               onIcoon={() => setToevoegenOpen(true)}
-              icoonLabel="Toevoegen"
+              icoonLabel={t('Toevoegen')}
             />
           ) : (
             <Leeg
               icoon="search"
-              kop="Niets gevonden"
-              tekst={zoek ? `Geen recept voor "${zoek}". Probeer een ingrediënt, bijvoorbeeld aubergine.` : 'Geen recept binnen deze filters.'}
-              knop={zoek ? 'Plak de link van je eigen recept' : undefined}
+              kop={t('Niets gevonden')}
+              tekst={zoek ? t('Geen recept voor "{zoek}". Probeer een ingrediënt, bijvoorbeeld aubergine.', { zoek }) : t('Geen recept binnen deze filters.')}
+              knop={zoek ? t('Plak de link van je eigen recept') : undefined}
               onKnop={() => navigeer('/toevoegen?route=link')}
             />
           )
@@ -306,7 +308,7 @@ export function Ontdekken() {
               fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
               textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)',
             }}>
-              {totaal} {totaal === 1 ? 'recept' : 'recepten'}
+              {totaal} {totaal === 1 ? t('recept') : t('recepten')}
             </span>
 
             <div style={{
@@ -331,7 +333,7 @@ export function Ontdekken() {
             {mijn && !resultaten.hasNextPage && (
               <button
                 onClick={() => setToevoegenOpen(true)}
-                aria-label="Recept toevoegen"
+                aria-label={t('Recept toevoegen')}
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '28px 16px', borderRadius: 'var(--radius-md)', cursor: 'pointer',
@@ -340,7 +342,7 @@ export function Ontdekken() {
                 }}
               >
                 <Icon name="plus" size={44} />
-                Recept toevoegen
+                {t('Recept toevoegen')}
               </button>
             )}
 
@@ -355,7 +357,7 @@ export function Ontdekken() {
                   fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, cursor: 'pointer',
                 }}
               >
-                {resultaten.isFetchingNextPage ? 'Even geduld' : 'Meer recepten'}
+                {resultaten.isFetchingNextPage ? t('Even geduld') : t('Meer recepten')}
               </button>
             )}
           </Inhoud>
@@ -364,11 +366,11 @@ export function Ontdekken() {
 
       <Dialoog
         open={uitlegOpen}
-        kop="Zo zet je een recept erbij"
-        tekst="Recepten van Instagram, TikTok of een website bewaar je in een paar tikken. Kookmaatje leest ze uit en zet ze in het Nederlands, metrisch en met een boodschappenlijst."
+        kop={t('Zo zet je een recept erbij')}
+        tekst={t('Recepten van Instagram, TikTok of een website bewaar je in een paar tikken. Kookmaatje leest ze uit en zet ze in het Nederlands, metrisch en met een boodschappenlijst.')}
         acties={[
-          { label: 'Plak een link', hoofd: true, onClick: () => { setUitlegOpen(false); navigeer('/toevoegen?route=link') } },
-          { label: 'Begrepen', onClick: () => setUitlegOpen(false) },
+          { label: t('Plak een link'), hoofd: true, onClick: () => { setUitlegOpen(false); navigeer('/toevoegen?route=link') } },
+          { label: t('Begrepen'), onClick: () => setUitlegOpen(false) },
         ]}
         onSluit={() => setUitlegOpen(false)}
       >
@@ -376,29 +378,29 @@ export function Ontdekken() {
           margin: '0 0 6px', paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 10,
           fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.45, color: 'var(--color-ink)',
         }}>
-          <li><b>Via Delen:</b> tik in Instagram of Safari op Delen en kies Kookmaatje. Het recept staat meteen klaar om te controleren.</li>
-          <li><b>Link plakken:</b> kopieer de link van de post of website, kom hier terug en tik op Toevoegen → Plak een link.</li>
-          <li><b>Of een screenshot</b> van een recept, of een foto uit je kookboek.</li>
+          <li><b>{t('Via Delen:')}</b> {t('tik in Instagram of Safari op Delen en kies Kookmaatje. Het recept staat meteen klaar om te controleren.')}</li>
+          <li><b>{t('Link plakken:')}</b> {t('kopieer de link van de post of website, kom hier terug en tik op Toevoegen → Plak een link.')}</li>
+          <li><b>{t('Of een screenshot')}</b> {t('van een recept, of een foto uit je kookboek.')}</li>
         </ol>
       </Dialoog>
 
       <Dialoog
         open={toevoegenOpen}
-        kop="Recept toevoegen"
-        tekst="Waar komt het vandaan?"
-        acties={TOEVOEGEN.map((k, i) => ({ label: k.label, hoofd: i === 0, onClick: () => { setToevoegenOpen(false); navigeer(k.naar) } }))}
+        kop={t('Recept toevoegen')}
+        tekst={t('Waar komt het vandaan?')}
+        acties={TOEVOEGEN.map((k, i) => ({ label: t(k.label), hoofd: i === 0, onClick: () => { setToevoegenOpen(false); navigeer(k.naar) } }))}
         onSluit={() => setToevoegenOpen(false)}
       />
 
       <Dialoog
         open={open === 'sorteer'}
-        kop="Sorteren"
-        tekst="De prijs is wat je mandje voor dit recept kost per persoon, zonder wat je al in huis hebt."
-        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        kop={t('Sorteren')}
+        tekst={t('De prijs is wat je mandje voor dit recept kost per persoon, zonder wat je al in huis hebt.')}
+        acties={[{ label: t('Klaar'), hoofd: true, onClick: () => setOpen(null) }]}
         onSluit={() => setOpen(null)}
       >
         <Keuzelijst
-          keuzes={[{ id: 'prijs', label: 'Goedkoopste eerst' }]}
+          keuzes={[{ id: 'prijs', label: t('Goedkoopste eerst') }]}
           gekozen={sorteer ? [sorteer] : []}
           onWissel={() => setSorteer(sorteer === 'prijs' ? null : 'prijs')}
         />
@@ -406,12 +408,12 @@ export function Ontdekken() {
 
       <Dialoog
         open={open === 'tijd'}
-        kop="Kooktijd"
-        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        kop={t('Kooktijd')}
+        acties={[{ label: t('Klaar'), hoofd: true, onClick: () => setOpen(null) }]}
         onSluit={() => setOpen(null)}
       >
         <Keuzelijst
-          keuzes={TIJDEN.map((t) => ({ id: String(t.waarde), label: t.label }))}
+          keuzes={TIJDEN.map((x) => ({ id: String(x.waarde), label: t('Binnen {n} min', { n: x.waarde }) }))}
           gekozen={maxTijd ? [String(maxTijd)] : []}
           onWissel={(id) => setMaxTijd(maxTijd === Number(id) ? null : Number(id))}
         />
@@ -419,9 +421,9 @@ export function Ontdekken() {
 
       <Dialoog
         open={open === 'keuken'}
-        kop="Keuken"
-        tekst="Vink aan wat je wilt zien; je voorkeurskeukens staan bovenaan."
-        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        kop={t('Keuken')}
+        tekst={t('Vink aan wat je wilt zien; je voorkeurskeukens staan bovenaan.')}
+        acties={[{ label: t('Klaar'), hoofd: true, onClick: () => setOpen(null) }]}
         onSluit={() => setOpen(null)}
       >
         <Keuzelijst
@@ -433,9 +435,9 @@ export function Ontdekken() {
 
       <Dialoog
         open={open === 'dieet'}
-        kop="Dieet"
-        tekst="Koolhydraatarm en keto zijn een schatting op basis van de ingrediënten."
-        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        kop={t('Dieet')}
+        tekst={t('Koolhydraatarm en keto zijn een schatting op basis van de ingrediënten.')}
+        acties={[{ label: t('Klaar'), hoofd: true, onClick: () => setOpen(null) }]}
         onSluit={() => setOpen(null)}
       >
         <Keuzelijst
@@ -447,9 +449,9 @@ export function Ontdekken() {
 
       <Dialoog
         open={open === 'allergie'}
-        kop="Zonder allergenen"
-        tekst="Recepten waar het in zit laten we weg. Geldt tot je de app opnieuw opent; je vaste allergieën stel je in bij Instellingen."
-        acties={[{ label: 'Klaar', hoofd: true, onClick: () => setOpen(null) }]}
+        kop={t('Zonder allergenen')}
+        tekst={t('Recepten waar het in zit laten we weg. Geldt tot je de app opnieuw opent; je vaste allergieën stel je in bij Instellingen.')}
+        acties={[{ label: t('Klaar'), hoofd: true, onClick: () => setOpen(null) }]}
         onSluit={() => setOpen(null)}
       >
         <Keuzelijst
@@ -514,8 +516,8 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
   // Eén label houdt de regel kort: vegan of vegetarisch gaat voor de keuken.
   const [label] = dieetLabels(recept)
   const meta = [
-    recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
-    label === 'vegan' || label === 'vegetarisch' ? label : recept.keuken,
+    recept.bereidingstijd_minuten ? t('{n} min', { n: recept.bereidingstijd_minuten }) : null,
+    label === 'vegan' || label === 'vegetarisch' ? t(label) : recept.keuken,
   ].filter(Boolean).join(' · ')
   // Wat het mandje voor dit recept kost per persoon (jouw winkel, jouw voorraadkast), zodat je het label Budget kunt beoordelen.
   const voorkeuren = useVoorkeuren()
@@ -526,8 +528,8 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
     [recept.ingredienten, recept.personen, personen],
   )
   const prijs = useReceptPrijs(prijsRegels, personen)
-  const prijsTekst = prijs && prijs.perPersoon > 0 ? `± ${euro(prijs.perPersoon, true)} p.p.` : null
-  const status = fase?.besteldOp ? 'Te koken' : fase?.opLijst ? 'Op je lijst' : fase ? 'Nog bestellen' : null
+  const prijsTekst = prijs && prijs.perPersoon > 0 ? t('± {prijs} p.p.', { prijs: euro(prijs.perPersoon, true) }) : null
+  const status = fase?.besteldOp ? t('Te koken') : fase?.opLijst ? t('Op je lijst') : fase ? t('Nog bestellen') : null
   // Jouw cijfer gaat voor; heb je het niet gekookt, dan het gemiddelde van alle koks (vanaf genoeg cijfers).
   const gemiddeld = mijn?.cijfer == null ? gemiddeldeOpKaart(recept) : null
   const favoriet = isFavorietCijfer(mijn?.cijfer)
@@ -544,7 +546,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
       }}>
         <button
           onClick={onOpen}
-          aria-label={recept.titel_nl ?? recept.titel}
+          aria-label={receptTitel(recept)}
           style={{
             display: 'block', width: '100%', aspectRatio: '1 / 1', border: 'none', padding: 0,
             borderRadius: 'var(--radius-md)', cursor: 'pointer', overflow: 'hidden',
@@ -554,12 +556,12 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
             color: 'var(--c-cream)', fontFamily: 'var(--font-body)', fontSize: 11,
             letterSpacing: '.08em', textTransform: 'uppercase',
           }}
-        >{recept.afbeelding_url ? '' : 'foto'}</button>
+        >{recept.afbeelding_url ? '' : t('foto')}</button>
         {toko && <TokoLabel />}
         <BonusLabel producten={bonus} />
         {(mijn?.cijfer != null || gemiddeld) && (
           <span
-            aria-label={mijn?.cijfer != null ? `Jouw cijfer: ${mijn.cijfer}` : `Gemiddeld ${cijferTekst(gemiddeld!.gemiddeld)}`}
+            aria-label={mijn?.cijfer != null ? t('Jouw cijfer: {cijfer}', { cijfer: mijn.cijfer }) : t('Gemiddeld {cijfer}', { cijfer: cijferTekst(gemiddeld!.gemiddeld) })}
             style={{
               position: 'absolute', right: 12, bottom: 12, minWidth: 30, height: 30, boxSizing: 'border-box', padding: '0 7px',
               borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -573,7 +575,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <button
             onClick={onHartje}
-            aria-label={bewaard ? 'Haal uit Nog bestellen' : 'Zet bij Nog bestellen'}
+            aria-label={bewaard ? t('Haal uit Nog bestellen') : t('Zet bij Nog bestellen')}
             aria-pressed={bewaard}
             style={{ ...rondje, ...(bewaard ? aan : {}) }}
           ><Icon name="heart" size={18} /></button>
@@ -591,7 +593,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
           fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, lineHeight: 1.25,
           color: 'var(--color-ink)', display: '-webkit-box', WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical', overflow: 'hidden',
-        }}>{recept.titel_nl ?? recept.titel}</span>
+        }}>{receptTitel(recept)}</span>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
           {meta}
           {prijsTekst && <>{meta ? ' · ' : ''}{prijsTekst}</>}
@@ -600,7 +602,7 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
         {bevat.length > 0 && (
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
-          }}>Bevat {opsomming(bevat)}</span>
+          }}>{t('Bevat {lijst}', { lijst: opsomming(bevat) })}</span>
         )}
         {status && (
           <span style={{
@@ -611,16 +613,16 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700, letterSpacing: '.08em',
             textTransform: 'uppercase', color: 'var(--c-red)',
-          }}>Jouw favoriet</span>
+          }}>{t('Jouw favoriet')}</span>
         )}
         {mijn?.cijfer != null && (
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
-            Jouw cijfer: {mijn.cijfer}{mijn.notitie ? ` · notitie: ${mijn.notitie}` : ''}
+            {t('Jouw cijfer: {cijfer}', { cijfer: mijn.cijfer })}{mijn.notitie ? ` · ${t('notitie: {notitie}', { notitie: mijn.notitie })}` : ''}
           </span>
         )}
         {gemiddeld && (
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.6)' }}>
-            {cijferTekst(gemiddeld.gemiddeld)} gemiddeld · {gemiddeld.aantal} koks
+            {t('{cijfer} gemiddeld · {aantal} koks', { cijfer: cijferTekst(gemiddeld.gemiddeld), aantal: gemiddeld.aantal })}
           </span>
         )}
       </button>
@@ -640,6 +642,6 @@ const aan: React.CSSProperties = { background: 'var(--c-red)', color: 'var(--c-c
 /** Klein groen "budget" achter de meta: tot €2,50 per persoon (geschat). */
 export function BudgetLabel() {
   return (
-    <span style={{ color: 'var(--c-green)', fontWeight: 700 }}> · budget</span>
+    <span style={{ color: 'var(--c-green)', fontWeight: 700 }}> · {t('budget')}</span>
   )
 }

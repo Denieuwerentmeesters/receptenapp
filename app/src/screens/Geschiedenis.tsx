@@ -1,9 +1,11 @@
+import { receptTitel } from '../lib/receptTaal'
 import { useNavigate } from 'react-router-dom'
 import { Inhoud, Kop, Label, Scherm, TerugKnop, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useGeschiedenis } from '../lib/queries2'
 import { weekLabel } from '../lib/week'
 import { useActieveWeek } from '../lib/queries'
+import { t } from '../lib/taal'
 
 export function Geschiedenis() {
   const navigeer = useNavigate()
@@ -13,24 +15,24 @@ export function Geschiedenis() {
 
   return (
     <Scherm>
-      <Grens query={geschiedenis} ladenTekst="Geschiedenis ophalen">
+      <Grens query={geschiedenis} ladenTekst={t('Geschiedenis ophalen')}>
         <Kop kleur="var(--c-red)" style={{ paddingBottom: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <TerugKnop />
-            <Label kleur="var(--c-pink-soft)">Wat je kookte</Label>
+            <Label kleur="var(--c-pink-soft)">{t('Wat je kookte')}</Label>
           </div>
-          <div style={{ marginTop: 14 }}><Titel grootte={26}>Geschiedenis</Titel></div>
+          <div style={{ marginTop: 14 }}><Titel grootte={26}>{t('Geschiedenis')}</Titel></div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
-            Tik een gerecht aan om het opnieuw te bekijken.
+            {t('Tik een gerecht aan om het opnieuw te bekijken.')}
           </p>
         </Kop>
 
         {weken.length === 0 ? (
           <Leeg
             icoon="clock"
-            kop="Nog niets gekookt"
-            tekst="Zodra je recepten kiest en kookt, bouwt zich hier je geschiedenis op."
-            knop="Naar mijn weekmenu"
+            kop={t('Nog niets gekookt')}
+            tekst={t('Zodra je recepten kiest en kookt, bouwt zich hier je geschiedenis op.')}
+            knop={t('Naar mijn weekmenu')}
             onKnop={() => navigeer('/mijn-recepten')}
           />
         ) : (
@@ -44,10 +46,10 @@ export function Geschiedenis() {
                       fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                       textTransform: 'uppercase', color: 'var(--c-red)',
                     }}>
-                      {wk.week === dezeWeek ? 'Deze week' : `Week van ${weekLabel(wk.week)}`}
+                      {wk.week === dezeWeek ? t('Deze week') : t('Week van {datum}', { datum: weekLabel(wk.week) })}
                     </span>
                     <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, color: 'rgba(43,20,32,0.6)' }}>
-                      {gekookt} van {wk.gekozen.length} gekookt
+                      {t('{n} van {totaal} gekookt', { n: gekookt, totaal: wk.gekozen.length })}
                     </span>
                   </div>
 
@@ -63,17 +65,17 @@ export function Geschiedenis() {
                     >
                       <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700 }}>
-                          {recept.titel_nl ?? recept.titel}
+                          {receptTitel(recept)}
                         </span>
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)' }}>
-                          {recept.bereidingstijd_minuten ?? '?'} min
+                          {t('{n} min', { n: recept.bereidingstijd_minuten ?? '?' })}
                           {recept.keuken ? ` · ${recept.keuken}` : ''}
                         </span>
                       </span>
                       <span style={{
                         fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
                         color: gekooktOp ? 'rgba(43,20,32,0.45)' : 'var(--c-red)',
-                      }}>{gekooktOp ? 'gekookt' : 'niet gekookt'}</span>
+                      }}>{gekooktOp ? t('gekookt') : t('niet gekookt')}</span>
                     </button>
                   ))}
                 </div>

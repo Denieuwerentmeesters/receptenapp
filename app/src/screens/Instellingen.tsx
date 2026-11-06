@@ -8,9 +8,11 @@ import { BonusBron } from '../components/Bonus'
 import { AllergieKeuze, KeukenKeuze } from '../components/voorkeuren'
 import { HuishoudenBlok } from '../components/Huishouden'
 import { useKeukens } from '../lib/queries2'
+import { TaalKeuze } from '../components/TaalKeuze'
+import { t } from '../lib/taal'
 import { vegaDoel, vegaMinimumVoor } from '../lib/weekvullen'
 
-const DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag']
+const dagen = () => [t('zondag'), t('maandag'), t('dinsdag'), t('woensdag'), t('donderdag'), t('vrijdag'), t('zaterdag')]
 
 export function Instellingen() {
   const voorkeuren = useVoorkeuren()
@@ -18,10 +20,11 @@ export function Instellingen() {
   const zet = (wijziging: Partial<Voorkeuren>) => opslaan.mutate(wijziging)
   const keukens = useKeukens()
   const navigeer = useNavigate()
+  const DAGEN = dagen()
 
   return (
     <Scherm>
-      <Grens query={voorkeuren} ladenTekst="Instellingen ophalen">
+      <Grens query={voorkeuren} ladenTekst={t('Instellingen ophalen')}>
         {voorkeuren.data && (() => {
           const v = voorkeuren.data
           const avonden = v.kookavonden ?? 4
@@ -30,52 +33,50 @@ export function Instellingen() {
               <Kop kleur="var(--c-green)" style={{ padding: 'calc(env(safe-area-inset-top) + 20px) 22px 22px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <TerugKnop />
-                  <Label>Jouw voorkeuren</Label>
+                  <Label>{t('Jouw voorkeuren')}</Label>
                 </div>
-                <div style={{ marginTop: 14 }}><Titel grootte={26}>Instellingen</Titel></div>
+                <div style={{ marginTop: 14 }}><Titel grootte={26}>{t('Instellingen')}</Titel></div>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
-                  Wijzigingen gelden vanaf je volgende weekmenu.
+                  {t('Wijzigingen gelden vanaf je volgende weekmenu.')}
                 </p>
               </Kop>
 
               <Inhoud style={{ gap: 20, padding: '18px 22px 8px' }}>
-                <Sectie naam="Weekmenu">
+                <Sectie naam={t('Weekmenu')}>
                   <Stapper
-                    label="Personen" sub="Alle hoeveelheden schalen mee"
+                    label={t('Personen')} sub={t('Alle hoeveelheden schalen mee')}
                     waarde={v.aantal_personen} min={1} max={12}
                     onWijzig={(n) => zet({ aantal_personen: n })}
                   />
                   {/* Een richtlijn voor Vul mijn week, geen grens: je bestelt zoveel als je wilt. */}
                   <Stapper
-                    label="Hoe vaak kook je?" sub="Meestal, per week. Voor Vul mijn week"
+                    label={t('Hoe vaak kook je?')} sub={t('Meestal, per week. Voor Vul mijn week')}
                     waarde={avonden} min={1} max={7}
-                    weergave={avonden === 7 ? 'elke avond' : `${avonden}×`}
+                    weergave={avonden === 7 ? t('elke avond') : `${avonden}×`}
                     onWijzig={(n) => zet({ kookavonden: n })}
                   />
                   <Stapper
-                    label="Hoeveel daarvan vegetarisch?" sub={`Van je ${avonden} ${avonden === 1 ? 'avond' : 'avonden'}`}
+                    label={t('Hoeveel daarvan vegetarisch?')} sub={avonden === 1 ? t('Van je {n} avond', { n: avonden }) : t('Van je {n} avonden', { n: avonden })}
                     waarde={vegaDoel({ vega_minimum: v.vega_minimum, kookavonden: avonden })} min={0} max={avonden}
                     onWijzig={(n) => zet({ vega_minimum: vegaMinimumVoor(n, avonden) })}
                   />
                   <Stapper
-                    label="Max bereidingstijd" sub="Langere recepten laten we weg"
+                    label={t('Max bereidingstijd')} sub={t('Langere recepten laten we weg')}
                     waarde={v.max_bereidingstijd ?? 0} min={0} max={180} stap={15}
                     // 0 betekent hier "geen limiet" — dat leest prettiger dan een
                     // aparte schakelaar naast de stapper.
-                    weergave={v.max_bereidingstijd ? `${v.max_bereidingstijd} min` : 'geen limiet'}
+                    weergave={v.max_bereidingstijd ? t('{n} min', { n: v.max_bereidingstijd }) : t('geen limiet')}
                     onWijzig={(n) => zet({ max_bereidingstijd: n === 0 ? null : n })}
                   />
                 </Sectie>
 
                 {keukens.data && keukens.data.length > 0 && (
-                  <Sectie naam="Keukens">
+                  <Sectie naam={t('Keukens')}>
                     <p style={{
                       fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45,
                       color: 'rgba(43,20,32,0.6)', margin: '0 0 10px',
                     }}>
-                      Wat je het liefst eet. Deze keukens komen vaker in je weekmenu en staan
-                      bovenaan in Ontdekken; de rest komt nog af en toe langs. Tik uit wat je
-                      minder graag eet.
+                      {t('Wat je het liefst eet. Deze keukens komen vaker in je weekmenu en staan bovenaan in Ontdekken; de rest komt nog af en toe langs. Tik uit wat je minder graag eet.')}
                     </p>
                     <div style={{ paddingBottom: 14 }}>
                       <KeukenKeuze
@@ -88,41 +89,45 @@ export function Instellingen() {
                   </Sectie>
                 )}
 
-                <Sectie naam="Allergieën">
+                <Sectie naam={t('Allergieën')}>
                   <p style={{
                     fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.45,
                     color: 'rgba(43,20,32,0.6)', margin: '0 0 10px',
                   }}>
-                    Recepten waar het in zit laten we weg. Gluten en koemelk vervangen we waar het
-                    kan, dan krijg je op je lijst bijvoorbeeld glutenvrije pasta of havermelk. Staat
-                    er een product in waarvan alleen het etiket het zeker weet, dan zeggen we dat erbij.
+                    {t('Recepten waar het in zit laten we weg. Gluten en koemelk vervangen we waar het kan, dan krijg je op je lijst bijvoorbeeld glutenvrije pasta of havermelk. Staat er een product in waarvan alleen het etiket het zeker weet, dan zeggen we dat erbij.')}
                   </p>
                   <div style={{ paddingBottom: 14 }}>
                     <AllergieKeuze gekozen={v.allergieen ?? []} onWijzig={(nieuw) => zet({ allergieen: nieuw })} />
                   </div>
                 </Sectie>
 
-                <Sectie naam="Boodschappen">
-                  <Rij label="Winkel" sub="Waar je mandje heen gaat">
+                <Sectie naam={t('Taal')}>
+                  <Rij label={t('Taal')} sub="Nederlands / English">
+                    <TaalKeuze />
+                  </Rij>
+                </Sectie>
+
+                <Sectie naam={t('Boodschappen')}>
+                  <Rij label={t('Winkel')} sub={t('Waar je mandje heen gaat')}>
                     <Keuze
                       opties={[['ah', 'AH'], ['jumbo', 'Jumbo']]}
                       waarde={v.voorkeurswinkel}
                       onWijzig={(w) => zet({ voorkeurswinkel: w })}
                     />
                   </Rij>
-                  <Rij label="Biologisch waar mogelijk" sub="Anders de standaardversie">
+                  <Rij label={t('Biologisch waar mogelijk')} sub={t('Anders de standaardversie')}>
                     <Schakelaar
                       aan={v.biologisch_voorkeur}
                       onWijzig={() => zet({ biologisch_voorkeur: !v.biologisch_voorkeur })}
                     />
                   </Rij>
-                  <Rij label="Zelf halen in de winkel" sub="Dan telt de bonus van vandaag, niet die van de bezorgdag">
+                  <Rij label={t('Zelf halen in de winkel')} sub={t('Dan telt de bonus van vandaag, niet die van de bezorgdag')}>
                     <Schakelaar
                       aan={v.zelf_halen ?? false}
                       onWijzig={() => zet({ zelf_halen: !v.zelf_halen })}
                     />
                   </Rij>
-                  <Rij label="Huismerk als het kan" sub="Anders het merk dat we standaard kiezen">
+                  <Rij label={t('Huismerk als het kan')} sub={t('Anders het merk dat we standaard kiezen')}>
                     <Schakelaar
                       aan={v.huismerk_voorkeur}
                       onWijzig={() => zet({ huismerk_voorkeur: !v.huismerk_voorkeur })}
@@ -130,23 +135,23 @@ export function Instellingen() {
                   </Rij>
                 </Sectie>
 
-                <Sectie naam="Meldingen">
-                  <Rij label="Herinnering om recepten te zoeken" sub={`${DAGEN[v.pushbericht_dag]} om ${v.pushbericht_tijd.slice(0, 5)} · alleen in de app op je telefoon`}>
+                <Sectie naam={t('Meldingen')}>
+                  <Rij label={t('Herinnering om recepten te zoeken')} sub={t('{dag} om {tijd} · alleen in de app op je telefoon', { dag: DAGEN[v.pushbericht_dag], tijd: v.pushbericht_tijd.slice(0, 5) })}>
                     <Schakelaar
                       aan={v.pushbericht_aan}
                       onWijzig={() => zet({ pushbericht_aan: !v.pushbericht_aan })}
                     />
                   </Rij>
-                  <Rij label="Dag" sub="Wanneer je de melding krijgt">
+                  <Rij label={t('Dag')} sub={t('Wanneer je de melding krijgt')}>
                     <select
                       value={v.pushbericht_dag}
                       onChange={(e) => zet({ pushbericht_dag: Number(e.target.value) })}
                       style={selectStijl}
                     >
-                      {DAGEN.map((dag, i) => <option key={dag} value={i}>{dag}</option>)}
+                      {DAGEN.map((dag, i) => <option key={i} value={i}>{dag}</option>)}
                     </select>
                   </Rij>
-                  <Rij label="Tijd" sub="Hoe laat de melding komt">
+                  <Rij label={t('Tijd')} sub={t('Hoe laat de melding komt')}>
                     <input
                       type="time"
                       value={v.pushbericht_tijd.slice(0, 5)}
@@ -156,13 +161,13 @@ export function Instellingen() {
                   </Rij>
                 </Sectie>
 
-                <Sectie naam="Huishouden">
+                <Sectie naam={t('Huishouden')}>
                   <HuishoudenBlok />
                 </Sectie>
 
-                <Sectie naam="Over de app">
+                <Sectie naam={t('Over de app')}>
                   <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '0 0 6px' }}>
-                    {BONUS_BRON.uitleg}
+                    {t(BONUS_BRON.uitleg)}
                   </p>
                   <BonusBron />
                   <button
@@ -173,7 +178,7 @@ export function Instellingen() {
                       fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700,
                       textDecoration: 'underline', textUnderlineOffset: 3,
                     }}
-                  >Bekijk de uitleg</button>
+                  >{t('Bekijk de uitleg')}</button>
                 </Sectie>
               </Inhoud>
             </>
@@ -298,12 +303,12 @@ function Stapper({ label, sub, waarde, min, max, stap = 1, weergave, onWijzig }:
   return (
     <Rij label={label} sub={sub}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {knop('−', Math.max(min, waarde - stap), waarde <= min, `${label} verlagen`)}
+        {knop('−', Math.max(min, waarde - stap), waarde <= min, t('{label} verlagen', { label }))}
         <span style={{
           fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, color: 'var(--c-red)',
           minWidth: 78, textAlign: 'center',
         }}>{weergave ?? waarde}</span>
-        {knop('+', Math.min(max, waarde + stap), waarde >= max, `${label} verhogen`)}
+        {knop('+', Math.min(max, waarde + stap), waarde >= max, t('{label} verhogen', { label }))}
       </div>
     </Rij>
   )

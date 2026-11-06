@@ -1,3 +1,4 @@
+import { t } from './taal'
 import { Capacitor } from '@capacitor/core'
 import { INLOGSITE } from './config'
 
@@ -28,7 +29,7 @@ export interface Uitgelezen {
 export class BestaatAl extends Error {
   receptId: string
   constructor(receptId: string) {
-    super('Dit recept staat al bij je recepten.')
+    super(t('Dit recept staat al bij je recepten.'))
     this.receptId = receptId
   }
 }
@@ -55,7 +56,7 @@ async function vraag(body: Record<string, unknown>, opStap: OpStap, signaal?: Ab
   })
   if (!respons.ok) {
     const { fout } = (await respons.json().catch(() => ({}))) as { fout?: string }
-    throw new Error(fout ?? 'Het uitlezen is niet gelukt.')
+    throw new Error(fout ?? t('Het uitlezen is niet gelukt.'))
   }
 
   let klaar: Uitgelezen | null = null
@@ -85,7 +86,7 @@ async function vraag(body: Record<string, unknown>, opStap: OpStap, signaal?: Ab
     verwerk(rest)
   }
 
-  if (!klaar) throw new Error('De verbinding viel weg voordat het recept af was. Probeer het opnieuw.')
+  if (!klaar) throw new Error(t('De verbinding viel weg voordat het recept af was. Probeer het opnieuw.'))
   return klaar
 }
 

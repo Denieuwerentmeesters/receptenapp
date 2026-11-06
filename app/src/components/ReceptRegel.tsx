@@ -1,6 +1,8 @@
+import { receptTitel } from '../lib/receptTaal'
 import { Icon } from '../ds'
 import type { Recept } from '../lib/database.types'
 import { tokoIngredienten } from '../lib/toko'
+import { t } from '../lib/taal'
 
 /** De twee roodtinten wisselen af — het merkritme uit de designs. */
 const VLAKKEN = ['var(--c-red)', 'var(--c-red-bright)']
@@ -20,9 +22,9 @@ export function ReceptRegel({ recept, index = 0, favoriet, onOpen, onFavoriet, a
 }) {
   const vega = recept.tags.includes('vegetarisch')
   const meta = [
-    recept.bereidingstijd_minuten ? `${recept.bereidingstijd_minuten} min` : null,
-    vega ? 'vegetarisch' : recept.keuken,
-    tokoIngredienten(recept.ingredienten).length > 0 ? 'toko nodig' : null,
+    recept.bereidingstijd_minuten ? t('{n} min', { n: recept.bereidingstijd_minuten }) : null,
+    vega ? t('vegetarisch') : recept.keuken,
+    tokoIngredienten(recept.ingredienten).length > 0 ? t('toko nodig') : null,
   ].filter(Boolean).join(' · ')
 
   return (
@@ -45,12 +47,12 @@ export function ReceptRegel({ recept, index = 0, favoriet, onOpen, onFavoriet, a
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: '.08em',
           textTransform: 'uppercase', color: 'var(--c-cream)',
-        }}>{recept.afbeelding_url ? '' : 'foto'}</span>
+        }}>{recept.afbeelding_url ? '' : t('foto')}</span>
 
         <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700, color: 'var(--color-ink)',
-          }}>{recept.titel_nl ?? recept.titel}</span>
+          }}>{receptTitel(recept)}</span>
           <span style={{
             fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(43,20,32,0.6)',
           }}>{meta}</span>
@@ -67,7 +69,7 @@ export function ReceptRegel({ recept, index = 0, favoriet, onOpen, onFavoriet, a
       {onFavoriet && (
         <button
           onClick={onFavoriet}
-          aria-label={favoriet ? 'Uit favorieten' : 'Bewaren als favoriet'}
+          aria-label={favoriet ? t('Uit favorieten') : t('Bewaren als favoriet')}
           style={{
             flex: 'none', width: 36, height: 36, borderRadius: 'var(--radius-full)',
             border: '1.5px solid rgba(43,20,32,0.14)', background: favoriet ? 'var(--c-red)' : 'transparent',

@@ -1,3 +1,4 @@
+import { receptTitel, receptBereiding, ingredientNaam, ingredientWeergave } from '../lib/receptTaal'
 import { useState } from 'react'
 import { useHartje } from '../components/Hartje'
 import { useFases } from '../lib/fases'
@@ -24,6 +25,7 @@ import { BonusBron } from '../components/Bonus'
 import { receptBonusProducten, totTekst, useBonus } from '../lib/bonus'
 import { standaardPersonen } from '../lib/menu'
 import { bronVermelding } from '../lib/importeren'
+import { t } from '../lib/taal'
 
 export function Recept() {
   const { id } = useParams<{ id: string }>()
@@ -55,16 +57,16 @@ export function Recept() {
     if (!heeftLink(r)) {
       maakDeellink(r.id)
         .then(() => client.invalidateQueries({ queryKey: sleutels.recept(r.id) }))
-        .catch((e) => setDeelStap({ fout: `De link werkt nog niet: ${foutTekst(e)}` }))
+        .catch((e) => setDeelStap({ fout: t('De link werkt nog niet: {fout}', { fout: foutTekst(e) }) }))
     }
     if (via === 'whatsapp') {
-      void openBijWinkel(whatsappLink(r.titel_nl ?? r.titel, url))
+      void openBijWinkel(whatsappLink(receptTitel(r), url))
       setDeelStap((stap) => (stap === 'vraag' ? null : stap))
       return
     }
-    void deel(r.titel_nl ?? r.titel, url).then((uitkomst) => {
+    void deel(receptTitel(r), url).then((uitkomst) => {
       if (uitkomst === 'gekopieerd') setDeelStap('gekopieerd')
-      else if (uitkomst === 'mislukt') setDeelStap({ fout: `Delen lukte niet. De link is ${url}` })
+      else if (uitkomst === 'mislukt') setDeelStap({ fout: t('Delen lukte niet. De link is {url}', { url }) })
       else setDeelStap((stap) => (stap === 'vraag' ? null : stap))
     })
   }
@@ -94,7 +96,7 @@ export function Recept() {
 
   return (
     <Scherm>
-      <Grens query={recept} ladenTekst="Recept ophalen">
+      <Grens query={recept} ladenTekst={t('Recept ophalen')}>
         {recept.data && (() => {
           const r = recept.data
           const ingredienten = schaalIngredienten(r.ingredienten, r.personen, personen)
@@ -133,7 +135,7 @@ export function Recept() {
                   }}>
                     {/* Geopend via een link of direct na het toevoegen: dan is er geen vorige pagina. */}
                     <IconButton
-                      icon="chevronLeft" label="Terug" size={42}
+                      icon="chevronLeft" label={t('Terug')} size={42}
                       onClick={() => {
                         if (terugNaar) return navigeer(terugNaar)
                         if (((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0) navigeer(-1)
@@ -147,10 +149,10 @@ export function Recept() {
                           padding: '8px 12px', borderRadius: 'var(--radius-full)',
                           background: 'rgba(43,20,32,0.5)', backdropFilter: 'blur(8px)',
                           fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700,
-                        }}>{inFase?.besteldOp ? 'Te koken' : opLijst ? 'Op je lijst' : 'Nog bestellen'}</span>
+                        }}>{inFase?.besteldOp ? t('Te koken') : opLijst ? t('Op je lijst') : t('Nog bestellen')}</span>
                       )}
                       <IconButton
-                        icon="share" label="Deel dit recept" size={42}
+                        icon="share" label={t('Deel dit recept')} size={42}
                         onClick={() => {
                           setDeelStap(magDelen(r) ? 'vraag' : 'kookboek')
                         }}
@@ -158,7 +160,7 @@ export function Recept() {
                       />
                       <IconButton
                         icon="heart" size={42}
-                        label={bewaard ? 'Haal uit Nog bestellen' : 'Zet bij Nog bestellen'}
+                        label={bewaard ? t('Haal uit Nog bestellen') : t('Zet bij Nog bestellen')}
                         onClick={() => hartje.tik(r)}
                         style={{
                           background: bewaard ? 'var(--c-red-bright)' : 'rgba(43,20,32,0.5)',
@@ -179,7 +181,7 @@ export function Recept() {
                       {/* Een eigen recept krijgt vannacht een foto (api/afbeeldingen.ts); een samengesteld menu niet. */}
                       {r.user_id && r.bron_type !== 'samengesteld' && (
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>
-                          Afbeelding wordt vannacht toegevoegd
+                          {t('Afbeelding wordt vannacht toegevoegd')}
                         </span>
                       )}
                     </div>
@@ -187,25 +189,25 @@ export function Recept() {
 
                   <div style={{ position: 'absolute', left: 22, right: 22, bottom: 22 }}>
                     <Label>
-                      {r.keuken ?? 'Recept'}{dieet.map((d) => ` · ${d}`).join('')}{isBudget(r) ? ' · budget' : ''}{toko.length > 0 ? ' · toko nodig' : ''}
+                      {r.keuken ?? t('Recept')}{dieet.map((d) => ` · ${t(d)}`).join('')}{isBudget(r) ? ` · ${t('budget')}` : ''}{toko.length > 0 ? ` · ${t('toko nodig')}` : ''}
                     </Label>
                     <div style={{ marginTop: 8, textShadow: '0 2px 12px rgba(0,0,0,0.35)' }}>
-                      <Titel grootte={30}>{r.titel_nl ?? r.titel}</Titel>
+                      <Titel grootte={30}>{receptTitel(r)}</Titel>
                     </div>
                     <div style={{
                       display: 'flex', gap: 16, marginTop: 12,
                       fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
                     }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <Icon name="clock" size={14} />{r.bereidingstijd_minuten ?? '?'} min
+                        <Icon name="clock" size={14} />{t('{n} min', { n: r.bereidingstijd_minuten ?? '?' })}
                       </span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <Icon name="users" size={14} />{personen} {personen === 1 ? 'persoon' : 'personen'}
+                        <Icon name="users" size={14} />{personen} {personen === 1 ? t('persoon') : t('personen')}
                       </span>
-                      <span>{r.ingredienten.length} ingrediënten</span>
+                      <span>{t('{n} ingrediënten', { n: r.ingredienten.length })}</span>
                       {prijs && prijs.perPersoon > 0 && (
-                        <span title={prijs.inHuis > 0 ? `Mandje voor dit recept, zonder ${prijs.inHuis} producten uit je voorraadkast` : undefined}>
-                          ± {euro(prijs.perPersoon, true)} p.p.
+                        <span title={prijs.inHuis > 0 ? t('Mandje voor dit recept, zonder {n} producten uit je voorraadkast', { n: prijs.inHuis }) : undefined}>
+                          {t('± {prijs} p.p.', { prijs: euro(prijs.perPersoon, true) })}
                         </span>
                       )}
                     </div>
@@ -219,9 +221,9 @@ export function Recept() {
                     background: 'var(--c-paper)', borderRadius: 'var(--radius-sm)', padding: '11px 14px',
                     marginBottom: 6, fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.4, color: 'var(--c-ink)',
                   }}>
-                    <strong>Tip:</strong> kies {prijs.tip.alternatief} in plaats van {prijs.tip.regel.toLowerCase()} en je scheelt ± {euro(prijs.tip.scheeltPerPersoon, true)} p.p.
+                    <strong>{t('Tip:')}</strong> {t('kies {alternatief} in plaats van {regel} en je scheelt ± {prijs} p.p.', { alternatief: prijs.tip.alternatief, regel: prijs.tip.regel.toLowerCase(), prijs: euro(prijs.tip.scheeltPerPersoon, true) })}
                     <span style={{ display: 'block', fontSize: 12, color: 'rgba(43,20,32,0.6)', marginTop: 2 }}>
-                      Dat kies je op je boodschappenlijst.
+                      {t('Dat kies je op je boodschappenlijst.')}
                     </span>
                   </div>
                 )}
@@ -246,22 +248,22 @@ export function Recept() {
                   <span style={{
                     fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                     textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)',
-                  }}>Ingrediënten</span>
+                  }}>{t('Ingrediënten')}</span>
 
                   {/* Portieschaling: on the fly, we slaan nooit herschaalde
                       hoeveelheden op — alleen de basis plus je voorkeur. */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <IconButton
-                      icon="minus" label="Minder personen" size={32}
+                      icon="minus" label={t('Minder personen')} size={32}
                       onClick={() => setLokaalPersonen(Math.max(1, personen - 1))}
                       style={{ background: 'transparent', color: 'var(--c-ink)', border: '1.5px solid rgba(43,20,32,0.2)' }}
                     />
                     <span style={{
                       fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 700,
                       minWidth: 64, textAlign: 'center',
-                    }}>{personen} pers.</span>
+                    }}>{t('{n} pers.', { n: personen })}</span>
                     <IconButton
-                      icon="plus" label="Meer personen" size={32}
+                      icon="plus" label={t('Meer personen')} size={32}
                       onClick={() => setLokaalPersonen(Math.min(12, personen + 1))}
                       style={{ background: 'var(--c-red)', color: 'var(--c-cream)' }}
                     />
@@ -273,9 +275,8 @@ export function Recept() {
                     background: 'var(--c-warm-300)', borderRadius: 'var(--radius-sm)', padding: '12px 14px',
                     margin: '4px 0 8px', fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45,
                   }}>
-                    <strong>Niet bij AH of Jumbo:</strong>{' '}
-                    {toko.map((t) => t.naam.toLowerCase()).join(', ')}. Die haal je bij een toko, bijvoorbeeld
-                    online bij Tjin's Toko — tik op "toko" bij het ingrediënt.
+                    <strong>{t('Niet bij AH of Jumbo:')}</strong>{' '}
+                    {toko.map((x) => x.naam.toLowerCase()).join(', ')}. {t('Die haal je bij een toko, bijvoorbeeld online bij Tjin\'s Toko — tik op "toko" bij het ingrediënt.')}
                   </div>
                 )}
 
@@ -292,22 +293,22 @@ export function Recept() {
                     <span style={{
                       flex: 'none', width: 88, fontFamily: 'var(--font-body)', fontSize: 14,
                       fontWeight: 700, color: 'var(--c-red-bright)',
-                    }}>{ing.weergave}</span>
+                    }}>{ingredientWeergave(r, i, ing.weergave)}</span>
                     <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-body)', fontSize: 15 }}>
-                      {ing.naam}
+                      {ingredientNaam(r, i)}
                       {actie && (
                         <span style={{
                           display: 'block', marginTop: 3, fontSize: 12, fontWeight: 700, color: 'var(--c-red)',
-                        }}>Bonus: {actie.mechanisme ?? 'in de aanbieding'} {totTekst(actie.geldig_tot)}</span>
+                        }}>{t('Bonus:')} {actie.mechanisme ?? t('in de aanbieding')} {totTekst(actie.geldig_tot)}</span>
                       )}
                     </span>
                     {tokoIng && (
                       <a
                         href={tokoIng.url}
                         onClick={(e) => { e.preventDefault(); void openBijWinkel(tokoIng.url) }}
-                        aria-label={`${tokoIng.naam} bij Tjin's Toko`}
+                        aria-label={t('{naam} bij Tjin\'s Toko', { naam: tokoIng.naam })}
                         style={{ flex: 'none', fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
-                      >toko</a>
+                      >{t('toko')}</a>
                     )}
                   </div>
                   )
@@ -316,7 +317,7 @@ export function Recept() {
                 {inBonus.size > 0 && (
                   <div style={{ marginTop: 6 }}>
                     <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(43,20,32,0.55)' }}>
-                      Bonus {bonus.peildatum.zelfHalen ? 'vandaag' : 'op je bezorgdag'} ·{' '}
+                      {t('Bonus')} {bonus.peildatum.zelfHalen ? t('vandaag') : t('op je bezorgdag')} ·{' '}
                     </span>
                     <BonusBron klein />
                   </div>
@@ -326,10 +327,10 @@ export function Recept() {
                 <div style={{
                   fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: '.1em',
                   textTransform: 'uppercase', color: 'rgba(43,20,32,0.6)', marginTop: 18,
-                }}>Zo maak je het</div>
+                }}>{t('Zo maak je het')}</div>
                 )}
 
-                {!teKoken && r.bereiding_nl.map((stap, i) => (
+                {!teKoken && receptBereiding(r).map((stap, i) => (
                   <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0' }}>
                     <span style={{
                       flex: 'none', width: 28, height: 28, borderRadius: 'var(--radius-full)',
@@ -369,14 +370,14 @@ export function Recept() {
                         })
                       }}
                       style={{ flex: 1, padding: '17px 20px', fontSize: 16 }}
-                    >Zet op de boodschappenlijst</Button>
+                    >{t('Zet op de boodschappenlijst')}</Button>
                   )}
                   {gekozen && (
                     <Button
                       tone="yellow"
                       onClick={() => navigeer(`/koken/${r.id}`)}
                       style={{ flex: opLijst || teKoken ? 1 : 'none', padding: '17px 20px', fontSize: 16 }}
-                    >Koken</Button>
+                    >{t('Koken')}</Button>
                   )}
                 </div>
                 {opLijst && !teKoken && (
@@ -387,43 +388,43 @@ export function Recept() {
                       background: 'transparent', cursor: 'pointer', fontFamily: 'var(--font-body)',
                       fontSize: 13, fontWeight: 700, color: 'var(--c-red)',
                     }}
-                  >Bekijk je boodschappenlijst</button>
+                  >{t('Bekijk je boodschappenlijst')}</button>
                 )}
               </Voet>
               {dialoog}
               <Dialoog
                 open={deelStap === 'vraag'}
-                kop="Deel dit recept"
+                kop={t('Deel dit recept')}
                 tekst={heeftLink(r)
-                  ? 'Je stuurt een link naar het recept op de website. Wie hem opent hoeft niet in te loggen.'
-                  : 'Dit is je eigen recept. Iedereen die de link heeft kan het lezen, ook zonder account. Je naam staat er niet bij.'}
+                  ? t('Je stuurt een link naar het recept op de website. Wie hem opent hoeft niet in te loggen.')
+                  : t('Dit is je eigen recept. Iedereen die de link heeft kan het lezen, ook zonder account. Je naam staat er niet bij.')}
                 onSluit={() => setDeelStap(null)}
                 acties={[
-                  { label: 'Deel via WhatsApp', hoofd: true, onClick: () => deelRecept(r, 'whatsapp') },
-                  { label: heeftDeelvenster() ? 'Andere app' : 'Kopieer de link', onClick: () => deelRecept(r, 'anders') },
-                  { label: 'Laat maar', onClick: () => setDeelStap(null) },
+                  { label: t('Deel via WhatsApp'), hoofd: true, onClick: () => deelRecept(r, 'whatsapp') },
+                  { label: heeftDeelvenster() ? t('Andere app') : t('Kopieer de link'), onClick: () => deelRecept(r, 'anders') },
+                  { label: t('Laat maar'), onClick: () => setDeelStap(null) },
                 ]}
               />
               <Dialoog
                 open={deelStap === 'kookboek'}
-                kop="Dit recept kun je niet delen"
-                tekst="Het komt uit een kookboek en blijft daarom alleen voor jou. Wil je het gerecht toch delen, voeg het dan toe als eigen recept met de bereiding in je eigen woorden."
+                kop={t('Dit recept kun je niet delen')}
+                tekst={t('Het komt uit een kookboek en blijft daarom alleen voor jou. Wil je het gerecht toch delen, voeg het dan toe als eigen recept met de bereiding in je eigen woorden.')}
                 onSluit={() => setDeelStap(null)}
-                acties={[{ label: 'Oké', hoofd: true, onClick: () => setDeelStap(null) }]}
+                acties={[{ label: t('Oké'), hoofd: true, onClick: () => setDeelStap(null) }]}
               />
               <Dialoog
                 open={deelStap === 'gekopieerd'}
-                kop="Link gekopieerd"
-                tekst="Plak de link in een bericht. Wie hem opent ziet het recept op de website, zonder in te loggen."
+                kop={t('Link gekopieerd')}
+                tekst={t('Plak de link in een bericht. Wie hem opent ziet het recept op de website, zonder in te loggen.')}
                 onSluit={() => setDeelStap(null)}
-                acties={[{ label: 'Oké', hoofd: true, onClick: () => setDeelStap(null) }]}
+                acties={[{ label: t('Oké'), hoofd: true, onClick: () => setDeelStap(null) }]}
               />
               <Dialoog
                 open={typeof deelStap === 'object' && deelStap !== null}
-                kop="Delen lukte niet"
+                kop={t('Delen lukte niet')}
                 tekst={typeof deelStap === 'object' && deelStap !== null ? deelStap.fout : ''}
                 onSluit={() => setDeelStap(null)}
-                acties={[{ label: 'Oké', hoofd: true, onClick: () => setDeelStap(null) }]}
+                acties={[{ label: t('Oké'), hoofd: true, onClick: () => setDeelStap(null) }]}
               />
             </>
           )
@@ -452,22 +453,22 @@ function AllergieBlok({ allergie, allergieen }: { allergie: ReceptAllergie; alle
       fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.45,
       display: 'flex', flexDirection: 'column', gap: 6,
     }}>
-      {niets && <p style={regel}><strong>Geen {opsomming(allergieen)}</strong>, volgens de ingrediëntenlijst.</p>}
+      {niets && <p style={regel}><strong>{t('Geen {lijst}', { lijst: opsomming(allergieen) })}</strong>, {t('volgens de ingrediëntenlijst.')}</p>}
       {bevat.length > 0 && (
         <p style={regel}>
-          <strong>Bevat {opsomming([...new Set(bevat.flatMap((b) => b.allergenen))])}:</strong>{' '}
+          <strong>{t('Bevat {lijst}:', { lijst: opsomming([...new Set(bevat.flatMap((b) => b.allergenen))]) })}</strong>{' '}
           {bevat.map((b) => klein(b.naam)).join(', ')}.
         </p>
       )}
       {vervangen.length > 0 && (
         <p style={regel}>
-          <strong>Op je lijst vervangen:</strong>{' '}
-          {vervangen.map((v) => `${klein(v.naam)} door ${v.vervanger}`).join(', ')}.
+          <strong>{t('Op je lijst vervangen:')}</strong>{' '}
+          {vervangen.map((v) => t('{naam} door {vervanger}', { naam: klein(v.naam), vervanger: v.vervanger })).join(', ')}.
         </p>
       )}
       {etiket.length > 0 && (
         <p style={regel}>
-          <strong>Check het etiket:</strong>{' '}
+          <strong>{t('Check het etiket:')}</strong>{' '}
           {etiket.map((e) => `${klein(e.naam)} (${e.allergenen.map(allergeenNaam).join(', ')})`).join(', ')}.
         </p>
       )}
