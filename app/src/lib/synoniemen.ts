@@ -66,7 +66,7 @@ export const BEREIDING = / (?:(?:fijn|grof)?(?:gesnipperd|gehakt|gesneden)|gehal
  * Wat ervoor staat maar het product niet verandert: een portie ("takjes
  * dille", "scheutje melk") of een toestand ("rijpe avocado", "koude boter").
  */
-const VOORAAN = /^(?:takjes?|blaadjes|bosje|stengels?|handje|handjes|scheutje|snufje|plukje|plakjes|blokjes|rijpe|jonge|middelgrote|flinke|koude|warme|zachte(?= roomboter)|gesmolten|fijne(?= (?:kristal)?suiker)) (?=.)/
+const VOORAAN = /^(?:een|paar|wat|beetje|takjes?|takje|blaadjes?|bosje|bosjes|bos|tros|stengels?|handje|handjes|handvol|handjevol|handenvol|scheutje|scheut|snufje|plukje|toefje|topje|zakje|bakje|potje|plakjes|blokjes|grote|kleine|klein|royale|rijpe|jonge|middelgrote|flinke|koude|warme|zachte(?= roomboter)|gesmolten|fijne(?= (?:kristal)?suiker)) (?=.)/
 
 /**
  * Dezelfde naam, anders gespeld: los of aan elkaar, Engels of Nederlands. De
@@ -150,7 +150,11 @@ export function lijstSleutel(item: { ingredient_key: string; naam: string }): st
   if (droog) return droog
   // Bij gehakt als product blijft "gehakt" staan; anders werd "half om half
   // gehakt" via de om-regel "half".
-  if (!GEHAKT_PRODUCT.test(key)) key = key.replace(BEREIDING, '').replace(VOORAAN, '')
+  if (!GEHAKT_PRODUCT.test(key)) {
+    key = key.replace(BEREIDING, '')
+    // Meerdere keren: "een handje basilicum", "paar takjes dille".
+    for (let i = 0; i < 3 && VOORAAN.test(key); i++) key = key.replace(VOORAAN, '')
+  }
   key = ANDERS_GESPELD[key] ?? key
   key = eenVorm(key)
   return (ANDERS_GESPELD[key] ?? key) || canoniek(item.ingredient_key)

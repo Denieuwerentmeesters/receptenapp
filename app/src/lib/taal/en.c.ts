@@ -157,6 +157,8 @@ export const EN_C: Record<string, string> = {
   'Vegagehakt': 'Vegan mince',
   'Vega rookworst': 'Vegan smoked sausage',
   'Vega spekjes': 'Vegan bacon bits',
+  'Vega kip': 'Vegan chicken',
+  'Kipfilet': 'Chicken breast',
   'Rundergehakt': 'Beef mince',
   'Kipgehakt': 'Chicken mince',
   'Rookworst': 'Smoked sausage',

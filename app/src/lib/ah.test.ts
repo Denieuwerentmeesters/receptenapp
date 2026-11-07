@@ -68,7 +68,9 @@ describe('de deelmatch laat alleen vallen wat het product niet verandert', () =>
     ['zalmfilet, zonder huid', 'Zalmfilet'], ['tijm, blad gehakt', 'Tijm'],
     ['guacamole, zure room of tomatensalsa (optioneel)', 'Guacamole'], ['tamari of sojasaus', 'Sojasaus'],
     // Een handje of een bosje is een portie; "verse" haalt ingredientKey al weg.
-    ['handje verse basilicum', 'Basilicum'], ['virgin kokosolie', 'Kokosolie'],
+    ['handje verse basilicum', 'Basilicum'], ['handvol basilicum', 'Basilicum'], ['grote handvol verse basilicum', 'Basilicum'],
+    ['een handje basilicum', 'Basilicum'], ['paar takjes basilicum', 'Basilicum'], ['handjevol basilicum', 'Basilicum'],
+    ['zakje basilicum', 'Basilicum'], ['wat basilicum', 'Basilicum'], ['virgin kokosolie', 'Kokosolie'],
     // Twee producten op één regel kunnen niet in het mandje: dat moeten twee regels zijn.
     ['handje verse basilicum en bladpeterselie', undefined],
   ])('%s → %s', (naam, product) => { expect(kies(naam)).toBe(product) })
