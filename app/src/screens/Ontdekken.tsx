@@ -6,6 +6,7 @@ import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
 import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../lib/queries2'
 import { useFases, type FaseRecept } from '../lib/fases'
+import { vliegHartje } from '../lib/vliegHartje'
 import { useHartje } from '../components/Hartje'
 import type { Recept } from '../lib/database.types'
 import { useReceptPrijs, useReceptPrijzen } from '../lib/receptprijs'
@@ -574,7 +575,10 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
 
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <button
-            onClick={onHartje}
+            onClick={(e) => {
+              if (!bewaard) vliegHartje(e.currentTarget)
+              onHartje()
+            }}
             aria-label={bewaard ? t('Haal uit Nog bestellen') : t('Zet bij Nog bestellen')}
             aria-pressed={bewaard}
             style={{ ...rondje, ...(bewaard ? aan : {}) }}

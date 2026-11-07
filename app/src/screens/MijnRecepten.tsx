@@ -354,7 +354,11 @@ export function MijnRecepten() {
 
         <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '12px 22px 4px', overflowX: 'auto' }}>
           {TABS.map((tb) => (
-            <Chip key={tb.id} selected={tab === tb.id} onClick={() => naar(tb.id)}>{tb.label()}</Chip>
+            <Chip key={tb.id} selected={tab === tb.id} onClick={() => naar(tb.id)}>
+              {tb.id === 'bestellen'
+                ? <span role="img" aria-label={tb.label()} style={{ display: 'flex', padding: '0 4px' }}><Icon name="heart" size={18} /></span>
+                : tb.label()}
+            </Chip>
           ))}
         </div>
 
@@ -573,8 +577,8 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 20, padding: 4,
-      // Een gele ring betekent: staat op je boodschappenlijst.
-      background: recept.opLijst ? 'var(--c-yellow)' : 'transparent',
+      // Een gele ring betekent: staat op je boodschappenlijst, nog niet besteld.
+      background: recept.opLijst && !recept.besteldOp ? 'var(--c-yellow)' : 'transparent',
       transition: 'background var(--motion-base) var(--ease)',
       ...(gedempt ? { opacity: 0.55, filter: 'grayscale(1)' } : {}),
     }}>

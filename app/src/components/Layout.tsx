@@ -3,7 +3,7 @@ import {
   type CSSProperties, type ReactNode, type Ref, type UIEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Icon } from '../ds'
 import { useBoodschappen } from '../lib/queries'
 import { useFases } from '../lib/fases'
@@ -306,6 +306,8 @@ function Teller({ aantal, label }: { aantal: number; label: string }) {
 
 export function OnderBalk() {
   const { balkPlek } = useContext(OnderkantContext)
+  const { pathname } = useLocation()
+  const pad = TABS.find((tb) => pathname === tb.pad || pathname.startsWith(tb.pad + '/'))?.pad
   // Alleen wat je nog moet koken: dat is waar het cijfer je aan herinnert.
   const { teKoken } = useFases()
   const boodschappen = useBoodschappen()
@@ -333,17 +335,19 @@ export function OnderBalk() {
         <NavLink
           key={tab.pad}
           to={tab.pad}
+          data-tab={tab.pad}
           style={({ isActive }) => ({
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
             padding: '4px 14px', textDecoration: 'none',
-            color: isActive ? 'var(--color-action)' : 'var(--c-ink-300)',
+            // Actief: vet en in de kleur van de actie; de rest een stuk donkerder dan eerst.
+            color: isActive ? 'var(--color-action)' : 'rgba(43,20,32,0.62)',
           })}
         >
           <span style={{ position: 'relative', display: 'flex' }}>
             <Icon name={tab.icoon} size={22} />
             {tellers[tab.pad] && <Teller {...tellers[tab.pad]} />}
           </span>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 400 }}>{t(tab.label)}</span>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: pad === tab.pad ? 700 : 500 }}>{t(tab.label)}</span>
         </NavLink>
       ))}
     </nav>,
