@@ -181,7 +181,7 @@ const ONSCHULDIG = new Set(`
   volle halfvolle naturel milde bevroren diepvries gekookt gekookte voorgekookte ongekookt ongekookte
   kaas pasta sla zout zeezout water olie erover jus uit blik blikje pot
   jong julienne wilde trosrijpe mini gedopte dubbel
-  handje handjes virgin
+  handje handjes scheut handvol handjevol handenvol paar wat toefje topje zakje bakje potje tros bosjes virgin
   groot grote grotere kleine klein kleinere stevig stevige mooie mooi goede flinke ruime beetje
   stevigere stevigste stevige
 `.split(/\s+/).filter(Boolean))

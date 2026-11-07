@@ -4,7 +4,7 @@ import { t } from './taal'
 
 /**
  * Vlees met een goede vega-versie gaat standaard vega naar het mandje: gehakt,
- * rookworst en spekjes. Per regel kun je terug naar wat het recept vraagt. En
+ * rookworst, spekjes en kipfilet. Per regel kun je terug naar wat het recept vraagt. En
  * andersom: vraagt het recept zelf om vega (vegagehakt, een vega
  * kipschnitzel), dan kun je er op de lijst vlees van maken. De keuze
  * onthouden we per ingrediënt op dit toestel, zodat je 'm niet elke week
@@ -24,12 +24,14 @@ export type VegaKeuze = string
 
 export const VEGAGEHAKT: Variant = { key: 'vegagehakt', naam: 'vegagehakt', get label() { return t('Vegagehakt') } }
 export const VEGA_ROOKWORST: Variant = { key: 'vega rookworst', naam: 'vega rookworst', get label() { return t('Vega rookworst') } }
+export const VEGA_KIP: Variant = { key: 'vega kipstukjes', naam: 'vega kipstukjes', get label() { return t('Vega kip') } }
 export const VEGA_SPEKJES: Variant = { key: 'vega spekjes', naam: 'vega spekjes', get label() { return t('Vega spekjes') } }
 
 const RUNDERGEHAKT: Variant = { key: 'rundergehakt', naam: 'rundergehakt', get label() { return t('Rundergehakt') } }
 const KIPGEHAKT: Variant = { key: 'kipgehakt', naam: 'kipgehakt', get label() { return t('Kipgehakt') } }
 const ROOKWORST: Variant = { key: 'rookworst', naam: 'rookworst', get label() { return t('Rookworst') } }
 const SPEKBLOKJES: Variant = { key: 'spekblokje', naam: 'spekblokjes', get label() { return t('Spekblokjes') } }
+const KIPFILET: Variant = { key: 'kipfilet', naam: 'kipfilet', get label() { return t('Kipfilet') } }
 const KIPSCHNITZEL: Variant = { key: 'kipschnitzel', naam: 'kipschnitzel', get label() { return t('Kipschnitzel') } }
 
 /**
@@ -51,6 +53,13 @@ function isRookworst(key: string): boolean {
   return /^(rund)?rookworst$/.test(laatste)
 }
 
+/** Kipfilet, ook dij- of borstfilet; niet gerookt of kipfilethaasjes: daar is vega geen vervanging voor. */
+function isKipfilet(key: string): boolean {
+  if (/gerookt/.test(key)) return false
+  const laatste = key.split(' ').pop() ?? ''
+  return /^kip(?:pen)?(?:dij|borst)?filets?$/.test(laatste)
+}
+
 /**
  * Spekjes in blokjes of reepjes: "spekblokjes", "gerookte spekreepjes".
  * Niet ontbijtspek, bacon of pancetta (plakken) en niet zuurkoolspek (een
@@ -67,6 +76,7 @@ export function vegaVervanger(key: string): Variant | undefined {
   if (isGehakt(key)) return VEGAGEHAKT
   if (isRookworst(key)) return VEGA_ROOKWORST
   if (isSpekjes(key)) return VEGA_SPEKJES
+  if (isKipfilet(key)) return VEGA_KIP
   return undefined
 }
 
@@ -84,6 +94,7 @@ export function vleesVarianten(key: string): Variant[] {
   if (rest === 'rookworst') return [ROOKWORST]
   if (/^spek(?:je|blokje|reepje)s?$/.test(rest)) return [SPEKBLOKJES]
   if (/^(?:kip)?schnitzels?$/.test(rest)) return [KIPSCHNITZEL]
+  if (/^kip(?:stukjes?|filet)$/.test(rest)) return [KIPFILET]
   return []
 }
 
