@@ -14,6 +14,7 @@ import { volgendeWeek } from '../lib/week'
 import { WeekVraag } from '../components/WeekVraag'
 import { useFases, type FaseRecept } from '../lib/fases'
 import { useHartje } from '../components/Hartje'
+import { luisterNaarHartje } from '../lib/vliegHartje'
 import { useWeekWissel } from '../lib/weekwissel'
 import { vulAan } from '../lib/weekvullen'
 import { tokoIngredienten } from '../lib/toko'
@@ -144,6 +145,8 @@ export function MijnRecepten() {
   const bewaar = useBeoordelingBewaren()
   const zetTerug = useLaagCijferWissen()
   const hartje = useHartje()
+  const hartjeChip = useRef<HTMLSpanElement>(null)
+  useEffect(() => luisterNaarHartje(() => hartjeChip.current), [])
 
   const plek = (doel: Tab) => TABS.findIndex((tb) => tb.id === doel)
 
@@ -356,7 +359,7 @@ export function MijnRecepten() {
           {TABS.map((tb) => (
             <Chip key={tb.id} selected={tab === tb.id} onClick={() => naar(tb.id)}>
               {tb.id === 'bestellen'
-                ? <span role="img" aria-label={tb.label()} style={{ display: 'flex', padding: '0 4px' }}><Icon name="heart" size={18} /></span>
+                ? <span ref={hartjeChip} role="img" aria-label={tb.label()} style={{ display: 'flex', padding: '0 4px' }}><Icon name="heart" size={18} /></span>
                 : tb.label()}
             </Chip>
           ))}

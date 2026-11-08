@@ -110,7 +110,7 @@ const ANDERS_GESPELD: Record<string, string> = {
  */
 const EEN_VORM: Record<string, string> = {
   uien: 'ui', preien: 'prei', aardappelen: 'aardappel', aardappeltje: 'aardappel',
-  citroenen: 'citroen', limoenen: 'limoen', limoentje: 'limoen',
+  citroenen: 'citroen', citroensap: 'citroen', limoenen: 'limoen', limoentje: 'limoen',
   sjalotten: 'sjalot', sjalotje: 'sjalot', krielen: 'krieltje',
   kippendijen: 'kippendij', eiwitten: 'eiwit', sesamzaadje: 'sesamzaad',
   bosuitje: 'bosui', bosuien: 'bosui', radijsje: 'radijs',
