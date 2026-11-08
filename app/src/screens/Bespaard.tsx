@@ -40,8 +40,8 @@ export function Bespaard() {
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.5, margin: '10px 0 0' }}>
           {lijst.length > 0
             ? (lijst.length === 1
-              ? t('Minder uitgegeven dan bij {naam}, over 1 bestelling.', { naam: MAALTIJDBOX.naam })
-              : t('Minder uitgegeven dan bij {naam}, over {n} bestellingen.', { naam: MAALTIJDBOX.naam, n: lijst.length }))
+              ? t('Bespaard sinds je de app gebruikt, vergeleken met dezelfde maaltijden bij {naam}. Over 1 bestelling.', { naam: t(MAALTIJDBOX.naam) })
+              : t('Bespaard sinds je de app gebruikt, vergeleken met dezelfde maaltijden bij {naam}. Over {n} bestellingen.', { naam: t(MAALTIJDBOX.naam), n: lijst.length }))
             : t('Wat je bespaart ten opzichte van {naam}.', { naam: MAALTIJDBOX.naam })}
         </p>
         {bonusTotaal > 0 && (

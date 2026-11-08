@@ -49,3 +49,50 @@ export function vliegHartje(van: HTMLElement): void {
   }
   anim.oncancel = () => hart.remove()
 }
+
+/**
+ * Het hartje op de chip bij Nog bestellen bonst even als je net een recept
+ * hartjes: zo zie je waar het terechtkwam. Het scherm Mijn recepten is er
+ * misschien nog niet (je zit in Ontdekken), dus we onthouden het tot hij er is.
+ */
+const BONS_EVENT = 'hartje-bons'
+let bonsOpenstaand = 0
+
+/** Aanroepen zodra er een recept bij Nog bestellen is gezet. */
+export function meldNieuwHartje(): void {
+  if (typeof window === 'undefined') return
+  bonsOpenstaand = Date.now()
+  window.dispatchEvent(new Event(BONS_EVENT))
+}
+
+/** Is er in de laatste halve minuut een hartje gezet dat nog niet bonste? Wist de melding. */
+export function neemNieuwHartje(): boolean {
+  const vers = bonsOpenstaand > 0 && Date.now() - bonsOpenstaand < 30_000
+  bonsOpenstaand = 0
+  return vers
+}
+
+/** Laat het element twee keer kloppen, als een hartslag. Niets bij "verminder beweging". */
+export function bonsHartje(el: HTMLElement | null): void {
+  if (!el?.animate) return
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+  el.animate(
+    [
+      { transform: 'scale(1)', filter: 'drop-shadow(0 0 0 rgba(224,169,58,0))', offset: 0 },
+      { transform: 'scale(1.5)', filter: 'drop-shadow(0 0 6px rgba(224,169,58,0.9))', offset: 0.18 },
+      { transform: 'scale(1.05)', filter: 'drop-shadow(0 0 2px rgba(224,169,58,0.4))', offset: 0.36 },
+      { transform: 'scale(1.4)', filter: 'drop-shadow(0 0 6px rgba(224,169,58,0.9))', offset: 0.56 },
+      { transform: 'scale(1)', filter: 'drop-shadow(0 0 0 rgba(224,169,58,0))', offset: 1 },
+    ],
+    { duration: 900, easing: 'ease-in-out' },
+  )
+}
+
+/** Voor Mijn recepten: bons zodra er een hartje bij kwam, ook als je het scherm net opent. */
+export function luisterNaarHartje(el: () => HTMLElement | null): () => void {
+  if (typeof window === 'undefined') return () => {}
+  const bons = () => { if (neemNieuwHartje()) bonsHartje(el()) }
+  const vertraagd = window.setTimeout(bons, 350)
+  window.addEventListener(BONS_EVENT, bons)
+  return () => { window.clearTimeout(vertraagd); window.removeEventListener(BONS_EVENT, bons) }
+}

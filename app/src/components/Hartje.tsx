@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useFases } from '../lib/fases'
 import { useLijstActies } from '../lib/queries'
+import { meldNieuwHartje } from '../lib/vliegHartje'
 import { volgendeWeek } from '../lib/week'
 import type { Recept } from '../lib/database.types'
 
@@ -28,7 +29,7 @@ export function useHartje() {
     if (fase?.besteldOp) return
     const acties = (fase?.week ?? fases.bestelWeek) === fases.week ? deze : komende
     if (fase) acties.haalUitWeek.mutate(recept.id)
-    else acties.zetInWeek.mutate(recept)
+    else { acties.zetInWeek.mutate(recept); meldNieuwHartje() }
   }
 
   return { tik, bewaard }
