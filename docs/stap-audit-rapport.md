@@ -21,16 +21,8 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Noedels in zoetzuur met ananas
 - Niet genoemd in de bereiding: verse ananas; varkenshaas; lichte sojasaus (marinade); donkere sojasaus (marinade); oestersaus (marinade); rijstazijn (marinade); suiker (marinade); sesamolie (marinade)
 
-## Stoof van linzen en aubergine
-- Niet genoemd in de bereiding: aubergines; cannellini bonen (uit blik)
-- Niet in de ingrediënten: aubergine (stap 1), aubergine (stap 2), aubergine (stap 3), tomatenblokjes (stap 3), brood (stap 5), rijst (stap 5), aubergine (stap 5)
-
 ## Salade in gado-gadostijl met edamame
 - Niet genoemd in de bereiding: pindakaas; tamarindepasta; limoenblaadjes; ketjap manis; Javaanse suiker; kokosmelk
-
-## Massamancurry met sperzieboontjes
-- Niet genoemd in de bereiding: runderreepjes; gemberwortel, geraspt; limoenblaadjes; tamarindepasta; bruine suiker; vissaus
-- Niet in de ingrediënten: gember (stap 2)
 
 ## Kaasfondue met truffel
 - Niet genoemd in de bereiding: geraspte Emmentaler; geraspte Gruyère
@@ -42,28 +34,16 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Karni stobá, Antilliaans stoofvlees
 - Niet genoemd in de bereiding: runderbouillon (+ extra als je een stoofpan gebruikt); suiker; komijn; tomatenpuree; donkere sojasaus; aardappels (geschild in parten); grote winterwortel (in stukken)
 
-## Eenvoudige soep van witte asperges
-- Niet in de ingrediënten: bouillon (stap 4), bouillon (stap 5), boter (stap 6), bloem (stap 6), bouillon (stap 6), room (stap 6)
-
 ## Aziatische garnalenomelet, lekker fris
 - Niet genoemd in de bereiding: rauwe, schoongemaakte garnalen; komkommer, julienne; radijsjes, dun gesneden
 - Niet in de ingrediënten: garnalen (stap 3), garnalen (stap 4), garnalen (stap 5)
 
-## Tonijnsalade met zelfgebakken bagels
-- Niet genoemd in de bereiding: sesamzaadjes; doperwten; dille (plus extra voor garnering); bladpeterselie
-- Niet in de ingrediënten: sesamzaad (stap 3)
+## Massamancurry met sperzieboontjes
+- Niet genoemd in de bereiding: runderreepjes; limoenblaadjes; tamarindepasta; bruine suiker; vissaus
 
 ## No bake pompoen cheesecake in een glaasje
 - Niet genoemd in de bereiding: nootmuskaat; gember; kaneel
 - Niet in de ingrediënten: pompoen (stap 1), pompoen (stap 5)
-
-## Okonomiyaki, hartige Japanse pannenkoek
-- Niet genoemd in de bereiding: dashi bouillon (of groentebouillon); sesamzaadjes; katsuobushi (bonitovlokken)
-- Niet in de ingrediënten: mayonaise (stap 6), sesamzaad (stap 6)
-
-## Paratha met spiegelei en frisse salade
-- Niet genoemd in de bereiding: radijzen; soja; sesamzaadjes
-- Niet in de ingrediënten: julienne (stap 1), sojasaus (stap 2), sesamzaad (stap 6)
 
 ## Wraps met pulled chicken
 - Niet genoemd in de bereiding: bleekselderijstengel, fijngesneden
@@ -73,22 +53,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: komijnzaad; salamblaadjes; limoenblaadjes
 - Niet in de ingrediënten: komijn (stap 2), rijst (stap 8)
 
-## Spinaziewrap met kipfilet
-- Niet genoemd in de bereiding: radijsjes, in plakjes
-- Niet in de ingrediënten: wrap (stap 2), wrap (stap 4), wrap (stap 5), wrap (stap 6)
-
-## Geroosterde groenten met kikkererwten van de bbq
-- Niet genoemd in de bereiding: basilicum; peterselie; oregano
-- Niet in de ingrediënten: courgette (stap 3)
-
-## Schnitzel van aubergine met koolsalade
-- Niet genoemd in de bereiding: bieten julienne
-- Niet in de ingrediënten: aubergines (stap 1), aubergines (stap 2), aubergines (stap 3), brood (stap 4)
-
-## Courgetteschotel uit de oven met ricotta en mozzarella
-- Niet genoemd in de bereiding: tomaatjes uit blik
-- Niet in de ingrediënten: tomaten (stap 5), courgette (stap 6), courgette (stap 8)
-
 ## Indiase soep met kikkererwten en pompoen
 - Niet genoemd in de bereiding: bospenen; Naan
 - Niet in de ingrediënten: wortelen (stap 1), brood (stap 4)
@@ -96,10 +60,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Risotto met rode wijn en paddenstoelen
 - Niet genoemd in de bereiding: gemengde paddestoelen; salie
 - Niet in de ingrediënten: paddenstoelen (stap 1), paddenstoelen (stap 2), paddenstoelen (stap 4), paddenstoelen (stap 6)
-
-## Champignonsoep met kaasstengels
-- Niet genoemd in de bereiding: slagroom; Grana Padano (of Parmezaanse kaas)
-- Niet in de ingrediënten: room (stap 4)
 
 ## Insalata mista
 - Niet genoemd in de bereiding: snack komkommers; witte balsamico azijn; olijfolie; Italiaanse kruiden
@@ -113,10 +73,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: pistachenootjes; snack-komkommers; verse munt; verse peterselie; flatbread
 - Niet in de ingrediënten: pistachenoten (stap 3)
 
-## Stoofpotje surf-and-turf
-- Niet genoemd in de bereiding: chorizoworst (in blokjes); kleine venkelknol (in reepjes); cherrytomaten (gehalveerd)
-- Niet in de ingrediënten: chorizo (stap 1), venkel (stap 2)
-
 ## Pastasalade in caesarstijl
 - Niet genoemd in de bereiding: penne of vlinderpasta; ansjovisfilets
 - Niet in de ingrediënten: ansjovis (stap 4)
@@ -125,20 +81,18 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: runderlappen; tomaat uit blik (pomodorini)
 - Niet in de ingrediënten: tomatenblokjes (stap 3)
 
-## Keema-curry met komkommerraita
-- Niet genoemd in de bereiding: gemberwortel, geraspt; runderbouillon, verkruimeld
-- Niet in de ingrediënten: gember (stap 2), gember (stap 3)
-
 ## Paddenstoelenrisotto uit de voorraadkast
 - Niet genoemd in de bereiding: gedroogde eekhoorntjesbrood (porcini)
 - Niet in de ingrediënten: paddenstoelen (stap 1), paddenstoelen (stap 6)
 
-## Curry van linzen en spinazie met champignons en ei
-- Niet genoemd in de bereiding: plantaardige olie; gemberwortel, geraspt
-- Niet in de ingrediënten: gember (stap 3), rijst (stap 7)
-
 ## Pastasalade met avocado, garnalen en cocktailsaus
 - Niet genoemd in de bereiding: verse munt, geplukt; bieslook, fijngesneden; basilicum, fijngesneden; dille, fijngehakt; peterselie, fijngehakt
+
+## Spinaziewrap met kipfilet
+- Niet in de ingrediënten: wrap (stap 2), wrap (stap 4), wrap (stap 5), wrap (stap 6)
+
+## Geroosterde groenten met kikkererwten van de bbq
+- Niet genoemd in de bereiding: basilicum; peterselie; oregano
 
 ## Tostada met pulled pork uit de slowcooker
 - Niet genoemd in de bereiding: winterpenen; uienpoeder; maizena; rode paprika
@@ -148,24 +102,8 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: radijsjes; witlof
 - Niet in de ingrediënten: wortel (stap 2), brood (stap 3)
 
-## Pastinaaksoep met rozemarijn en amandelen
-- Niet genoemd in de bereiding: kookroom; rozemarijn; verse salie
-- Niet in de ingrediënten: room (stap 3)
-
-## Broccolisoep met croutons van kaas
-- Niet genoemd in de bereiding: (kippen)bouillon; hard bolletje (mag oud zijn)
-- Niet in de ingrediënten: brood (stap 3), slagroom (stap 4)
-
-## Vegetarische orzosoep
-- Niet genoemd in de bereiding: peterselie
-- Niet in de ingrediënten: wortel (stap 1), wortel (stap 2), courgette (stap 2)
-
 ## Pastasalade caesar met kip
 - Niet genoemd in de bereiding: mayonaise; Griekse yoghurt; ansjovispasta; citroen (alleen het sap); knoflook
-
-## Spiesjes van rundergehakt in betelblad
-- Niet genoemd in de bereiding: verse gemberwortel; sesamolie; gembersiroop; Voor de garnituur
-- Niet in de ingrediënten: gember (stap 1)
 
 ## Filodeegtaart met spinazie, feta en citroen
 - Niet genoemd in de bereiding: nootmuskaatnoot (om te raspen)
@@ -183,10 +121,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: ansjovisfilets; ei (alleen dooier)
 - Niet in de ingrediënten: ansjovis (stap 5), eidooier (stap 5)
 
-## Soep van courgette met Hollandse garnalen
-- Niet genoemd in de bereiding: courgettes
-- Niet in de ingrediënten: courgette (stap 2), courgette (stap 4)
-
 ## Udonnoedels met garnalen uit één pan
 - Niet genoemd in de bereiding: rauwe, gepelde garnalen; verse udon noedels
 - Niet in de ingrediënten: garnalen (stap 1), garnalen (stap 6)
@@ -200,16 +134,15 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Gezond bananenbrood recept
 - Niet in de ingrediënten: eiwitten (stap 3), eiwit (stap 5), brood (stap 6)
 
+## Tonijnsalade met zelfgebakken bagels
+- Niet genoemd in de bereiding: doperwten; dille (plus extra voor garnering); bladpeterselie
+
 ## Havermout pannenkoeken met banaan, bosbes en maple syrup
 - Niet genoemd in de bereiding: eieren, gescheiden; bananen
 - Niet in de ingrediënten: eidooiers (stap 1), eiwitten (stap 2)
 
 ## Vegan Indiase linzencurry
 - Niet genoemd in de bereiding: gemalen komijn; kurkuma; gemalen koriander; koriander
-
-## Italiaanse kipstoof met venkel en kalamata-olijven
-- Niet genoemd in de bereiding: venkelknol, fijngehakt; cherrytomaatjes, gehalveerd
-- Niet in de ingrediënten: venkel (stap 2)
 
 ## Klassieke tulband met sinaasappel-roomkaasglazuur
 - Niet genoemd in de bereiding: eieren
@@ -225,13 +158,17 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: aardbeien; blauwe bessen; blauwe druiven
 - Niet in de ingrediënten: boter (stap 5)
 
-## Romige mosterdsoep met een scheutje sherry
-- Niet genoemd in de bereiding: slagroom of kookroom
-- Niet in de ingrediënten: room (stap 5), brood (stap 6)
+## Okonomiyaki, hartige Japanse pannenkoek
+- Niet genoemd in de bereiding: dashi bouillon (of groentebouillon); katsuobushi (bonitovlokken)
+- Niet in de ingrediënten: mayonaise (stap 6)
 
 ## Ossenstaartsoep met rode wijn
 - Niet genoemd in de bereiding: grote aardappel, optioneel
 - Niet in de ingrediënten: bouillon (stap 4), bouillon (stap 5), bouillon (stap 6)
+
+## Paratha met spiegelei en frisse salade
+- Niet genoemd in de bereiding: radijzen; soja
+- Niet in de ingrediënten: julienne (stap 1), sojasaus (stap 2)
 
 ## Pasta pesto met Parmezaan en tomaatjes
 - Niet genoemd in de bereiding: kerstomaten, gehalveerd
@@ -240,63 +177,30 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Romige enchilada's met kip
 - Niet genoemd in de bereiding: rode wijnazijn; zonnebloemolie
 
-## Savooiekoolstamppot met krokante Indische speklapjes
-- Niet genoemd in de bereiding: gemberwortel, geraspt; spek
-- Niet in de ingrediënten: gember (stap 1), suikers (stap 4)
-
-## Groene Thaise kalkoencurry
-- Niet genoemd in de bereiding: gemberwortel, grof gehakt; kalkoenfiletblokjes
-- Niet in de ingrediënten: gember (stap 1), currypasta (stap 1)
-
 ## Confit de canard met rode kool
 - Niet genoemd in de bereiding: olijfolie; olijfolie; kleine keukenmachine
 
-## Aubergine op Indonesische wijze met rijst
-- Niet in de ingrediënten: aubergine (stap 3), aubergine (stap 4), aubergine (stap 6)
+## Courgetteschotel uit de oven met ricotta en mozzarella
+- Niet genoemd in de bereiding: tomaatjes uit blik
+- Niet in de ingrediënten: tomaten (stap 5)
 
-## Vegetarische gnocchi in pompoensaus
-- Niet genoemd in de bereiding: kookroom
-- Niet in de ingrediënten: room (stap 4)
+## Broccolisoep met croutons van kaas
+- Niet genoemd in de bereiding: (kippen)bouillon; hard bolletje (mag oud zijn)
+- Niet in de ingrediënten: brood (stap 3)
 
-## Pompoenquiche
-- Niet genoemd in de bereiding: slagroom; mosterdzaad
-- Niet in de ingrediënten: eidooier (stap 4), room (stap 4)
-
-## Soep van pastinaak en knolselderij
-- Niet in de ingrediënten: brood (stap 7), room (stap 7), fraiche (stap 7), dille (stap 7)
-
-## Sushi springrolls met zalm
-- Niet genoemd in de bereiding: sesamzaadjes (geroosterd, zwart of beiden)
-- Niet in de ingrediënten: wortel (stap 2), wortel (stap 3), sesamzaad (stap 5)
-
-## Zalmterrine
-- Niet genoemd in de bereiding: toast voor erbij
-- Niet in de ingrediënten: gelatine (stap 5), room (stap 5)
-
-## Gebonden kippensoep met prei
-- Niet genoemd in de bereiding: kookroom
-- Niet in de ingrediënten: room (stap 4)
+## Champignonsoep met kaasstengels
+- Niet genoemd in de bereiding: Grana Padano (of Parmezaanse kaas)
 
 ## Rode currysoep met zoete aardappel
 - Niet genoemd in de bereiding: kokossnippers; (zonnebloem)olie; Naan
 
-## Auberginesalade met feta en platbrood
-- Niet in de ingrediënten: aubergine (stap 3), aubergine (stap 4), aubergine (stap 5)
-
-## Fruitsalade
-- Niet genoemd in de bereiding: blauwe bessen; bramen; frambozen; nectarine
-
-## Aardappelschotel met chorizo uit de oven
-- Niet genoemd in de bereiding: kookroom
-- Niet in de ingrediënten: room (stap 4), spekreepjes (stap 5), walnoten (stap 5)
+## Vegetarische orzosoep
+- Niet genoemd in de bereiding: peterselie
+- Niet in de ingrediënten: wortel (stap 1), wortel (stap 2)
 
 ## Enchilada's met gehakt en bonen
 - Niet genoemd in de bereiding: tomaten (uit blik)
 - Niet in de ingrediënten: bonen (stap 3), tomatenblokjes (stap 4), cheddar (stap 4)
-
-## Italiaanse pastaschotel uit de oven
-- Niet genoemd in de bereiding: courgettes
-- Niet in de ingrediënten: courgette (stap 2), courgette (stap 3)
 
 ## Thaise traybake met kip in groene curry
 - Niet genoemd in de bereiding: koriander; Thaise basilicum (of gewone basilicum)
@@ -305,31 +209,30 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: Hoisin-saus (naar smaak)
 - Niet in de ingrediënten: komkommer (stap 5), hoisinsaus (stap 6), komkommer (stap 6)
 
-## Tofuspiesjes met kruiden en zomergroenten
-- Niet genoemd in de bereiding: kleine venkelknol (in dunne parten)
-- Niet in de ingrediënten: venkel (stap 3), kooltjes (stap 4)
-
 ## Lamsrack met aardappels en asperges
 - Niet genoemd in de bereiding: aardappelmix
 - Niet in de ingrediënten: bouillon (stap 4), aardappeltjes (stap 6), aardappeltjes (stap 7)
 
-## Roerbak van groene kool met biefstukpuntjes
-- Niet genoemd in de bereiding: bospenen (geraspt); sesamzaadjes
-- Niet in de ingrediënten: wortel (stap 3), sesamzaad (stap 5)
+## Stoof van linzen en aubergine
+- Niet genoemd in de bereiding: cannellini bonen (uit blik)
+- Niet in de ingrediënten: tomatenblokjes (stap 3), brood (stap 5), rijst (stap 5)
+
+## Stoofpotje surf-and-turf
+- Niet genoemd in de bereiding: chorizoworst (in blokjes); cherrytomaten (gehalveerd)
+- Niet in de ingrediënten: chorizo (stap 1)
+
+## Groentelasagne uit één pan
+- Niet genoemd in de bereiding: groene asperges
 
 ## Quesadilla's uit de airfryer met kruidensla
 - Niet genoemd in de bereiding: tortillawraps (medium)
 - Niet in de ingrediënten: tortilla (stap 2)
 
-## Chicken wings van de bbq
-- Niet genoemd in de bereiding: chicken wings; sesamzaadjes
-- Niet in de ingrediënten: sesamzaad (stap 7)
+## Eenvoudige soep van witte asperges
+- Niet in de ingrediënten: boter (stap 6), bloem (stap 6), room (stap 6)
 
 ## Courgette plaattaart met roomkaas, parmezaanse kaas en knoflook
 - Niet genoemd in de bereiding: courgette, in dunne plakjes
-
-## Crème brûlée: het klassieke Franse dessert
-- Niet in de ingrediënten: extract (stap 1), room (stap 3)
 
 ## De ultieme moederdagtaart
 - Niet genoemd in de bereiding: frambozen (vers of diepvries); hartjessprinkles
@@ -364,17 +267,20 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Karamel cheesecake
 - Niet genoemd in de bereiding: mariakaakjes; eidooier
 
-## Kipschnitzel met katsu-curry
-- Niet genoemd in de bereiding: kurkuma
-- Niet in de ingrediënten: gember (stap 1)
-
 ## Last minute kerstkrans salade
 - Niet genoemd in de bereiding: walnoot
 - Niet in de ingrediënten: walnoten (stap 5), walnoten (stap 6)
 
+## Curry van linzen en spinazie met champignons en ei
+- Niet genoemd in de bereiding: plantaardige olie
+- Niet in de ingrediënten: rijst (stap 7)
+
 ## Mexicaanse tacobowl met rundergehakt
 - Niet genoemd in de bereiding: zonnebloemolie; kippenbouillonblokje
 - Niet in de ingrediënten: bouillon (stap 1)
+
+## Romige mosterdsoep met een scheutje sherry
+- Niet in de ingrediënten: spekjes (stap 6), brood (stap 6)
 
 ## New York Cheesecake
 - Niet genoemd in de bereiding: eieren, op kamertemperatuur
@@ -430,20 +336,16 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Zelf croissantjes maken
 - Niet in de ingrediënten: roomboter (stap 7), poedersuiker (stap 7)
 
+## Schnitzel van aubergine met koolsalade
+- Niet genoemd in de bereiding: bieten julienne
+- Niet in de ingrediënten: brood (stap 4)
+
 ## Groene-aspergeplaattaart
 - Niet genoemd in de bereiding: groene aspergetips; doperwten (uit de diepvries, ontdooid)
 - Niet in de ingrediënten: asperges (stap 5)
 
 ## Spinaziecurry met pompoen en kikkererwten
 - Niet genoemd in de bereiding: Flatbread
-
-## Crispy sushi bites
-- Niet genoemd in de bereiding: water; (zwart) sesamzaadjes
-- Niet in de ingrediënten: sesamzaad (stap 3)
-
-## Gyoza gevuld met kip
-- Niet genoemd in de bereiding: misopasta; sesamzaadjes
-- Niet in de ingrediënten: sesamzaad (stap 5)
 
 ## Heldere paddenstoelensoep
 - Niet genoemd in de bereiding: sjalotjes
@@ -453,12 +355,22 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: (citroen)azijn; basilicum
 - Niet in de ingrediënten: stokbrood (stap 3)
 
+## Soep van pastinaak en knolselderij
+- Niet in de ingrediënten: brood (stap 7), fraiche (stap 7), dille (stap 7)
+
+## Pastinaaksoep met rozemarijn en amandelen
+- Niet genoemd in de bereiding: rozemarijn; verse salie
+
 ## Quiche Lorraine met spek en gruyère
 - Niet in de ingrediënten: olijfolie (stap 5), rijst (stap 6)
 
 ## Steak tartare, met vlees én vegetarisch
 - Niet genoemd in de bereiding: kappertjes
 - Niet in de ingrediënten: kerstomaatjes (stap 3), brood (stap 4)
+
+## Zalmterrine
+- Niet genoemd in de bereiding: toast voor erbij
+- Niet in de ingrediënten: gelatine (stap 5)
 
 ## Linzenmaaltijdsoep met boerenkool
 - Niet in de ingrediënten: boter (stap 1), brood (stap 4), groentebouillon (stap 4)
@@ -470,6 +382,9 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Crispy potato salad
 - Niet genoemd in de bereiding: verse dille
 - Niet in de ingrediënten: aardappels (stap 5)
+
+## Fruitsalade
+- Niet genoemd in de bereiding: blauwe bessen; bramen; frambozen
 
 ## Kipsalade met misodressing
 - Niet genoemd in de bereiding: edamame-boontjes
@@ -490,10 +405,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: bonenmix
 - Niet in de ingrediënten: mais (stap 3), bonen (stap 4)
 
-## Moussaka van zoete aardappel
-- Niet genoemd in de bereiding: aubergines
-- Niet in de ingrediënten: aubergine (stap 2), aubergine (stap 7)
-
 ## Ovenrisotto met gehakt
 - Niet genoemd in de bereiding: kerstomaten (aan de tak)
 - Niet in de ingrediënten: kerstomaatjes (stap 4)
@@ -501,17 +412,9 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Vispastei met zalm, kabeljauw en garnalen
 - Niet genoemd in de bereiding: zalmfilet (diepvries); kabeljauwfilet (diepvries)
 
-## Bbq-spiesjes met gemarineerde biefstuk, lente-ui en yoghurtdip
-- Niet genoemd in de bereiding: korianderzaad; komijnzaad
-- Niet in de ingrediënten: kooltjes (stap 4)
-
 ## Bbq-salade met entrecote en chimichurri
 - Niet genoemd in de bereiding: rode wijnazijn
 - Niet in de ingrediënten: mais (stap 5)
-
-## Chili-cheeseburger van de bbq
-- Niet genoemd in de bereiding: boter om in te bakken
-- Niet in de ingrediënten: room (stap 2)
 
 ## Geroosterde honingspruitjes met feta
 - Niet genoemd in de bereiding: pistachenootjes
@@ -527,20 +430,12 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Salade van papaja en mango met geroosterde zalm
 - Niet genoemd in de bereiding: shisoblaadjes of takjes Thaise basilicum; munt; koriander
 
-## Snelle roerbak met gehakt, prei, peultjes en champignons
-- Niet genoemd in de bereiding: verse gemberwortel (geschild, geraspt)
-- Niet in de ingrediënten: noedels (stap 1), gember (stap 2)
-
-## Vegetarische stoof van parelgort, venkel, bonen en trostomaten
-- Niet genoemd in de bereiding: venkelknollen (in hele dunne plakken, groen bewaard)
-- Niet in de ingrediënten: venkel (stap 1), venkel (stap 2)
+## Spiesjes van rundergehakt in betelblad
+- Niet genoemd in de bereiding: sesamolie; gembersiroop; Voor de garnituur
 
 ## Lamsbalti
 - Niet genoemd in de bereiding: lamsnekfilet
 - Niet in de ingrediënten: rijst (stap 7)
-
-## Gebakken rijst met kip uit de oven
-- Niet genoemd in de bereiding: spekblokjes of ham; eieren (roerei, optioneel)
 
 ## Visspiesen
 - Niet genoemd in de bereiding: takjes verse rozemarijn; witvisfilet zonder vel (4 stuks van 130 g)
@@ -567,14 +462,17 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Beet Wellington: Wellington met biet
 - Niet genoemd in de bereiding: kastanjechampignons, in kleine blokjes
 
+## Brioche met geitenkaas en paddenstoelen
+- Niet in de ingrediënten: broodjes (stap 3), broodjes (stap 7)
+
+## Crème brûlée: het klassieke Franse dessert
+- Niet in de ingrediënten: extract (stap 1)
+
 ## Lamsstoof met doperwten uit één pan
 - Niet genoemd in de bereiding: lamspoulet; bospenen, in plakjes van 2 cm
 
 ## Tandoori-kip uit één pan
 - Niet in de ingrediënten: amandelen (stap 8)
-
-## Orzo met zalm uit één pan
-- Niet in de ingrediënten: courgette (stap 2), citroen (stap 6)
 
 ## Pompoenpasta met 'nduja uit één pan
 - Niet genoemd in de bereiding: olijfolie; salie
@@ -596,10 +494,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: witvis (bijv. kabeljauw), in stukken
 - Niet in de ingrediënten: rijst (stap 7)
 
-## Kipstoof in pindasaus met pompoen en paprika
-- Niet genoemd in de bereiding: gemberwortel, geraspt
-- Niet in de ingrediënten: gember (stap 4)
-
 ## Winterse groentestoof met kikkererwten en harissa
 - Niet genoemd in de bereiding: gemalen korianderzaad
 
@@ -610,17 +504,14 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Huzarensalade met rookvlees en appel
 - Niet in de ingrediënten: peterselie (stap 6)
 
-## Kerst voorgerecht: coquilles met pastinaakpuree
-- Niet genoemd in de bereiding: slagroom
-- Niet in de ingrediënten: room (stap 1)
+## Keema-curry met komkommerraita
+- Niet genoemd in de bereiding: runderbouillon, verkruimeld
 
-## Butter chicken op Indiase wijze
-- Niet genoemd in de bereiding: slagroom
-- Niet in de ingrediënten: room (stap 4)
+## Italiaanse kipstoof met venkel en kalamata-olijven
+- Niet genoemd in de bereiding: cherrytomaatjes, gehalveerd
 
-## Maaltijdsoep met kip en champignons
-- Niet genoemd in de bereiding: slagroom
-- Niet in de ingrediënten: room (stap 6)
+## Kipschnitzel met katsu-curry
+- Niet genoemd in de bereiding: kurkuma
 
 ## Rol met kipshoarma
 - Niet genoemd in de bereiding: knoflooksaus (voor serveren)
@@ -665,10 +556,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Vegetarische pastasalade met romige pesto
 - Niet in de ingrediënten: pesto (stap 2), pesto (stap 4)
 
-## Romige soep van venkel en prei
-- Niet genoemd in de bereiding: venkelknollen
-- Niet in de ingrediënten: venkel (stap 3)
-
 ## Niçoise-salade met citroenkrieltjes
 - Niet genoemd in de bereiding: ansjovisfilets (2 blikjes)
 - Niet in de ingrediënten: ansjovis (stap 5)
@@ -683,12 +570,16 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Scones met bramen en tijm-mascarpone
 - Niet genoemd in de bereiding: verse bramen
 
+## Savooiekoolstamppot met krokante Indische speklapjes
+- Niet genoemd in de bereiding: spek
+- Niet in de ingrediënten: suikers (stap 4)
+
 ## Summer springrolls met kip, bloemen en zelfgemaakte sweet chili
 - Niet in de ingrediënten: chilisaus (stap 2), chilisaus (stap 7)
 
-## Thaise kipstoof met gele curry
-- Niet genoemd in de bereiding: gemberwortel, in plakjes
-- Niet in de ingrediënten: gember (stap 1)
+## Groene Thaise kalkoencurry
+- Niet genoemd in de bereiding: kalkoenfiletblokjes
+- Niet in de ingrediënten: currypasta (stap 1)
 
 ## Tom kha kai
 - Niet genoemd in de bereiding: olie
@@ -698,10 +589,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 
 ## Wraps met kipgehakt van de bakplaat
 - Niet in de ingrediënten: wrap (stap 9), wrap (stap 10)
-
-## Boeuf bourguignon
-- Niet genoemd in de bereiding: runderriblappen
-- Niet in de ingrediënten: room (stap 7)
 
 ## Koolhydraatarme gehaktschotel uit de oven
 - Niet genoemd in de bereiding: platte peterselie; dille
@@ -715,9 +602,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 
 ## Lasagne van ravioli
 - Niet genoemd in de bereiding: tomaten cerises (uit blik)
-
-## Pastasalade op z'n Grieks met feta
-- Niet genoemd in de bereiding: (Griekse) pitabroodjes
 
 ## Kumpir: gevulde aardappel op z'n Turks
 - Niet genoemd in de bereiding: cherry tomaatjes
@@ -745,15 +629,14 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: slagroomroom
 - Niet in de ingrediënten: kookroom (stap 3)
 
-## Gemarineerde zalm met biet
-- Niet genoemd in de bereiding: venkelknollen
-- Niet in de ingrediënten: venkel (stap 4)
-
 ## Kerst amuses met kaas: 3 makkelijke recepten
 - Niet genoemd in de bereiding: balsamico-stroop (cremoso) (te koop in de supermarkt of delicatessewinkel); (zonnebloem)olie (om te frituren)
 
 ## Rode bietjes met feta uit de Airfryer
 - Niet in de ingrediënten: bietjes (stap 5)
+
+## Sushi springrolls met zalm
+- Niet in de ingrediënten: wortel (stap 2), wortel (stap 3)
 
 ## Noedelsoep met curry en kip
 - Niet in de ingrediënten: noedels (stap 4), noedels (stap 5)
@@ -798,20 +681,14 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 - Niet genoemd in de bereiding: balsamico crema
 - Niet in de ingrediënten: pesto (stap 1)
 
-## Venkel-sinaasappelsalade
-- Niet in de ingrediënten: venkelknollen (stap 1)
-
-## Aardappelgratin met truffel
-- Niet in de ingrediënten: room (stap 4), room (stap 6)
+## Aardappelschotel met chorizo uit de oven
+- Niet in de ingrediënten: spekreepjes (stap 5), walnoten (stap 5)
 
 ## Ovengnocchi met paddenstoelen
 - Niet in de ingrediënten: witlof (stap 6), walnoten (stap 6)
 
 ## Ovengebakken kabeljauw
 - Niet in de ingrediënten: asperges (stap 5), bimi (stap 5)
-
-## Kiptaart met een hoed van bladerdeeg
-- Niet in de ingrediënten: boter (stap 1), gember (stap 4)
 
 ## Pompoenschotel uit de oven met aardappelpuree
 - Niet in de ingrediënten: boter (stap 3)
@@ -827,6 +704,9 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 
 ## Witlofschotel uit de oven met gehakt
 - Niet in de ingrediënten: eiwit (stap 2), eidooiers (stap 4)
+
+## Chili-cheeseburger van de bbq
+- Niet genoemd in de bereiding: boter om in te bakken
 
 ## Coq au vin, kip gestoofd in rode wijn
 - Niet genoemd in de bereiding: ui (in ringen)
@@ -845,11 +725,15 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Griekse gehaktballetjes met salade en fetacrème
 - Niet genoemd in de bereiding: pita broodjes, flatbread
 
-## Indiase kipspies van de bbq
-- Niet genoemd in de bereiding: tikka masala; naanbroodjes (of zie tip)
+## Tofuspiesjes met kruiden en zomergroenten
+- Niet in de ingrediënten: kooltjes (stap 4)
 
 ## Pittige roerbak met zwarte bonen en (vega) gehakt
 - Niet genoemd in de bereiding: koriander; munt
+
+## Roerbak van groene kool met biefstukpuntjes
+- Niet genoemd in de bereiding: bospenen (geraspt)
+- Niet in de ingrediënten: wortel (stap 3)
 
 ## Katsu-curry met krokante kip
 - Niet in de ingrediënten: wortel (stap 2)
@@ -859,6 +743,9 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 
 ## Airfryer-zalm met knapperige aardappeltjes
 - Niet in de ingrediënten: pesto (stap 7)
+
+## Gebakken rijst met kip uit de oven
+- Niet genoemd in de bereiding: eieren (roerei, optioneel)
 
 ## Eenpanspasta met spinazie en bacon
 - Niet genoemd in de bereiding: geraspte Parmezaanse kaas
@@ -884,6 +771,9 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Ceviche met mango en leche de tigre
 - Niet in de ingrediënten: brood (stap 8)
 
+## Chicken wings van de bbq
+- Niet genoemd in de bereiding: chicken wings
+
 ## Courgettemuffins uit de airfryer
 - Niet in de ingrediënten: feta (stap 2)
 
@@ -898,6 +788,9 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 
 ## Farfalle met pesto, kip en broccoli uit één pan
 - Niet genoemd in de bereiding: farfalle
+
+## Orzo met zalm uit één pan
+- Niet in de ingrediënten: citroen (stap 6)
 
 ## Feestelijk hapje: slaschuitjes met krabsalade
 - Niet genoemd in de bereiding: radijsjes
@@ -926,17 +819,11 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Japanse nasi met edamame, minimais en shiitake
 - Niet genoemd in de bereiding: edamameboontjes (diepvries), ontdooid
 
-## Karamel appeltaart shooters
-- Niet in de ingrediënten: room (stap 4)
-
 ## Airfryer-pasta met kip en harissa
 - Niet genoemd in de bereiding: penne
 
 ## Verfrissende gazpacho met geroosterde paprika
 - Niet in de ingrediënten: basilicum (stap 6)
-
-## Limoncello cheesecake
-- Niet in de ingrediënten: room (stap 4)
 
 ## Bloemkoolrijst-nasi met garnalen
 - Niet genoemd in de bereiding: kipfilet, in blokjes
@@ -950,17 +837,11 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Airfryer-pasta met prei, ui en ansjovis
 - Niet in de ingrediënten: ansjovis (stap 3)
 
-## Quiche met spek en spinazie
-- Niet in de ingrediënten: spek (stap 4)
-
 ## Taco's met ribeye, koffierub en huisgemaakte koffie-bbq-saus
 - Niet genoemd in de bereiding: neutrale olie
 
 ## Geroosterde kwartel met rode curry en sinaasappel
 - Niet genoemd in de bereiding: limoenblaadjes (optioneel)
-
-## Romige pompoensoep met oosterse smaken
-- Niet in de ingrediënten: gember (stap 6)
 
 ## Romige panna cotta met aardbeien
 - Niet in de ingrediënten: aardbeien (stap 7)
@@ -986,8 +867,8 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Tarte tatin van appel en peer
 - Niet in de ingrediënten: slagroom (stap 7)
 
-## Traybake met feta en zoete aardappel
-- Niet genoemd in de bereiding: pitabroodjes
+## Boeuf bourguignon
+- Niet genoemd in de bereiding: runderriblappen
 
 ## Vegetarische ramen met miso-pompoen, shiitake en ei
 - Niet genoemd in de bereiding: honing
@@ -1013,6 +894,9 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Krokante airfryer-gnocchi met tomaatjes
 - Niet genoemd in de bereiding: balsamico crema
 
+## Pompoenquiche
+- Niet in de ingrediënten: eidooier (stap 4)
+
 ## Rucolastamppot met feta
 - Niet genoemd in de bereiding: cherrytomaten
 
@@ -1025,11 +909,17 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Soep van broccoli en bloemkool
 - Niet genoemd in de bereiding: (kippen)bouillon
 
+## Crispy sushi bites
+- Niet genoemd in de bereiding: water
+
 ## Garnalen kroketjes met citroen-mayo
 - Niet genoemd in de bereiding: olie om te frituren
 
 ## Soep van geroosterde tomaten en paprika
 - Niet genoemd in de bereiding: chili flakes
+
+## Gyoza gevuld met kip
+- Niet genoemd in de bereiding: misopasta
 
 ## Risotto met spinazie en kip
 - Niet genoemd in de bereiding: doperwten (diepvries)
@@ -1045,9 +935,6 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 
 ## Courgettesoep met pesto
 - Niet in de ingrediënten: basilicum (stap 5)
-
-## Soep van venkel met gerookte zalm
-- Niet in de ingrediënten: venkel (stap 1)
 
 ## Griekse salade met feta en olijven
 - Niet genoemd in de bereiding: gegrilde groenten
@@ -1079,6 +966,12 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Italiaanse ovenschotel met gehakt en courgette
 - Niet in de ingrediënten: tomaten (stap 4)
 
+## Kiptaart met een hoed van bladerdeeg
+- Niet in de ingrediënten: boter (stap 1)
+
+## Bbq-spiesjes met gemarineerde biefstuk, lente-ui en yoghurtdip
+- Niet in de ingrediënten: kooltjes (stap 4)
+
 ## Crunchy haring – krokant gebakken gezouten haring
 - Niet in de ingrediënten: doperwten (stap 7)
 
@@ -1091,8 +984,14 @@ Heuristisch: zout, peper en olie ontbreken vaak in de tekst en dat is meestal ok
 ## Geroosterde zoete aardappel met peer
 - Niet genoemd in de bereiding: tijm
 
+## Indiase kipspies van de bbq
+- Niet genoemd in de bereiding: tikka masala
+
 ## Kipstoof met orzo en meiknol
 - Niet in de ingrediënten: brood (stap 4)
 
 ## Pad thai met kip
 - Niet genoemd in de bereiding: Chilivlokken (als garnering)
+
+## Snelle roerbak met gehakt, prei, peultjes en champignons
+- Niet in de ingrediënten: noedels (stap 1)
