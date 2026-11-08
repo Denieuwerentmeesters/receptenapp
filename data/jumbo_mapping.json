@@ -8647,5 +8647,869 @@
   "bio_naam": null,
   "huismerk": null,
   "huismerk_naam": null
+ },
+ {
+  "key": "agavesiroop",
+  "naam": "Jumbo Biologisch Agavesiroop 350 g",
+  "standaard": "757852FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "amandelmelk",
+  "naam": "Jumbo Amandeldrink Ongezoet 1L",
+  "standaard": "380602PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "amandelspijs",
+  "naam": "Jumbo Basis Amandelspijs 300 g",
+  "standaard": "633652STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "ananassap",
+  "naam": "Jumbo Ananassap 1 L",
+  "standaard": "135039PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "aperol",
+  "naam": "Aperol - Aperitief - 700ML",
+  "standaard": "138420FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "appelmoe",
+  "naam": "Jumbo Appelmoes 710 g",
+  "standaard": "561926POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "appenzeller",
+  "naam": "Appenzeller Kaas ca. 150 g",
+  "standaard": "777206KGR",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "augurkenblokje",
+  "naam": "Jumbo Zoetzuur Blokjes Augurk 330 g",
+  "standaard": "583089POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "baking soda",
+  "naam": "Arm & Hammer Pure Baksoda 454 g",
+  "standaard": "580764DS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "banaan",
+  "naam": "Jumbo Dole Bananen 5 Stuks",
+  "standaard": "532148ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "bananen",
+  "naam": "Jumbo Dole Bananen 5 Stuks",
+  "standaard": "532148ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "bananenchips",
+  "naam": "Jumbo Gezoete Bananenchips 250 g",
+  "standaard": "628399TAS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "bastognekoeken",
+  "naam": "LU Bastogne koekjes Original 260g",
+  "standaard": "173140KST",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "blauwe kaas",
+  "naam": "Castello Creamy Blue Kaas 150 g",
+  "standaard": "194408PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "bloemkool en broccoliroosje",
+  "naam": "Jumbo Roosjes Bloemkool & Broccoli 400 g",
+  "standaard": "790926ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "bosbessen",
+  "naam": "Jumbo Blauwe Bessen 300 g",
+  "standaard": "774264DS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "broccoliroosje",
+  "naam": "Jumbo Roosjes Broccoli 400 g",
+  "standaard": "790923STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "bruine rijst",
+  "naam": "Jumbo Zilvervlies Rijst 400 g",
+  "standaard": "782530DS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "cantuccini koekje",
+  "naam": "Belli Cantuccini Amandelkoekjes 250 g",
+  "standaard": "439428BAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "casino witbrood",
+  "naam": "Jumbo - Casino Wit Brood - Half",
+  "standaard": "300160STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "cherrytomaten aan tak",
+  "naam": "Jumbo Cherry Tomaten 250 g",
+  "standaard": "302232BAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "chocolademousse",
+  "naam": "Meylandt Belgische Chocolademousse 4 x 90 g",
+  "standaard": "56972PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "diepvrieserwten",
+  "naam": "Jumbo Erwten 450 g",
+  "standaard": "699986ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "digestive koekje",
+  "naam": "Jumbo Digestive Volkoren 400 g",
+  "standaard": "510351PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "digestivekoekje",
+  "naam": "Jumbo Digestive Volkoren 400 g",
+  "standaard": "510351PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "donkere sojasaus",
+  "naam": "Jumbo Sojasaus 150 ml",
+  "standaard": "348749FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "engelse mosterd",
+  "naam": "Colman's Original English Mustard 100 g",
+  "standaard": "164316POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gehaktballetje",
+  "naam": "Jumbo Gehaktballetjes 400 g",
+  "standaard": "698272TRA",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gemengde paddenstoelen",
+  "naam": "Jumbo Roerbak Paddenstoelenmix 200 g",
+  "standaard": "646928PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gerookt spek",
+  "naam": "Jumbo Gerookte Spek Reepjes 250 g",
+  "standaard": "679081TRA",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gerookte amandelen",
+  "naam": "Jumbo Amandelen Gerookt Gezouten 150 g",
+  "standaard": "766627ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gerookte kip",
+  "naam": "Jumbo Scharrel Kipfilet Gerookt 120g",
+  "standaard": "714360STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gerookte spek",
+  "naam": "Jumbo Gerookte Spek Reepjes 250 g",
+  "standaard": "679081TRA",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "geroosterde rode paprika uit pot",
+  "naam": "Royal Mediterranean Geroosterde Rode Paprika 465 g",
+  "standaard": "567408POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "gezoete gecondenseerde melk",
+  "naam": "Jumbo Gecondenseerde Melk 397 g",
+  "standaard": "196465BLK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "groene linzen",
+  "naam": "Jumbo Gedroogde Groene Linzen 500 g",
+  "standaard": "711089ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "havermout",
+  "naam": "Jumbo Havermout Fijne Vlokken Volkoren 1 kg",
+  "standaard": "676477TAS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "havermoutvlokken",
+  "naam": "Jumbo Havermout Fijne Vlokken Volkoren 1 kg",
+  "standaard": "676477TAS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "havervlokken",
+  "naam": "Jumbo Biologisch Volkoren Havervlokken 500 g",
+  "standaard": "638128ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "japanse mayonaise",
+  "naam": "Kewpie Mayonnaise 337 g",
+  "standaard": "337664FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "kaneelsuiker",
+  "naam": "Van Gilse Fijne Kaneelsuiker 200 g",
+  "standaard": "185134PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "kewpie mayonaise",
+  "naam": "Kewpie Mayonnaise 337 g",
+  "standaard": "337664FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "kiemgroenten",
+  "naam": "Jumbo Biologisch Kiem Mix 60 g",
+  "standaard": "668766DS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "kikkoman sojasaus less salt",
+  "naam": "Kikkoman Sojasaus met Minder Zout 150 ml",
+  "standaard": "25794FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "kwark",
+  "naam": "Jumbo Milde Kwark Mager 500 g",
+  "standaard": "394229CUP",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "lichte en romige mayonaise",
+  "naam": "Calvé Pot Licht & Romig Mayonaise 450 ml",
+  "standaard": "198269POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "lichte kokosmelk",
+  "naam": "Jumbo Kokosmelk 6 % Vet 400 ml",
+  "standaard": "408584BLK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "lichte mayonaise",
+  "naam": "Calvé Pot Licht & Romig Mayonaise 450 ml",
+  "standaard": "198269POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "limoncello",
+  "naam": "Di Alfino Limoncello 500ML",
+  "standaard": "740268FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "maple syrup",
+  "naam": "Jumbo Biologisch Maple Syrup 189ML",
+  "standaard": "737325FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "melkchocolade",
+  "naam": "Jumbo Melkchocolade Tablet 200 g",
+  "standaard": "195121RP",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "mihoen",
+  "naam": "Jumbo Mihoen 250 g",
+  "standaard": "195428STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "mutti tomatenpuree",
+  "naam": "Mutti Tomatenpuree 140g",
+  "standaard": "711236BLK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "nectarine",
+  "naam": "Jumbo Nectarines 4 Stuks",
+  "standaard": "517010SC",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "nectarines",
+  "naam": "Jumbo Nectarines 4 Stuks",
+  "standaard": "517010SC",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "norivellen",
+  "naam": "Saitaku Sushi Nori 5 Vellen 14g",
+  "standaard": "49932PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "oploskoffie",
+  "naam": "Jumbo Aroma Oploskoffie 200 g",
+  "standaard": "319462POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "patentbloem",
+  "naam": "Jumbo Basis Patentbloem 1 kg",
+  "standaard": "170197ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "pijnboompitje",
+  "naam": "Jumbo Ongeroosterde Pijnboompitten 100 g",
+  "standaard": "216708ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "pistachepasta",
+  "naam": "Jumbo's 100% Pistachepasta 180 g",
+  "standaard": "715829POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "port",
+  "naam": "Gonzalves - Ruby Port - 750ML",
+  "standaard": "79075FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "prosecco",
+  "naam": "Jumbo - Prosecco Spumante - 750ML",
+  "standaard": "590960FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "ramen noedel",
+  "naam": "MAI WA Ramen Noedels 180g",
+  "standaard": "776261ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "rijpe banaan",
+  "naam": "Jumbo Dole Bananen 5 Stuks",
+  "standaard": "532148ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "rijpe bananen",
+  "naam": "Jumbo Dole Bananen 5 Stuks",
+  "standaard": "532148ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "rijpe bananen in stukken",
+  "naam": "Jumbo Dole Bananen 5 Stuks",
+  "standaard": "532148ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "rijstpapier",
+  "naam": "Rice Paper 200 g",
+  "standaard": "145313ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "rijstvermicelli",
+  "naam": "Flower Brand Mihoen Rijstvermicelli 250 g",
+  "standaard": "163309PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "rode appel",
+  "naam": "Jumbo Rode Goudreinet Extra Voordeel 1,5 kg",
+  "standaard": "772516ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "rode pesto",
+  "naam": "Jumbo Pesto Rosso 190 g",
+  "standaard": "347553POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "sambal badjak om te serveren",
+  "naam": "Conimex Sambal Badjak 200 g",
+  "standaard": "187098POT",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "sherry",
+  "naam": "Osborne - Sherry Medium - 750ML",
+  "standaard": "523453FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "shiitake paddenstoelen",
+  "naam": "Jumbo Biologisch Shiitake 125 g",
+  "standaard": "770716PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "shiitake paddenstoelen gehalveerd",
+  "naam": "Jumbo Biologisch Shiitake 125 g",
+  "standaard": "770716PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "sriracha mayonaise",
+  "naam": "Jumbo's Sriracha Smaak Mayonaise 250 ml",
+  "standaard": "751015FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "tete de moine kaas",
+  "naam": "Rozetten van Tête de Moine AOP Kaas 100 g",
+  "standaard": "786403STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "thaise rijstnoedel",
+  "naam": "Fairtrade Original Thaise Witte Rijstnoedels 225 g",
+  "standaard": "202835STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "tipo bloem",
+  "naam": "Il Molino Chiavazza Bloem 00\" van Zachte Tarwe 500g",
+  "standaard": "745367ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "tomaten in blik",
+  "naam": "Jumbo Tomatenblokjes 400 g",
+  "standaard": "218376DS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "tuinker",
+  "naam": "Jumbo Biologisch Tuinkers Kiemgroente 20 g",
+  "standaard": "161627PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vanille aroma",
+  "naam": "Dr. Oetker Aroma Vanillesmaak 38 ml",
+  "standaard": "142108FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vanille essence",
+  "naam": "Dr. Oetker Aroma Vanillesmaak 38 ml",
+  "standaard": "142108FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vanille ijs",
+  "naam": "Hertog IJs IJssalon Vanille Roomijs 900ml",
+  "standaard": "230353STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vanillepasta",
+  "naam": "Dr. Oetker Bourbon Vanille pasta 50 g",
+  "standaard": "342550TUB",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vanillestokje",
+  "naam": "Jumbo Vanillestokje 1 g",
+  "standaard": "734747STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vanillesuiker",
+  "naam": "Jumbo Suiker met Vanillesmaak 10 x 8 g",
+  "standaard": "164286STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vanillevla",
+  "naam": "Vla Vanillesmaak 1 L",
+  "standaard": "752653PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "vastkokende roodschillige aardappel",
+  "naam": "Jumbo Vastkokende Rode Aardappel 3kg",
+  "standaard": "383119ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "volkoren pasta",
+  "naam": "Jumbo's Volkoren Spaghetti Biologisch 500 g",
+  "standaard": "730407ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "volkorenbloem",
+  "naam": "Jumbo Tarwemeel Volkoren 1KG",
+  "standaard": "170328ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "volkorenmeel",
+  "naam": "Jumbo Tarwemeel Volkoren 1KG",
+  "standaard": "170328ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "witte balsamico azijn",
+  "naam": "Jumbo Biologisch Witte Balsamico Azijn 250ML",
+  "standaard": "658712FLS",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "witte reuzenbonen of limabonen",
+  "naam": "Jumbo Biologische Limabonen 400 g",
+  "standaard": "692552PAK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "witte rijstnoedel",
+  "naam": "Fairtrade Original Thaise Witte Rijstnoedels 225 g",
+  "standaard": "202835STK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zeebaarsfilet",
+  "naam": "Jumbo Zeebaarsfilet met Huid ca. 240 g",
+  "standaard": "733896KGR",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
+ },
+ {
+  "key": "zwart sesamzaad",
+  "naam": "Verstegen Sesamzaad Zwart Kleinverpakking 9 g",
+  "standaard": "437244ZK",
+  "bio": null,
+  "bio_naam": null,
+  "huismerk": null,
+  "huismerk_naam": null
  }
 ]

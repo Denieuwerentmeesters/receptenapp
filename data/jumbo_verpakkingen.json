@@ -2890,5 +2890,377 @@
     "inhoud": 245.0,
     "eenheid": "g",
     "naam": "Jumbo Scharrelkip Kipdijfilet ca. 245 g"
+  },
+  {
+    "sku": "135039PAK",
+    "inhoud": 1000.0,
+    "eenheid": "ml",
+    "naam": "Jumbo Ananassap 1 L"
+  },
+  {
+    "sku": "138420FLS",
+    "inhoud": 700.0,
+    "eenheid": "ml",
+    "naam": "Aperol - Aperitief - 700ML"
+  },
+  {
+    "sku": "142108FLS",
+    "inhoud": 38.0,
+    "eenheid": "ml",
+    "naam": "Dr. Oetker Aroma Vanillesmaak 38 ml"
+  },
+  {
+    "sku": "145313ZK",
+    "inhoud": 200.0,
+    "eenheid": "g",
+    "naam": "Rice Paper 200 g"
+  },
+  {
+    "sku": "161627PAK",
+    "inhoud": 20.0,
+    "eenheid": "g",
+    "naam": "Jumbo Biologisch Tuinkers Kiemgroente 20 g"
+  },
+  {
+    "sku": "163309PAK",
+    "inhoud": 250.0,
+    "eenheid": "g",
+    "naam": "Flower Brand Mihoen Rijstvermicelli 250 g"
+  },
+  {
+    "sku": "164286STK",
+    "inhoud": 80.0,
+    "eenheid": "g",
+    "naam": "Jumbo Suiker met Vanillesmaak 10 x 8 g"
+  },
+  {
+    "sku": "164316POT",
+    "inhoud": 100.0,
+    "eenheid": "g",
+    "naam": "Colman's Original English Mustard 100 g"
+  },
+  {
+    "sku": "170197ZK",
+    "inhoud": 1000.0,
+    "eenheid": "g",
+    "naam": "Jumbo Basis Patentbloem 1 kg"
+  },
+  {
+    "sku": "170328ZK",
+    "inhoud": 1000.0,
+    "eenheid": "g",
+    "naam": "Jumbo Tarwemeel Volkoren 1KG"
+  },
+  {
+    "sku": "173140KST",
+    "inhoud": 260.0,
+    "eenheid": "g",
+    "naam": "LU Bastogne koekjes Original 260g"
+  },
+  {
+    "sku": "185134PAK",
+    "inhoud": 200.0,
+    "eenheid": "g",
+    "naam": "Van Gilse Fijne Kaneelsuiker 200 g"
+  },
+  {
+    "sku": "187098POT",
+    "inhoud": 200.0,
+    "eenheid": "g",
+    "naam": "Conimex Sambal Badjak 200 g"
+  },
+  {
+    "sku": "194408PAK",
+    "inhoud": 150.0,
+    "eenheid": "g",
+    "naam": "Castello Creamy Blue Kaas 150 g"
+  },
+  {
+    "sku": "195428STK",
+    "inhoud": 250.0,
+    "eenheid": "g",
+    "naam": "Jumbo Mihoen 250 g"
+  },
+  {
+    "sku": "196465BLK",
+    "inhoud": 397.0,
+    "eenheid": "g",
+    "naam": "Jumbo Gecondenseerde Melk 397 g"
+  },
+  {
+    "sku": "198269POT",
+    "inhoud": 450.0,
+    "eenheid": "ml",
+    "naam": "Calvé Pot Licht & Romig Mayonaise 450 ml"
+  },
+  {
+    "sku": "202835STK",
+    "inhoud": 225.0,
+    "eenheid": "g",
+    "naam": "Fairtrade Original Thaise Witte Rijstnoedels 225 g"
+  },
+  {
+    "sku": "216708ZK",
+    "inhoud": 100.0,
+    "eenheid": "g",
+    "naam": "Jumbo Ongeroosterde Pijnboompitten 100 g"
+  },
+  {
+    "sku": "230353STK",
+    "inhoud": 900.0,
+    "eenheid": "ml",
+    "naam": "Hertog IJs IJssalon Vanille Roomijs 900ml"
+  },
+  {
+    "sku": "25794FLS",
+    "inhoud": 150.0,
+    "eenheid": "ml",
+    "naam": "Kikkoman Sojasaus met Minder Zout 150 ml"
+  },
+  {
+    "sku": "319462POT",
+    "inhoud": 200.0,
+    "eenheid": "g",
+    "naam": "Jumbo Aroma Oploskoffie 200 g"
+  },
+  {
+    "sku": "337664FLS",
+    "inhoud": 337.0,
+    "eenheid": "g",
+    "naam": "Kewpie Mayonnaise 337 g"
+  },
+  {
+    "sku": "342550TUB",
+    "inhoud": 50.0,
+    "eenheid": "g",
+    "naam": "Dr. Oetker Bourbon Vanille pasta 50 g"
+  },
+  {
+    "sku": "347553POT",
+    "inhoud": 190.0,
+    "eenheid": "g",
+    "naam": "Jumbo Pesto Rosso 190 g"
+  },
+  {
+    "sku": "380602PAK",
+    "inhoud": 1000.0,
+    "eenheid": "ml",
+    "naam": "Jumbo Amandeldrink Ongezoet 1L"
+  },
+  {
+    "sku": "394229CUP",
+    "inhoud": 500.0,
+    "eenheid": "g",
+    "naam": "Jumbo Milde Kwark Mager 500 g"
+  },
+  {
+    "sku": "439428BAK",
+    "inhoud": 250.0,
+    "eenheid": "g",
+    "naam": "Belli Cantuccini Amandelkoekjes 250 g"
+  },
+  {
+    "sku": "510351PAK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Digestive Volkoren 400 g"
+  },
+  {
+    "sku": "517010SC",
+    "inhoud": 4.0,
+    "eenheid": "stuks",
+    "naam": "Jumbo Nectarines 4 Stuks"
+  },
+  {
+    "sku": "523453FLS",
+    "inhoud": 750.0,
+    "eenheid": "ml",
+    "naam": "Osborne - Sherry Medium - 750ML"
+  },
+  {
+    "sku": "532148ZK",
+    "inhoud": 5.0,
+    "eenheid": "stuks",
+    "naam": "Jumbo Dole Bananen 5 Stuks"
+  },
+  {
+    "sku": "561926POT",
+    "inhoud": 710.0,
+    "eenheid": "g",
+    "naam": "Jumbo Appelmoes 710 g"
+  },
+  {
+    "sku": "56972PAK",
+    "inhoud": 360.0,
+    "eenheid": "g",
+    "naam": "Meylandt Belgische Chocolademousse 4 x 90 g"
+  },
+  {
+    "sku": "580764DS",
+    "inhoud": 454.0,
+    "eenheid": "g",
+    "naam": "Arm & Hammer Pure Baksoda 454 g"
+  },
+  {
+    "sku": "590960FLS",
+    "inhoud": 750.0,
+    "eenheid": "ml",
+    "naam": "Jumbo - Prosecco Spumante - 750ML"
+  },
+  {
+    "sku": "628399TAS",
+    "inhoud": 250.0,
+    "eenheid": "g",
+    "naam": "Jumbo Gezoete Bananenchips 250 g"
+  },
+  {
+    "sku": "633652STK",
+    "inhoud": 300.0,
+    "eenheid": "g",
+    "naam": "Jumbo Basis Amandelspijs 300 g"
+  },
+  {
+    "sku": "638128ZK",
+    "inhoud": 500.0,
+    "eenheid": "g",
+    "naam": "Jumbo Biologisch Volkoren Havervlokken 500 g"
+  },
+  {
+    "sku": "646928PAK",
+    "inhoud": 200.0,
+    "eenheid": "g",
+    "naam": "Jumbo Roerbak Paddenstoelenmix 200 g"
+  },
+  {
+    "sku": "668766DS",
+    "inhoud": 60.0,
+    "eenheid": "g",
+    "naam": "Jumbo Biologisch Kiem Mix 60 g"
+  },
+  {
+    "sku": "676477TAS",
+    "inhoud": 1000.0,
+    "eenheid": "g",
+    "naam": "Jumbo Havermout Fijne Vlokken Volkoren 1 kg"
+  },
+  {
+    "sku": "692552PAK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Biologische Limabonen 400 g"
+  },
+  {
+    "sku": "698272TRA",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Gehaktballetjes 400 g"
+  },
+  {
+    "sku": "711236BLK",
+    "inhoud": 140.0,
+    "eenheid": "g",
+    "naam": "Mutti Tomatenpuree 140g"
+  },
+  {
+    "sku": "714360STK",
+    "inhoud": 120.0,
+    "eenheid": "g",
+    "naam": "Jumbo Scharrel Kipfilet Gerookt 120g"
+  },
+  {
+    "sku": "715829POT",
+    "inhoud": 180.0,
+    "eenheid": "g",
+    "naam": "Jumbo's 100% Pistachepasta 180 g"
+  },
+  {
+    "sku": "730407ZK",
+    "inhoud": 500.0,
+    "eenheid": "g",
+    "naam": "Jumbo's Volkoren Spaghetti Biologisch 500 g"
+  },
+  {
+    "sku": "733896KGR",
+    "inhoud": 240.0,
+    "eenheid": "g",
+    "naam": "Jumbo Zeebaarsfilet met Huid ca. 240 g"
+  },
+  {
+    "sku": "734747STK",
+    "inhoud": 1.0,
+    "eenheid": "g",
+    "naam": "Jumbo Vanillestokje 1 g"
+  },
+  {
+    "sku": "740268FLS",
+    "inhoud": 500.0,
+    "eenheid": "ml",
+    "naam": "Di Alfino Limoncello 500ML"
+  },
+  {
+    "sku": "752653PAK",
+    "inhoud": 1000.0,
+    "eenheid": "ml",
+    "naam": "Vla Vanillesmaak 1 L"
+  },
+  {
+    "sku": "757852FLS",
+    "inhoud": 350.0,
+    "eenheid": "g",
+    "naam": "Jumbo Biologisch Agavesiroop 350 g"
+  },
+  {
+    "sku": "766627ZK",
+    "inhoud": 150.0,
+    "eenheid": "g",
+    "naam": "Jumbo Amandelen Gerookt Gezouten 150 g"
+  },
+  {
+    "sku": "772516ZK",
+    "inhoud": 1500.0,
+    "eenheid": "g",
+    "naam": "Jumbo Rode Goudreinet Extra Voordeel 1,5 kg"
+  },
+  {
+    "sku": "776261ZK",
+    "inhoud": 180.0,
+    "eenheid": "g",
+    "naam": "MAI WA Ramen Noedels 180g"
+  },
+  {
+    "sku": "777206KGR",
+    "inhoud": 150.0,
+    "eenheid": "g",
+    "naam": "Appenzeller Kaas ca. 150 g"
+  },
+  {
+    "sku": "782530DS",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Zilvervlies Rijst 400 g"
+  },
+  {
+    "sku": "786403STK",
+    "inhoud": 100.0,
+    "eenheid": "g",
+    "naam": "Rozetten van Tête de Moine AOP Kaas 100 g"
+  },
+  {
+    "sku": "79075FLS",
+    "inhoud": 750.0,
+    "eenheid": "ml",
+    "naam": "Gonzalves - Ruby Port - 750ML"
+  },
+  {
+    "sku": "790923STK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Roosjes Broccoli 400 g"
+  },
+  {
+    "sku": "790926ZK",
+    "inhoud": 400.0,
+    "eenheid": "g",
+    "naam": "Jumbo Roosjes Bloemkool & Broccoli 400 g"
   }
 ]
