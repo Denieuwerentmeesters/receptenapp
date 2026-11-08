@@ -1,3 +1,4 @@
+import { noemtIngredient } from '../lib/stapIngredienten'
 import { receptTitel, receptBereiding, ingredientNaam, ingredientWeergave } from '../lib/receptTaal'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -144,11 +145,7 @@ export function Kookmodus() {
 
           // Ingrediënten die in deze stap genoemd worden, tonen we als chips —
           // dan hoef je niet terug te bladeren voor de hoeveelheid.
-          const tekst = stappen[stap].toLowerCase()
-          const relevant = ingredienten.filter((i) => {
-            const woord = i.naam.toLowerCase().split(/[\s(,]/)[0]
-            return woord.length >= 4 && tekst.includes(woord)
-          }).slice(0, 6)
+          const relevant = ingredienten.filter((i) => noemtIngredient(stappen[stap], i.naam)).slice(0, 6)
 
           // Tijden uit de stap eerst, de vaste 5/10/15 erachter als terugval.
           const stapTijden = tijdenUitStap(stappen[stap]).slice(0, 3)
