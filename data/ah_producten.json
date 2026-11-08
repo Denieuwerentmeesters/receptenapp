@@ -8118,5 +8118,955 @@
     "inhoud": 200.0,
     "eenheid": "g",
     "peildatum": "2026-11-05"
+  },
+  {
+    "product_id": 3640,
+    "titel": "LU Bastogne original",
+    "inhoud_tekst": "260 g",
+    "prijs": 2.15,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 260.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 34347,
+    "titel": "Jerez Sherry medium",
+    "inhoud_tekst": "0,75 l",
+    "prijs": 5.35,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 750.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 36826,
+    "titel": "Castello Creamy blue kaas",
+    "inhoud_tekst": "150 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 150.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 46865,
+    "titel": "AH Digestive",
+    "inhoud_tekst": "400 g",
+    "prijs": 0.89,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 400.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 54149,
+    "titel": "AH Vanillesuiker",
+    "inhoud_tekst": "10 x 8 g",
+    "prijs": 0.39,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 80.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 55231,
+    "titel": "Côte d'Or Chocoladereep melk",
+    "inhoud_tekst": "180 g",
+    "prijs": 4.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 180.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 55943,
+    "titel": "Go-Tan Mihoen rice noodles",
+    "inhoud_tekst": "250 g",
+    "prijs": 2.69,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 250.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 69305,
+    "titel": "Cantine Pellegrino Marsala fine",
+    "inhoud_tekst": "0,75 l",
+    "prijs": 10.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 750.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 97361,
+    "titel": "AH Reuzengarnalen rauw en ongepeld",
+    "inhoud_tekst": "450 g",
+    "prijs": 7.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 450.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 107669,
+    "titel": "AH Biologisch Waterkers",
+    "inhoud_tekst": "75 g",
+    "prijs": 1.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 75.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 112336,
+    "titel": "AH Extra lang lekker casino wit heel",
+    "inhoud_tekst": "per stuk",
+    "prijs": 1.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1,
+    "eenheid": "stuks"
+  },
+  {
+    "product_id": 118131,
+    "titel": "AH Vanillevla",
+    "inhoud_tekst": "1 l",
+    "prijs": 1.59,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 130484,
+    "titel": "AH Semi zongedroogde tomaten",
+    "inhoud_tekst": "285 g",
+    "prijs": 2.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 285.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 132426,
+    "titel": "AH Brioche",
+    "inhoud_tekst": "400 g",
+    "prijs": 3.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 400.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 163406,
+    "titel": "Calvé Mayonaise licht & romig",
+    "inhoud_tekst": "450 ml",
+    "prijs": 3.65,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 450.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 166614,
+    "titel": "AH Pijnboompitten",
+    "inhoud_tekst": "80 g",
+    "prijs": 5.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 80.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 171583,
+    "titel": "Sobreiro Port ruby",
+    "inhoud_tekst": "0,75 l",
+    "prijs": 4.85,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 750.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 178785,
+    "titel": "Aperol Aperitivo",
+    "inhoud_tekst": "70 cl",
+    "prijs": 15.59,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 700.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 189666,
+    "titel": "Hak Appelmoes extra kwaliteit",
+    "inhoud_tekst": "197 g",
+    "prijs": 1.89,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 197.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 189682,
+    "titel": "AH Gegrilde rode paprika",
+    "inhoud_tekst": "295 g",
+    "prijs": 2.25,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 295.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 196212,
+    "titel": "AH Chocolade mousse puur",
+    "inhoud_tekst": "230 g",
+    "prijs": 1.69,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 230.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 196938,
+    "titel": "Van Gilse Fijne kaneelsuiker",
+    "inhoud_tekst": "200 g",
+    "prijs": 0.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 197393,
+    "titel": "AH Bananen tros",
+    "inhoud_tekst": "Tros",
+    "prijs": 1.19,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": null,
+    "eenheid": null
+  },
+  {
+    "product_id": 199157,
+    "titel": "Kesbeke Zoet-zure augurken blokjes",
+    "inhoud_tekst": "395 g",
+    "prijs": 1.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 395.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 199778,
+    "titel": "AH Gehaktballetjes Hollands 12 stuks",
+    "inhoud_tekst": "360 g",
+    "prijs": 3.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 360.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 212127,
+    "titel": "Li Limoncellow",
+    "inhoud_tekst": "0,5 l",
+    "prijs": 8.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 221728,
+    "titel": "Hertog Ijssalon vanille",
+    "inhoud_tekst": "0,9 l",
+    "prijs": 4.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 900.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 228598,
+    "titel": "Dr. Oetker Vanille aroma",
+    "inhoud_tekst": "38 ml",
+    "prijs": 1.45,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 38.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 232992,
+    "titel": "BioToday Maple syrup",
+    "inhoud_tekst": "250 ml",
+    "prijs": 7.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 250.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 377725,
+    "titel": "AH Ananassap",
+    "inhoud_tekst": "1 l",
+    "prijs": 2.65,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 378626,
+    "titel": "Heinz Tomaten blokjes naturel",
+    "inhoud_tekst": "390 g",
+    "prijs": 1.35,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 390.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 378637,
+    "titel": "Mutti Tomaten concentraat dubbel",
+    "inhoud_tekst": "140 g",
+    "prijs": 1.59,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 140.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 382562,
+    "titel": "AH Terra Tuinerwt fijn",
+    "inhoud_tekst": "750 g",
+    "prijs": 1.19,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 750.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 412052,
+    "titel": "Conimex Sambal badjak",
+    "inhoud_tekst": "200 g",
+    "prijs": 2.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 414974,
+    "titel": "Verstegen Zakje vanillestokje",
+    "inhoud_tekst": "2 g",
+    "prijs": 4.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": null,
+    "eenheid": null
+  },
+  {
+    "product_id": 429777,
+    "titel": "Campina Magere milde kwark naturel voordeelpak",
+    "inhoud_tekst": "1 kg",
+    "prijs": 3.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 435814,
+    "titel": "AH Excellent Selectie prosecco",
+    "inhoud_tekst": "0,75 l",
+    "prijs": 7.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 750.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 448556,
+    "titel": "AH Bananenchips",
+    "inhoud_tekst": "200 g",
+    "prijs": 2.39,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 449946,
+    "titel": "Saitaku Wasabi mayo",
+    "inhoud_tekst": "160 g",
+    "prijs": 4.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 160.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 469874,
+    "titel": "AH Terra Biologisch groene linzen",
+    "inhoud_tekst": "500 g",
+    "prijs": 1.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 494120,
+    "titel": "AH Glutenvrij Volkoren havervlokken",
+    "inhoud_tekst": "450 g",
+    "prijs": 2.89,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 450.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 502735,
+    "titel": "Jacob Hooy Rozenwater premium",
+    "inhoud_tekst": "0,5 l",
+    "prijs": 8.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 521031,
+    "titel": "AH Amandelspijs",
+    "inhoud_tekst": "300 g",
+    "prijs": 2.89,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 300.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 550007,
+    "titel": "AH Biologisch Milde kiemgroente",
+    "inhoud_tekst": "60 g",
+    "prijs": 1.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 60.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 563915,
+    "titel": "AH Biologisch Agavesiroop",
+    "inhoud_tekst": "350 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 350.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 565766,
+    "titel": "AH Terra Amandeldrink ongezoet",
+    "inhoud_tekst": "1 l",
+    "prijs": 1.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 569602,
+    "titel": "AH Rode uienringen zoetzuur",
+    "inhoud_tekst": "340 g",
+    "prijs": 1.69,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 340.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 569985,
+    "titel": "AH Volkoren havermout fijne vlokken",
+    "inhoud_tekst": "1 kg",
+    "prijs": 1.45,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 583908,
+    "titel": "AH Terra Plantaardig 100% pistachepasta",
+    "inhoud_tekst": "150 g",
+    "prijs": 7.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 150.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 587656,
+    "titel": "AH Zeebaarsfilet op huid",
+    "inhoud_tekst": "ca. 230 g",
+    "prijs": 8.47,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 230.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 606661,
+    "titel": "Il Molino Bloem voor pizza",
+    "inhoud_tekst": "500 g",
+    "prijs": 1.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 606851,
+    "titel": "Bamboo Tree Rijstpapier 22cm",
+    "inhoud_tekst": "200 g",
+    "prijs": 2.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 619322,
+    "titel": "AH Varkensgehakt",
+    "inhoud_tekst": "300 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 300.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 796,
+    "titel": "AH Terra Witte bonen in tomatensaus",
+    "inhoud_tekst": "400 g",
+    "prijs": 0.89,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 400.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 951,
+    "titel": "AH Patent tarwebloem",
+    "inhoud_tekst": "1 kg",
+    "prijs": 0.85,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 3830,
+    "titel": "Bona 100% Plantaardig",
+    "inhoud_tekst": "500 g",
+    "prijs": 3.09,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 47109,
+    "titel": "AH Volkoren tarwemeel",
+    "inhoud_tekst": "1 kg",
+    "prijs": 0.89,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 168710,
+    "titel": "Verkade Maria brosse biscuits",
+    "inhoud_tekst": "200 g",
+    "prijs": 1.85,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 173809,
+    "titel": "AH Keukenzout met jodium",
+    "inhoud_tekst": "500 g",
+    "prijs": 0.69,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 195541,
+    "titel": "AH Terra Lima bonen",
+    "inhoud_tekst": "400 g",
+    "prijs": 1.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 400.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 199027,
+    "titel": "Mee Chun Vijf kruidenpoeder",
+    "inhoud_tekst": "50 g",
+    "prijs": 2.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 50.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 221221,
+    "titel": "AH Salademix",
+    "inhoud_tekst": "300 g",
+    "prijs": 1.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 300.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 223822,
+    "titel": "Verstegen Anijszaad gemalen",
+    "inhoud_tekst": "33 g",
+    "prijs": 3.59,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": null,
+    "eenheid": null
+  },
+  {
+    "product_id": 227744,
+    "titel": "BioToday Kokosbloesemsuiker",
+    "inhoud_tekst": "350 g",
+    "prijs": 5.19,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 350.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 232295,
+    "titel": "Mitsuba Wasabi crispy rice crackers",
+    "inhoud_tekst": "100 g",
+    "prijs": 2.19,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 100.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 367079,
+    "titel": "Lion Melkchocolade reep 6-pack",
+    "inhoud_tekst": "180 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 180.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 370827,
+    "titel": "AH Gehaktballen",
+    "inhoud_tekst": "8 stuks",
+    "prijs": 8.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 8.0,
+    "eenheid": "stuks"
+  },
+  {
+    "product_id": 376520,
+    "titel": "AH Zakje met zomerfruit",
+    "inhoud_tekst": "1 kg",
+    "prijs": 5.75,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 407579,
+    "titel": "Hero Tova karamel dessertsaus",
+    "inhoud_tekst": "125 ml",
+    "prijs": 2.59,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 125.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 414960,
+    "titel": "Verstegen Zakje foelie heel",
+    "inhoud_tekst": "6 g",
+    "prijs": 2.19,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": null,
+    "eenheid": null
+  },
+  {
+    "product_id": 429232,
+    "titel": "AH Mayo truffel",
+    "inhoud_tekst": "220 ml",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 220.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 447720,
+    "titel": "AH Chocolademelk halfvol",
+    "inhoud_tekst": "1 l",
+    "prijs": 0.75,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 448430,
+    "titel": "Bolletje Zoute pepsels",
+    "inhoud_tekst": "180 g",
+    "prijs": 1.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 180.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 456425,
+    "titel": "AH Stevige crackers volkoren",
+    "inhoud_tekst": "200 g",
+    "prijs": 1.75,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 462463,
+    "titel": "AH Terra Plantaardige haverdrink ongezoet",
+    "inhoud_tekst": "1 l",
+    "prijs": 1.35,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 476720,
+    "titel": "AH Ginger beer",
+    "inhoud_tekst": "1 l",
+    "prijs": 1.19,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 1000.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 485310,
+    "titel": "AH Biologisch Kurkuma",
+    "inhoud_tekst": "80 g",
+    "prijs": 1.69,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 80.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 502003,
+    "titel": "Lion Mini melkchocolade uitdeelzak",
+    "inhoud_tekst": "270 g",
+    "prijs": 4.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 270.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 507760,
+    "titel": "AH Pure chocolade truffels slagroom",
+    "inhoud_tekst": "150 g",
+    "prijs": 3.59,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 150.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 526381,
+    "titel": "Lay's Naturel",
+    "inhoud_tekst": "200 g",
+    "prijs": 2.19,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 200.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 553362,
+    "titel": "Old Mother Crispy chili in oil",
+    "inhoud_tekst": "210 g",
+    "prijs": 4.39,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 210.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 553395,
+    "titel": "AH Kokosmelk",
+    "inhoud_tekst": "0,5 l",
+    "prijs": 2.75,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "ml"
+  },
+  {
+    "product_id": 554008,
+    "titel": "Jordans Crunchy naturel granola",
+    "inhoud_tekst": "750 g",
+    "prijs": 4.69,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 750.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 556299,
+    "titel": "AH Terra Plantaardig kokos gurt ongezoet",
+    "inhoud_tekst": "500 g",
+    "prijs": 1.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 500.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 557184,
+    "titel": "Verstegen World spice blend furikake",
+    "inhoud_tekst": "35 g",
+    "prijs": 3.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": null,
+    "eenheid": null
+  },
+  {
+    "product_id": 565528,
+    "titel": "Elephant Pretzels zeezout",
+    "inhoud_tekst": "180 g",
+    "prijs": 2.59,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 180.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 574318,
+    "titel": "Tajín Clásico seasoning",
+    "inhoud_tekst": "142 g",
+    "prijs": 4.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": null,
+    "eenheid": null
+  },
+  {
+    "product_id": 575441,
+    "titel": "Fast Fruit Acai drops original",
+    "inhoud_tekst": "250 g",
+    "prijs": 4.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 250.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 575501,
+    "titel": "Euroma Speculaaskruiden by Jonnie Boer",
+    "inhoud_tekst": "35 g",
+    "prijs": 3.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": null,
+    "eenheid": null
+  },
+  {
+    "product_id": 585152,
+    "titel": "AH Gyoza kip",
+    "inhoud_tekst": "240 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 240.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 589880,
+    "titel": "Santa Maria Wasabi sesame Japanese style",
+    "inhoud_tekst": "44 g",
+    "prijs": 3.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 44.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 591793,
+    "titel": "AH Sushi gember",
+    "inhoud_tekst": "190 g",
+    "prijs": 3.49,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 190.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 599953,
+    "titel": "AH Wasabi pasta",
+    "inhoud_tekst": "43 g",
+    "prijs": 2.99,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 43.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 605187,
+    "titel": "AH Truffelkaas blokjes 48+",
+    "inhoud_tekst": "100 g",
+    "prijs": 3.29,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 100.0,
+    "eenheid": "g"
+  },
+  {
+    "product_id": 628133,
+    "titel": "Steensma Rolfondant wit",
+    "inhoud_tekst": "250 g",
+    "prijs": 1.79,
+    "leverbaar": true,
+    "peildatum": "2026-11-08",
+    "inhoud": 250.0,
+    "eenheid": "g"
   }
 ]
