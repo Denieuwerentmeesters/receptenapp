@@ -37,6 +37,14 @@ describe('noemtIngredient', () => {
     expect(noemtIngredient('Fruit de knoflook.', 'knoflooktenen')).toBe(true)
   })
 
+  test('aubergine, courgette, sesamzaad, gember en venkel in de stap bij de vorm in de lijst', () => {
+    expect(noemtIngredient('Bak de aubergine bruin.', 'aubergines')).toBe(true)
+    expect(noemtIngredient('Snijd de courgette in stukken.', 'courgettes')).toBe(true)
+    expect(noemtIngredient('Bestrooi met sesamzaad.', 'sesamzaadjes')).toBe(true)
+    expect(noemtIngredient('Fruit de gember.', 'gemberwortel, geraspt')).toBe(true)
+    expect(noemtIngredient('Snijd de venkel fijn.', 'venkelknollen')).toBe(true)
+  })
+
   test('een ander product dat met dezelfde letters begint telt niet', () => {
     expect(noemtIngredient('Roer de kaasazijn erdoor.', 'kaas')).toBe(false)
     expect(noemtIngredient('Meng de komijnpoeder erdoor.', 'komijn')).toBe(true)

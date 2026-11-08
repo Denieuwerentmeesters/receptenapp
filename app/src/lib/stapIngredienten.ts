@@ -30,7 +30,7 @@ const GEEN_PRODUCT = new Set([
 const VOLTOOID_DEELWOORD = /^(?:ge\w{3,}(?:te|de)|ongekookt|ongebakken)$/
 
 /** Algemene woorden waar een stap niet het ingrediënt mee bedoelt: "de saus" is niet per se sojasaus. */
-const TE_ALGEMEEN_ALS_STAART = new Set(['saus', 'melk', 'room', 'pasta', 'soep', 'mix', 'puree', 'poeder', 'blokjes', 'plakjes', 'stukjes', 'vlokken', 'blaadjes', 'zaad'])
+const TE_ALGEMEEN_ALS_STAART = new Set(['saus', 'melk', 'pasta', 'soep', 'mix', 'puree', 'poeder', 'blokjes', 'plakjes', 'stukjes', 'vlokken', 'blaadjes', 'zaad'])
 
 export function woorden(tekst: string): string[] {
   return tekst
@@ -47,17 +47,20 @@ const VASTE_STAM: Record<string, string> = {
   peren: 'peer', appels: 'appel',
 }
 
-export function stam(w: string): string {
-  if (VASTE_STAM[w]) return VASTE_STAM[w]
-  if (w.length > 5 && w.endsWith('tjes')) return w.slice(0, -4)
+export function stam(woord: string): string {
+  if (VASTE_STAM[woord]) return VASTE_STAM[woord]
+  let w = woord
+  if (w.length > 5 && w.endsWith('tjes')) w = w.slice(0, -4)
+  else if (w.length > 6 && w.endsWith('jes')) w = w.slice(0, -3)
   // "citroen", "limoen" en "pompoen" zijn enkelvoud; "citroenen" niet.
-  if (w.length > 4 && w.endsWith('en') && !/[oe]en$/.test(w.replace(/enen$/, 'XX'))) {
-    const kort = w.slice(0, -2)
+  else if (w.length > 4 && w.endsWith('en') && !/[oe]en$/.test(w.replace(/enen$/, 'XX'))) {
+    w = w.slice(0, -2)
     // "sjalotten" -> "sjalot", "kippen" -> "kip".
-    return kort.length > 3 && kort.at(-1) === kort.at(-2) ? kort.slice(0, -1) : kort
-  }
-  if (w.length > 4 && w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1)
-  if (w.length > 4 && w.endsWith('e')) return w.slice(0, -1)
+    if (w.length > 3 && w.at(-1) === w.at(-2)) w = w.slice(0, -1)
+  } else if (w.length > 4 && w.endsWith('s') && !w.endsWith('ss')) w = w.slice(0, -1)
+  // "aubergines" en "aubergine", "courgettes" en "courgette": ook de laatste e laten we vallen.
+  if (w.length > 4 && w.endsWith('e')) w = w.slice(0, -1)
+  if (w.length > 3 && w.at(-1) === w.at(-2) && w.endsWith('t')) w = w.slice(0, -1)
   return w
 }
 
@@ -68,7 +71,7 @@ export function productWoorden(naam: string): string[] {
 }
 
 /** Wat achter een productnaam kan staan zonder dat het een ander product wordt: "citroensap", "knoflookteentjes". */
-const ONSCHULDIGE_STAART = /^(?:sap|rasp|schil|blaadjes|blad|partjes|plakjes|plakken|ringen|blokjes|reepjes|snippers|zaadjes|teentjes|teen|tenen|teentje|filet|filets|steeltjes|steel|stelen|mengsel|roosjes|stuk|stukken|sneetjes|bladeren|poeder|vlokken|stukjes|schijfjes|takjes|sprieten|bolletjes)$/
+const ONSCHULDIGE_STAART = /^(?:sap|rasp|schil|blaadjes|blad|partjes|plakjes|plakken|ringen|blokjes|reepjes|snippers|zaadjes|teentjes|teen|tenen|teentje|filet|filets|steeltjes|steel|stelen|mengsel|roosjes|stuk|stukken|sneetjes|bladeren|wortel|knol|knollen|blokje|blokjes|tablet|poeder|vlokken|stukjes|schijfjes|takjes|sprieten|bolletjes)$/
 
 /**
  * Algemene woorden die een stap voor een soort gebruikt: "schep de kip terug"
