@@ -613,8 +613,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
               background: isFavorietCijfer(cijfer) ? 'var(--c-yellow)' : 'var(--c-paper)', color: 'var(--c-ink)',
             }}>{cijfer}</span>
           )}
-          {/* Een samengesteld recept krijgt nooit een foto: dan ook geen belofte. */}
-          {recept.afbeelding_url || recept.bron_type === 'samengesteld'
+          {recept.afbeelding_url
             ? ''
             : recept.user_id
               ? <span style={{ padding: '0 10px', textAlign: 'center', lineHeight: 1.3 }}>{t('Afbeelding wordt vannacht toegevoegd')}</span>
