@@ -3633,5 +3633,225 @@
   "sku": "790926ZK",
   "prijs": 2.59,
   "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "140850ZK",
+  "prijs": 3.59,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "144721STK",
+  "prijs": 1.89,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "146753PAK",
+  "prijs": 1.19,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "157388PAK",
+  "prijs": 2.99,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "162120STK",
+  "prijs": 1.85,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "208405PAK",
+  "prijs": 0.75,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "212149STK",
+  "prijs": 2.39,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "212584POT",
+  "prijs": 0.79,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "213589BAK",
+  "prijs": 4.5,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "218877STK",
+  "prijs": 1.29,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "227462POT",
+  "prijs": 0.59,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "237941STK",
+  "prijs": 5.79,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "394663TRA",
+  "prijs": 2.19,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "398355ZK",
+  "prijs": 0.89,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "408583BLK",
+  "prijs": 2.19,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "420152ZK",
+  "prijs": 4.49,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "432400CUP",
+  "prijs": 1.85,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "434829ZK",
+  "prijs": 2.79,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "436015FLS",
+  "prijs": 2.49,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "436732ZK",
+  "prijs": 1.99,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "436898ZK",
+  "prijs": 1.09,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "456086STK",
+  "prijs": 3.99,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "49926ZK",
+  "prijs": 3.79,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "50595STK",
+  "prijs": 3.99,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "511587PAK",
+  "prijs": 0.85,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "521217ZK",
+  "prijs": 5.69,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "561861POT",
+  "prijs": 2.79,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "568357PAK",
+  "prijs": 1.35,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "572651ZK",
+  "prijs": 2.59,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "595000POT",
+  "prijs": 4.39,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "595071ZK",
+  "prijs": 4.49,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "605582ZK",
+  "prijs": 4.15,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "607260CUP",
+  "prijs": 3.49,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "616764BLK",
+  "prijs": 3.29,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "622863ZK",
+  "prijs": 3.49,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "627344FLS",
+  "prijs": 2.59,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "647865TRA",
+  "prijs": 1.75,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "652014FLS",
+  "prijs": 1.69,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "698692STK",
+  "prijs": 3.99,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "734597POT",
+  "prijs": 3.29,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "743042FLS",
+  "prijs": 3.29,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "785402DS",
+  "prijs": 1.79,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "785736ZK",
+  "prijs": 2.99,
+  "peildatum": "2026-11-08"
+ },
+ {
+  "sku": "796078ZK",
+  "prijs": 1.19,
+  "peildatum": "2026-11-08"
  }
 ]
