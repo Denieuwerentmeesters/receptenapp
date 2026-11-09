@@ -6,12 +6,19 @@
     },
     "api/afbeeldingen.ts": {
       "maxDuration": 300
+    },
+    "api/vertalen.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [
     {
       "path": "/api/afbeeldingen",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/vertalen",
+      "schedule": "0 4 * * *"
     }
   ],
   "installCommand": "npm install && cd app && npm install",

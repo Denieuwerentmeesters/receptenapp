@@ -738,6 +738,15 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
 - Wijzig je de prompt-lijsten, draai dan eerst `--dry-run --telling`: het doel is
   ongeveer half top-down, half schuin, en een derde zonder rekwisieten.
 
+## Recepten in het Engels
+
+Titel, ingrediënten en bereiding staan naast het Nederlands in `titel_en`,
+`ingredienten_en` (zelfde volgorde als `ingredienten`) en `bereiding_en`;
+`src/lib/receptTaal.ts` kiest per taal. Het is alleen weergave: sleutels,
+mapping en lijst blijven Nederlands. `api/vertalen.ts` vertaalt elke nacht
+(04:00 UTC, 25 per run) recepten zonder `titel_en`; met de hand en in bulk:
+`npm run vertaal -- --limit 1000` (vergt `DATABASE_URL` en `ANTHROPIC_API_KEY`).
+
 ## Laadanimatie
 
 Het woordmerk pruttelt en verdampt letter voor letter
