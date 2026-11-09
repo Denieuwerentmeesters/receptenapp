@@ -178,8 +178,8 @@ export function Recept() {
                       pointerEvents: 'none',
                     }}>
                       <Icon name="utensils" size={48} />
-                      {/* Een eigen recept krijgt vannacht een foto (api/afbeeldingen.ts); een samengesteld menu niet. */}
-                      {r.user_id && r.bron_type !== 'samengesteld' && (
+                      {/* Een eigen recept krijgt vannacht een foto (api/afbeeldingen.ts), ook een samengesteld menu. */}
+                      {r.user_id && (
                         <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700 }}>
                           {t('Afbeelding wordt vannacht toegevoegd')}
                         </span>

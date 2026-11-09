@@ -694,8 +694,9 @@ eventueel wensen, en Claude maakt een menu (`/samenstellen`,
 - **Opslaan pas bij "Zet op mijn lijst" of "Bewaar alleen de recepten".**
   Ze staan daarna onder "Mijn recepten" op het vragenscherm (zoeken op
   gerecht, ingrediënt of datum) én onder Mijn recepten in Ontdekken
-  (`EIGEN_BRON_TYPES`), niet bij je favorieten. Ze krijgen **geen
-  foto**: de nachtelijke ronde slaat ze over, dat kost te veel. `bron_type = 'samengesteld'`, altijd privé
+  (`EIGEN_BRON_TYPES`), niet bij je favorieten. Ze krijgen **net als elk
+  ander recept een foto** van de nachtelijke ronde (Reinoud, 8 nov 2026; eerder
+  sloeg die ze over). `bron_type = 'samengesteld'`, altijd privé
   (check-constraint), met `samenstelling_id`. Ze staan in Ontdekken alleen bij Mijn recepten, en
   niet in de weekmenu-generator, en tellen niet mee voor Bespaard!.
 - **Porties:** een samengesteld recept gaat op de lijst en opent voor het
@@ -727,9 +728,13 @@ taalmodel ertussen; het beeldmodel (Nano Banana 2 Lite,
   `DATABASE_URL`, `GEMINI_API_KEY` en `BLOB_READ_WRITE_TOKEN`. Eerst
   `--dry-run --telling` om de verdeling te zien, dat kost niets.
 - Nieuwe recepten: `api/afbeeldingen.ts` draait elke nacht (Vercel Cron) en
-  pakt alles zonder afbeelding op, hooguit 20 per run, vier tegelijk.
+  pakt alles zonder afbeelding op, hooguit 60 per run, zes tegelijk.
 - Tegenvallend beeld: `npm run afbeeldingen -- --id <uuid> --opnieuw`.
 - Eigen foto's (`eigen_foto`, `kookboek_foto`) worden nooit overschreven.
+- De nachtelijke ronde pakt elk recept zonder foto (lege `afbeelding_url` telt
+  ook), zonder uitzondering voor samengestelde recepten. Eigen recepten gaan
+  voor de pool. Staat het logboek op "0 gevonden" terwijl er recepten zonder
+  foto zijn, kijk dan eerst naar het filter in `haalReceptenZonderAfbeelding`.
 - Wijzig je de prompt-lijsten, draai dan eerst `--dry-run --telling`: het doel is
   ongeveer half top-down, half schuin, en een derde zonder rekwisieten.
 
