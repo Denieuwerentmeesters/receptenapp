@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Chip, Icon } from '../ds'
 import { Inhoud, Kop, OnderBalk, Scherm, Titel } from '../components/Layout'
 import { Grens, Leeg } from '../components/Staten'
-import { useKeukens, useOntdek, useOntdekTelling, type OntdekFilters } from '../lib/queries2'
+import { useKeukens, useOntdek, useOntdekTelling, useReceptVerwijderen, type OntdekFilters } from '../lib/queries2'
 import { useFases, type FaseRecept } from '../lib/fases'
 import { vliegHartje } from '../lib/vliegHartje'
 import { useHartje } from '../components/Hartje'
@@ -105,6 +105,8 @@ export function Ontdekken() {
   const [hoogCijfer, setHoogCijfer] = useState(onthouden.hoogCijfer)
   const [zonder, setZonder] = useState(onthouden.zonder)
   const [mijn, setMijn] = useState(onthouden.mijn)
+  const [teVerwijderen, setTeVerwijderen] = useState<Recept | null>(null)
+  const verwijder = useReceptVerwijderen()
   const [toevoegenOpen, setToevoegenOpen] = useState(false)
   const [uitlegOpen, setUitlegOpen] = useState(false)
   // Welke keuzelijst onderin openstaat: kooktijd, dieet of allergieën.
@@ -326,6 +328,7 @@ export function Ontdekken() {
                   onOpen={() => navigeer(`/recept/${r.id}`)}
                   bewaard={hartje.bewaard.has(r.id)}
                   onHartje={() => hartje.tik(r)}
+                  onVerwijder={mijn ? () => setTeVerwijderen(r) : undefined}
                 />
               ))}
             </div>
@@ -449,6 +452,20 @@ export function Ontdekken() {
       </Dialoog>
 
       <Dialoog
+        open={teVerwijderen !== null}
+        kop={t('Recept verwijderen?')}
+        tekst={teVerwijderen ? t('{naam} verdwijnt uit je recepten, je week en je lijst. Dit kan niet ongedaan worden.', { naam: receptTitel(teVerwijderen) }) : undefined}
+        acties={[
+          {
+            label: t('Ja, verwijderen'), hoofd: true,
+            onClick: () => { if (teVerwijderen) verwijder.mutate(teVerwijderen.id); setTeVerwijderen(null) },
+          },
+          { label: t('Laat maar'), onClick: () => setTeVerwijderen(null) },
+        ]}
+        onSluit={() => setTeVerwijderen(null)}
+      />
+
+      <Dialoog
         open={open === 'allergie'}
         kop={t('Zonder allergenen')}
         tekst={t('Recepten waar het in zit laten we weg. Geldt tot je de app opnieuw opent; je vaste allergieën stel je in bij Instellingen.')}
@@ -500,7 +517,7 @@ function Keuzelijst({ keuzes, gekozen, onWissel }: {
  * Een recept als foto met de tekst eronder. Rechtsboven het hartje (naar Nog
  * bestellen); staat 'ie op je lijst, dan de gele rand.
  */
-function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje }: {
+function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje, onVerwijder }: {
   recept: Recept
   index: number
   /** Staat het bij Te koken of Nog bestellen: voor de gele rand en de regel eronder. */
@@ -513,6 +530,8 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
   bevat: string[]
   onOpen: () => void
   onHartje: () => void
+  /** Alleen bij Mijn recepten: kruisje linksboven om het recept te verwijderen. */
+  onVerwijder?: () => void
 }) {
   // Eén label houdt de regel kort: vegan of vegetarisch gaat voor de keuken.
   const [label] = dieetLabels(recept)
@@ -571,6 +590,14 @@ function FotoKaart({ recept, index, fase, mijn, bewaard, bevat, onOpen, onHartje
               boxShadow: '0 2px 8px rgba(43,20,32,0.18)',
             }}
           >{mijn?.cijfer ?? cijferTekst(gemiddeld!.gemiddeld)}</span>
+        )}
+
+        {onVerwijder && (
+          <button
+            onClick={onVerwijder}
+            aria-label={t('Verwijder {naam}', { naam: receptTitel(recept) })}
+            style={{ ...rondje, position: 'absolute', top: 12, left: 12, color: 'var(--c-ink)' }}
+          ><Icon name="x" size={18} /></button>
         )}
 
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>

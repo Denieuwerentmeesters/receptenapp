@@ -279,4 +279,7 @@ export const EN_A: Record<string, string> = {
   'Soja': 'Soy',
   'Sesam': 'Sesame',
   '{rest} en {laatste}': '{rest} and {laatste}',
+  'Verwijder {naam}': 'Delete {naam}',
+  'Recept verwijderen?': 'Delete recipe?',
+  '{naam} verdwijnt uit je recepten, je week en je lijst. Dit kan niet ongedaan worden.': '{naam} will be removed from your recipes, your week and your list. This cannot be undone.',
 }
