@@ -8,8 +8,8 @@
  * geprobeerd. Zo is de hele pool na een paar nachten Engels, en elk nieuw recept
  * de nacht erna.
  *
- * Per run hooguit 25 recepten, vier tegelijk, binnen de 60 seconden die de
- * functie krijgt.
+ * Per run hooguit 200 recepten, twintig tegelijk, binnen de 300 seconden die de
+ * functie krijgt (na vier minuten begint niemand aan een nieuw recept).
  *
  * Omgevingsvariabelen op Vercel: DATABASE_URL, ANTHROPIC_API_KEY en
  * CRON_SECRET (zonder geldige secret doet de functie niets).
@@ -18,9 +18,9 @@ import Anthropic from '@anthropic-ai/sdk'
 import { neon } from '@neondatabase/serverless'
 import { vertaalRecept, type NlRecept } from '../lib/vertalen/vertaal.js'
 
-const MAX_PER_RUN = 25
-const PARALLEL = 4
-const TIJDSLIMIET_MS = 40_000
+const MAX_PER_RUN = 200
+const PARALLEL = 20
+const TIJDSLIMIET_MS = 240_000
 
 export async function GET(request: Request): Promise<Response> {
   const secret = process.env.CRON_SECRET
