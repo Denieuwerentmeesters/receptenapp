@@ -19,6 +19,22 @@
     {
       "path": "/api/vertalen",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/vertalen?ronde=2",
+      "schedule": "6 4 * * *"
+    },
+    {
+      "path": "/api/vertalen?ronde=3",
+      "schedule": "12 4 * * *"
+    },
+    {
+      "path": "/api/vertalen?ronde=4",
+      "schedule": "18 4 * * *"
+    },
+    {
+      "path": "/api/vertalen?ronde=5",
+      "schedule": "24 4 * * *"
     }
   ],
   "installCommand": "npm install && cd app && npm install",
