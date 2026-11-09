@@ -744,7 +744,7 @@ Titel, ingrediënten en bereiding staan naast het Nederlands in `titel_en`,
 `ingredienten_en` (zelfde volgorde als `ingredienten`) en `bereiding_en`;
 `src/lib/receptTaal.ts` kiest per taal. Het is alleen weergave: sleutels,
 mapping en lijst blijven Nederlands. `api/vertalen.ts` vertaalt elke nacht
-(04:00 UTC, 25 per run) recepten zonder `titel_en`; met de hand en in bulk:
+(04:00 UTC, tot 600 per run, tien tegelijk, 270 s) recepten zonder `titel_en`; met de hand en in bulk:
 `npm run vertaal -- --limit 1000` (vergt `DATABASE_URL` en `ANTHROPIC_API_KEY`).
 
 ## Laadanimatie
