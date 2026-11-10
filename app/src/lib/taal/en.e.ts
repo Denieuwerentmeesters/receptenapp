@@ -194,6 +194,8 @@ export const EN_E: Record<string, string> = {
   'Voorwaarden': 'Terms',
   'Contact': 'Contact',
   'Download in de App Store': 'Download on the App Store',
+  'Download via Google Play': 'Get it on Google Play',
+  'Ontdek het op': 'Get it on',
   'Download in de': 'Download on the',
   'Bonus': 'Bonus',
   'min': 'min',

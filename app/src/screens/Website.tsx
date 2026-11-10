@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Icon, Woordmerk } from '../ds'
 import { t } from '../lib/taal'
-import { APPSTORE_URL, GOOGLE_PLAY_BESCHIKBAAR, PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
+import { APPSTORE_URL, GOOGLE_PLAY_BESCHIKBAAR, GOOGLE_PLAY_URL, PRIVACY_URL, VOORWAARDEN_URL } from '../lib/config'
 import aubergine from '../assets/website/aubergine-traybake.jpg'
 import goddess from '../assets/website/green-goddess.jpg'
 import tacos from '../assets/website/tacos-kip.jpg'
@@ -51,6 +51,7 @@ export function Website({ onInloggen }: { onInloggen: () => void }) {
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16, marginTop: 8 }}>
               <AppStoreKnop />
+              {GOOGLE_PLAY_BESCHIKBAAR && <GooglePlayKnop />}
               {GOOGLE_PLAY_BESCHIKBAAR === false && (
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1.5px dashed rgba(43,20,32,.3)', color: 'var(--k-ink-500)', borderRadius: 12, padding: '12px 16px', fontSize: 14, fontWeight: 700 }}>
                   {t('Google Play komt eraan')}
@@ -186,6 +187,7 @@ export function Website({ onInloggen }: { onInloggen: () => void }) {
           <p style={{ margin: 0, fontSize: 18, lineHeight: 1.5, maxWidth: '28em' }}>{t('Download Kookmaatje gratis en zet je eerste recepten op je lijst.')}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
             <AppStoreKnop opPaars />
+            {GOOGLE_PLAY_BESCHIKBAAR && <GooglePlayKnop opPaars />}
             {GOOGLE_PLAY_BESCHIKBAAR === false && (
               <span style={{ display: 'flex', alignItems: 'center', border: '1.5px dashed rgba(248,241,236,.5)', borderRadius: 12, padding: '12px 16px', fontSize: 14, fontWeight: 700 }}>
                 {t('Google Play komt eraan')}
@@ -240,6 +242,26 @@ function AppStoreKnop({ opPaars }: { opPaars?: boolean }) {
       <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, textAlign: 'left' }}>
         <span style={{ fontSize: 11 }}>{t('Download in de')}</span>
         <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-.01em' }}>App Store</span>
+      </span>
+    </a>
+  )
+}
+
+function GooglePlayKnop({ opPaars }: { opPaars?: boolean }) {
+  return (
+    <a
+      href={GOOGLE_PLAY_URL} aria-label={t('Download via Google Play')}
+      style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#000', color: '#fff', borderRadius: 12, padding: '9px 18px 9px 14px', border: opPaars ? '1.5px solid rgba(248,241,236,.5)' : undefined }}
+    >
+      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#00d7fe" d="M3.6 2.2c-.2.2-.3.6-.3 1v17.6c0 .4.1.8.3 1l9.8-9.8z" />
+        <path fill="#00f076" d="M16.7 15.3l-3.3-3.3 3.3-3.3 3.9 2.2c1.1.6 1.1 1.7 0 2.3z" />
+        <path fill="#ff3a44" d="M16.7 15.3L13.4 12l-9.8 9.8c.4.4 1 .4 1.7.1z" />
+        <path fill="#ffd500" d="M16.7 8.7L5.3 2.1c-.7-.4-1.3-.3-1.7.1l9.8 9.8z" />
+      </svg>
+      <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, textAlign: 'left' }}>
+        <span style={{ fontSize: 11 }}>{t('Ontdek het op')}</span>
+        <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-.01em' }}>Google Play</span>
       </span>
     </a>
   )

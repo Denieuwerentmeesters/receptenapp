@@ -25,8 +25,11 @@ export const INLOGSITE = 'https://receptenapp.vercel.app'
 /** De App Store-pagina van Kookmaatje, voor de knop op de website. */
 export const APPSTORE_URL = 'https://apps.apple.com/nl/app/kookmaatje/id6818273736'
 
-/** Zet op true zodra de Android-app in Google Play staat: dan verdwijnt "komt eraan". */
-export const GOOGLE_PLAY_BESCHIKBAAR: boolean = false
+/** De Google Play-pagina van Kookmaatje, voor de knop op de website. */
+export const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=nl.reinoudtencate.receptenapp'
+
+/** Staat de Android-app in Google Play, dan toont de website de knop; anders "komt eraan". */
+export const GOOGLE_PLAY_BESCHIKBAAR: boolean = true
 
 /** Openbare pagina's in app/public; App Store Connect verwijst naar dezelfde adressen. */
 export const PRIVACY_URL = `${WEBSITE}/privacy.html`
