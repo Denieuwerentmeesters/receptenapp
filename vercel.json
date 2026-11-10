@@ -40,6 +40,13 @@
   "installCommand": "npm install && cd app && npm install",
   "buildCommand": "cd app && npm run build",
   "outputDirectory": "app/dist",
+  "redirects": [
+    {
+      "source": "/android",
+      "destination": "https://play.google.com/store/apps/details?id=nl.reinoudtencate.receptenapp",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/auth/:pad*",

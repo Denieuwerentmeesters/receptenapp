@@ -25,8 +25,11 @@ export const INLOGSITE = 'https://receptenapp.vercel.app'
 /** De App Store-pagina van Kookmaatje, voor de knop op de website. */
 export const APPSTORE_URL = 'https://apps.apple.com/nl/app/kookmaatje/id6818273736'
 
-/** De Google Play-pagina van Kookmaatje, voor de knop op de website. */
-export const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=nl.reinoudtencate.receptenapp'
+/**
+ * Korte link voor de knop op de website. vercel.json stuurt /android door naar
+ * de Google Play-pagina; zo staat het app-id (met een naam erin) niet in de link.
+ */
+export const GOOGLE_PLAY_URL = '/android'
 
 /** Staat de Android-app in Google Play, dan toont de website de knop; anders "komt eraan". */
 export const GOOGLE_PLAY_BESCHIKBAAR: boolean = true
