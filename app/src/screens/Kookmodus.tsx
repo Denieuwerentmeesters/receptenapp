@@ -13,7 +13,7 @@ import { useFases } from '../lib/fases'
 import { useWeekWissel } from '../lib/weekwissel'
 import { schaalIngredienten } from '../lib/schaal'
 import { formatteerDuur, tijdenUitStap } from '../lib/kookmodus'
-import { bereidGeluidVoor, houdSchermAan, planWekker, trekWekkerIn, wekkerAfgelopen } from '../lib/kookwekker'
+import { bereidGeluidVoor, houdSchermAan, planWekker, stopWekkerGeluid, trekWekkerIn, wekkerAfgelopen } from '../lib/kookwekker'
 import { standaardPersonen } from '../lib/menu'
 import { t } from '../lib/taal'
 
@@ -86,7 +86,7 @@ export function Kookmodus() {
   useEffect(() => houdSchermAan(), [])
 
   // Verlaat je de kookmodus, dan gaat de timer mee weg, en de melding ook.
-  useEffect(() => () => { void trekWekkerIn() }, [])
+  useEffect(() => () => { void trekWekkerIn(); stopWekkerGeluid() }, [])
 
   const loopt = timer?.eindOp != null
   useEffect(() => {
@@ -101,6 +101,8 @@ export function Kookmodus() {
 
   useEffect(() => {
     if (loopt && resterend === 0) {
+      // Zit je in de app, dan piept de app zelf; de geplande melding is dan overbodig.
+      void trekWekkerIn()
       wekkerAfgelopen()
       setTimer((vorige) => vorige && { ...vorige, eindOp: null, resterend: 0 })
     }
@@ -128,6 +130,7 @@ export function Kookmodus() {
   }
 
   function zetUit() {
+    stopWekkerGeluid()
     setTimer(null)
     void trekWekkerIn()
   }
