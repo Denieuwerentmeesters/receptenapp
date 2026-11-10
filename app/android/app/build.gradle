@@ -14,7 +14,8 @@ android {
         applicationId "nl.reinoudtencate.receptenapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        // `npm run release:android` geeft het volgende nummer mee (-PversionCode=…).
+        versionCode (project.findProperty('versionCode') ?: 1).toInteger()
         versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
