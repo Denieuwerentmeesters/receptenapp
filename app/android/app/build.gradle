@@ -15,7 +15,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // `npm run release:android` geeft het volgende nummer mee (-PversionCode=…).
-        versionCode (project.findProperty('versionCode') ?: 1).toInteger()
+        versionCode = Integer.parseInt((project.findProperty('versionCode') ?: '1').toString())
         versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
