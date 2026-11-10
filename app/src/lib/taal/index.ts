@@ -24,9 +24,8 @@ function beginTaal(): Taal {
     const opgeslagen = window.localStorage.getItem(SLEUTEL)
     if (opgeslagen === 'nl' || opgeslagen === 'en') return opgeslagen
   } catch { /* privémodus: standaard */ }
-  // Eerste keer: een toestel dat niet in het Nederlands staat krijgt Engels.
-  const toestel = typeof navigator !== 'undefined' ? navigator.language?.toLowerCase() ?? 'nl' : 'nl'
-  return toestel.startsWith('nl') ? 'nl' : 'en'
+  // Standaard Nederlands; Engels kies je zelf in Instellingen of de onboarding.
+  return 'nl'
 }
 
 let huidig: Taal = beginTaal()
