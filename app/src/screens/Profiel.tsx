@@ -34,7 +34,7 @@ export function Profiel() {
     {
       label: t('Bespaard!'),
       sub: bespaard.length > 0
-        ? t('{bedrag} minder dan bij {naam}', { bedrag: euro(totaalBespaard(bespaard)), naam: t(MAALTIJDBOX.naam) })
+        ? t('{bedrag} bespaard sinds je de app gebruikt, vergeleken met dezelfde maaltijden bij {naam}', { bedrag: euro(totaalBespaard(bespaard)), naam: t(MAALTIJDBOX.naam) })
         : t('Wat je bespaart ten opzichte van {naam}', { naam: t(MAALTIJDBOX.naam) }),
       pad: '/bespaard',
     },

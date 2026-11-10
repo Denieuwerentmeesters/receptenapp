@@ -9,9 +9,9 @@
  *
  * Waarom een cron en geen aanroep bij het opslaan: mislukt de generatie, dan
  * heeft dat geen effect op het toevoegen zelf, en de volgende nacht pakt hij het
- * gewoon opnieuw op. Vercel Hobby laat één cron-run per dag toe.
+ * gewoon opnieuw op. De cron draait één keer per dag.
  *
- * Per run hooguit 20 beelden, vier tegelijk, binnen de 60 seconden die de functie
+ * Per run hooguit 60 beelden, zes tegelijk, binnen de 300 seconden die de functie
  * krijgt. Ligt er meer, dan is dat morgen aan de beurt.
  *
  * Omgevingsvariabelen op Vercel: DATABASE_URL, GEMINI_API_KEY,
@@ -21,10 +21,11 @@
 
 import { haalReceptenZonderAfbeelding, maakSql, verwerkRecept } from '../lib/afbeeldingen/genereer.js'
 
-const MAX_PER_RUN = 20
+const MAX_PER_RUN = 60
 /** Gelijktijdige aanvragen bij Gemini; achter elkaar haalde een run er maar een handvol. */
-const PARALLEL = 4
-const TIJDSLIMIET_MS = 45_000
+const PARALLEL = 6
+/** Het Vercel-plan laat 300 s toe (vercel.json); ruim voor het einde stoppen we met nieuwe recepten. */
+const TIJDSLIMIET_MS = 200_000
 
 export async function GET(request: Request): Promise<Response> {
   const secret = process.env.CRON_SECRET

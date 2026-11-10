@@ -14,6 +14,7 @@ import { volgendeWeek } from '../lib/week'
 import { WeekVraag } from '../components/WeekVraag'
 import { useFases, type FaseRecept } from '../lib/fases'
 import { useHartje } from '../components/Hartje'
+import { luisterNaarHartje } from '../lib/vliegHartje'
 import { useWeekWissel } from '../lib/weekwissel'
 import { vulAan } from '../lib/weekvullen'
 import { tokoIngredienten } from '../lib/toko'
@@ -144,6 +145,8 @@ export function MijnRecepten() {
   const bewaar = useBeoordelingBewaren()
   const zetTerug = useLaagCijferWissen()
   const hartje = useHartje()
+  const hartjeChip = useRef<HTMLSpanElement>(null)
+  useEffect(() => luisterNaarHartje(() => hartjeChip.current), [])
 
   const plek = (doel: Tab) => TABS.findIndex((tb) => tb.id === doel)
 
@@ -354,7 +357,11 @@ export function MijnRecepten() {
 
         <div style={{ flex: 'none', display: 'flex', gap: 8, padding: '12px 22px 4px', overflowX: 'auto' }}>
           {TABS.map((tb) => (
-            <Chip key={tb.id} selected={tab === tb.id} onClick={() => naar(tb.id)}>{tb.label()}</Chip>
+            <Chip key={tb.id} selected={tab === tb.id} onClick={() => naar(tb.id)}>
+              {tb.id === 'bestellen'
+                ? <span ref={hartjeChip} role="img" aria-label={tb.label()} style={{ display: 'flex', padding: '0 4px' }}><Icon name="heart" size={18} /></span>
+                : tb.label()}
+            </Chip>
           ))}
         </div>
 
@@ -573,8 +580,8 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 20, padding: 4,
-      // Een gele ring betekent: staat op je boodschappenlijst.
-      background: recept.opLijst ? 'var(--c-yellow)' : 'transparent',
+      // Een gele ring betekent: staat op je boodschappenlijst, nog niet besteld.
+      background: recept.opLijst && !recept.besteldOp ? 'var(--c-yellow)' : 'transparent',
       transition: 'background var(--motion-base) var(--ease)',
       ...(gedempt ? { opacity: 0.55, filter: 'grayscale(1)' } : {}),
     }}>
@@ -606,8 +613,7 @@ function ReceptKaart({ recept, vlak, bonus = [], personen, knop, onOpen, onKnop,
               background: isFavorietCijfer(cijfer) ? 'var(--c-yellow)' : 'var(--c-paper)', color: 'var(--c-ink)',
             }}>{cijfer}</span>
           )}
-          {/* Een samengesteld recept krijgt nooit een foto: dan ook geen belofte. */}
-          {recept.afbeelding_url || recept.bron_type === 'samengesteld'
+          {recept.afbeelding_url
             ? ''
             : recept.user_id
               ? <span style={{ padding: '0 10px', textAlign: 'center', lineHeight: 1.3 }}>{t('Afbeelding wordt vannacht toegevoegd')}</span>

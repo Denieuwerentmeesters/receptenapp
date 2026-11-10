@@ -1,6 +1,6 @@
 /**
  * Vertaalt een recept (titel, ingrediënten, bereiding) naar het Engels met
- * Claude. Gedeeld door scripts/vertaal_recepten.ts. De hoeveelheden blijven
+ * Claude. Gedeeld door scripts/vertaal_recepten.ts en api/vertalen.ts. De hoeveelheden blijven
  * zoals ze zijn; vertaald worden de eenheid en de naam, op dezelfde plek in de
  * lijst. Klopt het aantal regels niet, dan is het antwoord afgekeurd.
  */

@@ -57,13 +57,13 @@ export async function haalReceptenZonderAfbeelding(sql: Sql, limiet: number, ids
   return (await sql`
     select id, titel, titel_nl, keuken, tags, ingredienten, afbeelding_url, afbeelding_bron
     from recepten
-    where afbeelding_url is null
-      and (afbeelding_bron is null or afbeelding_bron = 'gegenereerd')
-      -- Zelf samengestelde menu's krijgen geen foto: ze zijn voor één
-      -- gebruiker, en een beeld per gerecht kost meer dan het oplevert.
-      and bron_type <> 'samengesteld'
-    -- Recepten die iemand zelf toevoegde gaan voor de pool: anders wacht je
-    -- recept achter een lading gescrapete recepten, hooguit acht per nacht.
+    -- Een lege tekst telt als geen foto. Een bron zonder echte url ook: alleen
+    -- foto's die de gebruiker zelf maakte (eigen_foto, kookboek_foto) blijven staan.
+    where (afbeelding_url is null or afbeelding_url = '')
+      and (afbeelding_bron is null or afbeelding_bron in ('gegenereerd', 'origineel_bron'))
+    -- Alle recepten, ook zelf samengestelde (Reinoud, 8 nov 2026: elk recept
+    -- krijgt een foto). Recepten die iemand zelf toevoegde gaan voor de pool:
+    -- anders wacht je recept achter een lading gescrapete recepten.
     order by (user_id is null), aangemaakt_op
     limit ${limiet}
   `) as ReceptRij[]

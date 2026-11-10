@@ -19,12 +19,14 @@ import { KORREL, LETTERS, VLAK } from '../ds/woordmerk'
 /** Volgorde van verdampen: niet van links naar rechts, dat oogt te netjes. */
 const VOLGORDE = [4, 1, 7, 0, 5, 9, 2, 6, 3, 8]
 const SNELHEID = 1.25
-const PRUTTEL = 1.6
-const TUSSEN = 0.5
-const VERDAMP = 1.6
+// Alle tijden 25% korter dan het ontwerp (nov 2026): het duurde net te lang.
+// Het wiebelen blijft even snel; alleen de tijdlijn is korter.
+const PRUTTEL = 1.2
+const TUSSEN = 0.375
+const VERDAMP = 1.2
 const VERDAMP_KLAAR = PRUTTEL + TUSSEN * (LETTERS.length - 1) + VERDAMP
-const LEEG = 0.6
-const TERUG = 0.7
+const LEEG = 0.45
+const TERUG = 0.525
 const TOTAAL = VERDAMP_KLAAR + LEEG + TERUG
 /** Eén "stap" in het ontwerp, omgerekend naar de maat van de letters. */
 const F = 1.25

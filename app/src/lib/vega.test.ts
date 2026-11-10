@@ -16,17 +16,24 @@ describe('vlees wordt standaard vega', () => {
     expect(vegaVervanger('peterselie grof gehakt')).toBeUndefined()
     expect(vegaVervanger('rookworst')?.key).toBe('vega rookworst')
     expect(vegaVervanger('gerookte spekreepje')?.key).toBe('vega spekjes')
-    expect(vegaVervanger('kipfilet')).toBeUndefined()
+    expect(vegaVervanger('kipfilet')?.key).toBe('vega kipstukjes')
+    expect(vegaVervanger('kippendijfilet')?.key).toBe('vega kipstukjes')
+    expect(vegaVervanger('scharrel kipfilet')?.key).toBe('vega kipstukjes')
+    // Gerookt, haasjes en schnitzel zijn een ander product.
+    expect(vegaVervanger('gerookte kipfilet')).toBeUndefined()
+    expect(vegaVervanger('kipfilethaasje')).toBeUndefined()
     expect(vegaVervanger('vegagehakt')).toBeUndefined()
   })
 
   test('de keuzelijst: vega eerst, dan het recept', () => {
     expect(vegaOpties('rundergehakt')).toEqual([{ keuze: 'vega', label: 'Vegagehakt' }, { keuze: 'recept' }])
-    expect(vegaOpties('kipfilet')).toEqual([])
+    expect(vegaOpties('kipfilet')).toEqual([{ keuze: 'vega', label: 'Vega kip' }, { keuze: 'recept' }])
+    expect(vegaOpties('kipschnitzel')).toEqual([])
   })
 
   test('naar de winkel gaat de gekozen versie', () => {
     expect(metVegaKeuze(rij('rundergehakt'), 'vega')).toMatchObject({ naam: 'vegagehakt', ingredient_key: 'vegagehakt' })
+    expect(metVegaKeuze(rij('kipfilet'), 'vega')).toMatchObject({ naam: 'vega kipstukjes', ingredient_key: 'vega kipstukjes' })
     expect(metVegaKeuze(rij('rundergehakt'), 'recept')).toMatchObject({ naam: 'rundergehakt' })
   })
 })
@@ -38,6 +45,7 @@ describe('vega in het recept kun je vlees maken', () => {
     ['plantaardig rulgehakt', ['rundergehakt', 'kipgehakt']],
     ['vegetarische kipschnitzel', ['kipschnitzel']],
     ['vega rookworst', ['rookworst']],
+    ['vega kipstukjes', ['kipfilet']],
     ['vega spekje', ['spekblokje']],
     // Geen vleesversie met een productnummer: niets te kiezen.
     ['vegetarische gehaktbal', []],

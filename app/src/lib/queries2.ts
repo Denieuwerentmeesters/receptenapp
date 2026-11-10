@@ -618,6 +618,25 @@ export function useReceptOpslaan() {
   })
 }
 
+/**
+ * Een eigen recept helemaal verwijderen (kruisje in Mijn recepten). RLS laat
+ * alleen eigen rijen toe; keuzes, lijstregels, cijfers en favorieten gaan
+ * mee via `on delete cascade`.
+ */
+export function useReceptVerwijderen() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (receptId: string) => {
+      const { error } = await db.from('recepten').delete().eq('id', receptId)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      // Het recept kan in weken, lijst, fases en favorieten staan: alles opnieuw ophalen.
+      void qc.invalidateQueries()
+    },
+  })
+}
+
 /* ------------------------------------------------------ admin: goedkeuren */
 
 export function useIsAdmin() {
