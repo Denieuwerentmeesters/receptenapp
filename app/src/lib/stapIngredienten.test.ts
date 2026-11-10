@@ -60,3 +60,24 @@ describe('noemtIngredient', () => {
     expect(noemtIngredient(TACO, 'olijfolie')).toBe(true) // "olie" in de stap
   })
 })
+
+describe('woorden uit de stap die geen product zijn', () => {
+  const STAP = 'Snijd de kipfilet in lange repen, bestrijk met sesamolie en bestrooi met zout en peper. Bak 3 minuten per kant tot ze gaar zijn.'
+  test('"zijn" is niet rijstazijn', () => {
+    expect(noemtIngredient(STAP, 'rijstazijn')).toBe(false)
+    expect(noemtIngredient(STAP, 'wijnazijn')).toBe(false)
+  })
+  test('wat de stap wel noemt blijft staan', () => {
+    expect(noemtIngredient(STAP, 'kipfilet')).toBe(true)
+    expect(noemtIngredient(STAP, 'geroosterde sesamolie')).toBe(true)
+  })
+  test('"een", "ook" en "folie" zijn geen winterpeen, knoflook of olijfolie', () => {
+    expect(noemtIngredient('Pak een bakplaat en leg er folie op. Voeg ook wat toe.', 'winterpeen')).toBe(false)
+    expect(noemtIngredient('Pak een bakplaat en leg er folie op. Voeg ook wat toe.', 'knoflook')).toBe(false)
+    expect(noemtIngredient('Pak een bakplaat en leg er folie op.', 'olijfolie')).toBe(false)
+  })
+  test('kip in de stap is geen kippenbouillon, paprika geen paprikapoeder', () => {
+    expect(noemtIngredient('Schep de kip terug in de pan.', 'kippenbouillon')).toBe(false)
+    expect(noemtIngredient('Snijd de paprika in reepjes.', 'paprikapoeder')).toBe(false)
+  })
+})

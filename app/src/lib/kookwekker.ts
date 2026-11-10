@@ -64,44 +64,67 @@ export async function trekWekkerIn(): Promise<void> {
   }
 }
 
-/** Het moment dat de timer op nul komt terwijl je in de app bent. */
+/**
+ * Het moment dat de timer op nul komt terwijl je in de app bent. Een lokale
+ * melding laat iOS in de voorgrond niet altijd horen, dus de app piept zelf,
+ * op het toestel en in de browser, en trilt erbij.
+ */
 export function wekkerAfgelopen(): void {
   if (native()) {
-    // Het geluid komt van de melding zelf; hier alleen de tik in je hand.
     void Haptics.notification({ type: NotificationType.Warning }).catch(() => { /* geen trilmotor */ })
-    return
+  } else {
+    navigator.vibrate?.([300, 150, 300, 150, 300])
   }
-  navigator.vibrate?.([300, 150, 300, 150, 300])
   piep()
 }
 
 let geluid: AudioContext | null = null
+let stopPiep: (() => void) | null = null
 
 /**
- * Safari laat Web Audio pas klinken na een tik van de gebruiker. Daarom maken
- * we de context aan op het moment dat je de timer start, niet pas bij nul.
+ * Safari en de webview laten Web Audio pas klinken na een tik van de gebruiker.
+ * Daarom maken we de context aan op het moment dat je de timer start, niet pas
+ * bij nul.
  */
 export function bereidGeluidVoor(): void {
-  if (native()) return
   const AudioCtx = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
   if (!AudioCtx) return
   geluid ??= new AudioCtx()
   void geluid.resume().catch(() => { /* geen geluid dan */ })
 }
 
+/** Zet een lopend alarm uit (de knop Klaar). */
+export function stopWekkerGeluid(): void {
+  stopPiep?.()
+  stopPiep = null
+}
+
+/** Vier rondes van drie pieptonen: lang genoeg om het te horen vanaf de andere kant van de keuken. */
+const RONDES = 4
+
 function piep(): void {
   const ctx = geluid
   if (!ctx) return
-  for (let i = 0; i < 3; i++) {
-    const osc = ctx.createOscillator()
-    const volume = ctx.createGain()
-    osc.frequency.value = 880
-    osc.connect(volume)
-    volume.connect(ctx.destination)
-    const start = ctx.currentTime + i * 0.45
-    volume.gain.setValueAtTime(0.3, start)
-    volume.gain.exponentialRampToValueAtTime(0.001, start + 0.3)
-    osc.start(start)
-    osc.stop(start + 0.3)
+  void ctx.resume().catch(() => { /* geen geluid dan */ })
+  stopWekkerGeluid()
+  const oscillatoren: OscillatorNode[] = []
+  for (let ronde = 0; ronde < RONDES; ronde++) {
+    for (let i = 0; i < 3; i++) {
+      const osc = ctx.createOscillator()
+      const volume = ctx.createGain()
+      osc.type = 'square'
+      osc.frequency.value = 988
+      osc.connect(volume)
+      volume.connect(ctx.destination)
+      const start = ctx.currentTime + ronde * 2 + i * 0.4
+      volume.gain.setValueAtTime(0.25, start)
+      volume.gain.exponentialRampToValueAtTime(0.001, start + 0.28)
+      osc.start(start)
+      osc.stop(start + 0.3)
+      oscillatoren.push(osc)
+    }
+  }
+  stopPiep = () => {
+    for (const osc of oscillatoren) { try { osc.stop() } catch { /* al gestopt */ } }
   }
 }

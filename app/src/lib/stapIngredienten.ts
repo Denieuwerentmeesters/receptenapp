@@ -27,7 +27,7 @@ const GEEN_PRODUCT = new Set([
 ])
 
 /** "gepelde", "gekookte", "geroosterde", "ongekookt": een toestand, geen product. */
-const VOLTOOID_DEELWOORD = /^(?:ge\w{3,}(?:te|de)|ongekookt|ongebakken)$/
+const VOLTOOID_DEELWOORD = /^(?:\w*ge\w{3,}(?:te|de)|ongekookt|ongebakken)$/
 
 /** Algemene woorden waar een stap niet het ingrediënt mee bedoelt: "de saus" is niet per se sojasaus. */
 const TE_ALGEMEEN_ALS_STAART = new Set(['saus', 'melk', 'pasta', 'soep', 'mix', 'puree', 'poeder', 'blokjes', 'plakjes', 'stukjes', 'vlokken', 'blaadjes', 'zaad'])
@@ -71,7 +71,7 @@ export function productWoorden(naam: string): string[] {
 }
 
 /** Wat achter een productnaam kan staan zonder dat het een ander product wordt: "citroensap", "knoflookteentjes". */
-const ONSCHULDIGE_STAART = /^(?:sap|rasp|schil|blaadjes|blad|partjes|plakjes|plakken|ringen|blokjes|reepjes|snippers|zaadjes|teentjes|teen|tenen|teentje|filet|filets|steeltjes|steel|stelen|mengsel|roosjes|stuk|stukken|sneetjes|bladeren|wortel|knol|knollen|blokje|blokjes|tablet|poeder|vlokken|stukjes|schijfjes|takjes|sprieten|bolletjes)$/
+const ONSCHULDIGE_STAART = /^(?:sap|rasp|schil|blaadjes|blad|partjes|plakjes|plakken|ringen|blokjes|reepjes|snippers|zaadjes|teentjes|teen|tenen|teentje|filet|filets|steeltjes|steel|stelen|mengsel|roosjes|stuk|stukken|sneetjes|bladeren|wortel|knol|knollen|blokje|blokjes|tablet|vlokken|stukjes|schijfjes|takjes|sprieten|bolletjes)$/
 
 /**
  * Algemene woorden die een stap voor een soort gebruikt: "schep de kip terug"
@@ -79,19 +79,41 @@ const ONSCHULDIGE_STAART = /^(?:sap|rasp|schil|blaadjes|blad|partjes|plakjes|pla
  */
 const ALGEMEEN = new Set(['kip', 'kaas', 'noten'])
 
+/**
+ * Gewone woorden uit een bereidingstekst die toevallig het einde zijn van een
+ * ingrediëntnaam: "zijn" in "rijstazijn", "een" in "winterpeen", "folie" in
+ * "olijfolie". Zonder deze lijst kreeg je chips voor producten die de stap
+ * helemaal niet noemt.
+ */
+const STAP_WOORD_GEEN_PRODUCT = new Set([
+  'zijn', 'een', 'ook', 'andere', 'aan', 'uit', 'pel', 'vel', 'vorm', 'folie', 'bak', 'vet', 'kruid', 'kruiden', 'vulling',
+  'groenten', 'wortel', 'wortels', 'peper', 'sap', 'blokjes', 'plakjes', 'stukjes', 'mengsel', 'saus', 'deeg',
+  'door', 'over', 'naar', 'kant', 'laat', 'heel', 'hele', 'goed', 'klaar', 'nodig', 'extra', 'kleine', 'grote', 'zacht',
+])
+
+/** Bij deze producten is het poeder hetzelfde als het product zelf in de stap ("komijn" bij komijnpoeder). */
+const POEDER_IS_HETZELFDE = new Set(['komijn', 'koriander', 'kaneel', 'cacao', 'kurkuma', 'nootmuskaat', 'curry', 'kardemom'])
+
 /** Noemt dit woord uit de stap dit ingrediëntwoord? */
 export function zelfdeWoord(stapWoord: string, naamWoord: string): boolean {
   const s = stam(stapWoord)
   const n = stam(naamWoord)
   if (s === n) return true
+  // "olie" in de stap is geen sesamolie.
+  if (s === 'olie' && /sesam|chili/.test(naamWoord)) return false
+  if (ALGEMEEN.has(s) && n.length > s.length && n.startsWith(s) && !/bouillon|blokje|saus|poeder|smaak/.test(naamWoord)) return true
+  // Een alledaags woord uit de stap ("zijn", "een") is nooit het einde van een productnaam.
+  if (stapWoord.length < 4 || STAP_WOORD_GEEN_PRODUCT.has(stapWoord) || STAP_WOORD_GEEN_PRODUCT.has(s)) return false
   // De stap zegt "bonen" of "wortel", het ingrediënt is "kidneybonen" of "winterwortels".
   if (s.length >= 3 && !TE_ALGEMEEN_ALS_STAART.has(s) && n.length > s.length + 2 && (n.endsWith(s) || naamWoord.endsWith(stapWoord))) return true
-  if (ALGEMEEN.has(s) && n.length > s.length && n.startsWith(s)) return true
   // "citroensap" in de stap bij ingrediënt "citroen" (of andersom), maar niet "tomatenpuree" bij "tomaten".
   const [kort, lang] = s.length <= n.length ? [s, n] : [n, s]
   const langRuw = s.length <= n.length ? naamWoord : stapWoord
-  if (kort.length >= 3 && langRuw.startsWith(kort) && ONSCHULDIGE_STAART.test(langRuw.slice(kort.length))) return true
-  if (kort.length >= 3 && lang.startsWith(kort) && ONSCHULDIGE_STAART.test(lang.slice(kort.length))) return true
+  const onschuldig = (ruw: string, begin: string) =>
+    begin.length >= 3 && ruw.startsWith(begin) && (
+      ONSCHULDIGE_STAART.test(ruw.slice(begin.length))
+      || (ruw.slice(begin.length) === 'poeder' && POEDER_IS_HETZELFDE.has(begin)))
+  if (onschuldig(langRuw, kort) || onschuldig(lang, kort)) return true
   return false
 }
 
