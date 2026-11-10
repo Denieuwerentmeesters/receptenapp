@@ -11,7 +11,9 @@
     "test": "vitest run",
     "ios": "npm run build && cap sync ios && cap open ios",
     "android": "node ios/controleer-env.mjs && npm run build && cap sync android && cap open android",
-    "testflight": "node ios/controleer-env.mjs && npm run build && cap sync ios && ./ios/testflight.sh"
+    "testflight": "node ios/controleer-env.mjs && npm run build && cap sync ios && ./ios/testflight.sh",
+    "release:indienen": "fastlane ios indienen",
+    "release:android": "node ios/controleer-env.mjs && npm run build && cap sync android && fastlane android uitrollen"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",

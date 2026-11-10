@@ -210,7 +210,10 @@ openen in Android Studio: `npm run android` in `app/` (controleert ook of
   bij elke upload. Checklist, teksten en Data safety:
   `docs/google-play/checklist.md`.
 - **Nog niet:** de Play Console zelf (account in aanvraag, app, abonnement,
-  testen).
+  testen). Let op: dit is mogelijk verouderd, er zijn al testers die de app
+  installeerden; controleer de Play Console.
+- **Release door Claude:** `docs/release.md` (fastlane, sleutels in
+  `~/.kookmaatje/`). Production en App Store-review: eerst vragen.
 
 ## AH-mapping — hoe het hoort te werken
 

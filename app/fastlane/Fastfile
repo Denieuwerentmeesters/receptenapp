@@ -1,0 +1,81 @@
+# Release naar Apple en Google. Draaien via `npm run release:indienen` (iOS) en
+# `npm run release:android`; zie docs/release.md.
+#
+# Sleutels staan buiten de repo, in ~/.kookmaatje/:
+#   release.env       ASC_KEY_ID=…  ASC_ISSUER_ID=…
+#   AuthKey.p8        App Store Connect API-sleutel
+#   play-sleutel.json serviceaccount van Google Play
+require 'fileutils'
+
+SLEUTELS = File.expand_path('~/.kookmaatje')
+PAKKET = 'nl.reinoudtencate.receptenapp'
+
+def lees_env
+  pad = File.join(SLEUTELS, 'release.env')
+  UI.user_error!("#{pad} ontbreekt (zie docs/release.md)") unless File.exist?(pad)
+  File.readlines(pad).each do |regel|
+    sleutel, waarde = regel.strip.split('=', 2)
+    ENV[sleutel] = waarde if sleutel && !sleutel.start_with?('#') && waarde
+  end
+end
+
+def vereis(pad)
+  UI.user_error!("#{pad} ontbreekt (zie docs/release.md)") unless File.exist?(pad)
+  pad
+end
+
+platform :ios do
+  desc 'Nieuwste TestFlight-build indienen voor App Store-review (niet automatisch vrijgeven)'
+  lane :indienen do
+    lees_env
+    sleutel = app_store_connect_api_key(
+      key_id: ENV.fetch('ASC_KEY_ID'),
+      issuer_id: ENV.fetch('ASC_ISSUER_ID'),
+      key_filepath: vereis(File.join(SLEUTELS, 'AuthKey.p8'))
+    )
+    deliver(
+      api_key: sleutel,
+      app_identifier: PAKKET,
+      skip_binary_upload: true,   # de build staat er al via `npm run testflight`
+      skip_screenshots: true,
+      skip_metadata: true,
+      submit_for_review: true,
+      automatic_release: false,   # jij drukt zelf op vrijgeven
+      force: true,
+      submission_information: {
+        export_compliance_uses_encryption: false,
+        add_id_info_uses_idfa: false
+      }
+    )
+  end
+end
+
+platform :android do
+  desc 'Bouwt de .aab met het volgende versionCode en zet hem op een Play-track (TRACK=internal|alpha|beta|production)'
+  lane :uitrollen do
+    lees_env
+    json = vereis(File.join(SLEUTELS, 'play-sleutel.json'))
+    track = ENV['TRACK'] || 'internal'
+
+    hoogste = %w[internal alpha beta production].flat_map do |t|
+      begin
+        google_play_track_version_codes(package_name: PAKKET, track: t, json_key: json)
+      rescue StandardError
+        []
+      end
+    end.max || 0
+    nieuw = hoogste + 1
+    UI.message("Hoogste versionCode in Play: #{hoogste}, nieuwe build: #{nieuw}")
+
+    sh("cd ../android && ./gradlew bundleRelease -PversionCode=#{nieuw}")
+    upload_to_play_store(
+      package_name: PAKKET,
+      json_key: json,
+      track: track,
+      aab: File.expand_path('../android/app/build/outputs/bundle/release/app-release.aab', __dir__),
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
