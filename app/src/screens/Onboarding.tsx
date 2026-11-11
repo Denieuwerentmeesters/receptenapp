@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
 import { Button, Icon, IconButton, ProgressBar, Woordmerk } from '../ds'
 import { Label, Titel } from '../components/Layout'
-import { Grens, Laden } from '../components/Staten'
+import { Grens } from '../components/Staten'
 import { AANTAL_UITLEGKAARTEN, Uitleg, UitlegVoorladen } from '../components/Uitleg'
 import { AllergieKeuze, VoorraadKeuze } from '../components/voorkeuren'
-import { haalDezeWeek, sleutels, useLijstActies, useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
+import { useVoorkeuren, useVoorkeurenOpslaan } from '../lib/queries'
 import { useVoorraad, useVoorraadMuteren } from '../lib/queries2'
 import { ingredientKey } from '../lib/schaal'
 import { DROGE_KRUIDEN } from '../lib/kruiden'
-import { opsomming, vastVoorJou } from '../lib/allergenen'
-import { kiesWeek, vegaDoel, vegaMinimumVoor } from '../lib/weekvullen'
-import { weekStart } from '../lib/week'
+import { opsomming } from '../lib/allergenen'
 import { foutTekst } from '../lib/fouten'
 import { meet } from '../lib/meten'
 import { planWeekmenuMelding } from '../lib/weekmenuMelding'
@@ -22,8 +19,8 @@ import { t } from '../lib/taal'
 
 /**
  * De onboarding: één keer na het aanmaken van een account. Eerst de uitleg,
- * dan vijf vragen, en daarna sta je op Deze week met een weekmenu dat bij je
- * huishouden past.
+ * dan vijf vragen, en daarna begin je bij Ontdekken met zoeken. Niets wordt
+ * vanzelf op je lijst gezet: Vul mijn week staat op Mijn recepten.
  *
  * - De antwoorden gaan naar dezelfde kolommen als Instellingen
  *   (gebruiker_voorkeuren); er is geen tweede plek om iets in te stellen.
@@ -108,20 +105,12 @@ export function Onboarding() {
   return <Grens query={voorkeuren} ladenTekst={t('Even alles klaarzetten')}>{null}</Grens>
 }
 
-type Scherm = 'welkom' | 'uitleg' | 'vraag' | 'klaar' | 'vullen'
+type Scherm = 'welkom' | 'uitleg' | 'vraag' | 'klaar'
 
 function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
   const navigeer = useNavigate()
   const DAGEN = dagen()
-  const qc = useQueryClient()
-  const week = weekStart()
   const opslaan = useVoorkeurenOpslaan()
-  const { zetOpLijst } = useLijstActies(week)
-  // Kookavonden en keukens vraagt de onboarding niet: je bepaalt elke week zelf
-  // wat je kookt. "Vul mijn week" rekent met wat er al in je voorkeuren staat.
-  const avonden = voorkeuren.kookavonden ?? 4
-  const vegaMinimum = vegaMinimumVoor(vegaDoel({ vega_minimum: voorkeuren.vega_minimum, kookavonden: avonden }), avonden)
-
   // Eén keer lezen: daarna is de state hier de waarheid.
   const [hervat] = useState(leesVoortgang)
   const [scherm, setScherm] = useState<Scherm>(hervat ? (hervat.klaar ? 'klaar' : 'vraag') : 'welkom')
@@ -237,45 +226,24 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
     else setVraag(vraag - 1)
   }
 
-  /** Zet uit de tien suggesties zoveel recepten op je lijst als je kookavonden hebt. */
-  async function vulWeek(): Promise<number> {
-    const recepten = await qc.fetchQuery({
-      queryKey: sleutels.dezeWeek(week), queryFn: () => haalDezeWeek(week), staleTime: 0,
-    })
-    const passend = recepten.filter((r) => r.gekozen || vastVoorJou(r, antw.allergieen).length === 0)
-    const ids = kiesWeek(
-      passend.filter((r) => r.positie !== null && !r.gekozen && !r.gekooktOp),
-      { vega_minimum: vegaMinimum, kookavonden: avonden },
-      passend.filter((r) => r.gekozen),
-    )
-    // Na elkaar: elk recept schrijft zijn eigen regels op de boodschappenlijst.
-    for (const receptId of ids) await zetOpLijst.mutateAsync({ receptId, automatisch: true })
-    return ids.length
-  }
-
-  async function rondAf(vullen: boolean) {
+  async function rondAf() {
     setFout('')
     setBezig(true)
-    if (vullen) setScherm('vullen')
     try {
       // Alles nog één keer in één schrijfactie: dan staat het er zeker voordat
       // de generator het weekmenu maakt.
       await opslaan.mutateAsync(Object.assign({}, ...VRAGEN.map((v) => wijziging[v])) as Partial<Voorkeuren>)
       // De voorraadkast moet er ook staan: wat in huis is komt niet op de lijst.
       await voorraadOpslag.current.catch(() => bewaarVoorraad())
-      const aantal = vullen ? await vulWeek() : 0
       await opslaan.mutateAsync({ onboarding_klaar_op: new Date().toISOString() })
-      if (vullen) meet('week_gevuld_onboarding', { recepten: aantal })
       bewaarVoortgang(null)
-      navigeer(vullen ? '/mijn-recepten' : '/ontdekken', { replace: true })
+      navigeer('/ontdekken', { replace: true })
     } catch (e) {
       setFout(foutTekst(e))
       setBezig(false)
       setScherm('klaar')
     }
   }
-
-  if (scherm === 'vullen') return <Laden tekst={t('We vullen je week')} />
 
   if (scherm === 'welkom') {
     return (
@@ -343,9 +311,9 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
           display: 'flex', flexDirection: 'column', gap: 12,
         }}>
           <Label>{t('Klaar')}</Label>
-          <Titel grootte={30}>{t('Je week staat klaar')}</Titel>
+          <Titel grootte={30}>{t('Alles staat klaar')}</Titel>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.5, margin: 0 }}>
-            {t('Hiermee kiest Kookmaatje je recepten.')}
+            {t('Zoek in Ontdekken je eerste recepten en tik op het hartje. Op Mijn recepten kan Kookmaatje er later een paar voor je kiezen.')}
           </p>
         </div>
 
@@ -381,13 +349,9 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
           flex: 'none', display: 'flex', flexDirection: 'column', gap: 10,
           padding: '8px 22px calc(env(safe-area-inset-bottom) + 20px)',
         }}>
-          <Button size="lg" disabled={bezig} style={{ width: '100%', fontSize: 16 }} onClick={() => void rondAf(true)}>
-            {t('Vul mijn week')}
+          <Button size="lg" disabled={bezig} style={{ width: '100%', fontSize: 16 }} onClick={() => void rondAf()}>
+            {t('Zoek je eerste recepten')}
           </Button>
-          <Button
-            variant="secondary" tone="ink" size="lg" disabled={bezig}
-            style={{ width: '100%', fontSize: 15 }} onClick={() => void rondAf(false)}
-          >{t('Zelf kiezen in Ontdekken')}</Button>
         </div>
       </div>
     )

@@ -930,13 +930,13 @@ staat daarna op Mijn recepten.
   staan in `src/components/voorkeuren/` en worden door beide gebruikt.
 - **Het weekmenu wordt pas na de vragen gemaakt.** `genereer_weekmenu` is
   idempotent per week; draait hij eerder, dan zijn de tien suggesties op de
-  standaardwaarden gemaakt. De poort moet dus vóór Mijn recepten blijven, en de
-  onboarding roept `haalDezeWeek` pas aan bij "Vul mijn week".
-- **"Vul mijn week" zet direct recepten op je lijst** (`kiesWeek`, zoveel als
-  `kookavonden`), zonder bevestigscherm. De onboarding vraagt kookavonden,
-  vega en keukens niet meer (Reinoud, 31 okt 2026: je bepaalt dat elke week
-  zelf); het rekent met wat al in je voorkeuren staat (standaard 4 avonden).
-  Beide stel je nog in bij Instellingen.
+  standaardwaarden gemaakt. De poort moet dus vóór Mijn recepten blijven; de
+  onboarding zelf roept `haalDezeWeek` niet meer aan.
+- **De onboarding zet niets op je lijst of bij Nog bestellen** (Reinoud,
+  11 nov 2026). De laatste knop is "Zoek je eerste recepten" en brengt je naar
+  Ontdekken, waar je zelf zoekt. "Vul mijn week" staat alleen op Mijn recepten
+  → Nog bestellen. De onboarding vraagt kookavonden, vega en keukens niet; die
+  stel je bij Instellingen in.
 - **De herinneringsvraag** (dag en tijd om recepten te zoeken) schrijft naar
   `pushbericht_dag`, `pushbericht_tijd` en zet `pushbericht_aan`; overslaan
   laat de standaard staan (zondag 17:00, aan).
