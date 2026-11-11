@@ -286,7 +286,7 @@ function Verloop({ voorkeuren }: { voorkeuren: Voorkeuren }) {
         padding: 'calc(env(safe-area-inset-top) + 28px) 26px calc(env(safe-area-inset-bottom) + 20px)',
       }}>
         <UitlegVoorladen />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16 }}>
           <Woordmerk hoogte={40} />
           <TaalKeuze opRood />
         </div>
