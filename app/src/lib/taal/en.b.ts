@@ -151,6 +151,12 @@ export const EN_B: Record<string, string> = {
   'donderdag': 'Thursday', 'vrijdag': 'Friday', 'zaterdag': 'Saturday',
   'vandaag': 'today', 'morgen': 'tomorrow',
 
+  // GekooktPopup
+  'Recepten gekookt?': 'Cooked these?',
+  'Je hebt {n} recepten bij Te koken. Geef een cijfer aan wat je kookte: dan gaat het van je lijst. De oudste staan bovenaan.': 'You have {n} recipes under To cook. Rate what you cooked and it leaves your list. The oldest are at the top.',
+  'Zonder cijfer': 'No rating',
+  'Later doen': 'Later',
+
   // CijferSheet
   'Viel het in de smaak?': 'Did you enjoy it?',
   'Gekookt op {dag} · 1 persoon': 'Cooked on {dag} · 1 person',

@@ -6,6 +6,7 @@ import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layo
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { CijferSheet } from '../components/CijferSheet'
+import { GekooktPopup } from '../components/GekooktPopup'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
 import { useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
@@ -465,7 +466,15 @@ export function MijnRecepten() {
                   </div>
                 )}
                 <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
-                  <div style={ROOSTER}>{eerderGekookt.map(kaartGekookt)}</div>
+                  {/* Twee kolommen naast elkaar, geen rijen: een kaart met cijfer is korter dan een
+                      zonder, en de kaarten eronder schuiven dan gewoon omhoog. */}
+                  <div style={{ ...ROOSTER, alignItems: 'start' }}>
+                    {[0, 1].map((kolom) => (
+                      <div key={kolom} style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+                        {eerderGekookt.map((r, i) => (i % 2 === kolom ? kaartGekookt(r, i) : null))}
+                      </div>
+                    ))}
+                  </div>
                 </Inhoud>
               </>
             )}
@@ -477,6 +486,7 @@ export function MijnRecepten() {
       {lijstDeze.dialoog}
       {lijstKomende.dialoog}
       <WeekVraag />
+      {!cijferVoor && <GekooktPopup teKoken={teKoken} geladen={geladen} />}
       {cijferVoor && (
         <CijferSheet
           recept={cijferVoor.recept}
