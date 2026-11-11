@@ -466,7 +466,15 @@ export function MijnRecepten() {
                   </div>
                 )}
                 <Inhoud style={{ padding: '8px 22px 16px', gap: 0 }}>
-                  <div style={ROOSTER}>{eerderGekookt.map(kaartGekookt)}</div>
+                  {/* Twee kolommen naast elkaar, geen rijen: een kaart met cijfer is korter dan een
+                      zonder, en de kaarten eronder schuiven dan gewoon omhoog. */}
+                  <div style={{ ...ROOSTER, alignItems: 'start' }}>
+                    {[0, 1].map((kolom) => (
+                      <div key={kolom} style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+                        {eerderGekookt.map((r, i) => (i % 2 === kolom ? kaartGekookt(r, i) : null))}
+                      </div>
+                    ))}
+                  </div>
                 </Inhoud>
               </>
             )}
