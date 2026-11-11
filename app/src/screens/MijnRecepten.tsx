@@ -6,6 +6,7 @@ import { Inhoud, Kop, Label, OnderBalk, Scherm, Titel } from '../components/Layo
 import { Grens, Leeg } from '../components/Staten'
 import { Dialoog } from '../components/Dialoog'
 import { CijferSheet } from '../components/CijferSheet'
+import { GekooktPopup } from '../components/GekooktPopup'
 import { BespaardMelding } from '../components/BespaardMelding'
 import { useOpLijst } from '../components/OpLijst'
 import { useLijstActies, useVoorkeuren, type WeekRecept } from '../lib/queries'
@@ -477,6 +478,7 @@ export function MijnRecepten() {
       {lijstDeze.dialoog}
       {lijstKomende.dialoog}
       <WeekVraag />
+      {!cijferVoor && <GekooktPopup teKoken={teKoken} geladen={geladen} />}
       {cijferVoor && (
         <CijferSheet
           recept={cijferVoor.recept}
