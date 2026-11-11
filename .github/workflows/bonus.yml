@@ -25,6 +25,11 @@ jobs:
       - name: Dependencies installeren
         run: npm ci
 
+      # lib/bonus trekt app/src/lib mee, en daar importeert taal/ React.
+      # Zonder de app-dependencies faalt de ronde met ERR_MODULE_NOT_FOUND.
+      - name: App-dependencies installeren
+        run: npm ci --prefix app
+
       - name: Ophalen en koppelen
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
