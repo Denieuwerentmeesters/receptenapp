@@ -147,6 +147,11 @@ wissen, dus laat ze zo.
   dag en plant de melding zelf, zodat iOS dáár om toestemming vraagt; `Poort`
   plant pas als `onboarding_klaar_op` gezet is. In de browser gebeurt er
   niets. Id 2026; de kookwekker heeft 4711.
+- **De kookwekker heeft een eigen geluid** (`app/public/wekker.wav`, via
+  `sound` in `src/lib/kookwekker.ts`). Zonder `sound` plant
+  `@capacitor/local-notifications` een stille melding. In de app zelf zet
+  `piep` de audiosessie op `playback`, anders hoor je niets als de telefoon
+  op stil staat.
 - **De deelknop** (`app/ios/App/Delen`, target `Delen`, bundle-id
   `nl.reinoudtencate.receptenapp.delen`): in Instagram of Safari tik je op
   Delen en kies je Kookmaatje. De extension pakt de link, zet 'm in de App Group
