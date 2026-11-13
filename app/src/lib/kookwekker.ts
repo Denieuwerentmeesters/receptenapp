@@ -12,9 +12,15 @@ import { t } from './taal'
  * eindtijdstip. iOS speelt dan zelf het geluid af, ook als de app in de
  * achtergrond staat of het scherm op slot is. In de browser kan dat niet;
  * daar piepen we via Web Audio zolang het tabblad open is.
+ *
+ * Geef de melding altijd een geluid mee: zonder `sound` plant de plugin een
+ * stille melding (alleen een banner). `wekker.wav` staat in `public/` en komt
+ * zo in de app; hetzelfde piepje als in de app, korter dan de 30 s die iOS
+ * toestaat.
  */
 
 const MELDING_ID = 4711
+const WEKKERGELUID = 'wekker.wav'
 const native = () => Capacitor.isNativePlatform()
 
 type WakeLock = { request: (type: 'screen') => Promise<{ release: () => Promise<void> }> }
@@ -47,6 +53,9 @@ export async function planWekker(eindOp: number, wat: string): Promise<void> {
         title: t('Timer klaar'),
         body: wat,
         schedule: { at: new Date(eindOp), allowWhileIdle: true },
+        // Android zoekt het geluid in res/raw en valt anders terug op het
+        // standaardgeluid van het kanaal; alleen iOS kent het bestand.
+        ...(Capacitor.getPlatform() === 'ios' ? { sound: WEKKERGELUID } : {}),
       }],
     })
   } catch {
@@ -93,6 +102,18 @@ export function bereidGeluidVoor(): void {
   void geluid.resume().catch(() => { /* geen geluid dan */ })
 }
 
+/**
+ * Standaard valt Web Audio op iOS stil als de telefoon op stil staat. Een
+ * kookwekker moet je dan toch horen: "playback" negeert de stilschakelaar
+ * (Safari en WKWebView vanaf iOS 16.4). Alleen zolang het alarm klinkt, want
+ * "playback" zet ook je muziek of podcast stil; daarna weer "auto".
+ */
+function zetGeluidssessie(type: 'playback' | 'auto'): void {
+  const sessie = (navigator as Navigator & { audioSession?: { type: string } }).audioSession
+  if (!sessie) return
+  try { sessie.type = type } catch { /* niet ondersteund */ }
+}
+
 /** Zet een lopend alarm uit (de knop Klaar). */
 export function stopWekkerGeluid(): void {
   stopPiep?.()
@@ -105,8 +126,9 @@ const RONDES = 4
 function piep(): void {
   const ctx = geluid
   if (!ctx) return
-  void ctx.resume().catch(() => { /* geen geluid dan */ })
   stopWekkerGeluid()
+  zetGeluidssessie('playback')
+  void ctx.resume().catch(() => { /* geen geluid dan */ })
   const oscillatoren: OscillatorNode[] = []
   for (let ronde = 0; ronde < RONDES; ronde++) {
     for (let i = 0; i < 3; i++) {
@@ -124,7 +146,10 @@ function piep(): void {
       oscillatoren.push(osc)
     }
   }
+  const klaar = window.setTimeout(() => stopWekkerGeluid(), RONDES * 2000)
   stopPiep = () => {
+    window.clearTimeout(klaar)
     for (const osc of oscillatoren) { try { osc.stop() } catch { /* al gestopt */ } }
+    zetGeluidssessie('auto')
   }
 }
